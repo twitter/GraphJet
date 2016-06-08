@@ -1,0 +1,18 @@
+Recos, or Real-time Content Suggestions, is a heterogeneous graph
+based system that produces personalized content suggestions for users
+in real-time. The content recommendation mechanism based on the
+heterogeneous graph has two desirable properties: (a) it is
+contextual, i.e. recommendations are based on a user’s current context
+(tweets she’s tweeting/retweeting/faving/reading/clicking, and her
+network), and (b) it will be an exploration mechanism that will refine
+itself with each user interaction in real time.
+
+The architecture for making these content recommendations is (at a
+high-level) as follows: we listen to real-time user interactions and
+build a heterogeneous graph of user to content, which then allows
+running real-time algorithms on this graph. Thus, given a user at
+query time, we run a collaborative filtering algorithm to provide
+content recommendations of the kind: “People who did A also did B”,
+given that the input user did A.
+
+https://confluence.twitter.biz/display/relevance/Recos
