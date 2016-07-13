@@ -1,0 +1,142 @@
+package com.twitter.graphjet.algorithms.salsa;
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.PriorityQueue;
+
+import com.google.common.collect.Lists;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.twitter.graphjet.algorithms.NodeInfo;
+import com.twitter.graphjet.algorithms.RecommendationInfo;
+import com.twitter.graphjet.algorithms.TweetIDMask;
+import com.twitter.graphjet.algorithms.TweetRecommendationInfo;
+import com.twitter.graphjet.bipartite.api.LeftIndexedBipartiteGraph;
+import com.twitter.graphjet.hashing.SmallArrayBasedLongToDoubleMap;
+
+import it.unimi.dsi.fastutil.longs.LongArrayList;
+import it.unimi.dsi.fastutil.longs.LongList;
+
+/**
+ * This class selects the top recommendations from a SALSA run.
+ */
+public class SalsaSelectResults<T extends LeftIndexedBipartiteGraph> {
+  private static final Logger LOG = LoggerFactory.getLogger("graph");
+
+  private final CommonInternalState<T> salsaInternalState;
+  private final SalsaStats salsaStats;
+
+  /**
+   * Default constructor that requires a {@link CommonInternalState} populated with visited
+   * information to extract recommendations.
+   *
+   * @param salsaInternalState  is the state populated with visited information
+   */
+  public SalsaSelectResults(CommonInternalState<T> salsaInternalState) {
+    this.salsaInternalState = salsaInternalState;
+    this.salsaStats = salsaInternalState.getSalsaStats();
+  }
+
+  /**
+   * Picks the top-k visited nodes in SALSA.
+   */
+  public SalsaResponse pickTopNodes() {
+    PriorityQueue<NodeInfo> topResults = new PriorityQueue<NodeInfo>(
+        salsaInternalState.getSalsaRequest().getMaxNumResults());
+
+    int numFilteredNodes = 0;
+    for (NodeInfo nodeInfo : salsaInternalState.getVisitedRightNodes().values()) {
+      if (salsaInternalState.getSalsaRequest().filterResult(
+        nodeInfo.getValue(),
+        nodeInfo.getSocialProofs())
+      ) {
+        numFilteredNodes++;
+        continue;
+      }
+      nodeInfo.setWeight(
+          nodeInfo.getWeight() / salsaInternalState.getSalsaStats().getNumRHSVisits());
+      addResultToPriorityQueue(topResults, nodeInfo);
+    }
+
+    List<RecommendationInfo> outputResults =
+        Lists.newArrayListWithCapacity(topResults.size());
+
+    byte[] validSocialProofs = salsaInternalState.getSalsaRequest().getSocialProofTypes();
+    int maxSocialProofSize = salsaInternalState.getSalsaRequest().getMaxSocialProofSize();
+
+    while (!topResults.isEmpty()) {
+      NodeInfo nodeInfo = topResults.poll();
+      outputResults.add(
+        new TweetRecommendationInfo(
+          TweetIDMask.restore(nodeInfo.getValue()),
+          nodeInfo.getWeight(),
+          pickTopSocialProofs(nodeInfo.getSocialProofs(), validSocialProofs, maxSocialProofSize)));
+    }
+    Collections.reverse(outputResults);
+
+    salsaStats.setNumRightNodesFiltered(numFilteredNodes);
+    salsaStats.setNumRightNodesReached(salsaInternalState.getVisitedRightNodes().size());
+
+    LOG.info("SALSA: after running iterations for request_id = "
+        + salsaInternalState.getSalsaRequest().getQueryNode()
+        + ", we get numSeedNodes = "
+        + salsaStats.getNumSeedNodes()
+        + ", numDirectNeighbors = "
+        + salsaStats.getNumDirectNeighbors()
+        + ", numRHSVisits = "
+        + salsaStats.getNumRHSVisits()
+        + ", numRightNodesReached = "
+        + salsaStats.getNumRightNodesReached()
+        + ", numRightNodesFiltered = "
+        + salsaStats.getNumRightNodesFiltered()
+        + ", minVisitsPerRightNode = "
+        + salsaStats.getMinVisitsPerRightNode()
+        + ", maxVisitsPerRightNode = "
+        + salsaStats.getMaxVisitsPerRightNode()
+        + ", numOutputResults = "
+        + outputResults.size()
+    );
+
+    return new SalsaResponse(outputResults, salsaStats);
+  }
+
+  /**
+   * Pick the top social proofs for each RHS node
+   */
+  private Map<Byte, LongList> pickTopSocialProofs(
+    SmallArrayBasedLongToDoubleMap[] socialProofs,
+    byte[] validSocialProofs,
+    int maxSocialProofSize
+  ) {
+    Map<Byte, LongList> results = new HashMap<Byte, LongList>();
+    int length = validSocialProofs.length;
+
+    for (int i = 0; i < length; i++) {
+      SmallArrayBasedLongToDoubleMap socialProof = socialProofs[validSocialProofs[i]];
+      if (socialProof != null) {
+        if (socialProof.size() > 1) {
+          socialProof.sort();
+        }
+
+        socialProof.trim(maxSocialProofSize);
+        results.put((byte) i, new LongArrayList(socialProof.keys()));
+      }
+    }
+    return results;
+  }
+
+  private void addResultToPriorityQueue(
+      PriorityQueue<NodeInfo> topResults,
+      NodeInfo nodeInfo) {
+    if (topResults.size() < salsaInternalState.getSalsaRequest().getMaxNumResults()) {
+      topResults.add(nodeInfo);
+    } else if (nodeInfo.getWeight() > topResults.peek().getWeight()) {
+      topResults.poll();
+      topResults.add(nodeInfo);
+    }
+  }
+}
