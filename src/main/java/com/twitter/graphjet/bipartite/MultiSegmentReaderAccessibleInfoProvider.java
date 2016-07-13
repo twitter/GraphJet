@@ -92,7 +92,7 @@ public class MultiSegmentReaderAccessibleInfoProvider<T extends LeftIndexedBipar
     }
     // LOG.info("Total number of edges in graph = " + numEdgesInNonLiveSegments);
     // LOG.info("Created a new segment: oldestSegmentId = " + oldestSegmentId
-        + ", and liveSegmentId = " + liveSegmentId);
+    //     + ", and liveSegmentId = " + liveSegmentId);
 
     return liveSegment;
   }
