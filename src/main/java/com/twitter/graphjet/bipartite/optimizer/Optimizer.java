@@ -108,8 +108,8 @@ public final class Optimizer {
     long end = System.currentTimeMillis();
 
     // LOG.info("PowerLawDegreeEdgePool optimization finishes in "
-      + (double) (end - start) / 1000.0 + " seconds.");
-    return optimizedEdgePool;
+    //   + (double) (end - start) / 1000.0 + " seconds.");
+    // return optimizedEdgePool;
   }
 
   /**
@@ -141,8 +141,8 @@ public final class Optimizer {
     long end = System.currentTimeMillis();
 
     // LOG.info("LeftIndexedBipartiteGraphSegment optimization takes "
-        + (double) (end - start) / 1000.0 + " seconds."
-    );
+    //    + (double) (end - start) / 1000.0 + " seconds."
+    //);
   }
 
   /**
