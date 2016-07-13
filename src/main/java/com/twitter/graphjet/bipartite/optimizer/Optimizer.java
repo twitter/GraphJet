@@ -185,8 +185,8 @@ public final class Optimizer {
     long end = System.currentTimeMillis();
 
     // LOG.info("BipartiteGraphSegment left + right edge pool optimization takes "
-        + (double) (end - start) / 1000.0 + " seconds."
-    );
+    //     + (double) (end - start) / 1000.0 + " seconds."
+    // );
   }
 
 }
