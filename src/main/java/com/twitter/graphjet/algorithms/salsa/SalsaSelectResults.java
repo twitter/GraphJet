@@ -81,25 +81,25 @@ public class SalsaSelectResults<T extends LeftIndexedBipartiteGraph> {
     salsaStats.setNumRightNodesFiltered(numFilteredNodes);
     salsaStats.setNumRightNodesReached(salsaInternalState.getVisitedRightNodes().size());
 
-    LOG.info("SALSA: after running iterations for request_id = "
-        + salsaInternalState.getSalsaRequest().getQueryNode()
-        + ", we get numSeedNodes = "
-        + salsaStats.getNumSeedNodes()
-        + ", numDirectNeighbors = "
-        + salsaStats.getNumDirectNeighbors()
-        + ", numRHSVisits = "
-        + salsaStats.getNumRHSVisits()
-        + ", numRightNodesReached = "
-        + salsaStats.getNumRightNodesReached()
-        + ", numRightNodesFiltered = "
-        + salsaStats.getNumRightNodesFiltered()
-        + ", minVisitsPerRightNode = "
-        + salsaStats.getMinVisitsPerRightNode()
-        + ", maxVisitsPerRightNode = "
-        + salsaStats.getMaxVisitsPerRightNode()
-        + ", numOutputResults = "
-        + outputResults.size()
-    );
+    // LOG.info("SALSA: after running iterations for request_id = "
+    //     + salsaInternalState.getSalsaRequest().getQueryNode()
+    //     + ", we get numSeedNodes = "
+    //     + salsaStats.getNumSeedNodes()
+    //     + ", numDirectNeighbors = "
+    //     + salsaStats.getNumDirectNeighbors()
+    //     + ", numRHSVisits = "
+    //     + salsaStats.getNumRHSVisits()
+    //     + ", numRightNodesReached = "
+    //     + salsaStats.getNumRightNodesReached()
+    //     + ", numRightNodesFiltered = "
+    //     + salsaStats.getNumRightNodesFiltered()
+    //     + ", minVisitsPerRightNode = "
+    //     + salsaStats.getMinVisitsPerRightNode()
+    //     + ", maxVisitsPerRightNode = "
+    //     + salsaStats.getMaxVisitsPerRightNode()
+    //     + ", numOutputResults = "
+    //     + outputResults.size()
+    // );
 
     return new SalsaResponse(outputResults, salsaStats);
   }

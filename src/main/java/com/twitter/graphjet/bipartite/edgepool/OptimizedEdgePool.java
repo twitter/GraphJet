@@ -106,9 +106,9 @@ public class OptimizedEdgePool implements EdgePool {
       intToIntPairHashMap
     );
 
-    LOG.info(
-      "OptimizedEdgePool: maxNumEdges " + maxNumEdges + " maxNumNodes " + numOfNodes
-    );
+    // LOG.info(
+    //   "OptimizedEdgePool: maxNumEdges " + maxNumEdges + " maxNumNodes " + numOfNodes
+    // );
   }
 
   /**

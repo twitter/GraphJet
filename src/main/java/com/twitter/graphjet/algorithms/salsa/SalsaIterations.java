@@ -58,12 +58,12 @@ public class SalsaIterations<T extends LeftIndexedBipartiteGraph> {
    * @param random              is used for making all the random choices in SALSA
    */
   public void runSalsaIterations(SalsaRequest salsaRequest, Random random) {
-    LOG.info("SALSA: starting to reset internal state");
+    // LOG.info("SALSA: starting to reset internal state");
     resetWithRequest(salsaRequest, random);
-    LOG.info("SALSA: done resetting internal state");
+    // LOG.info("SALSA: done resetting internal state");
 
     seedLeftSideForFirstIteration();
-    LOG.info("SALSA: done seeding");
+    // LOG.info("SALSA: done seeding");
     boolean isForwardIteration = true;
     SingleSalsaIteration singleSalsaIteration = leftSalsaIteration;
 

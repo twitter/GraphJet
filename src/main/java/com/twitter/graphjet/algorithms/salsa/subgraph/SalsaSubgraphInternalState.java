@@ -62,20 +62,20 @@ public class SalsaSubgraphInternalState extends CommonInternalState<LeftIndexedB
     numEdgesAdded = 0;
     subgraphRightNodeDegreeReciprocal.clear();
     int seedSetSize = incomingSalsaRequest.getLeftSeedNodesWithWeight().size() + 1;
-    LOG.info("SALSA: resetting internal state");
+    // LOG.info("SALSA: resetting internal state");
     // Need to clear only if the array is NOT resized
     if (!resizeSubgraphEdgesArray(incomingSalsaRequest.getNumRandomWalks() + seedSetSize)) {
       Arrays.fill(subgraphEdgesArray, 0);
       Arrays.fill(subgraphEdgeTypesArray, (byte) 0);
     }
-    LOG.info("SALSA: subgraph edges array size = " + subgraphEdgesArray.length);
+    // LOG.info("SALSA: subgraph edges array size = " + subgraphEdgesArray.length);
     // Need to clear only if the array is NOT resized
     if (!resizeSubgraphLeftNodes(seedSetSize)) {
       Arrays.fill(subgraphLeftNodes, 0);
       Arrays.fill(subgraphLeftNodeDegree, 0);
     }
-    LOG.info("SALSA: subgraph left nodes size = " + subgraphLeftNodes.length);
-    LOG.info("SALSA: subgraph left node degree size = " + subgraphLeftNodeDegree.length);
+    // LOG.info("SALSA: subgraph left nodes size = " + subgraphLeftNodes.length);
+    // LOG.info("SALSA: subgraph left node degree size = " + subgraphLeftNodeDegree.length);
   }
 
   // Returns true if it resized, false if not
@@ -136,14 +136,14 @@ public class SalsaSubgraphInternalState extends CommonInternalState<LeftIndexedB
           entry, 1.0 / subgraphRightNodeDegreeReciprocal.get(entry));
     }
     salsaStats.addToNumRHSVisits(numEdgesAdded);
-    LOG.info("SALSA subgraph iteration initialized"
-            + " with numLeftNodes = "
-            + currentLeftNodes.size()
-            + " numEdgesAdded = "
-            + numEdgesAdded
-            + " numVisitedRightNodes = "
-            + visitedRightNodes.size()
-    );
+    // LOG.info("SALSA subgraph iteration initialized"
+    //         + " with numLeftNodes = "
+    //         + currentLeftNodes.size()
+    //         + " numEdgesAdded = "
+    //         + numEdgesAdded
+    //         + " numVisitedRightNodes = "
+    //         + visitedRightNodes.size()
+    // );
   }
 
   /**

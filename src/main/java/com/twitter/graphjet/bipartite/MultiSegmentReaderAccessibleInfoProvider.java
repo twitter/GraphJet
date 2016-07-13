@@ -69,7 +69,7 @@ public class MultiSegmentReaderAccessibleInfoProvider<T extends LeftIndexedBipar
     if (multiSegmentReaderAccessibleInfo.getSegments().size() == maxNumSegments) {
       segments.remove(oldestSegmentId);
       numEdgesInNonLiveSegmentsMap.remove(oldestSegmentId);
-      LOG.info("Removed segment " + oldestSegmentId);
+      // LOG.info("Removed segment " + oldestSegmentId);
       oldestSegmentId++;
     } else {
       statsReceiver.counter("numSegments").incr();
@@ -90,8 +90,8 @@ public class MultiSegmentReaderAccessibleInfoProvider<T extends LeftIndexedBipar
     for (int segmentEdgeCount : numEdgesInNonLiveSegmentsMap.values()) {
       numEdgesInNonLiveSegments += segmentEdgeCount;
     }
-    LOG.info("Total number of edges in graph = " + numEdgesInNonLiveSegments);
-    LOG.info("Created a new segment: oldestSegmentId = " + oldestSegmentId
+    // LOG.info("Total number of edges in graph = " + numEdgesInNonLiveSegments);
+    // LOG.info("Created a new segment: oldestSegmentId = " + oldestSegmentId
         + ", and liveSegmentId = " + liveSegmentId);
 
     return liveSegment;
