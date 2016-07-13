@@ -193,7 +193,7 @@ public class SalsaTest {
 
     int maxUserId = 1000;
 
-    final SalsaStats expectedSalsaStats = new SalsaStats(1, 64, 998, 21050, 1, 227, 64);
+    final SalsaStats expectedSalsaStats = new SalsaStats(1, 63, 1000, 21050, 1, 227, 64);
 
     ArrayList<HashMap<Byte, LongList>> socialProof = new ArrayList<HashMap<Byte, LongList>>();
     for (int i = 0; i < 3; i++) {
