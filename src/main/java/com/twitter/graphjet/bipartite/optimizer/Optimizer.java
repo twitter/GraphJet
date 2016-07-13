@@ -109,7 +109,7 @@ public final class Optimizer {
 
     // LOG.info("PowerLawDegreeEdgePool optimization finishes in "
     //   + (double) (end - start) / 1000.0 + " seconds.");
-    // return optimizedEdgePool;
+    return optimizedEdgePool;
   }
 
   /**
