@@ -138,7 +138,7 @@
     <dependency>
         <groupId>it.unimi.dsi</groupId>
         <artifactId>fastutil</artifactId>
-        <version>7.0.12</version>
+        <version>6.5.7</version>
         <scope>compile</scope>
     </dependency>
     <dependency>
