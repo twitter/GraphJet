@@ -193,22 +193,22 @@ public class SalsaTest {
 
     int maxUserId = 1000;
 
-    final SalsaStats expectedSalsaStats = new SalsaStats(1, 63, 1000, 21108, 1, 237, 63);
+    final SalsaStats expectedSalsaStats = new SalsaStats(1, 64, 998, 21050, 1, 227, 64);
 
     ArrayList<HashMap<Byte, LongList>> socialProof = new ArrayList<HashMap<Byte, LongList>>();
     for (int i = 0; i < 3; i++) {
       socialProof.add(new HashMap<Byte, LongList>());
     }
-    socialProof.get(0).put((byte) 0, new LongArrayList(new long[]{425, 868}));
-    socialProof.get(1).put((byte) 0, new LongArrayList(new long[]{300, 248}));
-    socialProof.get(2).put((byte) 0, new LongArrayList(new long[]{39, 411}));
+    socialProof.get(0).put((byte) 0, new LongArrayList(new long[]{718, 889}));
+    socialProof.get(1).put((byte) 0, new LongArrayList(new long[]{47, 96}));
+    socialProof.get(2).put((byte) 0, new LongArrayList(new long[]{623, 880}));
 
     final List<RecommendationInfo> expectedTopResults = new ArrayList<RecommendationInfo>();
-    expectedTopResults.add(new TweetRecommendationInfo(771, 0.0013738866780367634,
+    expectedTopResults.add(new TweetRecommendationInfo(735, 0.0010926365795724466,
       socialProof.get(0)));
-    expectedTopResults.add(new TweetRecommendationInfo(59, 0.0011370096645821489,
+    expectedTopResults.add(new TweetRecommendationInfo(119, 0.0010451306413301663,
       socialProof.get(1)));
-    expectedTopResults.add(new TweetRecommendationInfo(87, 0.0011370096645821489,
+    expectedTopResults.add(new TweetRecommendationInfo(70, 0.0010451306413301663,
       socialProof.get(2)));
 
     Set<Long> sourceIdList = Sets.newHashSetWithExpectedSize(maxNumLeftNodes);
