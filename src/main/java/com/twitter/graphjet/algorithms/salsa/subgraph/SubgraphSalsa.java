@@ -71,13 +71,13 @@ public class SubgraphSalsa implements RecommendationAlgorithm<SalsaRequest, Sals
     // First, update some stats
     numRequestsCounter.incr();
     long queryNode = request.getQueryNode();
-    // LOG.info("SubgraphSALSA: Incoming request with request_id = "
-    //         + queryNode
-    //         + " with numRandomWalks = "
-    //         + request.getNumRandomWalks()
-    //         + " with seed set size = "
-    //         + request.getLeftSeedNodesWithWeight().size()
-    // );
+    LOG.info("SubgraphSALSA: Incoming request with request_id = "
+            + queryNode
+            + " with numRandomWalks = "
+            + request.getNumRandomWalks()
+            + " with seed set size = "
+            + request.getLeftSeedNodesWithWeight().size()
+    );
 
     salsaIterationsSubgraph.runSalsaIterations(request, random);
     return salsaSelectResultsSubgraph.pickTopNodes();

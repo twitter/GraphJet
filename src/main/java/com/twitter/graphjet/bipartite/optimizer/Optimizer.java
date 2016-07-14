@@ -70,7 +70,7 @@ public final class Optimizer {
    */
   public static EdgePool optimizePowerLawDegreeEdgePool(PowerLawDegreeEdgePool edgePool) {
     long start = System.currentTimeMillis();
-    // LOG.info("PowerLawDegreeEdgePool optimization starts.");
+    LOG.info("PowerLawDegreeEdgePool optimization starts.");
 
     PowerLawDegreeEdgePool.ReaderAccessibleInfo readerAccessibleInfo =
       edgePool.getReaderAccessibleInfo();
@@ -107,8 +107,8 @@ public final class Optimizer {
 
     long end = System.currentTimeMillis();
 
-    // LOG.info("PowerLawDegreeEdgePool optimization finishes in "
-    //   + (double) (end - start) / 1000.0 + " seconds.");
+    LOG.info("PowerLawDegreeEdgePool optimization finishes in "
+      + (double) (end - start) / 1000.0 + " seconds.");
     return optimizedEdgePool;
   }
 
@@ -123,7 +123,7 @@ public final class Optimizer {
   ) {
     long start = System.currentTimeMillis();
 
-    // LOG.info("LeftIndexedBipartiteGraphSegment optimization starts. ");
+    LOG.info("LeftIndexedBipartiteGraphSegment optimization starts. ");
 
     EdgePool optimizedEdgePool = optimizePowerLawDegreeEdgePool(
       (PowerLawDegreeEdgePool) leftIndexedBipartiteGraphSegment
@@ -132,7 +132,7 @@ public final class Optimizer {
         .getLeftNodeEdgePool()
     );
 
-    // LOG.info("LeftIndexedBipartiteGraphSegment optimization finishes ");
+    LOG.info("LeftIndexedBipartiteGraphSegment optimization finishes ");
 
     // Safe publication ensures that readers who reference the object will see the new edge pool
     leftIndexedBipartiteGraphSegment.getLeftIndexedReaderAccessibleInfoProvider()
@@ -140,9 +140,9 @@ public final class Optimizer {
 
     long end = System.currentTimeMillis();
 
-    // LOG.info("LeftIndexedBipartiteGraphSegment optimization takes "
-    //    + (double) (end - start) / 1000.0 + " seconds."
-    //);
+    LOG.info("LeftIndexedBipartiteGraphSegment optimization takes "
+        + (double) (end - start) / 1000.0 + " seconds."
+    );
   }
 
   /**
@@ -156,7 +156,7 @@ public final class Optimizer {
   ) {
     long start = System.currentTimeMillis();
 
-    // LOG.info("BipartiteGraphSegment optimization starts.");
+    LOG.info("BipartiteGraphSegment optimization starts.");
 
     PowerLawDegreeEdgePool leftNodeEdgePool =
       (PowerLawDegreeEdgePool) bipartiteGraphSegment
@@ -166,7 +166,7 @@ public final class Optimizer {
 
     EdgePool leftOptimizedEdgePool = optimizePowerLawDegreeEdgePool(leftNodeEdgePool);
 
-    // LOG.info("BipartiteGraphSegment left edge pool optimization finishes.");
+    LOG.info("BipartiteGraphSegment left edge pool optimization finishes.");
 
     PowerLawDegreeEdgePool rightNodeEdgePool =
       (PowerLawDegreeEdgePool) bipartiteGraphSegment
@@ -176,7 +176,7 @@ public final class Optimizer {
 
     EdgePool rightOptimizedEdgePool = optimizePowerLawDegreeEdgePool(rightNodeEdgePool);
 
-    // LOG.info("BipartiteGraphSegment right edge pool optimization finishes.");
+    LOG.info("BipartiteGraphSegment right edge pool optimization finishes.");
 
     // Safe publication ensures that readers who reference the object will see the new edge pool
     bipartiteGraphSegment.getReaderAccessibleInfoProvider()
@@ -184,9 +184,9 @@ public final class Optimizer {
 
     long end = System.currentTimeMillis();
 
-    // LOG.info("BipartiteGraphSegment left + right edge pool optimization takes "
-    //     + (double) (end - start) / 1000.0 + " seconds."
-    // );
+    LOG.info("BipartiteGraphSegment left + right edge pool optimization takes "
+        + (double) (end - start) / 1000.0 + " seconds."
+    );
   }
 
 }

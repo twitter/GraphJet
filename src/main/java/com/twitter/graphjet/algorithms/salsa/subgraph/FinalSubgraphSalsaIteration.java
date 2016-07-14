@@ -18,7 +18,7 @@ public class FinalSubgraphSalsaIteration extends LeftSubgraphSalsaIteration {
 
   @Override
   public void runSingleIteration() {
-    // LOG.info("SALSA: running final subgraph iteration");
+    LOG.info("SALSA: running final subgraph iteration");
     salsaSubgraphInternalState.traverseSubgraphLeftToRight(nodeVisitor);
   }
 }

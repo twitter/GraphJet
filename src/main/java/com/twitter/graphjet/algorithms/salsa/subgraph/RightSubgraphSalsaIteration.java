@@ -15,7 +15,7 @@ public class RightSubgraphSalsaIteration extends SingleSalsaIteration {
    */
   @Override
   public void runSingleIteration() {
-    // LOG.info("SALSA: running right subgraph iteration");
+    LOG.info("SALSA: running right subgraph iteration");
     salsaSubgraphInternalState.traverseSubgraphRightToLeft();
   }
 }

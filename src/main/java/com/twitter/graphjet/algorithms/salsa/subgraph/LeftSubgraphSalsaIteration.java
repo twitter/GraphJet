@@ -25,11 +25,11 @@ public class LeftSubgraphSalsaIteration extends SingleSalsaIteration {
   @Override
   public void runSingleIteration() {
     if (firstIteration) {
-      // LOG.info("SALSA: running first left subgraph iteration");
+      LOG.info("SALSA: running first left subgraph iteration");
       salsaSubgraphInternalState.constructSubgraphAndTraverseOnce(nodeVisitor, random);
       firstIteration = false;
     } else {
-      // LOG.info("SALSA: running left subgraph iteration");
+      LOG.info("SALSA: running left subgraph iteration");
       salsaSubgraphInternalState.traverseSubgraphLeftToRight(nodeVisitor);
     }
   }

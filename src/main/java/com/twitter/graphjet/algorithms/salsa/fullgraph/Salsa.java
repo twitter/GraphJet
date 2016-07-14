@@ -61,15 +61,15 @@ public class Salsa implements RecommendationAlgorithm<SalsaRequest, SalsaRespons
     // First, update some stats
     numRequestsCounter.incr();
     long queryNode = request.getQueryNode();
-    // LOG.info("SALSA: Incoming request with request_id = "
-    //     + queryNode
-    //     + " with numRandomWalks = "
-    //     + request.getNumRandomWalks()
-    //     + " with seed set size = "
-    //     + request.getLeftSeedNodesWithWeight().size()
-    // );
+    LOG.info("SALSA: Incoming request with request_id = "
+        + queryNode
+        + " with numRandomWalks = "
+        + request.getNumRandomWalks()
+        + " with seed set size = "
+        + request.getLeftSeedNodesWithWeight().size()
+    );
 
-    // LOG.info("SALSA: running the full graph algo for query node " + queryNode);
+    LOG.info("SALSA: running the full graph algo for query node " + queryNode);
     salsaIterations.runSalsaIterations(request, random);
     return salsaSelectResults.pickTopNodes();
   }
