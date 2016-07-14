@@ -76,7 +76,7 @@ public class TweetSocialProof implements
           if (inputTweets.contains(rightNode) && socialProofTypes.contains(edgeType)) {
             // Get the social proof variable of the current tweet.
             if (!tweetsInteractions.containsKey(rightNode)) {
-              tweetsInteractions.put(rightNode, new Byte2ObjectArrayMap<>());
+              tweetsInteractions.put(rightNode, new Byte2ObjectArrayMap<LongSet>());
               tweetsSocialProofWeights.put(rightNode, 0);
             }
             Byte2ObjectMap<LongSet> interactionMap =
