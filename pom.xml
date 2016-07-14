@@ -1,13 +1,50 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>com.twitter.graphjet</groupId>
+
+  <groupId>com.twitter</groupId>
   <artifactId>graphjet</artifactId>
+  <version>1.0</version>
   <packaging>jar</packaging>
-  <version>1.0-SNAPSHOT</version>
+
   <name>graphjet</name>
-  <url>http://graphjet.io</url>
   <description>GraphJet is a real time graph processing library.</description>
+  <url>http://graphjet.io</url>
+
+  <licenses>
+    <license>
+      <name>The Apache Software License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+    </license>
+  </licenses>
+
+  <developers>
+    <developer>
+      <name>Aneesh Sharma</name>
+      <email>aneesh@twitter.com</email>
+      <organization>Twitter</organization>
+      <organizationUrl>http://www.twitter.com</organizationUrl>
+    </developer>
+    <developer>
+      <name>Jerry Jiang</name>
+      <email>jjiang@twitter.com</email>
+      <organization>Twitter</organization>
+      <organizationUrl>http://www.twitter.com</organizationUrl>
+    </developer>
+    <developer>
+      <name>Praveen Bommannavar</name>
+      <email>praveen@twitter.com</email>
+      <organization>Twitter</organization>
+      <organizationUrl>http://www.twitter.com</organizationUrl>
+    </developer>
+  </developers>
+
+  <scm>
+    <connection>scm:git:git://github.com/twitter/graphjet.git</connection>
+    <developerConnection>scm:git:ssh://github.com:twitter/graphjet.git</developerConnection>
+    <url>http://github.com/twitter/graphjet/tree/master</url>
+  </scm>
+
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
@@ -31,6 +68,30 @@
           <reuseForks>true</reuseForks>
           <argLine>-Xmx1024m -XX:MaxPermSize=256m</argLine>
         </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>attach-sources</id>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>attach-javadocs</id>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>
