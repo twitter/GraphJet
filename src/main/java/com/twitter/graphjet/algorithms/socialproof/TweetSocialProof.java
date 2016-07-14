@@ -113,8 +113,8 @@ public class TweetSocialProof implements
     for (Long tweetId : request.getInputTweets()) {
       socialProofList.add(new SocialProofResult(
         tweetId,
-        tweetsInteractions.getOrDefault(tweetId, EMPTY_SOCIALPROOF_MAP),
-        tweetsSocialProofWeights.getOrDefault(tweetId, 0.0)));
+        EMPTY_SOCIALPROOF_MAP, // tweetsInteractions.getOrDefault(tweetId, EMPTY_SOCIALPROOF_MAP),
+        0.0));// tweetsSocialProofWeights.getOrDefault(tweetId, 0.0)));
     }
 
     return new SocialProofResponse(socialProofList);
