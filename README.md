@@ -3,5 +3,8 @@
 # GraphJet
 GraphJet is a real-time graph processing library.
 
+# Example
+In progress: a working example
+
 # License
 Apache 2.0
