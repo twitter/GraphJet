@@ -8,61 +8,63 @@ import com.twitter.graphjet.stats.Counter;
 import com.twitter.graphjet.stats.StatsReceiver;
 
 /**
- * This class implements a large array as an array of arrays that are sharded. There are two
- * benefits advantage of this implementation over a large one-dimensional array:
+ * <p>This class implements a large array as an array of arrays that are sharded. There are two
+ * benefits advantage of this implementation over a large one-dimensional array:</p>
  * 1) Since the array is allocated shard-by-shard, we expect better GC performance for large arrays
  * as each shard can be allocated/collected separately
  * 2) Accessing entries requires loading much less data in L1 cache since only the relevant "shards"
  * are accessed.
- * There is a little bit of extra computational cost associated with sharding, namely that we need
+ * <p>There is a little bit of extra computational cost associated with sharding, namely that we need
  * to convert positions to shards and offsets. To make this cost negligible, we enforce that shard
  * lengths are powers of 2, which implies that conversations are bit operations. This does make the
- * array size a bit larger than desired, but the memory overhead is generally small.
- * <p/>
- * This class is thread-safe even though it does not do any locking: it achieves this by leveraging
+ * array size a bit larger than desired, but the memory overhead is generally small.</p>
+ *
+ * <p>This class is thread-safe even though it does not do any locking: it achieves this by leveraging
  * the assumptions stated below and using a "memory barrier" between writes and reads to sync
- * updates.
- * <p/>
- * Here are the client assumptions needed to enable lock-free read/writes:
+ * updates.</p>
+ *
+ * <p>Here are the client assumptions needed to enable lock-free read/writes:</p>
  * 1. There is a SINGLE writer thread -- this is extremely important as we don't lock during writes.
  * 2. Readers are OK reading stale data, i.e. if even if a reader thread arrives after the writer
  * thread started doing a write, the update is NOT guaranteed to be available to it unless the
  * update has finished.
- * <p/>
- * This class enables lock-free read/writes by guaranteeing the following:
+ *
+ * <p>This class enables lock-free read/writes by guaranteeing the following:</p>
  * 1. The writes that are done are always "safe", i.e. in no time during the writing do they leave
  * things in a state such that a reader would either encounter an exception or do wrong
  * computation.
  * 2. After a write is done, it is explicitly "published" such that a reader that arrives after
  * the published write it would see updated data.
- * <p/>
- * The way this works is as follows: suppose we have some linked objects X, Y and Z that need to be
+ *
+ * <p>The way this works is as follows: suppose we have some linked objects X, Y and Z that need to be
  * maintained in a consistent state. First, our setup ensures that the reader is _only_ allowed to
  * access these in a linear manner as follows: read X -> read Y -> read Z. Then, we ensure that the
  * writer behavior is to write (safe, atomic) updates to each of these in the exact opposite order:
- * write Z --flush--> write Y --flush--> write X.
- * <p/>
- * Note that the flushing ensures that if a reader sees Y then it _must_ also see the updated Z,
+ * write Z --flush--&gt; write Y --flush--&gt; write X.</p>
+ *
+ * <p>Note that the flushing ensures that if a reader sees Y then it _must_ also see the updated Z,
  * and if sees X then it _must_ also see the updated Y and Z. Further, each update itself is safe.
  * For instance, a reader can safely access an updated Z even if X and Y are not updated since the
  * updated information will only be accessible through the updated X and Y (the converse though is
  * NOT true). Together, this ensures that the reader accesses to the objects are always consistent
- * with each other and safe to access by the reader.
+ * with each other and safe to access by the reader.</p>
  */
 public class ShardedBigIntArray implements BigIntArray {
   /**
-   * This class encapsulates ALL the state that will be accessed by a reader (refer to the X, Y, Z
+   * <p>This class encapsulates ALL the state that will be accessed by a reader (refer to the X, Y, Z
    * comment above). The final members are used to guarantee visibility to other threads without
-   * synchronization/using volatile.
-   * <p/>
-   * From 'Java Concurrency in practice' by Brian Goetz, p. 349:
-   * <p/>
-   * "Initialization safety guarantees that for properly constructed objects, all
-   * threads will see the correct values of final fields that were set by the con-
-   * structor, regardless of how the object is published. Further, any variables
-   * that can be reached through a final field of a properly constructed object
-   * (such as the elements of a final array or the contents of a HashMap refer-
-   * enced by a final field) are also guaranteed to be visible to other threads."
+   * synchronization/using volatile.</p>
+   *
+   * <p>From 'Java Concurrency in practice' by Brian Goetz, p. 349:</p>
+   *
+   * <blockquote>"Initialization safety guarantees that for properly
+   * constructed objects, all threads will see the correct values of
+   * final fields that were set by the constructor, regardless of
+   * how the object is published. Further, any variables that can be
+   * reached through a final field of a properly constructed object
+   * (such as the elements of a final array or the contents of a
+   * HashMap referenced by a final field) are also guaranteed to be
+   * visible to other threads."</blockquote>
    */
   public static final class ReaderAccessibleInfo {
     public final int[][] array;
