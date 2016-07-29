@@ -1,4 +1,21 @@
-package com.twitter.graphjet.algorithms.magicrecs;
+/**
+ * Copyright 2016 Twitter. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+
+package com.twitter.graphjet.algorithms.counting;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,10 +51,10 @@ import it.unimi.dsi.fastutil.longs.LongList;
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import it.unimi.dsi.fastutil.longs.LongSet;
 
-public class MagicRecsTest {
+public class TopSecondDegreeByCountTest {
 
   @Test
-  public void testMagicRecsWithSmallGraph() throws Exception {
+  public void testTopSecondDegreeByCountWithSmallGraph() throws Exception {
     NodeMetadataLeftIndexedMultiSegmentBipartiteGraph bipartiteGraph =
       BipartiteGraphTestHelper.buildSmallTestNodeMetadataLeftIndexedMultiSegmentBipartiteGraph();
     long queryNode = 1;
@@ -68,7 +85,7 @@ public class MagicRecsTest {
       new RequestedSetFilter(new NullStatsReceiver())
     ));
 
-    MagicRecsRequest magicRecsRequest = new MagicRecsRequest(
+    TopSecondDegreeByCountRequest topSecondDegreeByCountRequest = new TopSecondDegreeByCountRequest(
       queryNode,
       seedsMap,
       toBeFiltered,
@@ -82,11 +99,11 @@ public class MagicRecsTest {
       resultFilterChain
     );
 
-    MagicRecsResponse magicRecsResponse = new MagicRecs(
+    TopSecondDegreeByCountResponse topSecondDegreeByCountResponse = new TopSecondDegreeByCount(
       bipartiteGraph,
       expectedNodesToHit,
       new NullStatsReceiver()
-    ).computeRecommendations(magicRecsRequest, random);
+    ).computeRecommendations(topSecondDegreeByCountRequest, random);
 
     ArrayList<HashMap<Byte, LongList>> socialProof = new ArrayList<HashMap<Byte, LongList>>();
     for (int i = 0; i < 3; i++) {
@@ -101,19 +118,20 @@ public class MagicRecsTest {
     expectedTopResults.add(new TweetRecommendationInfo(6, 1.0, socialProof.get(1)));
     expectedTopResults.add(new TweetRecommendationInfo(8, 0.5, socialProof.get(2)));
 
-    List<RecommendationInfo> magicRecsResults =
-      Lists.newArrayList(magicRecsResponse.getRankedRecommendations());
+    List<RecommendationInfo> topSecondDegreeByCountResults =
+      Lists.newArrayList(topSecondDegreeByCountResponse.getRankedRecommendations());
 
-    final RecommendationStats expectedMagicRecsStats = new RecommendationStats(4, 9, 20, 2, 3, 2);
-    RecommendationStats magicRecsStats = magicRecsResponse.getMagicRecsStats();
+    final RecommendationStats expectedTopSecondDegreeByCountStats =
+      new RecommendationStats(4, 9, 20, 2, 3, 2);
+    RecommendationStats topSecondDegreeByCountStats =
+      topSecondDegreeByCountResponse.getTopSecondDegreeByCountStats();
 
-
-    assertEquals(expectedMagicRecsStats, magicRecsStats);
-    assertEquals(expectedTopResults, magicRecsResults);
+    assertEquals(expectedTopSecondDegreeByCountStats, topSecondDegreeByCountStats);
+    assertEquals(expectedTopResults, topSecondDegreeByCountResults);
   }
 
   @Test
-  public void testMagicRecsWithRandomGraph() throws Exception {
+  public void testTopSecondDegreeByCountWithRandomGraph() throws Exception {
     long randomSeed = 918324701982347L;
     Random random = new Random(randomSeed);
 
@@ -160,7 +178,7 @@ public class MagicRecsTest {
       new RequestedSetFilter(new NullStatsReceiver())
     ));
 
-    MagicRecsRequest magicRecsRequest = new MagicRecsRequest(
+    TopSecondDegreeByCountRequest topSecondDegreeByCountRequest = new TopSecondDegreeByCountRequest(
       queryNode,
       seedsMap,
       toBeFiltered,
@@ -174,11 +192,11 @@ public class MagicRecsTest {
       resultFilterChain
     );
 
-    MagicRecsResponse magicRecsResponse = new MagicRecs(
+    TopSecondDegreeByCountResponse topSecondDegreeByCountResponse = new TopSecondDegreeByCount(
       bipartiteGraph,
       expectedNodesToHit,
       new NullStatsReceiver()
-    ).computeRecommendations(magicRecsRequest, random);
+    ).computeRecommendations(topSecondDegreeByCountRequest, random);
 
     ArrayList<HashMap<Byte, LongList>> socialProof = new ArrayList<HashMap<Byte, LongList>>();
     for (int i = 0; i < 3; i++) {
@@ -199,14 +217,15 @@ public class MagicRecsTest {
       new TweetRecommendationInfo(19301, 0.6, socialProof.get(2))
     );
 
-    List<RecommendationInfo> magicRecsResults =
-      Lists.newArrayList(magicRecsResponse.getRankedRecommendations());
+    List<RecommendationInfo> topSecondDegreeByCountResults =
+      Lists.newArrayList(topSecondDegreeByCountResponse.getRankedRecommendations());
 
-    final RecommendationStats expectedMagicRecsStats =
+    final RecommendationStats expectedTopSecondDegreeByCountStats =
       new RecommendationStats(0, 398, 798, 2, 3, 0);
-    RecommendationStats magicRecsStats = magicRecsResponse.getMagicRecsStats();
+    RecommendationStats topSecondDegreeByCountStats =
+      topSecondDegreeByCountResponse.getTopSecondDegreeByCountStats();
 
-    assertEquals(expectedMagicRecsStats, magicRecsStats);
-    assertEquals(expectedTopResults, magicRecsResults);
+    assertEquals(expectedTopSecondDegreeByCountStats, topSecondDegreeByCountStats);
+    assertEquals(expectedTopResults, topSecondDegreeByCountResults);
   }
 }

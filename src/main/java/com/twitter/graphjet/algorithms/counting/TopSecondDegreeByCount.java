@@ -1,4 +1,21 @@
-package com.twitter.graphjet.algorithms.magicrecs;
+/**
+ * Copyright 2016 Twitter. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+
+package com.twitter.graphjet.algorithms.counting;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +41,8 @@ import it.unimi.dsi.fastutil.longs.Long2DoubleMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 
-public class MagicRecs implements RecommendationAlgorithm<MagicRecsRequest, MagicRecsResponse> {
+public class TopSecondDegreeByCount implements
+    RecommendationAlgorithm<TopSecondDegreeByCountRequest, TopSecondDegreeByCountResponse> {
   private static final Logger LOG = LoggerFactory.getLogger("graph");
   private static final int MAX_EDGES_PER_NODE = 500;
 
@@ -32,24 +50,24 @@ public class MagicRecs implements RecommendationAlgorithm<MagicRecsRequest, Magi
   private final Long2ObjectMap<NodeInfo> visitedRightNodes;
   private final List<NodeInfo> nodeInfosAfterFiltering;
   private final Long2ByteMap seenEdgesPerNode;
-  private final RecommendationStats magicRecsStats;
+  private final RecommendationStats topSecondDegreeByCountStats;
   private final StatsReceiver statsReceiver;
   private final Counter numRequestsCounter;
 
   /**
-   * This initializes all the state needed to run MagicRecs. Note that the object can be reused for
-   * answering many different queries on the same graph, which allows for optimizations such as
-   * reusing internally allocated maps etc.
+   * This initializes all the state needed to run TopSecondDegreeByCount. Note that the object can
+   * be reused for answering many different queries on the same graph, which allows for
+   * optimizations such as reusing internally allocated maps etc.
    *
    * @param leftIndexedBipartiteGraph is the
    *                                  {@link NodeMetadataLeftIndexedMultiSegmentBipartiteGraph}
-   *                                  to run MagicRecs on
-   * @param expectedNodesToHit        is an estimate of how many nodes can be hit in MagicRecs. This
-   *                                  is purely for allocating needed memory right up front to make
-   *                                  requests fast.
+   *                                  to run TopSecondDegreeByCount on
+   * @param expectedNodesToHit        is an estimate of how many nodes can be hit in
+   *                                  TopSecondDegreeByCount. This is purely for allocating needed
+   *                                  memory right up front to make requests fast.
    * @param statsReceiver             tracks the internal stats
    */
-  public MagicRecs(
+  public TopSecondDegreeByCount(
     NodeMetadataLeftIndexedMultiSegmentBipartiteGraph leftIndexedBipartiteGraph,
     int expectedNodesToHit,
     StatsReceiver statsReceiver
@@ -58,12 +76,12 @@ public class MagicRecs implements RecommendationAlgorithm<MagicRecsRequest, Magi
     this.visitedRightNodes = new Long2ObjectOpenHashMap<NodeInfo>(expectedNodesToHit);
     this.nodeInfosAfterFiltering = new ArrayList<NodeInfo>();
     this.seenEdgesPerNode = new Long2ByteArrayMap();
-    this.magicRecsStats = new RecommendationStats();
-    this.statsReceiver = statsReceiver.scope("MagicRecs");
+    this.topSecondDegreeByCountStats = new RecommendationStats();
+    this.statsReceiver = statsReceiver.scope("TopSecondDegreeByCount");
     this.numRequestsCounter = this.statsReceiver.counter("numRequests");
   }
 
-  private void collectRecommendations(MagicRecsRequest request) {
+  private void collectRecommendations(TopSecondDegreeByCountRequest request) {
     for (Long2DoubleMap.Entry entry: request.getLeftSeedNodesWithWeight().long2DoubleEntrySet()) {
       long leftNode = entry.getLongKey();
       double weight = entry.getDoubleValue();
@@ -124,7 +142,9 @@ public class MagicRecs implements RecommendationAlgorithm<MagicRecsRequest, Magi
   }
 
   private void collectRecommendationStats(long queryNode) {
-    magicRecsStats.setNumDirectNeighbors(leftIndexedBipartiteGraph.getLeftNodeDegree(queryNode));
+    topSecondDegreeByCountStats.setNumDirectNeighbors(
+      leftIndexedBipartiteGraph.getLeftNodeDegree(queryNode)
+    );
 
     int minVisitsPerRightNode = Integer.MAX_VALUE;
     int maxVisitsPerRightNode = 0;
@@ -139,13 +159,13 @@ public class MagicRecs implements RecommendationAlgorithm<MagicRecsRequest, Magi
       numRHSVisits += numVisits;
     }
 
-    magicRecsStats.setMinVisitsPerRightNode(minVisitsPerRightNode);
-    magicRecsStats.setMaxVisitsPerRightNode(maxVisitsPerRightNode);
-    magicRecsStats.setNumRHSVisits(numRHSVisits);
-    magicRecsStats.setNumRightNodesReached(visitedRightNodes.size());
+    topSecondDegreeByCountStats.setMinVisitsPerRightNode(minVisitsPerRightNode);
+    topSecondDegreeByCountStats.setMaxVisitsPerRightNode(maxVisitsPerRightNode);
+    topSecondDegreeByCountStats.setNumRHSVisits(numRHSVisits);
+    topSecondDegreeByCountStats.setNumRightNodesReached(visitedRightNodes.size());
   }
 
-  private void filterNodeInfo(MagicRecsRequest request) {
+  private void filterNodeInfo(TopSecondDegreeByCountRequest request) {
     int numFilteredNodes = 0;
     for (NodeInfo nodeInfo : visitedRightNodes.values()) {
       if (request.filterResult(nodeInfo.getValue(), nodeInfo.getSocialProofs())) {
@@ -156,20 +176,20 @@ public class MagicRecs implements RecommendationAlgorithm<MagicRecsRequest, Magi
       nodeInfosAfterFiltering.add(nodeInfo);
     }
 
-    magicRecsStats.setNumRightNodesFiltered(numFilteredNodes);
+    topSecondDegreeByCountStats.setNumRightNodesFiltered(numFilteredNodes);
   }
 
-  private void reset(MagicRecsRequest request) {
+  private void reset(TopSecondDegreeByCountRequest request) {
     request.resetFilters();
     visitedRightNodes.clear();
     nodeInfosAfterFiltering.clear();
     seenEdgesPerNode.clear();
-    magicRecsStats.reset();
+    topSecondDegreeByCountStats.reset();
   }
 
   @Override
-  public MagicRecsResponse computeRecommendations(
-    MagicRecsRequest request,
+  public TopSecondDegreeByCountResponse computeRecommendations(
+    TopSecondDegreeByCountRequest request,
     Random random
   ) {
     numRequestsCounter.incr();
@@ -188,14 +208,17 @@ public class MagicRecs implements RecommendationAlgorithm<MagicRecsRequest, Magi
 
     if (request.getRecommendationTypes().contains(RecommendationType.TWEET)) {
       List<RecommendationInfo> tweetRecommendations =
-        MagicRecsTweetRecsGenerator.generateTweetRecs(request, nodeInfosAfterFiltering);
+        TopSecondDegreeByCountTweetRecsGenerator.generateTweetRecs(
+          request,
+          nodeInfosAfterFiltering
+        );
       numTweetResults = tweetRecommendations.size();
       recommendations.addAll(tweetRecommendations);
     }
 
     if (request.getRecommendationTypes().contains(RecommendationType.HASHTAG)) {
       List<RecommendationInfo> hashtagRecommendations =
-        MagicRecsTweetMetadataRecsGenerator.generateTweetMetadataRecs(
+        TopSecondDegreeByCountTweetMetadataRecsGenerator.generateTweetMetadataRecs(
           request,
           nodeInfosAfterFiltering,
           RecommendationType.HASHTAG
@@ -206,7 +229,7 @@ public class MagicRecs implements RecommendationAlgorithm<MagicRecsRequest, Magi
 
     if (request.getRecommendationTypes().contains(RecommendationType.URL)) {
       List<RecommendationInfo> urlRecommendations =
-        MagicRecsTweetMetadataRecsGenerator.generateTweetMetadataRecs(
+        TopSecondDegreeByCountTweetMetadataRecsGenerator.generateTweetMetadataRecs(
           request,
           nodeInfosAfterFiltering,
           RecommendationType.URL
@@ -215,20 +238,20 @@ public class MagicRecs implements RecommendationAlgorithm<MagicRecsRequest, Magi
       recommendations.addAll(urlRecommendations);
     }
 
-    LOG.info("MagicRecs: after running algorithm for request_id = "
+    LOG.info("TopSecondDegreeByCount: after running algorithm for request_id = "
         + request.getQueryNode()
         + ", we get numDirectNeighbors = "
-        + magicRecsStats.getNumDirectNeighbors()
+        + topSecondDegreeByCountStats.getNumDirectNeighbors()
         + ", numRHSVisits = "
-        + magicRecsStats.getNumRHSVisits()
+        + topSecondDegreeByCountStats.getNumRHSVisits()
         + ", numRightNodesReached = "
-        + magicRecsStats.getNumRightNodesReached()
+        + topSecondDegreeByCountStats.getNumRightNodesReached()
         + ", numRightNodesFiltered = "
-        + magicRecsStats.getNumRightNodesFiltered()
+        + topSecondDegreeByCountStats.getNumRightNodesFiltered()
         + ", minVisitsPerRightNode = "
-        + magicRecsStats.getMinVisitsPerRightNode()
+        + topSecondDegreeByCountStats.getMinVisitsPerRightNode()
         + ", maxVisitsPerRightNode = "
-        + magicRecsStats.getMaxVisitsPerRightNode()
+        + topSecondDegreeByCountStats.getMaxVisitsPerRightNode()
         + ", numTweetResults = "
         + numTweetResults
         + ", numHashtagResults = "
@@ -239,6 +262,6 @@ public class MagicRecs implements RecommendationAlgorithm<MagicRecsRequest, Magi
         + (numTweetResults + numHashtagResults + numUrlResults)
     );
 
-    return new MagicRecsResponse(recommendations, magicRecsStats);
+    return new TopSecondDegreeByCountResponse(recommendations, topSecondDegreeByCountStats);
   }
 }

@@ -1,4 +1,21 @@
-package com.twitter.graphjet.algorithms.magicrecs;
+/**
+ * Copyright 2016 Twitter. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+
+package com.twitter.graphjet.algorithms.counting;
 
 import java.util.Map;
 import java.util.Set;
@@ -11,7 +28,7 @@ import com.twitter.graphjet.hashing.SmallArrayBasedLongToDoubleMap;
 import it.unimi.dsi.fastutil.longs.Long2DoubleMap;
 import it.unimi.dsi.fastutil.longs.LongSet;
 
-public class MagicRecsRequest extends RecommendationRequest {
+public class TopSecondDegreeByCountRequest extends RecommendationRequest {
   private final Long2DoubleMap leftSeedNodesWithWeight;
   private final Set<RecommendationType> recommendationTypes;
   private final Map<RecommendationType, Integer> maxNumResultsByType;
@@ -22,10 +39,10 @@ public class MagicRecsRequest extends RecommendationRequest {
   private final ResultFilterChain resultFilterChain;
 
   /**
-   * The constructor of MagicRecsRequest.
-   * @param queryNode                 is the query node for running MagicRecs
+   * The constructor of TopSecondDegreeByCountRequest.
+   * @param queryNode                 is the query node for running TopSecondDegreeByCount
    * @param leftSeedNodesWithWeight   is the set of seed nodes and their weights to use for
-   *                                  MagicRecs.
+   *                                  TopSecondDegreeByCount.
    * @param toBeFiltered              is the set of RHS nodes to be filtered from the output
    * @param recommendationTypes       is the list of recommendation types requested by clients
    * @param maxNumResultsByType       is the maximum number of results requested by clients per type
@@ -38,7 +55,7 @@ public class MagicRecsRequest extends RecommendationRequest {
    * @param socialProofTypes          is the social proof types to return
    * @param resultFilterChain         is the chain of filters to be applied
    */
-  public MagicRecsRequest(
+  public TopSecondDegreeByCountRequest(
     long queryNode,
     Long2DoubleMap leftSeedNodesWithWeight,
     LongSet toBeFiltered,
