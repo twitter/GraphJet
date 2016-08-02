@@ -1,4 +1,21 @@
-package com.twitter.graphjet.algorithms.magicrecs;
+/**
+ * Copyright 2016 Twitter. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+
+package com.twitter.graphjet.algorithms.counting;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -18,10 +35,10 @@ import com.twitter.graphjet.hashing.SmallArrayBasedLongToDoubleMap;
 import it.unimi.dsi.fastutil.longs.LongArrayList;
 import it.unimi.dsi.fastutil.longs.LongList;
 
-public final class MagicRecsTweetRecsGenerator {
+public final class TopSecondDegreeByCountTweetRecsGenerator {
   private static final int MIN_USER_SOCIAL_PROOF_SIZE = 1;
 
-  private MagicRecsTweetRecsGenerator() {
+  private TopSecondDegreeByCountTweetRecsGenerator() {
   }
   /**
    * Pick the top social proofs for each RHS node
@@ -94,12 +111,12 @@ public final class MagicRecsTweetRecsGenerator {
   /**
    * Return tweet recommendations
    *
-   * @param request       magicRecs request
+   * @param request       topSecondDegreeByCount request
    * @param nodeInfoList  a list of node info containing engagement social proof and weights
    * @return a list of tweet recommendations
    */
   public static List<RecommendationInfo> generateTweetRecs(
-    MagicRecsRequest request,
+    TopSecondDegreeByCountRequest request,
     List<NodeInfo> nodeInfoList
   ) {
     int maxNumResults = request.getMaxNumResultsByType().containsKey(RecommendationType.TWEET)

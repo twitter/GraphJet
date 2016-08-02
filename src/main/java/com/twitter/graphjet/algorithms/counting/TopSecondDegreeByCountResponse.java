@@ -15,26 +15,27 @@
  */
 
 
-package com.twitter.graphjet.algorithms.salsa;
+package com.twitter.graphjet.algorithms.counting;
 
 import com.twitter.graphjet.algorithms.RecommendationInfo;
 import com.twitter.graphjet.algorithms.RecommendationResponse;
+import com.twitter.graphjet.algorithms.RecommendationStats;
 
 /**
  * A simple wrapper around {@link RecommendationResponse} that also allows returning
- * {@link SalsaStats} from the Salsa computation.
+ * {@link RecommendationStats} from the TopSecondDegreeByCount computation.
  */
-public class SalsaResponse extends RecommendationResponse {
-  private final SalsaStats salsaStats;
+public class TopSecondDegreeByCountResponse extends RecommendationResponse {
+  private final RecommendationStats topSecondDegreeByCountStats;
 
-  public SalsaResponse(
-      Iterable<RecommendationInfo> rankedRecommendations,
-      SalsaStats salsaStats) {
+  public TopSecondDegreeByCountResponse(
+    Iterable<RecommendationInfo> rankedRecommendations,
+    RecommendationStats topSecondDegreeByCountStats) {
     super(rankedRecommendations);
-    this.salsaStats = salsaStats;
+    this.topSecondDegreeByCountStats = topSecondDegreeByCountStats;
   }
 
-  public SalsaStats getSalsaStats() {
-    return salsaStats;
+  public RecommendationStats getTopSecondDegreeByCountStats() {
+    return topSecondDegreeByCountStats;
   }
 }
