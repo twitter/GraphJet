@@ -1,5 +1,9 @@
 package com.twitter.graphjet.demo;
 
+/**
+ * A container object for holding a node (node id) and an associated value, for insertion into a priority queue, heap,
+ * or some similar data structure.
+ */
 public class NodeValueEntry implements Comparable<NodeValueEntry> {
   private final long node;
   private final int value;

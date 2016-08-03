@@ -5,6 +5,7 @@ import com.google.common.collect.Lists;
 import com.twitter.graphjet.bipartite.MultiSegmentPowerLawBipartiteGraph;
 import it.unimi.dsi.fastutil.longs.LongIterator;
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
+import it.unimi.dsi.fastutil.longs.LongSet;
 import org.eclipse.jetty.http.HttpStatus;
 
 import javax.servlet.ServletException;
@@ -16,10 +17,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.PriorityQueue;
 
+/**
+ * Servlet of {@link TwitterStreamReader} that returns the top <i>k</i> tweets in terms of degree in the user-tweet
+ * bipartite graph.
+ */
 public class TopTweetsServlet extends HttpServlet {
   private static final Joiner JOINER = Joiner.on(",\n");
   private final MultiSegmentPowerLawBipartiteGraph bigraph;
-  private final LongOpenHashSet tweets;
+  private final LongSet tweets;
 
   public TopTweetsServlet(MultiSegmentPowerLawBipartiteGraph bigraph, LongOpenHashSet tweets) {
     this.bigraph = bigraph;
@@ -39,7 +44,7 @@ public class TopTweetsServlet extends HttpServlet {
       }
     }
 
-    PriorityQueue<NodeValueEntry> queue = new PriorityQueue<>();
+    PriorityQueue<NodeValueEntry> queue = new PriorityQueue<>(k);
     LongIterator iter = tweets.iterator();
     while (iter.hasNext()) {
       long tweet = iter.nextLong();
@@ -64,7 +69,7 @@ public class TopTweetsServlet extends HttpServlet {
     }
 
     NodeValueEntry e;
-    List<String> entries = new ArrayList<>();
+    List<String> entries = new ArrayList<>(queue.size());
     while ((e = queue.poll()) != null) {
       entries.add(String.format("{\"id\": %d, \"cnt\": %d}", e.getNode(), e.getValue()));
     }

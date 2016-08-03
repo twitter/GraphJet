@@ -19,6 +19,11 @@ import twitter4j.StatusListener;
 import twitter4j.TwitterStream;
 import twitter4j.TwitterStreamFactory;
 
+/**
+ * Demo of GraphJet. This program uses Twitter4j to read from the streaming API, where it observes status messages to
+ * maintain a bipartite graph of users (on the left) and tweets (on the right). The program also starts up a Jetty
+ * server to present a REST API to access statistics of the graph.
+ */
 public class TwitterStreamReader {
   private static class TwitterStreamReaderArgs {
     @Option(name = "-port", metaVar = "[port]", usage = "port")
@@ -69,7 +74,7 @@ public class TwitterStreamReader {
             new IdentityEdgeTypeMask(),
             new NullStatsReceiver());
 
-    Long2ObjectOpenHashMap<String> users = new Long2ObjectOpenHashMap<String>();
+    Long2ObjectOpenHashMap<String> users = new Long2ObjectOpenHashMap<>();
     LongOpenHashSet tweets = new LongOpenHashSet();
 
     StatusListener listener = new StatusListener() {
