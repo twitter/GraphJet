@@ -71,7 +71,9 @@ public class TopTweetsServlet extends HttpServlet {
     NodeValueEntry e;
     List<String> entries = new ArrayList<>(queue.size());
     while ((e = queue.poll()) != null) {
-      entries.add(String.format("{\"id\": %d, \"cnt\": %d}", e.getNode(), e.getValue()));
+      // Note that we explicitly use id_str and treat the tweet id as a String. See:
+      // https://dev.twitter.com/overview/api/twitter-ids-json-and-snowflake
+      entries.add(String.format("{\"id_str\": \"%d\", \"cnt\": %d}", e.getNode(), e.getValue()));
     }
 
     response.setStatus(HttpStatus.OK_200);
