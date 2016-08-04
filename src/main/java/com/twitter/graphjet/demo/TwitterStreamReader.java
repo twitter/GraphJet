@@ -75,6 +75,9 @@ public class TwitterStreamReader {
             new IdentityEdgeTypeMask(),
             new NullStatsReceiver());
 
+    // Note that we're keeping track of the nodes on the left and right side externally, apart from the bigraph,
+    // because the bigraph currently does not provide an API for enumerating over nodes. Currently, this is liable to
+    // running out of memory, but this is fine for the demo.
     Long2ObjectOpenHashMap<String> users = new Long2ObjectOpenHashMap<>();
     LongOpenHashSet tweets = new LongOpenHashSet();
 
