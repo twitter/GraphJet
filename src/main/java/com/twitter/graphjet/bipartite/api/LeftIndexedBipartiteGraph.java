@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-
 package com.twitter.graphjet.bipartite.api;
 
 import java.util.Random;
@@ -22,45 +21,49 @@ import java.util.Random;
 import javax.annotation.Nullable;
 
 /**
- * This interface should specify all the read-only operations that are needed from a Left-indexed
- * Bipartite graph. In particular, any recommendation algorithms that solely access the left-hand
- * side index of a bipartite graph should only need to use this interface.
- * <p/>
- * NOTE: the graph is assumed to have nodes that are longs -- this is a very deliberate choice to
- * avoid the need for (un)boxing at any point.
- * <p/>
- * We also note the expected runtime cost for the operations here that the clients will assume,
- * and assume that implementations respect that.
+ * <p>Interface that specifies all the read operations that are needed for a left-indexed bipartite graph. In
+ * particular, any graph manipulations or graph algorithms that solely access the left-hand side index of a bipartite
+ * graph should only need to use this interface.</p>
+ *
+ * <p>Notes:</p>
+ *
+ * <ul>
+ *
+ * <li>The graph is assumed to have nodes that are identified by (primitive) longs. This is a deliberate choice to avoid
+ * the need for (un)boxing at any point in accessing the graph.</li>
+ *
+ * <li>The expected runtime cost for each operation is noted in the documentation. Clients can assume that
+ * implementations respect these costs.</li>
+ *
+ * </ul>
  */
 public interface LeftIndexedBipartiteGraph {
-
   /**
-   * This operation is expected to be O(1).
+   * Returns the degree of a left node. This operation is expected to take O(1).
    *
-   * @param leftNode is the left node whose degree is being asked
-   * @return the number of right nodes this leftNode is pointing to
+   * @param leftNode the left node being queried
+   * @return the number of right nodes the left node points to
    */
   int getLeftNodeDegree(long leftNode);
 
   /**
-   * This operation can be O(n) so it should be used sparingly, if at all. Note that it might be
-   * faster if the list is populated lazily, but that is not guaranteed.
+   * Returns all edges incident on a left node. This operation can take O(n) so it should be used sparingly. Note that
+   * it might be faster if the iterator is populated lazily, but that is not guaranteed.
    *
-   * @param leftNode is the left node whose edges are being fetched
-   * @return the list of right nodes this leftNode is pointing to, or null if the leftNode doesn't
-   * exist in the graph
+   * @param leftNode the left node whose edges are being queried
+   * @return iterator over the right nodes this left node points to, or null if the left node doesn't exist in the graph
    */
   @Nullable
   EdgeIterator getLeftNodeEdges(long leftNode);
 
   /**
-   * This operation is expected to be O(numSamples). Note that this is sampling with replacement.
+   * Returns a sample of edges incident on a left node. This operation is expected to take O(numSamples). Note that this
+   * is sampling with replacement.
    *
-   * @param leftNode   is the left node, numSamples of whose neighbors are chosen at random
-   * @param numSamples is the number of samples to return
-   * @return numSamples     randomly chosen right neighbors of this leftNode, or null if the
-   * leftNode doesn't exist in the graph. Note that the returned list may
-   * contain repetitions.
+   * @param leftNode the left node, numSamples of whose neighbors are selected at random
+   * @param numSamples number of samples to return
+   * @return iterator over randomly sampled right nodes that this left node points to, or null if the left node doesn't
+   * exist in the graph. Note that the results may contain repetitions.
    */
   @Nullable
   EdgeIterator getRandomLeftNodeEdges(long leftNode, int numSamples, Random random);

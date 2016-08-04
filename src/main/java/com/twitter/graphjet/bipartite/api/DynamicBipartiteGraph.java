@@ -14,36 +14,38 @@
  * limitations under the License.
  */
 
-
 package com.twitter.graphjet.bipartite.api;
 
 /**
- * This interface should specify all the write operations that are needed from a dynamically
- * updating Bipartite graph. In particular, this interface is all that's needed from an
- * implementation.
+ * <p>Interface that specifies all the write operations that are needed for a dynamically updating bipartite graph.</p>
  *
- * NOTE: the graph is assumed to have nodes that are longs -- this is a very deliberate choice to
- * avoid the need for (un)boxing at any point.
+ * <p>Notes:</p>
  *
- * We also note the expected runtime cost for the operations here that the clients will assume,
- * and assume that implementations respect that.
+ * <ul>
+ *
+ * <li>The graph is assumed to have nodes that are identified by (primitive) longs. This is a deliberate choice to avoid
+ * the need for (un)boxing at any point in accessing the graph.</li>
+ *
+ * <li>The expected runtime cost for each operation is noted in the documentation. Clients can assume that
+ * implementations respect these costs.</li>
+ *
+ * </ul>
  */
 public interface DynamicBipartiteGraph {
-
   /**
-   * Adding an edge is assumed to be an O(1) operation.
+   * Adds an edge to this graph. Assumed to be an O(1) operation.
    *
-   * @param leftNode   is the left hand side node in the bipartite graph
-   * @param rightNode  is the right hand side node in the bipartite graph
-   * @param edgeType   is the edge type relationship between leftNode and rightNode
+   * @param leftNode   the left node in the bipartite graph
+   * @param rightNode  the right node in the bipartite graph
+   * @param edgeType   the edge type
    */
   void addEdge(long leftNode, long rightNode, byte edgeType);
 
   /**
-   * Removing an edge is assumed to be an O(1) operation.
+   * Removes an edge in this graph. Assumed to be an O(1) operation.
    *
-   * @param leftNode   is the left hand side node in the bipartite graph
-   * @param rightNode  is the right hand side node in the bipartite graph
+   * @param leftNode   the left node in the bipartite graph
+   * @param rightNode  the right node in the bipartite graph
    */
   void removeEdge(long leftNode, long rightNode);
 }
