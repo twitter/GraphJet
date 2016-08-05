@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.twitter.graphjet.monopartite.api;
+package com.twitter.graphjet.directed.api;
 
 /**
  * <p>Interface that specifies all the read operations needed for a monopartite directed graph. In particular,

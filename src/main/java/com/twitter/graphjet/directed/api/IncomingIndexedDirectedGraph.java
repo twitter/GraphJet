@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.twitter.graphjet.monopartite.api;
+package com.twitter.graphjet.directed.api;
 
 import java.util.Random;
 import com.twitter.graphjet.bipartite.api.EdgeIterator;
