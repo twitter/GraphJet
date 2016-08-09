@@ -51,7 +51,7 @@ public abstract class BipartiteGraphSegmentProvider<T extends LeftIndexedBiparti
   }
 
   /**
-   * Generate a new {@link T}. This is guaranteed to be thread-safe.
+   * Generate a new segment of type <code>T</code>. This is guaranteed to be thread-safe.
    *
    * @return the new segment
    */
