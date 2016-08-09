@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-
 package com.twitter.graphjet.bipartite.api;
 
 import java.util.Random;
@@ -22,44 +21,50 @@ import java.util.Random;
 import javax.annotation.Nullable;
 
 /**
- * This interface should specify all the read-only operations that are needed from a Right-indexed
- * Bipartite graph. In particular, any recommendation algorithms that solely access the right-hand
- * side index of a bipartite graph should only need to use this interface.
+ * <p>Interface that specifies all the read operations that are needed for a right-indexed bipartite graph. In
+ * particular, any graph manipulations or graph algorithms that solely access the right-hand side index of a bipartite
+ * graph should only need to use this interface.</p>
  *
- * NOTE: the graph is assumed to have nodes that are longs -- this is a very deliberate choice to
- * avoid the need for (un)boxing at any point.
+ * <p>Notes:</p>
  *
- * We also note the expected runtime cost for the operations here that the clients will assume,
- * and assume that implementations respect that.
+ * <ul>
+ *
+ * <li>The graph is assumed to have nodes that are identified by (primitive) longs. This is a deliberate choice to avoid
+ * the need for (un)boxing at any point in accessing the graph.</li>
+ *
+ * <li>The expected runtime cost for each operation is noted in the documentation. Clients can assume that
+ * implementations respect these costs.</li>
+ *
+ * </ul>
  */
 public interface RightIndexedBipartiteGraph {
-
   /**
-   * This operation can be O(n) so it should be used sparingly, if at all. Note that it might be
-   * faster if the list is populated lazily, but that is not guaranteed.
+   * Returns the degree of a right node. This operation is expected to take O(1).
    *
-   * @param rightNode  is the right node whose edges are being fetched
-   * @return the list of left nodes this rightNode is pointing to, or null if the rightNode doesn't
-   *         exist in the graph
-   */
-  @Nullable EdgeIterator getRightNodeEdges(long rightNode);
-
-  /**
-   * This operation is expected to be O(1).
-   *
-   * @param rightNode  is the right node whose degree is being asked
-   * @return the number of left nodes this rightNode is pointing to
+   * @param rightNode the right node being queried
+   * @return the number of left nodes the right node points to
    */
   int getRightNodeDegree(long rightNode);
 
   /**
-   * This operation is expected to be O(numSamples). Note that this is sampling with replacement.
+   * Returns all edges incident on a right node. This operation can take O(n) so it should be used sparingly. Note that
+   * it might be faster if the iterator is populated lazily, but that is not guaranteed.
    *
-   * @param rightNode       is the right node, numSamples of whose neighbors are chosen at random
-   * @param numSamples      is the number of samples to return
-   * @return numSamples     randomly chosen right neighbors of this rightNode, or null if the
-   *                        rightNode doesn't exist in the graph. Note that the returned list may
-   *                        contain repetitions.
+   * @param rightNode the right node whose edges are being queried
+   * @return iterator over the left nodes this right node points to, or null if the right node doesn't exist in the graph
    */
-  @Nullable EdgeIterator getRandomRightNodeEdges(long rightNode, int numSamples, Random random);
+  @Nullable
+  EdgeIterator getRightNodeEdges(long rightNode);
+
+  /**
+   * Returns a sample of edges incident on a right node. This operation is expected to take O(numSamples). Note that
+   * this is sampling with replacement.
+   *
+   * @param rightNode the right node, numSamples of whose neighbors are selected at random
+   * @param numSamples number of samples to return
+   * @return iterator over randomly sampled left nodes that this right node points to, or null if the right node doesn't
+   * exist in the graph. Note that the results may contain repetitions.
+   */
+  @Nullable
+  EdgeIterator getRandomRightNodeEdges(long rightNode, int numSamples, Random random);
 }

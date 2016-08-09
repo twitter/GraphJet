@@ -152,7 +152,7 @@ public abstract class CommonInternalState<T extends LeftIndexedBipartiteGraph> {
   /**
    * We need to return a left-indexed graph at least for operations such as seeding
    *
-   * @return a {@link T} graph
+   * @return a graph of type <code>T</code>
    */
   public abstract T getBipartiteGraph();
 }

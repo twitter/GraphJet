@@ -14,20 +14,26 @@
  * limitations under the License.
  */
 
-
 package com.twitter.graphjet.bipartite.api;
 
 /**
- * This interface should specify all the read-only operations that are needed from a Bipartite
- * graph. In particular, any recommendation algorithms should only need to use this interface.
+ * <p>Interface that specifies all the read operations that are needed for a bipartite graph. In particular, any graph
+ * manipulations or graph algorithms should only need to use this interface.</p>
  *
- * NOTE: the graph is assumed to have nodes that are longs -- this is a very deliberate choice to
- * avoid the need for (un)boxing at any point.
+ * <p>All operations are defined in {@link LeftIndexedBipartiteGraph} and {@link RightIndexedBipartiteGraph}. This
+ * interface serves as a convenience wrapper that is used to refer to a bi-indexed graph.</p>
  *
- * We also note the expected runtime cost for the operations here that the clients will assume,
- * and assume that implementations respect that.
+ * <p>Notes:</p>
+ *
+ * <ul>
+ *
+ * <li>The graph is assumed to have nodes that are identified by (primitive) longs. This is a deliberate choice to avoid
+ * the need for (un)boxing at any point in accessing the graph.</li>
+ *
+ * <li>The expected runtime cost for each operation is noted in the documentation. Clients can assume that
+ * implementations respect these costs.</li>
+ *
+ * </ul>
  */
 public interface BipartiteGraph extends LeftIndexedBipartiteGraph, RightIndexedBipartiteGraph {
-  // all operations are defined in the left/right interfaces and this interface is just a
-  // convenience wrapper that is used to refer to a bi-indexed graph.
 }
