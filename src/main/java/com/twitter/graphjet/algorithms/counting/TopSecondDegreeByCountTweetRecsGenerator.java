@@ -59,7 +59,7 @@ public final class TopSecondDegreeByCountTweetRecsGenerator {
         }
 
         socialProof.trim(maxSocialProofSize);
-        results.put((byte) i, new LongArrayList(socialProof.keys()));
+        results.put(validSocialProofs[i], new LongArrayList(socialProof.keys()));
       }
     }
     return results;
