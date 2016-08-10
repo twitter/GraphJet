@@ -38,6 +38,9 @@ import it.unimi.dsi.fastutil.longs.Long2IntOpenHashMap;
 
 /**
  * A simple random sampling algorithm to get neighbors based on weighted seeds.
+ * If S is the seed set, and N(S) is the neighborhood of S, assign d(v) for v in 
+ * N(S) to be the number of incoming edges for v that originate in S. Then, this 
+ * algorithm samples v proportional to d(v).
  */
 public class RandomMultiGraphNeighbors {
   private static final int MULTIPER_FOR_ALIASTABLE = 100;
