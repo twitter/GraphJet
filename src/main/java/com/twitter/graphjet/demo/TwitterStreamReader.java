@@ -68,7 +68,7 @@ public class TwitterStreamReader {
     int minorUpdateInterval = 1000;
 
     @Option(name = "-majorUpdateInterval", metaVar = "[value]", usage = "number of statuses before major status update")
-    int majorUdateInverval = 10000;
+    int majorUpdateInterval = 10000;
   }
 
   public static void main(String[] argv) throws Exception {
@@ -135,7 +135,7 @@ public class TwitterStreamReader {
         }
 
         // Major status update: iterate over right and left nodes.
-        if (statusCnt % args.majorUdateInverval == 0 ) {
+        if (statusCnt % args.majorUpdateInterval == 0 ) {
           int leftCnt = 0;
           LongIterator leftIter = users.keySet().iterator();
           while (leftIter.hasNext()) {
