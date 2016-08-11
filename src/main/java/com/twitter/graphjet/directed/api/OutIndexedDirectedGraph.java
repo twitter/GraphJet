@@ -16,16 +16,15 @@
 
 package com.twitter.graphjet.directed.api;
 
-import java.util.Random;
-
 import com.twitter.graphjet.bipartite.api.EdgeIterator;
 
 import javax.annotation.Nullable;
+import java.util.Random;
 
 /**
- * <p>Interface that specifies all the read operations needed for a monopartite directed graph indexed by outgoing
- * edges. In particular, any graph manipulations or graph algorithms that solely access outgoing edges should only need
- * to use this interface.</p>
+ * <p>Interface that specifies all the read operations needed for a directed graph indexed by outgoing edges. In
+ * particular, any graph manipulations or graph algorithms that solely access outgoing edges should only need to use
+ * this interface.</p>
  *
  * <p>Notes:</p>
  *
@@ -39,14 +38,14 @@ import javax.annotation.Nullable;
  *
  * </ul>
  */
-public interface OutgoingIndexedDirectedGraph {
+public interface OutIndexedDirectedGraph {
   /**
    * Returns the outgoing degree of a node. This operation is expected to take O(1).
    *
    * @param node the query node
    * @return the outgoing degree of the query node
    */
-  int getOutgoingDegree(long node);
+  int getOutDegree(long node);
 
   /**
    * Returns all outgoing edges of a node. This operation can take O(n) so it should be used sparingly. Note that
@@ -56,7 +55,7 @@ public interface OutgoingIndexedDirectedGraph {
    * @return iterator over the outgoing edges of the query node, or null if the query node does not exist in the graph
    */
   @Nullable
-  EdgeIterator getOutgoingEdges(long node);
+  EdgeIterator getOutEdges(long node);
 
   /**
    * Returns a sample of outgoing edges of a node. This operation is expected to take O(numSamples). Note that this is
@@ -68,5 +67,5 @@ public interface OutgoingIndexedDirectedGraph {
    * in the graph
    */
   @Nullable
-  EdgeIterator getRandomOutgoingEdges(long node, int numSamples, Random random);
+  EdgeIterator getRandomOutEdges(long node, int numSamples, Random random);
 }

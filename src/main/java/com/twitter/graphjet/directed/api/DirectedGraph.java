@@ -17,11 +17,11 @@
 package com.twitter.graphjet.directed.api;
 
 /**
- * <p>Interface that specifies all the read operations needed for a monopartite directed graph. In particular,
- * any graph manipulations or graph algorithms should only need to use this interface.</p>
+ * <p>Interface that specifies all the read operations needed for a directed graph. In particular, any graph
+ * manipulations or graph algorithms should only need to use this interface.</p>
  *
- * <p>All operations are defined in {@link OutgoingIndexedDirectedGraph} and {@link IncomingIndexedDirectedGraph}. This
- * interface serves as a convenience wrapper that is used to refer to a bi-indexed monopartite directed graph.</p>
+ * <p>All operations are defined in {@link OutIndexedDirectedGraph} and {@link InIndexedDirectedGraph}. This
+ * interface serves as a convenience wrapper that is used to refer to a bi-indexed directed graph.</p>
  *
  * <p>Notes:</p>
  *
@@ -35,5 +35,5 @@ package com.twitter.graphjet.directed.api;
  *
  * </ul>
  */
-public interface DirectedGraph extends OutgoingIndexedDirectedGraph, IncomingIndexedDirectedGraph {
+public interface DirectedGraph extends OutIndexedDirectedGraph, InIndexedDirectedGraph {
 }

@@ -17,8 +17,7 @@
 package com.twitter.graphjet.directed.api;
 
 /**
- * <p>Interface that specifies all the write operations needed for a dynamically updating monopartite directed
- * graph.</p>
+ * <p>Interface that specifies all the write operations needed for a dynamically updating directed graph.</p>
  *
  * <p>Notes:</p>
  *
