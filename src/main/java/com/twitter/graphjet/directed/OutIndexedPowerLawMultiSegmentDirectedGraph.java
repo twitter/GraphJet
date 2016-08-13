@@ -1,0 +1,67 @@
+/**
+ * Copyright 2016 Twitter. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package com.twitter.graphjet.directed;
+
+import com.twitter.graphjet.bipartite.LeftIndexedPowerLawMultiSegmentBipartiteGraph;
+import com.twitter.graphjet.bipartite.api.EdgeIterator;
+import com.twitter.graphjet.bipartite.api.EdgeTypeMask;
+import com.twitter.graphjet.directed.api.DynamicDirectedGraph;
+import com.twitter.graphjet.directed.api.OutIndexedDirectedGraph;
+import com.twitter.graphjet.stats.StatsReceiver;
+
+import java.util.Random;
+
+/**
+ * Implementation of a dynamic, out-indexed directed graph. This class is implemented as a wrapper around a
+ * {@link LeftIndexedPowerLawMultiSegmentBipartiteGraph} and delegates method calls to the underlying class. We treat a
+ * directed graph as a left-indexed bipartite graph where the left and right nodes have the same domain of ids.
+ */
+public class OutIndexedPowerLawMultiSegmentDirectedGraph implements OutIndexedDirectedGraph, DynamicDirectedGraph {
+  protected final LeftIndexedPowerLawMultiSegmentBipartiteGraph graph;
+
+  public OutIndexedPowerLawMultiSegmentDirectedGraph(int maxNumSegments, int maxNumEdgesPerSegment,
+      int expectedNumNodes, int expectedMaxDegree, double powerLawExponent, EdgeTypeMask edgeTypeMask,
+      StatsReceiver statsReceiver) {
+    this.graph = new LeftIndexedPowerLawMultiSegmentBipartiteGraph(maxNumSegments, maxNumEdgesPerSegment,
+        expectedNumNodes, expectedMaxDegree, powerLawExponent, expectedNumNodes, edgeTypeMask, statsReceiver);
+  }
+
+  @Override
+  public int getOutDegree(long node) {
+    return graph.getLeftNodeDegree(node);
+  }
+
+  @Override
+  public EdgeIterator getOutEdges(long node) {
+    return graph.getLeftNodeEdges(node);
+  }
+
+  @Override
+  public EdgeIterator getRandomOutEdges(long node, int numSamples, Random random) {
+    return graph.getRandomLeftNodeEdges(node, numSamples, random);
+  }
+
+  @Override
+  public void addEdge(long srcNode, long destNode, byte edgeType) {
+    graph.addEdge(srcNode, destNode, edgeType);
+  }
+
+  @Override
+  public void removeEdge(long srcNode, long destNode) {
+    graph.removeEdge(srcNode, destNode);
+  }
+}
