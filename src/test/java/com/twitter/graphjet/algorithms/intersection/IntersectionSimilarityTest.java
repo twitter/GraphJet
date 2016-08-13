@@ -14,31 +14,26 @@
  * limitations under the License.
  */
 
+package com.twitter.graphjet.algorithms.intersection;
 
-package com.twitter.graphjet.algorithms;
+import com.google.common.collect.Lists;
+import com.twitter.graphjet.algorithms.BipartiteGraphTestHelper;
+import com.twitter.graphjet.algorithms.SimilarityInfo;
+import com.twitter.graphjet.algorithms.SimilarityResponse;
+import com.twitter.graphjet.algorithms.filters.MinEngagementFilter;
+import com.twitter.graphjet.algorithms.filters.RelatedTweetFilter;
+import com.twitter.graphjet.algorithms.filters.RelatedTweetFilterChain;
+import com.twitter.graphjet.bipartite.api.BipartiteGraph;
+import com.twitter.graphjet.stats.NullStatsReceiver;
+import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
+import it.unimi.dsi.fastutil.longs.LongSet;
+import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import com.google.common.collect.Lists;
-
-import org.junit.Test;
-
 import static org.junit.Assert.assertEquals;
-
-import com.twitter.graphjet.algorithms.filters.MinEngagementFilter;
-import com.twitter.graphjet.algorithms.filters.RelatedTweetFilter;
-import com.twitter.graphjet.algorithms.filters.RelatedTweetFilterChain;
-import com.twitter.graphjet.algorithms.intersection.CosineUpdateNormalization;
-import com.twitter.graphjet.algorithms.intersection.IntersectionSimilarity;
-import com.twitter.graphjet.algorithms.intersection.IntersectionSimilarityRequest;
-import com.twitter.graphjet.algorithms.intersection.RelatedTweetUpdateNormalization;
-import com.twitter.graphjet.bipartite.api.BipartiteGraph;
-import com.twitter.graphjet.stats.NullStatsReceiver;
-
-import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
-import it.unimi.dsi.fastutil.longs.LongSet;
 
 public class IntersectionSimilarityTest {
   @Test
