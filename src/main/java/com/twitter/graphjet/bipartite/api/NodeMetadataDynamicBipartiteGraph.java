@@ -14,20 +14,24 @@
  * limitations under the License.
  */
 
-
 package com.twitter.graphjet.bipartite.api;
 
 /**
- * This interface should specify all the write operations that are needed from a dynamically
- * updating bipartite graph that also stores some node metadata. In particular, this interface is
- * all that's needed from an implementation.
+ * <p>Interface that specifies write operations for a dynamically updating bipartite graph that also stores
+ * node metadata.</p>
  *
- * NOTE: the graph is assumed to have nodes that are longs -- this is a very deliberate choice to
- * avoid the need for (un)boxing at any point.
+ * <p>Notes:</p>
  *
- * We also note the expected runtime cost for the operations here that the clients will assume,
- * and assume that implementations respect that.
- */
+ * <ul>
+ *
+ * <li>The graph is assumed to have nodes that are identified by (primitive) longs. This is a deliberate choice to avoid
+ * the need for (un)boxing at any point in accessing the graph.</li>
+ *
+ * <li>The expected runtime cost for each operation is noted in the documentation. Clients can assume that
+ * implementations respect these costs.</li>
+ *
+ * </ul>
+*/
 public interface NodeMetadataDynamicBipartiteGraph {
 
   /**

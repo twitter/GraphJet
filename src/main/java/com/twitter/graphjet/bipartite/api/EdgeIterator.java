@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-
 package com.twitter.graphjet.bipartite.api;
 
 import it.unimi.dsi.fastutil.longs.LongIterator;
 
-/** A type-specific Iterator; provides an additional method to avoid (un)boxing, and
- * the possibility to skip elements.
+/**
+ * An optimized iterator for traversing graph edges. Iterator returns primitive values to avoid (un)boxing and also
+ * provides a method for skipping elements.
  */
 public interface EdgeIterator extends LongIterator {
   /**
@@ -37,11 +37,9 @@ public interface EdgeIterator extends LongIterator {
    */
   long nextLong();
 
-  /** Skips the given number of elements.
-   *
-   * <P>The effect of this call is exactly the same as that of
-   * calling {@link #next()} for <code>n</code> times (possibly stopping
-   * if {@link #hasNext()} becomes false).
+  /**
+   * Skips the given number of elements. The effect of this call is exactly the same as that of calling {@link #next()}
+   * <i>n</i> times (stopping if {@link #hasNext()} becomes false).
    *
    * @param n the number of elements to skip.
    * @return the number of elements actually skipped.

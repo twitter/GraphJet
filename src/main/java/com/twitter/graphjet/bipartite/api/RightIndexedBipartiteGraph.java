@@ -21,9 +21,9 @@ import java.util.Random;
 import javax.annotation.Nullable;
 
 /**
- * <p>Interface that specifies all the read operations that are needed for a right-indexed bipartite graph. In
- * particular, any graph manipulations or graph algorithms that solely access the right-hand side index of a bipartite
- * graph should only need to use this interface.</p>
+ * <p>Interface that specifies read operations for a right-indexed bipartite graph. In particular, any graph
+ * manipulations or graph algorithms that solely access the right-hand side index of a bipartite graph should only need
+ * this interface.</p>
  *
  * <p>Notes:</p>
  *
@@ -51,7 +51,8 @@ public interface RightIndexedBipartiteGraph {
    * it might be faster if the iterator is populated lazily, but that is not guaranteed.
    *
    * @param rightNode the right node whose edges are being queried
-   * @return iterator over the left nodes this right node points to, or null if the right node doesn't exist in the graph
+   * @return iterator over the left nodes the right query node points to, or null if the right query node does not
+   * exist in the graph
    */
   @Nullable
   EdgeIterator getRightNodeEdges(long rightNode);
@@ -60,10 +61,10 @@ public interface RightIndexedBipartiteGraph {
    * Returns a sample of edges incident on a right node. This operation is expected to take O(numSamples). Note that
    * this is sampling with replacement.
    *
-   * @param rightNode the right node, numSamples of whose neighbors are selected at random
+   * @param rightNode the right query node
    * @param numSamples number of samples to return
-   * @return iterator over randomly sampled left nodes that this right node points to, or null if the right node doesn't
-   * exist in the graph. Note that the results may contain repetitions.
+   * @return iterator over randomly sampled left nodes that the right query node points to, or null if the right
+   * query node does not exist in the graph. Note that the results may contain repetitions.
    */
   @Nullable
   EdgeIterator getRandomRightNodeEdges(long rightNode, int numSamples, Random random);

@@ -17,8 +17,8 @@
 package com.twitter.graphjet.bipartite.api;
 
 /**
- * <p>Interface that specifies all the read operations that are needed for a bipartite graph. In particular, any graph
- * manipulations or graph algorithms should only need to use this interface.</p>
+ * <p>Interface that specifies read operations needed for a bi-indexed bipartite graph. Any graph manipulations or graph
+ * algorithms should only need this interface.</p>
  *
  * <p>All operations are defined in {@link LeftIndexedBipartiteGraph} and {@link RightIndexedBipartiteGraph}. This
  * interface serves as a convenience wrapper that is used to refer to a bi-indexed graph.</p>

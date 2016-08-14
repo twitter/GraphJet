@@ -19,8 +19,9 @@ package com.twitter.graphjet.bipartite.api;
 
 import it.unimi.dsi.fastutil.ints.IntIterator;
 
-/** A type-specific Iterator; provides an additional method to avoid (un)boxing, and
- * the possibility to skip elements.
+/**
+ * An optimized iterator for traversing graph edges that also provides access to node metadata. Iterator returns
+ * primitive values to avoid (un)boxing.
  */
 public interface NodeMetadataEdgeIterator extends EdgeIterator {
   /**
@@ -37,4 +38,3 @@ public interface NodeMetadataEdgeIterator extends EdgeIterator {
    */
   IntIterator getRightNodeMetadata(byte nodeMetadataType);
 }
-

@@ -17,7 +17,7 @@
 package com.twitter.graphjet.bipartite.api;
 
 /**
- * <p>Interface that specifies all the write operations that are needed for a dynamically updating bipartite graph.</p>
+ * <p>Interface that specifies write operations for a dynamically updating bipartite graph.</p>
  *
  * <p>Notes:</p>
  *
