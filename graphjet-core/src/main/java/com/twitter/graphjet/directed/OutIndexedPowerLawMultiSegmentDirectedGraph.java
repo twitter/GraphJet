@@ -33,8 +33,26 @@ import java.util.Random;
 public class OutIndexedPowerLawMultiSegmentDirectedGraph implements OutIndexedDirectedGraph, DynamicDirectedGraph {
   protected final LeftIndexedPowerLawMultiSegmentBipartiteGraph graph;
 
-  public OutIndexedPowerLawMultiSegmentDirectedGraph(int maxNumSegments, int maxNumEdgesPerSegment,
-      int expectedNumNodes, int expectedMaxDegree, double powerLawExponent, EdgeTypeMask edgeTypeMask,
+  /**
+   * Constructor for a dynamic, out-indexed directed graph.
+   *
+   * @param maxNumSegments         the maximum number of segments in the graph, after which the oldest segment will
+   *                               be dropped
+   * @param maxNumEdgesPerSegment  determines when the implementation starts a new segment
+   * @param expectedNumNodes       the expected number of nodes in each segment
+   * @param expectedMaxDegree      the expected maximum degree for each node
+   * @param powerLawExponent       the exponent of the power-law graph, see
+   *                               {@link com.twitter.graphjet.bipartite.edgepool.PowerLawDegreeEdgePool} for details
+   * @param edgeTypeMask           the bit mask for edge types
+   * @param statsReceiver          for tracking internal stats
+   */
+  public OutIndexedPowerLawMultiSegmentDirectedGraph(
+      int maxNumSegments,
+      int maxNumEdgesPerSegment,
+      int expectedNumNodes,
+      int expectedMaxDegree,
+      double powerLawExponent,
+      EdgeTypeMask edgeTypeMask,
       StatsReceiver statsReceiver) {
     this.graph = new LeftIndexedPowerLawMultiSegmentBipartiteGraph(maxNumSegments, maxNumEdgesPerSegment,
         expectedNumNodes, expectedMaxDegree, powerLawExponent, expectedNumNodes, edgeTypeMask, statsReceiver);
