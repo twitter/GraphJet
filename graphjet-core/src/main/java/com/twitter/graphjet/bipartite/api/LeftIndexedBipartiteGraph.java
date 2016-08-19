@@ -21,9 +21,9 @@ import java.util.Random;
 import javax.annotation.Nullable;
 
 /**
- * <p>Interface that specifies all the read operations that are needed for a left-indexed bipartite graph. In
- * particular, any graph manipulations or graph algorithms that solely access the left-hand side index of a bipartite
- * graph should only need to use this interface.</p>
+ * <p>Interface that specifies read operations for a left-indexed bipartite graph. In particular, any graph
+ * manipulations or graph algorithms that solely access the left-hand side index of a bipartite graph should only need
+ * this interface.</p>
  *
  * <p>Notes:</p>
  *
@@ -41,8 +41,8 @@ public interface LeftIndexedBipartiteGraph {
   /**
    * Returns the degree of a left node. This operation is expected to take O(1).
    *
-   * @param leftNode the left node being queried
-   * @return the number of right nodes the left node points to
+   * @param leftNode the left query node
+   * @return the degree of the left query node
    */
   int getLeftNodeDegree(long leftNode);
 
@@ -50,8 +50,9 @@ public interface LeftIndexedBipartiteGraph {
    * Returns all edges incident on a left node. This operation can take O(n) so it should be used sparingly. Note that
    * it might be faster if the iterator is populated lazily, but that is not guaranteed.
    *
-   * @param leftNode the left node whose edges are being queried
-   * @return iterator over the right nodes this left node points to, or null if the left node doesn't exist in the graph
+   * @param leftNode the left query node
+   * @return iterator over the right nodes the left query node points to, or null if the left query node does not exist
+   * in the graph
    */
   @Nullable
   EdgeIterator getLeftNodeEdges(long leftNode);
@@ -60,10 +61,10 @@ public interface LeftIndexedBipartiteGraph {
    * Returns a sample of edges incident on a left node. This operation is expected to take O(numSamples). Note that this
    * is sampling with replacement.
    *
-   * @param leftNode the left node, numSamples of whose neighbors are selected at random
+   * @param leftNode the left query node
    * @param numSamples number of samples to return
-   * @return iterator over randomly sampled right nodes that this left node points to, or null if the left node doesn't
-   * exist in the graph. Note that the results may contain repetitions.
+   * @return iterator over randomly sampled right nodes that the left query node points to, or null if the left query
+   * node does not exist in the graph. Note that the results may contain repetitions.
    */
   @Nullable
   EdgeIterator getRandomLeftNodeEdges(long leftNode, int numSamples, Random random);

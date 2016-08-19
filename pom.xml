@@ -4,11 +4,11 @@
 
   <groupId>com.twitter</groupId>
   <artifactId>graphjet</artifactId>
-  <version>1.0</version>
-  <packaging>jar</packaging>
+  <version>1.0.0</version>
+  <packaging>pom</packaging>
 
   <name>graphjet</name>
-  <description>GraphJet is a real time graph processing library.</description>
+  <description>GraphJet is a real-time graph engine for generating recommendations</description>
   <url>http://graphjet.io</url>
 
   <licenses>
@@ -48,6 +48,7 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
+
   <build>
     <plugins>
       <plugin>
@@ -99,83 +100,10 @@
       </plugin>
     </plugins>
   </build>
-  <dependencies>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.12</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-lang3</artifactId>
-      <version>3.3.2</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-        <groupId>org.slf4j</groupId>
-        <artifactId>slf4j-api</artifactId>
-        <version>1.7.21</version>
-        <scope>compile</scope>
-    </dependency>
-    <dependency>
-        <groupId>org.slf4j</groupId>
-        <artifactId>slf4j-nop</artifactId>
-        <version>1.7.21</version>
-        <scope>test</scope>
-    </dependency>
 
-    <dependency>
-        <groupId>com.google.code.findbugs</groupId>
-        <artifactId>jsr305</artifactId>
-        <version>2.0.1</version>
-        <scope>compile</scope>
-    </dependency>
-    <dependency>
-        <groupId>com.google.guava</groupId>
-        <artifactId>guava</artifactId>
-        <version>16.0.1</version>
-        <scope>compile</scope>
-    </dependency>
-    <dependency>
-        <groupId>it.unimi.dsi</groupId>
-        <artifactId>fastutil</artifactId>
-        <version>6.5.7</version>
-        <scope>compile</scope>
-    </dependency>
-    <dependency>
-        <groupId>org.slf4j</groupId>
-        <artifactId>slf4j-log4j12</artifactId>
-        <version>1.7.21</version>
-        <scope>test</scope>
-    </dependency>
+  <modules>
+    <module>graphjet-core</module>
+    <module>graphjet-demo</module>
+  </modules>
 
-    <!-- needed only for the demo -->
-    <dependency>
-      <groupId>org.twitter4j</groupId>
-      <artifactId>twitter4j-core</artifactId>
-      <version>4.0.4</version>
-    </dependency>
-    <dependency>
-      <groupId>org.twitter4j</groupId>
-      <artifactId>twitter4j-stream</artifactId>
-      <version>4.0.4</version>
-    </dependency>
-    <dependency>
-        <groupId>org.eclipse.jetty</groupId>
-        <artifactId>jetty-server</artifactId>
-        <version>9.3.11.v20160721</version>
-    </dependency>
-    <dependency>
-        <groupId>org.eclipse.jetty</groupId>
-        <artifactId>jetty-servlet</artifactId>
-        <version>9.3.11.v20160721</version>
-    </dependency>
-    <dependency>
-      <groupId>args4j</groupId>
-      <artifactId>args4j</artifactId>
-      <version>2.32</version>
-    </dependency>
-
-  </dependencies>
 </project>
