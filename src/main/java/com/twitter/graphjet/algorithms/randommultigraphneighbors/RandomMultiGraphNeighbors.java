@@ -66,7 +66,7 @@ public class RandomMultiGraphNeighbors {
    * Sample random neighbors given a request and random seed.
    * @param request                   the random neighbor request
    * @param random                    the random seed
-   * @return
+   * @return response object encapsulating results
    */
   public RandomMultiGraphNeighborsResponse getRandomMultiGraphNeighbors(
       RandomMultiGraphNeighborsRequest request,
@@ -82,7 +82,7 @@ public class RandomMultiGraphNeighbors {
    * @param request                   the random neighbor request
    * @param random                    the random seed
    * @param filterChain               the filter chain
-   * @return
+   * @return response object encapsulating results
    */
   public RandomMultiGraphNeighborsResponse getRandomMultiGraphNeighbors(
       RandomMultiGraphNeighborsRequest request,

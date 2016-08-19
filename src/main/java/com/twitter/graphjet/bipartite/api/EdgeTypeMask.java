@@ -14,35 +14,34 @@
  * limitations under the License.
  */
 
-
 package com.twitter.graphjet.bipartite.api;
 
 /**
- * The bit mask is used to encode edge types in the top bits of an integer.
+ * Bit mask used to encode edge types in the high-order bits of an integer.
  */
 public interface EdgeTypeMask {
   /**
-   * Encode the edge type into the top bits of the integer node id.
+   * Encodes the edge type in the high-order bits of the integer node id.
    *
    * @param node the original node id
    * @param edgeType edge type
-   * @return the node id with bitmask
+   * @return the node id with encoded edge type
    */
   int encode(int node, byte edgeType);
 
   /**
-   * Retrieve the edge type from the integer node id.
+   * Extracts the edge type from an integer node id that has been encoded with {@link #encode(int, byte)}.
    *
-   * @param node the node id with bitmask
+   * @param node the node id with encoded edge type
    * @return edge type
    */
   byte edgeType(int node);
 
   /**
-   * Restore the original node id by removing the meta data saved in top bits.
+   * Restores the original node id by removing the edge types encoded in the high-order bits.
    *
-   * @param node the node id with bitmask
-   * @return node id without the bitmask
+   * @param node the node id with encoded edge type
+   * @return the original node id edge type removed
    */
   int restore(int node);
 }
