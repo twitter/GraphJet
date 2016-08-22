@@ -10,7 +10,7 @@
 
   <groupId>com.twitter</groupId>
   <artifactId>graphjet-demo</artifactId>
-  <version>1.0</version>
+  <version>1.0.0</version>
   <packaging>jar</packaging>
   <name>graphjet-demo</name>
   <description>GraphJet demo</description>
@@ -20,7 +20,7 @@
     <dependency>
       <groupId>com.twitter</groupId>
       <artifactId>graphjet-core</artifactId>
-      <version>1.0</version>
+      <version>1.0.0</version>
     </dependency>
     <dependency>
       <groupId>org.twitter4j</groupId>
