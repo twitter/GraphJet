@@ -8,7 +8,7 @@
   <packaging>pom</packaging>
 
   <name>graphjet</name>
-  <description>GraphJet is a real-time graph engine for generating recommendations</description>
+  <description>GraphJet is a real-time graph processing library</description>
   <url>http://graphjet.io</url>
 
   <licenses>

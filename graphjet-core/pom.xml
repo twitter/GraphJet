@@ -13,7 +13,7 @@
   <version>1.0.0</version>
   <packaging>jar</packaging>
   <name>GraphJet Core</name>
-  <description>GraphJet core library</description>
+  <description>GraphJet is a real-time graph processing library: core graph library and recommendation algorithms</description>
   <url>http://graphjet.io</url>
 
   <dependencies>

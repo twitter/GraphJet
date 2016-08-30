@@ -12,8 +12,8 @@
   <artifactId>graphjet-demo</artifactId>
   <version>1.0.0</version>
   <packaging>jar</packaging>
-  <name>graphjet-demo</name>
-  <description>GraphJet demo</description>
+  <name>GraphJet Demo</name>
+  <description>GraphJet is a real-time graph processing library: demo of core graph library</description>
   <url>http://graphjet.io</url>
 
   <dependencies>
