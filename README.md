@@ -21,7 +21,7 @@ oauth.accessToken=xxxx
 oauth.accessTokenSecret=xxxx
 ```
 
-The public sample stream is available to registered users, see [documentation about Twitter streaming APIs](https://dev.twitter.com/streaming/overview) for more details.
+For obtaining the credentials, see [documentation on obtaining Twitter OAuth tokens](https://dev.twitter.com/oauth/overview/application-owner-access-tokens). The public sample stream is available to registered users, see [documentation about Twitter streaming APIs](https://dev.twitter.com/streaming/overview) for more details.
 
 Once you've built GraphJet, start the demo as follows:
 
