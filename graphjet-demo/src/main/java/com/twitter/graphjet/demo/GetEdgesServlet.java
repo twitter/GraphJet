@@ -36,6 +36,12 @@ public class GetEdgesServlet extends HttpServlet {
   private final MultiSegmentPowerLawBipartiteGraph bigraph;
   private final Side side;
 
+  /**
+   * Creates an instance of this servlet.
+   *
+   * @param bigraph the bipartite graph
+   * @param side which side (right or left) being queried
+   */
   public GetEdgesServlet(MultiSegmentPowerLawBipartiteGraph bigraph, Side side) {
     this.bigraph = bigraph;
     this.side = side;
