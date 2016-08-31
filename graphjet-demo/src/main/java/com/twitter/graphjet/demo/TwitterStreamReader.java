@@ -123,17 +123,21 @@ public class TwitterStreamReader {
         String screenname = status.getUser().getScreenName();
         long userId = status.getUser().getId();
         long tweetId = status.isRetweet() ? status.getRetweetedStatus().getId() : status.getId();
+      
+        String[] tweetTokens = status.getText().split(" "); // better ways of parsing Strings exist
+        for (String token: tweetTokens) { 
+	  if (token.startsWith("#")) {
+	      bigraph.addEdge(tweetId, (long)token.hashCode(), (byte) 0);
+	    if (!users.containsKey(tweetId)) {
+              users.put(tweetId, screenname);
+	    }
 
-        bigraph.addEdge(userId, tweetId, (byte) 0);
-
-        if (!users.containsKey(userId)) {
-          users.put(userId, screenname);
-        }
-
-        if (!tweets.contains(tweetId)) {
-          tweets.add(tweetId);
-        }
-
+	    if (!tweets.contains((long)token.hashCode())) {
+		tweets.add((long)token.hashCode());
+	    }
+          }  
+	}
+       
         statusCnt++;
 
         // Note that status updates are currently performed synchronously (i.e., blocking). Best practices dictate that
