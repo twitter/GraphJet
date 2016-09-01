@@ -37,14 +37,14 @@ import java.util.PriorityQueue;
  * Servlet of {@link TwitterStreamReader} that returns the top <i>k</i> users in terms of degree in the user-tweet
  * bipartite graph.
  */
-public class TopUsersServlet extends HttpServlet {
+public class TopTokensServlet extends HttpServlet {
   private static final Joiner JOINER = Joiner.on(",\n");
   private final MultiSegmentPowerLawBipartiteGraph bigraph;
-  private final Long2ObjectMap<String> users;
+  private final Long2ObjectMap<String> tokens;
 
-  public TopUsersServlet(MultiSegmentPowerLawBipartiteGraph bigraph, Long2ObjectOpenHashMap<String> users) {
+  public TopTokensServlet(MultiSegmentPowerLawBipartiteGraph bigraph, Long2ObjectOpenHashMap<String> tokens) {
     this.bigraph = bigraph;
-    this.users = users;
+    this.tokens = tokens;
   }
 
   @Override
@@ -61,20 +61,20 @@ public class TopUsersServlet extends HttpServlet {
     }
 
     PriorityQueue<NodeValueEntry> queue = new PriorityQueue<>(k);
-    LongIterator iter = users.keySet().iterator();
+    LongIterator iter = tokens.keySet().iterator();
     while (iter.hasNext()) {
-      long user = iter.nextLong();
-      int cnt = bigraph.getLeftNodeDegree(user);
+      long token = iter.nextLong();
+      int cnt = bigraph.getLeftNodeDegree(token);
       if (cnt == 1) continue;
 
       if (queue.size() < k) {
-        queue.add(new NodeValueEntry(user, cnt));
+        queue.add(new NodeValueEntry(token, cnt));
       } else {
         NodeValueEntry peek = queue.peek();
         // Break ties by preferring higher userid (i.e., more recent user)
-        if (cnt > peek.getValue() || (cnt == peek.getValue() && user > peek.getNode())) {
+        if (cnt > peek.getValue() || (cnt == peek.getValue() && token > peek.getNode())) {
           queue.poll();
-          queue.add(new NodeValueEntry(user, cnt));
+          queue.add(new NodeValueEntry(token, cnt));
         }
       }
     }
@@ -89,7 +89,7 @@ public class TopUsersServlet extends HttpServlet {
     while ((e = queue.poll()) != null) {
       // Note that we explicitly use id_str and treat the tweet id as a String. See:
       // https://dev.twitter.com/overview/api/twitter-ids-json-and-snowflake
-      entries.add(String.format("{\"id_str\": \"%d\", \"cnt\": %d}", e.getNode(), e.getValue()));
+      entries.add(String.format("{\"token_str\": \"%s\", \"cnt\": %d}", tokens.get(e.getNode()), e.getValue()));
     }
 
     response.setStatus(HttpStatus.OK_200);

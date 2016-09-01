@@ -111,7 +111,7 @@ public class TwitterStreamReader {
     // Note that we're keeping track of the nodes on the left and right side externally, apart from the bigraph,
     // because the bigraph currently does not provide an API for enumerating over nodes. Currently, this is liable to
     // running out of memory, but this is fine for the demo.
-    Long2ObjectOpenHashMap<String> users = new Long2ObjectOpenHashMap<>();
+    Long2ObjectOpenHashMap<String> tokens = new Long2ObjectOpenHashMap<>();
     LongOpenHashSet tweets = new LongOpenHashSet();
     // It is accurate of think of these two data structures as holding all users and tweets observed on the stream since
     // the demo program was started.
@@ -121,22 +121,21 @@ public class TwitterStreamReader {
 
       public void onStatus(Status status) {
         String screenname = status.getUser().getScreenName();
-        long userId = status.getUser().getId();
         long tweetId = status.isRetweet() ? status.getRetweetedStatus().getId() : status.getId();
       
-        String[] tweetTokens = status.getText().split(" "); // better ways of parsing Strings exist
-        for (String token: tweetTokens) { 
-	  if (token.startsWith("#")) {
-	      bigraph.addEdge(tweetId, (long)token.hashCode(), (byte) 0);
-	    if (!users.containsKey(tweetId)) {
-              users.put(tweetId, screenname);
-	    }
-
-	    if (!tweets.contains((long)token.hashCode())) {
-		tweets.add((long)token.hashCode());
-	    }
+        String[] tweetTokens = status.getText().split(" "); // for demo purpose - better ways of parsing Strings exist
+        for (String token: tweetTokens) {
+          long tokenHash = (long)token.hashCode();
+	      if (token.startsWith("#")) {
+	        bigraph.addEdge(tweetId, tokenHash, (byte) 0);
+            if (!tokens.containsKey(tokenHash)) {
+              tokens.put(tokenHash, token);
+	        }
+	        if (!tweets.contains(tokenHash)) {
+        	  tweets.add((long)token.hashCode());
+	        }
           }  
-	}
+	    }
        
         statusCnt++;
 
@@ -148,28 +147,28 @@ public class TwitterStreamReader {
         if (statusCnt % args.minorUpdateInterval == 0) {
           long duration = (new Date().getTime() - demoStart.getTime()) / 1000;
 
-          System.out.println(String.format("%tc: %,d statuses, %,d unique users, %,d unique tweets (observed); " +
+          System.out.println(String.format("%tc: %,d statuses, %,d unique tweets, %,d unique tokens (observed); " +
               "%.2f edges/s; totalMemory(): %,d bytes, freeMemory(): %,d bytes",
-              new Date(), statusCnt, users.size(), tweets.size(), (float) statusCnt / duration,
+              new Date(), statusCnt, tweets.size(), tokens.size(), (float) statusCnt / duration,
               Runtime.getRuntime().totalMemory(), Runtime.getRuntime().freeMemory()));
         }
 
         // Major status update: iterate over right and left nodes.
         if (statusCnt % args.majorUpdateInterval == 0 ) {
           int leftCnt = 0;
-          LongIterator leftIter = users.keySet().iterator();
+          LongIterator leftIter = tweets.iterator();
           while (leftIter.hasNext()) {
             if (bigraph.getLeftNodeDegree(leftIter.nextLong()) != 0)
               leftCnt++;
           }
 
           int rightCnt = 0;
-          LongIterator rightIter = tweets.iterator();
+          LongIterator rightIter = tokens.keySet().iterator();
           while (rightIter.hasNext()) {
             if (bigraph.getRightNodeDegree(rightIter.nextLong()) != 0)
               rightCnt++;
           }
-          System.out.println(String.format("%tc: Current graph state: %,d left nodes (users), %,d right nodes (tweets)",
+          System.out.println(String.format("%tc: Current graph state: %,d left nodes (tweets), %,d right nodes (tokens)",
               new Date(), leftCnt, rightCnt));
         }
       }
@@ -194,10 +193,10 @@ public class TwitterStreamReader {
     Server jettyServer = new Server(args.port);
     jettyServer.setHandler(context);
 
-    context.addServlet(new ServletHolder(new TopUsersServlet(bigraph, users)), "/top/users");
     context.addServlet(new ServletHolder(new TopTweetsServlet(bigraph, tweets)), "/top/tweets");
-    context.addServlet(new ServletHolder(new GetEdgesServlet(bigraph, GetEdgesServlet.Side.LEFT)), "/edges/users");
-    context.addServlet(new ServletHolder(new GetEdgesServlet(bigraph, GetEdgesServlet.Side.RIGHT)), "/edges/tweets");
+    context.addServlet(new ServletHolder(new TopTokensServlet(bigraph, tokens)), "/top/tokens");
+    context.addServlet(new ServletHolder(new GetEdgesServlet(bigraph, GetEdgesServlet.Side.LEFT)), "/edges/tweets");
+    context.addServlet(new ServletHolder(new GetEdgesServlet(bigraph, GetEdgesServlet.Side.RIGHT)), "/edges/tokens");
 
     System.out.println(String.format("%tc: Starting service on port %d", new Date(), args.port));
     try {
