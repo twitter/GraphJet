@@ -29,6 +29,7 @@ import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
 import org.kohsuke.args4j.ParserProperties;
+import twitter4j.HashtagEntity;
 import twitter4j.StallWarning;
 import twitter4j.Status;
 import twitter4j.StatusDeletionNotice;
@@ -101,18 +102,27 @@ public class TwitterStreamReader {
     }
 
     final Date demoStart = new Date();
-    final MultiSegmentPowerLawBipartiteGraph bigraph =
+    final MultiSegmentPowerLawBipartiteGraph userTweetBigraph =
         new MultiSegmentPowerLawBipartiteGraph(args.maxSegments, args.maxEdgesPerSegment,
             args.leftSize, args.leftDegree, args.leftPowerLawExponent,
             args.rightSize, args.rightDegree, args.rightPowerLawExponent,
             new IdentityEdgeTypeMask(),
             new NullStatsReceiver());
 
-    // Note that we're keeping track of the nodes on the left and right side externally, apart from the bigraph,
+    final MultiSegmentPowerLawBipartiteGraph tweetHashtagBigraph =
+        new MultiSegmentPowerLawBipartiteGraph(args.maxSegments, args.maxEdgesPerSegment,
+            args.leftSize, args.leftDegree, args.leftPowerLawExponent,
+            args.rightSize, args.rightDegree, args.rightPowerLawExponent,
+            new IdentityEdgeTypeMask(),
+            new NullStatsReceiver());
+
+
+    // Note that we're keeping track of the nodes on the left and right sides externally, apart from the bigraphs,
     // because the bigraph currently does not provide an API for enumerating over nodes. Currently, this is liable to
     // running out of memory, but this is fine for the demo.
-    Long2ObjectOpenHashMap<String> tokens = new Long2ObjectOpenHashMap<>();
+    Long2ObjectOpenHashMap<String> users = new Long2ObjectOpenHashMap<>();
     LongOpenHashSet tweets = new LongOpenHashSet();
+    Long2ObjectOpenHashMap<String> tokens = new Long2ObjectOpenHashMap<>();
     // It is accurate of think of these two data structures as holding all users and tweets observed on the stream since
     // the demo program was started.
 
@@ -121,21 +131,33 @@ public class TwitterStreamReader {
 
       public void onStatus(Status status) {
 
-        long tweetId = status.getId();
+        String screenname = status.getUser().getScreenName();
+        long userId = status.getUser().getId();
+        long tweetId = status.isRetweet() ? status.getRetweetedStatus().getId() : status.getId();
+        HashtagEntity[] hashtagEntities = status.getHashtagEntities();
 
-        String[] tweetTokens = status.getText().toLowerCase().split(" "); // for demo purpose - better ways of parsing Strings exist
-        for (String token: tweetTokens) {
-          long tokenHash = (long)token.hashCode();
-	      if (token.startsWith("#")) {
-	        bigraph.addEdge(tweetId, tokenHash, (byte) 0);
-            if (!tokens.containsKey(tokenHash)) {
-              tokens.put(tokenHash, token);
-	        }
-	        if (!tweets.contains(tweetId)) {
-        	  tweets.add(tweetId);
-	        }
-          }  
-	    }
+        userTweetBigraph.addEdge(userId, tweetId, (byte) 0);
+
+        if (!users.containsKey(userId)) {
+          users.put(userId, screenname);
+        }
+
+        if (!tweets.contains(tweetId)) {
+          tweets.add(tweetId);
+        }
+
+//        for (String token: tweetTokens) {
+//          long tokenHash = (long)token.hashCode();
+//	      if (token.startsWith("#")) {
+//	        bigraph.addEdge(tweetId, tokenHash, (byte) 0);
+//            if (!tokens.containsKey(tokenHash)) {
+//              tokens.put(tokenHash, token);
+//	        }
+//	        if (!tweets.contains(tweetId)) {
+//        	  tweets.add(tweetId);
+//	        }
+//          }  
+//	    }
        
         statusCnt++;
 
@@ -158,17 +180,18 @@ public class TwitterStreamReader {
           int leftCnt = 0;
           LongIterator leftIter = tweets.iterator();
           while (leftIter.hasNext()) {
-            if (bigraph.getLeftNodeDegree(leftIter.nextLong()) != 0)
+            if (userTweetBigraph.getLeftNodeDegree(leftIter.nextLong()) != 0)
               leftCnt++;
           }
 
           int rightCnt = 0;
           LongIterator rightIter = tokens.keySet().iterator();
           while (rightIter.hasNext()) {
-            if (bigraph.getRightNodeDegree(rightIter.nextLong()) != 0)
+            if (userTweetBigraph.getRightNodeDegree(rightIter.nextLong()) != 0)
               rightCnt++;
           }
-          System.out.println(String.format("%tc: Current graph state: %,d left nodes (tweets), %,d right nodes (tokens)",
+          System.out.println(String.format("%tc: Current user-tweet graph state: %,d left nodes (tweets), " + 
+              "%,d right nodes (tokens)",
               new Date(), leftCnt, rightCnt));
         }
       }
@@ -193,11 +216,12 @@ public class TwitterStreamReader {
     Server jettyServer = new Server(args.port);
     jettyServer.setHandler(context);
 
-    context.addServlet(new ServletHolder(new TopTweetsServlet(bigraph, tweets)), "/top/tweets");
-    context.addServlet(new ServletHolder(new TopTokensServlet(bigraph, tokens)), "/top/tokens");
-    context.addServlet(new ServletHolder(new GetEdgesServlet(bigraph, GetEdgesServlet.Side.LEFT)), "/edges/tweets");
-    context.addServlet(new ServletHolder(new GetEdgesServlet(bigraph, GetEdgesServlet.Side.RIGHT)), "/edges/tokens");
-    context.addServlet(new ServletHolder(new GetSimilarTokensServlet(bigraph, tokens)), "/similarTokens");
+    context.addServlet(new ServletHolder(new TopTokensServlet(userTweetBigraph, users)), "/topUserTweetGraph/users");
+    context.addServlet(new ServletHolder(new TopTweetsServlet(userTweetBigraph, tweets, true)), "/topUserTweetGraph/tweets");
+    context.addServlet(new ServletHolder(new GetEdgesServlet(userTweetBigraph, GetEdgesServlet.Side.RIGHT)), "/userTweetGraphEdges/users");
+    context.addServlet(new ServletHolder(new GetEdgesServlet(userTweetBigraph, GetEdgesServlet.Side.LEFT)), "/userTweetGraphEdges/tweets");
+
+    // context.addServlet(new ServletHolder(new GetSimilarTokensServlet(userTweetBigraph, tokens)), "/similarTokens");
 
     System.out.println(String.format("%tc: Starting service on port %d", new Date(), args.port));
     try {

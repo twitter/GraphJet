@@ -41,10 +41,12 @@ public class TopTweetsServlet extends HttpServlet {
   private static final Joiner JOINER = Joiner.on(",\n");
   private final MultiSegmentPowerLawBipartiteGraph bigraph;
   private final LongSet tweets;
+  private final boolean tweetsOnLHS; 
 
-  public TopTweetsServlet(MultiSegmentPowerLawBipartiteGraph bigraph, LongOpenHashSet tweets) {
+  public TopTweetsServlet(MultiSegmentPowerLawBipartiteGraph bigraph, LongOpenHashSet tweets, boolean tweetsOnLHS) {
     this.bigraph = bigraph;
     this.tweets = tweets;
+    this.tweetsOnLHS = tweetsOnLHS;
   }
 
   @Override
@@ -64,7 +66,7 @@ public class TopTweetsServlet extends HttpServlet {
     LongIterator iter = tweets.iterator();
     while (iter.hasNext()) {
       long tweet = iter.nextLong();
-      int cnt = bigraph.getLeftNodeDegree(tweet);
+      int cnt = tweetsOnLHS ? bigraph.getLeftNodeDegree(tweet) : bigraph.getRightNodeDegree(tweet);
       if (cnt == 1) continue;
 
       if (queue.size() < k) {
