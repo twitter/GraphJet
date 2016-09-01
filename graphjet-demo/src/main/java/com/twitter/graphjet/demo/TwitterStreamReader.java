@@ -120,10 +120,10 @@ public class TwitterStreamReader {
       long statusCnt = 0;
 
       public void onStatus(Status status) {
-        String screenname = status.getUser().getScreenName();
-        long tweetId = status.isRetweet() ? status.getRetweetedStatus().getId() : status.getId();
-      
-        String[] tweetTokens = status.getText().split(" "); // for demo purpose - better ways of parsing Strings exist
+
+        long tweetId = status.getId();
+
+        String[] tweetTokens = status.getText().toLowerCase().split(" "); // for demo purpose - better ways of parsing Strings exist
         for (String token: tweetTokens) {
           long tokenHash = (long)token.hashCode();
 	      if (token.startsWith("#")) {
@@ -131,8 +131,8 @@ public class TwitterStreamReader {
             if (!tokens.containsKey(tokenHash)) {
               tokens.put(tokenHash, token);
 	        }
-	        if (!tweets.contains(tokenHash)) {
-        	  tweets.add((long)token.hashCode());
+	        if (!tweets.contains(tweetId)) {
+        	  tweets.add(tweetId);
 	        }
           }  
 	    }
@@ -197,6 +197,7 @@ public class TwitterStreamReader {
     context.addServlet(new ServletHolder(new TopTokensServlet(bigraph, tokens)), "/top/tokens");
     context.addServlet(new ServletHolder(new GetEdgesServlet(bigraph, GetEdgesServlet.Side.LEFT)), "/edges/tweets");
     context.addServlet(new ServletHolder(new GetEdgesServlet(bigraph, GetEdgesServlet.Side.RIGHT)), "/edges/tokens");
+    context.addServlet(new ServletHolder(new GetSimilarTokensServlet(bigraph, tokens)), "/similarTokens");
 
     System.out.println(String.format("%tc: Starting service on port %d", new Date(), args.port));
     try {

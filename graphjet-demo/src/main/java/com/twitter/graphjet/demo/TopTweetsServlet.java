@@ -64,7 +64,7 @@ public class TopTweetsServlet extends HttpServlet {
     LongIterator iter = tweets.iterator();
     while (iter.hasNext()) {
       long tweet = iter.nextLong();
-      int cnt = bigraph.getRightNodeDegree(tweet);
+      int cnt = bigraph.getLeftNodeDegree(tweet);
       if (cnt == 1) continue;
 
       if (queue.size() < k) {

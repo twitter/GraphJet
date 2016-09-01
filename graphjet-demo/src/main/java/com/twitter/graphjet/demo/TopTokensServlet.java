@@ -63,18 +63,17 @@ public class TopTokensServlet extends HttpServlet {
     PriorityQueue<NodeValueEntry> queue = new PriorityQueue<>(k);
     LongIterator iter = tokens.keySet().iterator();
     while (iter.hasNext()) {
-      long token = iter.nextLong();
-      int cnt = bigraph.getLeftNodeDegree(token);
+      long tokenHash = iter.nextLong();
+      int cnt = bigraph.getRightNodeDegree(tokenHash);
       if (cnt == 1) continue;
 
       if (queue.size() < k) {
-        queue.add(new NodeValueEntry(token, cnt));
+        queue.add(new NodeValueEntry(tokenHash, cnt));
       } else {
         NodeValueEntry peek = queue.peek();
-        // Break ties by preferring higher userid (i.e., more recent user)
-        if (cnt > peek.getValue() || (cnt == peek.getValue() && token > peek.getNode())) {
+        if (cnt > peek.getValue()) {
           queue.poll();
-          queue.add(new NodeValueEntry(token, cnt));
+          queue.add(new NodeValueEntry(tokenHash, cnt));
         }
       }
     }
