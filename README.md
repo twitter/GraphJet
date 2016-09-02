@@ -33,17 +33,6 @@ Once the demo starts up, it begins ingesting the Twitter public sample stream. T
 
 You can interact with the graph via a REST API, running on port 8888 by default; use ` -Dexec.args="-port xxxx"` to specify a different port. The following calls are available to query the state of the in-memory bipartite graphs:
 
-    context.addServlet(new ServletHolder(new GetEdgesServlet(userTweetBigraph, GetEdgesServlet.Side.RIGHT)),
-            "/userTweetGraphEdges/users");
-    context.addServlet(new ServletHolder(new GetEdgesServlet(userTweetBigraph, GetEdgesServlet.Side.LEFT)),
-            "/userTweetGraphEdges/tweets");
-    context.addServlet(new ServletHolder(new GetEdgesServlet(tweetHashtagBigraph, GetEdgesServlet.Side.RIGHT)),
-            "/tweetHashtagGraphEdges/tweets");
-    context.addServlet(new ServletHolder(new GetEdgesServlet(tweetHashtagBigraph, GetEdgesServlet.Side.LEFT)),
-            "/tweetHashtagGraphEdges/tokens");
-    context.addServlet(new ServletHolder(new GetSimilarTokensServlet(tweetHashtagBigraph, tokens)), "/similarTokens");
-
-
 + `userTweetGraph/topTweets`: queries for the top tweets in terms of interactions (retweets). Use parameter `k` to specify number of results to return (default ten). Sample invocation:
 
 ```
