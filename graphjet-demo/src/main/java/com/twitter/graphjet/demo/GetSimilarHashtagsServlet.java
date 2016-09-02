@@ -20,25 +20,25 @@ import java.io.IOException;
 import java.util.Random;
 
 /**
- * Servlet of {@link TwitterStreamReader} that computes similar tokens in a tweet-token bipartite graph.
+ * Servlet of {@link TwitterStreamReader} that computes similar hashtags in a tweet-hashtag bipartite graph.
  */
 
-public class GetSimilarTokensServlet extends HttpServlet {
+public class GetSimilarHashtagsServlet extends HttpServlet {
     private final MultiSegmentPowerLawBipartiteGraph bigraph;
-    private final Long2ObjectOpenHashMap<String> tokens;
+    private final Long2ObjectOpenHashMap<String> hashtags;
 
-    public GetSimilarTokensServlet(MultiSegmentPowerLawBipartiteGraph bigraph, Long2ObjectOpenHashMap<String> tokens) {
+    public GetSimilarHashtagsServlet(MultiSegmentPowerLawBipartiteGraph bigraph, Long2ObjectOpenHashMap<String> hashtags) {
         this.bigraph = bigraph;
-        this.tokens = tokens;
+        this.hashtags = hashtags;
     }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String token = request.getParameter("token").toLowerCase();
+        String hashtag= request.getParameter("hashtag").toLowerCase();
         String numResults = request.getParameter("k");
 
-        long id = (long)token.hashCode();
+        long id = (long)hashtag.hashCode();
         int k = 10;
         int maxNumNeighbors = 100;
         int minNeighborDegree = 1;
@@ -55,7 +55,7 @@ public class GetSimilarTokensServlet extends HttpServlet {
         }
 
         if (bigraph.getRightNodeDegree(id) == 0) {
-            response.getWriter().println(String.format("Token %s not found", token));
+            response.getWriter().println(String.format("Hashtag #%s not found", hashtag));
             return;
         }
 
@@ -80,9 +80,9 @@ public class GetSimilarTokensServlet extends HttpServlet {
                 cosineSimilarity.getSimilarNodes(intersectionSimilarityRequest, new Random());
 
         response.setStatus(HttpStatus.OK_200);
-        response.getWriter().println("Related tokens for: " + token);
+        response.getWriter().println("Related hashtags for: #" + hashtag);
         for (SimilarityInfo sim : similarityResponse.getRankedSimilarNodes()) {
-            response.getWriter().println(tokens.get(sim.getSimilarNode()) + ": " + sim.toString());
+            response.getWriter().println(hashtags.get(sim.getSimilarNode()) + ": " + sim.toString());
         }
     }
 }

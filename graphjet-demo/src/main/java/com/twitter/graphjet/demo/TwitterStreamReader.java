@@ -122,7 +122,7 @@ public class TwitterStreamReader {
     // running out of memory, but this is fine for the demo.
     Long2ObjectOpenHashMap<String> users = new Long2ObjectOpenHashMap<>();
     LongOpenHashSet tweets = new LongOpenHashSet();
-    Long2ObjectOpenHashMap<String> tokens = new Long2ObjectOpenHashMap<>();
+    Long2ObjectOpenHashMap<String> hashtags = new Long2ObjectOpenHashMap<>();
     // It is accurate of think of these two data structures as holding all users and tweets observed on the stream since
     // the demo program was started.
 
@@ -151,10 +151,10 @@ public class TwitterStreamReader {
         }
 
         for (HashtagEntity entity: hashtagEntities) {
-          long tokenHash = (long)entity.getText().toLowerCase().hashCode();
-          tweetHashtagBigraph.addEdge(tweetId, tokenHash, (byte) 0);
-          if (!tokens.containsKey(tokenHash)) {
-            tokens.put(tokenHash, entity.getText().toLowerCase());
+          long hashtagHash = (long)entity.getText().toLowerCase().hashCode();
+          tweetHashtagBigraph.addEdge(tweetId, hashtagHash, (byte) 0);
+          if (!hashtags.containsKey(hashtagHash)) {
+            hashtags.put(hashtagHash, entity.getText().toLowerCase());
           }
 	    }
        
@@ -168,9 +168,9 @@ public class TwitterStreamReader {
         if (statusCnt % args.minorUpdateInterval == 0) {
           long duration = (new Date().getTime() - demoStart.getTime()) / 1000;
 
-          System.out.println(String.format("%tc: %,d statuses, %,d unique tweets, %,d unique tokens (observed); " +
+          System.out.println(String.format("%tc: %,d statuses, %,d unique tweets, %,d unique hashtags (observed); " +
               "%.2f edges/s; totalMemory(): %,d bytes, freeMemory(): %,d bytes",
-              new Date(), statusCnt, tweets.size(), tokens.size(), (float) statusCnt / duration,
+              new Date(), statusCnt, tweets.size(), hashtags.size(), (float) statusCnt / duration,
               Runtime.getRuntime().totalMemory(), Runtime.getRuntime().freeMemory()));
         }
 
@@ -184,7 +184,7 @@ public class TwitterStreamReader {
           }
 
           int rightCnt = 0;
-          LongIterator rightIter = tokens.keySet().iterator();
+          LongIterator rightIter = hashtags.keySet().iterator();
           while (rightIter.hasNext()) {
             if (userTweetBigraph.getRightNodeDegree(rightIter.nextLong()) != 0)
               rightCnt++;
@@ -221,8 +221,8 @@ public class TwitterStreamReader {
             TopTweetsServlet.GraphType.USER_TWEET)),  "/userTweetGraph/topTweets");
     context.addServlet(new ServletHolder(new TopTweetsServlet(tweetHashtagBigraph, tweets,
             TopTweetsServlet.GraphType.TWEET_TOKEN)), "/tweetHashtagGraph/topTweets");
-    context.addServlet(new ServletHolder(new TopTokensServlet(tweetHashtagBigraph, tokens)),
-            "/tweetHashtagGraph/topTokens");
+    context.addServlet(new ServletHolder(new TopHashtagsServlet(tweetHashtagBigraph, hashtags)),
+            "/tweetHashtagGraph/topHashtags");
     context.addServlet(new ServletHolder(new GetEdgesServlet(userTweetBigraph, GetEdgesServlet.Side.RIGHT)),
             "/userTweetGraphEdges/users");
     context.addServlet(new ServletHolder(new GetEdgesServlet(userTweetBigraph, GetEdgesServlet.Side.LEFT)),
@@ -230,8 +230,8 @@ public class TwitterStreamReader {
     context.addServlet(new ServletHolder(new GetEdgesServlet(tweetHashtagBigraph, GetEdgesServlet.Side.RIGHT)),
             "/tweetHashtagGraphEdges/tweets");
     context.addServlet(new ServletHolder(new GetEdgesServlet(tweetHashtagBigraph, GetEdgesServlet.Side.LEFT)),
-            "/tweetHashtagGraphEdges/tokens");
-    context.addServlet(new ServletHolder(new GetSimilarTokensServlet(tweetHashtagBigraph, tokens)), "/similarTokens");
+            "/tweetHashtagGraphEdges/hashtags");
+    context.addServlet(new ServletHolder(new GetSimilarHashtagsServlet(tweetHashtagBigraph, hashtags)), "/similarHashtags");
 
     System.out.println(String.format("%tc: Starting service on port %d", new Date(), args.port));
     try {

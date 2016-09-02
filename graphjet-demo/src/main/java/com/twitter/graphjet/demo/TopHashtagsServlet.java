@@ -37,14 +37,14 @@ import java.util.PriorityQueue;
  * Servlet of {@link TwitterStreamReader} that returns the top <i>k</i> users in terms of degree in the user-tweet
  * bipartite graph.
  */
-public class TopTokensServlet extends HttpServlet {
+public class TopHashtagsServlet extends HttpServlet {
   private static final Joiner JOINER = Joiner.on(",\n");
   private final MultiSegmentPowerLawBipartiteGraph bigraph;
-  private final Long2ObjectMap<String> tokens;
+  private final Long2ObjectMap<String> hashtags;
 
-  public TopTokensServlet(MultiSegmentPowerLawBipartiteGraph bigraph, Long2ObjectOpenHashMap<String> tokens) {
+  public TopHashtagsServlet(MultiSegmentPowerLawBipartiteGraph bigraph, Long2ObjectOpenHashMap<String> hashtags) {
     this.bigraph = bigraph;
-    this.tokens = tokens;
+    this.hashtags = hashtags;
   }
 
   @Override
@@ -61,19 +61,19 @@ public class TopTokensServlet extends HttpServlet {
     }
 
     PriorityQueue<NodeValueEntry> queue = new PriorityQueue<>(k);
-    LongIterator iter = tokens.keySet().iterator();
+    LongIterator iter = hashtags.keySet().iterator();
     while (iter.hasNext()) {
-      long tokenHash = iter.nextLong();
-      int cnt = bigraph.getRightNodeDegree(tokenHash);
+      long hashtagHash = iter.nextLong();
+      int cnt = bigraph.getRightNodeDegree(hashtagHash);
       if (cnt == 1) continue;
 
       if (queue.size() < k) {
-        queue.add(new NodeValueEntry(tokenHash, cnt));
+        queue.add(new NodeValueEntry(hashtagHash, cnt));
       } else {
         NodeValueEntry peek = queue.peek();
         if (cnt > peek.getValue()) {
           queue.poll();
-          queue.add(new NodeValueEntry(tokenHash, cnt));
+          queue.add(new NodeValueEntry(hashtagHash, cnt));
         }
       }
     }
@@ -88,8 +88,8 @@ public class TopTokensServlet extends HttpServlet {
     while ((e = queue.poll()) != null) {
       // Note that we explicitly use id_str and treat the tweet id as a String. See:
       // https://dev.twitter.com/overview/api/twitter-ids-json-and-snowflake
-      entries.add(String.format("{\"token_str\": \"%s\", \"id\": %d, \"cnt\": %d}",
-              tokens.get(e.getNode()), e.getNode(), e.getValue()));
+      entries.add(String.format("{\"hashtag_str\": \"%s\", \"id\": %d, \"cnt\": %d}",
+              hashtags.get(e.getNode()), e.getNode(), e.getValue()));
     }
 
     response.setStatus(HttpStatus.OK_200);
