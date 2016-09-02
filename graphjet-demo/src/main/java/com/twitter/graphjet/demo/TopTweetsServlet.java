@@ -20,7 +20,6 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.twitter.graphjet.bipartite.MultiSegmentPowerLawBipartiteGraph;
 import it.unimi.dsi.fastutil.longs.LongIterator;
-import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import it.unimi.dsi.fastutil.longs.LongSet;
 import org.eclipse.jetty.http.HttpStatus;
 
@@ -38,15 +37,16 @@ import java.util.PriorityQueue;
  * bipartite graph.
  */
 public class TopTweetsServlet extends HttpServlet {
+  public enum GraphType {USER_TWEET, TWEET_TOKEN}
   private static final Joiner JOINER = Joiner.on(",\n");
   private final MultiSegmentPowerLawBipartiteGraph bigraph;
   private final LongSet tweets;
-  private final boolean tweetsOnLHS; 
+  private final GraphType graphType;
 
-  public TopTweetsServlet(MultiSegmentPowerLawBipartiteGraph bigraph, LongOpenHashSet tweets, boolean tweetsOnLHS) {
+  public TopTweetsServlet(MultiSegmentPowerLawBipartiteGraph bigraph, LongSet tweets, GraphType graphType) {
     this.bigraph = bigraph;
     this.tweets = tweets;
-    this.tweetsOnLHS = tweetsOnLHS;
+    this.graphType = graphType;
   }
 
   @Override
@@ -66,7 +66,7 @@ public class TopTweetsServlet extends HttpServlet {
     LongIterator iter = tweets.iterator();
     while (iter.hasNext()) {
       long tweet = iter.nextLong();
-      int cnt = tweetsOnLHS ? bigraph.getLeftNodeDegree(tweet) : bigraph.getRightNodeDegree(tweet);
+      int cnt = graphType.equals(GraphType.USER_TWEET) ? bigraph.getRightNodeDegree(tweet) : bigraph.getLeftNodeDegree(tweet);
       if (cnt == 1) continue;
 
       if (queue.size() < k) {

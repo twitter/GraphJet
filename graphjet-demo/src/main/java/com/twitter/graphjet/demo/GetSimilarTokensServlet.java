@@ -19,6 +19,10 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Random;
 
+/**
+ * Servlet of {@link TwitterStreamReader} that computes similar tokens in a tweet-token bipartite graph.
+ */
+
 public class GetSimilarTokensServlet extends HttpServlet {
     private final MultiSegmentPowerLawBipartiteGraph bigraph;
     private final Long2ObjectOpenHashMap<String> tokens;
@@ -39,7 +43,7 @@ public class GetSimilarTokensServlet extends HttpServlet {
         int maxNumNeighbors = 100;
         int minNeighborDegree = 1;
         int maxNumSamplesPerNeighbor = 100;
-        int minCooccurrence = 1;
+        int minCooccurrence = 2;
         int minDegree = 2;
         double maxLowerMultiplicativeDeviation = 5.0;
         double maxUpperMultiplicativeDeviation = 5.0;

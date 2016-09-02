@@ -189,8 +189,8 @@ public class TwitterStreamReader {
             if (userTweetBigraph.getRightNodeDegree(rightIter.nextLong()) != 0)
               rightCnt++;
           }
-          System.out.println(String.format("%tc: Current user-tweet graph state: %,d left nodes (tweets), " + 
-              "%,d right nodes (tokens)",
+          System.out.println(String.format("%tc: Current user-tweet graph state: %,d left nodes (users), " +
+              "%,d right nodes (tweets)",
               new Date(), leftCnt, rightCnt));
         }
       }
@@ -217,10 +217,10 @@ public class TwitterStreamReader {
 
     context.addServlet(new ServletHolder(new TopUsersServlet(userTweetBigraph, users)),
             "/userTweetGraph/topUsers");
-    context.addServlet(new ServletHolder(new TopTweetsServlet(userTweetBigraph, tweets, false)),
-            "/userTweetGraph/topTweets");
-    context.addServlet(new ServletHolder(new TopTweetsServlet(tweetHashtagBigraph, tweets, true)),
-            "/tweetHashtagGraph/topTweets");
+    context.addServlet(new ServletHolder(new TopTweetsServlet(userTweetBigraph, tweets,
+            TopTweetsServlet.GraphType.USER_TWEET)),  "/userTweetGraph/topTweets");
+    context.addServlet(new ServletHolder(new TopTweetsServlet(tweetHashtagBigraph, tweets,
+            TopTweetsServlet.GraphType.TWEET_TOKEN)), "/tweetHashtagGraph/topTweets");
     context.addServlet(new ServletHolder(new TopTokensServlet(tweetHashtagBigraph, tokens)),
             "/tweetHashtagGraph/topTokens");
     context.addServlet(new ServletHolder(new GetEdgesServlet(userTweetBigraph, GetEdgesServlet.Side.RIGHT)),
