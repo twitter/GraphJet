@@ -133,10 +133,11 @@ public class TwitterStreamReader {
 
         String screenname = status.getUser().getScreenName();
         long userId = status.getUser().getId();
-        long tweetId = status.isRetweet() ? status.getRetweetedStatus().getId() : status.getId();
+        long tweetId = status.getId();
+        long resolvedTweetId = status.isRetweet() ? status.getRetweetedStatus().getId() : status.getId();
         HashtagEntity[] hashtagEntities = status.getHashtagEntities();
 
-        userTweetBigraph.addEdge(userId, tweetId, (byte) 0);
+        userTweetBigraph.addEdge(userId, resolvedTweetId, (byte) 0);
 
         if (!users.containsKey(userId)) {
           users.put(userId, screenname);
@@ -145,19 +146,17 @@ public class TwitterStreamReader {
         if (!tweets.contains(tweetId)) {
           tweets.add(tweetId);
         }
+        if (!tweets.contains(resolvedTweetId)) {
+          tweets.add(resolvedTweetId);
+        }
 
-//        for (String token: tweetTokens) {
-//          long tokenHash = (long)token.hashCode();
-//	      if (token.startsWith("#")) {
-//	        bigraph.addEdge(tweetId, tokenHash, (byte) 0);
-//            if (!tokens.containsKey(tokenHash)) {
-//              tokens.put(tokenHash, token);
-//	        }
-//	        if (!tweets.contains(tweetId)) {
-//        	  tweets.add(tweetId);
-//	        }
-//          }  
-//	    }
+        for (HashtagEntity entity: hashtagEntities) {
+          long tokenHash = (long)entity.getText().toLowerCase().hashCode();
+          tweetHashtagBigraph.addEdge(tweetId, tokenHash, (byte) 0);
+          if (!tokens.containsKey(tokenHash)) {
+            tokens.put(tokenHash, entity.getText().toLowerCase());
+          }
+	    }
        
         statusCnt++;
 
@@ -216,12 +215,23 @@ public class TwitterStreamReader {
     Server jettyServer = new Server(args.port);
     jettyServer.setHandler(context);
 
-    context.addServlet(new ServletHolder(new TopTokensServlet(userTweetBigraph, users)), "/topUserTweetGraph/users");
-    context.addServlet(new ServletHolder(new TopTweetsServlet(userTweetBigraph, tweets, true)), "/topUserTweetGraph/tweets");
-    context.addServlet(new ServletHolder(new GetEdgesServlet(userTweetBigraph, GetEdgesServlet.Side.RIGHT)), "/userTweetGraphEdges/users");
-    context.addServlet(new ServletHolder(new GetEdgesServlet(userTweetBigraph, GetEdgesServlet.Side.LEFT)), "/userTweetGraphEdges/tweets");
-
-    // context.addServlet(new ServletHolder(new GetSimilarTokensServlet(userTweetBigraph, tokens)), "/similarTokens");
+    context.addServlet(new ServletHolder(new TopUsersServlet(userTweetBigraph, users)),
+            "/userTweetGraph/topUsers");
+    context.addServlet(new ServletHolder(new TopTweetsServlet(userTweetBigraph, tweets, false)),
+            "/userTweetGraph/topTweets");
+    context.addServlet(new ServletHolder(new TopTweetsServlet(tweetHashtagBigraph, tweets, true)),
+            "/tweetHashtagGraph/topTweets");
+    context.addServlet(new ServletHolder(new TopTokensServlet(tweetHashtagBigraph, tokens)),
+            "/tweetHashtagGraph/topTokens");
+    context.addServlet(new ServletHolder(new GetEdgesServlet(userTweetBigraph, GetEdgesServlet.Side.RIGHT)),
+            "/userTweetGraphEdges/users");
+    context.addServlet(new ServletHolder(new GetEdgesServlet(userTweetBigraph, GetEdgesServlet.Side.LEFT)),
+            "/userTweetGraphEdges/tweets");
+    context.addServlet(new ServletHolder(new GetEdgesServlet(tweetHashtagBigraph, GetEdgesServlet.Side.RIGHT)),
+            "/tweetHashtagGraphEdges/tweets");
+    context.addServlet(new ServletHolder(new GetEdgesServlet(tweetHashtagBigraph, GetEdgesServlet.Side.LEFT)),
+            "/tweetHashtagGraphEdges/tokens");
+    context.addServlet(new ServletHolder(new GetSimilarTokensServlet(tweetHashtagBigraph, tokens)), "/similarTokens");
 
     System.out.println(String.format("%tc: Starting service on port %d", new Date(), args.port));
     try {
