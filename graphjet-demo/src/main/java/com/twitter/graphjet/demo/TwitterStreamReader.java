@@ -220,7 +220,7 @@ public class TwitterStreamReader {
     context.addServlet(new ServletHolder(new TopTweetsServlet(userTweetBigraph, tweets,
             TopTweetsServlet.GraphType.USER_TWEET)),  "/userTweetGraph/topTweets");
     context.addServlet(new ServletHolder(new TopTweetsServlet(tweetHashtagBigraph, tweets,
-            TopTweetsServlet.GraphType.TWEET_TOKEN)), "/tweetHashtagGraph/topTweets");
+            TopTweetsServlet.GraphType.TWEET_HASHTAG)), "/tweetHashtagGraph/topTweets");
     context.addServlet(new ServletHolder(new TopHashtagsServlet(tweetHashtagBigraph, hashtags)),
             "/tweetHashtagGraph/topHashtags");
     context.addServlet(new ServletHolder(new GetEdgesServlet(userTweetBigraph, GetEdgesServlet.Side.RIGHT)),

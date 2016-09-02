@@ -37,7 +37,7 @@ import java.util.PriorityQueue;
  * bipartite graph.
  */
 public class TopTweetsServlet extends HttpServlet {
-  public enum GraphType {USER_TWEET, TWEET_TOKEN}
+  public enum GraphType {USER_TWEET, TWEET_HASHTAG}
   private static final Joiner JOINER = Joiner.on(",\n");
   private final MultiSegmentPowerLawBipartiteGraph bigraph;
   private final LongSet tweets;
