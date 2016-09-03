@@ -19,8 +19,9 @@ package com.twitter.graphjet.demo;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.twitter.graphjet.bipartite.MultiSegmentPowerLawBipartiteGraph;
+import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.longs.LongIterator;
-import it.unimi.dsi.fastutil.longs.LongSet;
 import org.eclipse.jetty.http.HttpStatus;
 
 import javax.servlet.ServletException;
@@ -33,20 +34,17 @@ import java.util.List;
 import java.util.PriorityQueue;
 
 /**
- * Servlet of {@link TwitterStreamReader} that returns the top <i>k</i> tweets in terms of degree in the user-tweet
+ * Servlet of {@link TwitterStreamReader} that returns the top <i>k</i> users in terms of degree in the user-tweet
  * bipartite graph.
  */
-public class TopTweetsServlet extends HttpServlet {
-  public enum GraphType {USER_TWEET, TWEET_HASHTAG}
+public class TopHashtagsServlet extends HttpServlet {
   private static final Joiner JOINER = Joiner.on(",\n");
   private final MultiSegmentPowerLawBipartiteGraph bigraph;
-  private final LongSet tweets;
-  private final GraphType graphType;
+  private final Long2ObjectMap<String> hashtags;
 
-  public TopTweetsServlet(MultiSegmentPowerLawBipartiteGraph bigraph, LongSet tweets, GraphType graphType) {
+  public TopHashtagsServlet(MultiSegmentPowerLawBipartiteGraph bigraph, Long2ObjectOpenHashMap<String> hashtags) {
     this.bigraph = bigraph;
-    this.tweets = tweets;
-    this.graphType = graphType;
+    this.hashtags = hashtags;
   }
 
   @Override
@@ -63,20 +61,19 @@ public class TopTweetsServlet extends HttpServlet {
     }
 
     PriorityQueue<NodeValueEntry> queue = new PriorityQueue<>(k);
-    LongIterator iter = tweets.iterator();
+    LongIterator iter = hashtags.keySet().iterator();
     while (iter.hasNext()) {
-      long tweet = iter.nextLong();
-      int cnt = graphType.equals(GraphType.USER_TWEET) ? bigraph.getRightNodeDegree(tweet) : bigraph.getLeftNodeDegree(tweet);
+      long hashtagHash = iter.nextLong();
+      int cnt = bigraph.getRightNodeDegree(hashtagHash);
       if (cnt == 1) continue;
 
       if (queue.size() < k) {
-        queue.add(new NodeValueEntry(tweet, cnt));
+        queue.add(new NodeValueEntry(hashtagHash, cnt));
       } else {
         NodeValueEntry peek = queue.peek();
-        // Break ties by preferring higher tweetid (i.e., more recent tweet)
-        if (cnt > peek.getValue() || (cnt == peek.getValue() && tweet > peek.getNode())) {
+        if (cnt > peek.getValue()) {
           queue.poll();
-          queue.add(new NodeValueEntry(tweet, cnt));
+          queue.add(new NodeValueEntry(hashtagHash, cnt));
         }
       }
     }
@@ -91,7 +88,8 @@ public class TopTweetsServlet extends HttpServlet {
     while ((e = queue.poll()) != null) {
       // Note that we explicitly use id_str and treat the tweet id as a String. See:
       // https://dev.twitter.com/overview/api/twitter-ids-json-and-snowflake
-      entries.add(String.format("{\"id_str\": \"%d\", \"cnt\": %d}", e.getNode(), e.getValue()));
+      entries.add(String.format("{\"hashtag_str\": \"%s\", \"id\": %d, \"cnt\": %d}",
+              hashtags.get(e.getNode()), e.getNode(), e.getValue()));
     }
 
     response.setStatus(HttpStatus.OK_200);

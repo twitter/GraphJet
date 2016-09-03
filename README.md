@@ -12,7 +12,7 @@ After cloning the repo, build as follows (for the impatient, use option `-DskipT
 $ mvn package install
 ```
 
-GraphJet includes a demo that reads from the Twitter public sample stream using the [Twitter4j library](http://twitter4j.org/en/) and maintains an in-memory bipartite graph of user-tweet interactions. To run the demo, create a file called `twitter4j.properties` in the GraphJet base directory with your Twitter credentials (replace `xxxx` with actual credentials):
+GraphJet includes a demo that reads from the Twitter public sample stream using the [Twitter4j library](http://twitter4j.org/en/) and maintains an in-memory bipartite graph of user-tweet interactions. It also maintains an in-memory bipartite graph of tweet-hashtag associations according to recent tweet creation. To run the demo, create a file called `twitter4j.properties` in the GraphJet base directory with your Twitter credentials (replace `xxxx` with actual credentials):
 
 ```
 oauth.consumerKey=xxxx
@@ -29,36 +29,64 @@ Once you've built GraphJet, start the demo as follows:
 $ mvn exec:java -pl graphjet-demo -Dexec.mainClass=com.twitter.graphjet.demo.TwitterStreamReader
 ```
 
-Once the demo starts up, it begins ingesting the Twitter public sample stream. The program will print out a sequence of status messages indicating the internal state of the graph.
+Once the demo starts up, it begins ingesting the Twitter public sample stream. The program will print out a sequence of status messages indicating the internal state of the user-tweet graph and the tweet-hashtag graph.
 
-You can interact with the graph via a REST API, running on port 8888 by default; use ` -Dexec.args="-port xxxx"` to specify a different port. The following calls are available to query the state of the in-memory bipartite graph:
+You can interact with the graph via a REST API, running on port 8888 by default; use ` -Dexec.args="-port xxxx"` to specify a different port. The following calls are available to query the state of the in-memory bipartite graphs:
 
-+ `top/tweets`: queries for the top tweets in terms of interactions (retweets). Use parameter `k` to specify number of results to return (default ten). Sample invocation:
-
-```
-curl http://localhost:8888/top/tweets?k=5
-```
-
-+ `top/users`: queries for the top users in terms of interactions (retweets).  Use parameter `k` to specify number of results to return (default ten). Sample invocation:
++ `userTweetGraph/topTweets`: queries for the top tweets in terms of interactions (retweets). Use parameter `k` to specify number of results to return (default ten). Sample invocation:
 
 ```
-curl http://localhost:8888/top/users?k=5
+curl http://localhost:8888/userTweetGraph/topTweets?k=5
 ```
 
-+ `edges/tweets`: queries for the edges incident to a particular tweet, i.e., users who have interacted with the tweet. Use parameter `id` to specify tweetid (e.g., from `top/tweets` above). Sample invocation:
++ `userTweetGraph/topUsers`: queries for the top users in terms of interactions (retweets).  Use parameter `k` to specify number of results to return (default ten). Sample invocation:
 
 ```
-curl http://localhost:8888/edges/tweets?id=xxx
+curl http://localhost:8888/userTweetGraph/topUsers?k=5
 ```
 
-+ `top/users`: queries for the edges incident to a particular user, i.e., tweets the user interacted with. Use parameter `id` to specify userid (e.g., from `top/users` above). Sample invocation:
++ `tweetHashtagGraph/topTweets`: queries for the top tweets in terms of tweet creation. Use parameter `k` to specify number of results to return (default ten). Sample invocation:
 
 ```
-curl http://localhost:8888/edges/users?id=xxx
+curl http://localhost:8888/tweetHashtagGraph/topTweets/topTweets?k=5
 ```
 
-Note that the current demo program does not illustrate actual recommendation algorithms because the public sample stream API is too sparse in terms of interactions to give good results. We are working on alternative demos that will highlight GraphJet's recommendation algorithms.
++ `tweetHashtagGraph/topHashtags`: queries for the top hashtags in terms of tweet creation.  Use parameter `k` to specify number of results to return (default ten). Sample invocation:
 
+```
+curl http://localhost:8888/tweetHashtagGraph/topHashtags?k=5
+```
+
++ `userTweetGraphEdges/tweets`: queries for the edges incident to a particular tweet in the user-tweet graph, i.e., users who have interacted with the tweet. Use parameter `id` to specify tweetid (e.g., from `userTweetGraph/topTweets` above). Sample invocation:
+
+```
+curl http://localhost:8888/userTweetGraphEdges/tweets?id=xxx
+```
+
++ `userTweetGraphEdges/users`: queries for the edges incident to a particular user in the user-tweet graph, i.e., tweets the user interacted with. Use parameter `id` to specify userid (e.g., from `userTweetGraph/topUsers` above). Sample invocation:
+
+```
+curl http://localhost:8888/userTweetGraphEdges/users?id=xxx
+```
+
++ `tweetHashtagGraphEdges/tweets`: queries for the edges incident to a particular tweet in the tweet-hashtag graph, i.e., hashtags which are contained within the tweet. Use parameter `id` to specify tweetid (e.g., from `tweetHashtagGraph/topTweets` above). Sample invocation:
+
+```
+curl http://localhost:8888/tweetHashtagGraphEdges/tweets?id=xxx
+```
+
++ `tweetHashtagGraphEdges/hashtags`: queries for the edges incident to a particular hashtag hashtag in the tweet-hashtag graph, i.e., tweets the given hashtag is contained in. Use parameter `id` to specify hashtagid (e.g., from `tweetHashtagGraph/topHashtags` above). Sample invocation:
+
+```
+curl http://localhost:8888/userTweetGraphEdges/users?id=xxx
+```
+Note that the current demo program does not illustrate actual recommendation algorithms because the public sample stream API is too sparse in terms of interactions to give good results. The following endpoint offers related hashtags given an input hashtag:
+
++ `similarHashtags`: computes similar hashtag to the input hashtag based on real time data. Use parameter `hashtag` to specify hashtag (e.g., from `tweetHashtagGraph/topHashtags` above). Sample invocation:
+
+```
+curl http://localhost:8888/similarHashtags?hashtag=trump&k=10
+```
 
 # License
 

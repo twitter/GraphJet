@@ -29,6 +29,7 @@ import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
 import org.kohsuke.args4j.ParserProperties;
+import twitter4j.HashtagEntity;
 import twitter4j.StallWarning;
 import twitter4j.Status;
 import twitter4j.StatusDeletionNotice;
@@ -101,18 +102,27 @@ public class TwitterStreamReader {
     }
 
     final Date demoStart = new Date();
-    final MultiSegmentPowerLawBipartiteGraph bigraph =
+    final MultiSegmentPowerLawBipartiteGraph userTweetBigraph =
         new MultiSegmentPowerLawBipartiteGraph(args.maxSegments, args.maxEdgesPerSegment,
             args.leftSize, args.leftDegree, args.leftPowerLawExponent,
             args.rightSize, args.rightDegree, args.rightPowerLawExponent,
             new IdentityEdgeTypeMask(),
             new NullStatsReceiver());
 
-    // Note that we're keeping track of the nodes on the left and right side externally, apart from the bigraph,
+    final MultiSegmentPowerLawBipartiteGraph tweetHashtagBigraph =
+        new MultiSegmentPowerLawBipartiteGraph(args.maxSegments, args.maxEdgesPerSegment,
+            args.leftSize, args.leftDegree, args.leftPowerLawExponent,
+            args.rightSize, args.rightDegree, args.rightPowerLawExponent,
+            new IdentityEdgeTypeMask(),
+            new NullStatsReceiver());
+
+
+    // Note that we're keeping track of the nodes on the left and right sides externally, apart from the bigraphs,
     // because the bigraph currently does not provide an API for enumerating over nodes. Currently, this is liable to
     // running out of memory, but this is fine for the demo.
     Long2ObjectOpenHashMap<String> users = new Long2ObjectOpenHashMap<>();
     LongOpenHashSet tweets = new LongOpenHashSet();
+    Long2ObjectOpenHashMap<String> hashtags = new Long2ObjectOpenHashMap<>();
     // It is accurate of think of these two data structures as holding all users and tweets observed on the stream since
     // the demo program was started.
 
@@ -120,11 +130,14 @@ public class TwitterStreamReader {
       long statusCnt = 0;
 
       public void onStatus(Status status) {
+
         String screenname = status.getUser().getScreenName();
         long userId = status.getUser().getId();
-        long tweetId = status.isRetweet() ? status.getRetweetedStatus().getId() : status.getId();
+        long tweetId = status.getId();
+        long resolvedTweetId = status.isRetweet() ? status.getRetweetedStatus().getId() : status.getId();
+        HashtagEntity[] hashtagEntities = status.getHashtagEntities();
 
-        bigraph.addEdge(userId, tweetId, (byte) 0);
+        userTweetBigraph.addEdge(userId, resolvedTweetId, (byte) 0);
 
         if (!users.containsKey(userId)) {
           users.put(userId, screenname);
@@ -133,7 +146,18 @@ public class TwitterStreamReader {
         if (!tweets.contains(tweetId)) {
           tweets.add(tweetId);
         }
+        if (!tweets.contains(resolvedTweetId)) {
+          tweets.add(resolvedTweetId);
+        }
 
+        for (HashtagEntity entity: hashtagEntities) {
+          long hashtagHash = (long)entity.getText().toLowerCase().hashCode();
+          tweetHashtagBigraph.addEdge(tweetId, hashtagHash, (byte) 0);
+          if (!hashtags.containsKey(hashtagHash)) {
+            hashtags.put(hashtagHash, entity.getText().toLowerCase());
+          }
+	    }
+       
         statusCnt++;
 
         // Note that status updates are currently performed synchronously (i.e., blocking). Best practices dictate that
@@ -144,28 +168,29 @@ public class TwitterStreamReader {
         if (statusCnt % args.minorUpdateInterval == 0) {
           long duration = (new Date().getTime() - demoStart.getTime()) / 1000;
 
-          System.out.println(String.format("%tc: %,d statuses, %,d unique users, %,d unique tweets (observed); " +
+          System.out.println(String.format("%tc: %,d statuses, %,d unique tweets, %,d unique hashtags (observed); " +
               "%.2f edges/s; totalMemory(): %,d bytes, freeMemory(): %,d bytes",
-              new Date(), statusCnt, users.size(), tweets.size(), (float) statusCnt / duration,
+              new Date(), statusCnt, tweets.size(), hashtags.size(), (float) statusCnt / duration,
               Runtime.getRuntime().totalMemory(), Runtime.getRuntime().freeMemory()));
         }
 
         // Major status update: iterate over right and left nodes.
         if (statusCnt % args.majorUpdateInterval == 0 ) {
           int leftCnt = 0;
-          LongIterator leftIter = users.keySet().iterator();
+          LongIterator leftIter = tweets.iterator();
           while (leftIter.hasNext()) {
-            if (bigraph.getLeftNodeDegree(leftIter.nextLong()) != 0)
+            if (userTweetBigraph.getLeftNodeDegree(leftIter.nextLong()) != 0)
               leftCnt++;
           }
 
           int rightCnt = 0;
-          LongIterator rightIter = tweets.iterator();
+          LongIterator rightIter = hashtags.keySet().iterator();
           while (rightIter.hasNext()) {
-            if (bigraph.getRightNodeDegree(rightIter.nextLong()) != 0)
+            if (userTweetBigraph.getRightNodeDegree(rightIter.nextLong()) != 0)
               rightCnt++;
           }
-          System.out.println(String.format("%tc: Current graph state: %,d left nodes (users), %,d right nodes (tweets)",
+          System.out.println(String.format("%tc: Current user-tweet graph state: %,d left nodes (users), " +
+              "%,d right nodes (tweets)",
               new Date(), leftCnt, rightCnt));
         }
       }
@@ -190,10 +215,23 @@ public class TwitterStreamReader {
     Server jettyServer = new Server(args.port);
     jettyServer.setHandler(context);
 
-    context.addServlet(new ServletHolder(new TopUsersServlet(bigraph, users)), "/top/users");
-    context.addServlet(new ServletHolder(new TopTweetsServlet(bigraph, tweets)), "/top/tweets");
-    context.addServlet(new ServletHolder(new GetEdgesServlet(bigraph, GetEdgesServlet.Side.LEFT)), "/edges/users");
-    context.addServlet(new ServletHolder(new GetEdgesServlet(bigraph, GetEdgesServlet.Side.RIGHT)), "/edges/tweets");
+    context.addServlet(new ServletHolder(new TopUsersServlet(userTweetBigraph, users)),
+            "/userTweetGraph/topUsers");
+    context.addServlet(new ServletHolder(new TopTweetsServlet(userTweetBigraph, tweets,
+            TopTweetsServlet.GraphType.USER_TWEET)),  "/userTweetGraph/topTweets");
+    context.addServlet(new ServletHolder(new TopTweetsServlet(tweetHashtagBigraph, tweets,
+            TopTweetsServlet.GraphType.TWEET_HASHTAG)), "/tweetHashtagGraph/topTweets");
+    context.addServlet(new ServletHolder(new TopHashtagsServlet(tweetHashtagBigraph, hashtags)),
+            "/tweetHashtagGraph/topHashtags");
+    context.addServlet(new ServletHolder(new GetEdgesServlet(userTweetBigraph, GetEdgesServlet.Side.RIGHT)),
+            "/userTweetGraphEdges/users");
+    context.addServlet(new ServletHolder(new GetEdgesServlet(userTweetBigraph, GetEdgesServlet.Side.LEFT)),
+            "/userTweetGraphEdges/tweets");
+    context.addServlet(new ServletHolder(new GetEdgesServlet(tweetHashtagBigraph, GetEdgesServlet.Side.RIGHT)),
+            "/tweetHashtagGraphEdges/tweets");
+    context.addServlet(new ServletHolder(new GetEdgesServlet(tweetHashtagBigraph, GetEdgesServlet.Side.LEFT)),
+            "/tweetHashtagGraphEdges/hashtags");
+    context.addServlet(new ServletHolder(new GetSimilarHashtagsServlet(tweetHashtagBigraph, hashtags)), "/similarHashtags");
 
     System.out.println(String.format("%tc: Starting service on port %d", new Date(), args.port));
     try {
