@@ -12,7 +12,12 @@ After cloning the repo, build as follows (for the impatient, use option `-DskipT
 $ mvn package install
 ```
 
-GraphJet includes a demo that reads from the Twitter public sample stream using the [Twitter4j library](http://twitter4j.org/en/) and maintains an in-memory bipartite graph of user-tweet interactions. It also maintains an in-memory bipartite graph of tweet-hashtag associations according to recent tweet creation. To run the demo, create a file called `twitter4j.properties` in the GraphJet base directory with your Twitter credentials (replace `xxxx` with actual credentials):
+GraphJet includes a demo that reads from the Twitter public sample stream using the [Twitter4j library](http://twitter4j.org/en/) and maintains two separate in-memory bipartite graphs:
+
++ A bipartite graph of user-tweet interactions. The left-hand side vertices represent users, the right-hand side vertices represent tweets, and the edges represent tweet posts and retweets.
++ A bipartite graph of tweet-hashtag contents. The left-hand side vertices represent tweets, the right-hand side vertices represent hashtags, and the edges represent content association (e.g., a tweet contains a hashtag).
+
+To run the demo, create a file called `twitter4j.properties` in the GraphJet base directory with your Twitter credentials (replace `xxxx` with actual credentials):
 
 ```
 oauth.consumerKey=xxxx
@@ -31,7 +36,9 @@ $ mvn exec:java -pl graphjet-demo -Dexec.mainClass=com.twitter.graphjet.demo.Twi
 
 Once the demo starts up, it begins ingesting the Twitter public sample stream. The program will print out a sequence of status messages indicating the internal state of the user-tweet graph and the tweet-hashtag graph.
 
-You can interact with the graph via a REST API, running on port 8888 by default; use ` -Dexec.args="-port xxxx"` to specify a different port. The following calls are available to query the state of the in-memory bipartite graphs:
+You can interact with the graph via a REST API, running on port 8888 by default; use ` -Dexec.args="-port xxxx"` to specify a different port. 
+
+The following calls are available to query the state of the in-memory bipartite graph of user-tweet interactions:
 
 + `userTweetGraph/topTweets`: queries for the top tweets in terms of interactions (retweets). Use parameter `k` to specify number of results to return (default ten). Sample invocation:
 
@@ -43,18 +50,6 @@ curl http://localhost:8888/userTweetGraph/topTweets?k=5
 
 ```
 curl http://localhost:8888/userTweetGraph/topUsers?k=5
-```
-
-+ `tweetHashtagGraph/topTweets`: queries for the top tweets in terms of tweet creation. Use parameter `k` to specify number of results to return (default ten). Sample invocation:
-
-```
-curl http://localhost:8888/tweetHashtagGraph/topTweets/topTweets?k=5
-```
-
-+ `tweetHashtagGraph/topHashtags`: queries for the top hashtags in terms of tweet creation.  Use parameter `k` to specify number of results to return (default ten). Sample invocation:
-
-```
-curl http://localhost:8888/tweetHashtagGraph/topHashtags?k=5
 ```
 
 + `userTweetGraphEdges/tweets`: queries for the edges incident to a particular tweet in the user-tweet graph, i.e., users who have interacted with the tweet. Use parameter `id` to specify tweetid (e.g., from `userTweetGraph/topTweets` above). Sample invocation:
@@ -69,7 +64,9 @@ curl http://localhost:8888/userTweetGraphEdges/tweets?id=xxx
 curl http://localhost:8888/userTweetGraphEdges/users?id=xxx
 ```
 
-+ `tweetHashtagGraphEdges/tweets`: queries for the edges incident to a particular tweet in the tweet-hashtag graph, i.e., hashtags which are contained within the tweet. Use parameter `id` to specify tweetid (e.g., from `tweetHashtagGraph/topTweets` above). Sample invocation:
+The following calls are available to query the state of the in-memory bipartite graph of tweet-hashtag contents:
+
++ `tweetHashtagGraphEdges/tweets`: queries for the edges incident to a particular tweet in the tweet-hashtag graph, i.e., hashtags contained in the tweet. Use parameter `id` to specify tweetid (e.g., from `tweetHashtagGraph/topTweets` above). Sample invocation:
 
 ```
 curl http://localhost:8888/tweetHashtagGraphEdges/tweets?id=xxx
@@ -78,9 +75,22 @@ curl http://localhost:8888/tweetHashtagGraphEdges/tweets?id=xxx
 + `tweetHashtagGraphEdges/hashtags`: queries for the edges incident to a particular hashtag hashtag in the tweet-hashtag graph, i.e., tweets the given hashtag is contained in. Use parameter `id` to specify hashtagid (e.g., from `tweetHashtagGraph/topHashtags` above). Sample invocation:
 
 ```
-curl http://localhost:8888/userTweetGraphEdges/users?id=xxx
+curl http://localhost:8888/tweetHashtagGraphEdges/hashtags?hashtag=xxx
 ```
-Note that the current demo program does not illustrate actual recommendation algorithms because the public sample stream API is too sparse in terms of interactions to give good results. The following endpoint offers related hashtags given an input hashtag:
+
++ `tweetHashtagGraph/topTweets`: queries for the top tweets in terms of hashtags. Use parameter `k` to specify number of results to return (default ten). Sample invocation:
+
+```
+curl http://localhost:8888/tweetHashtagGraph/topTweets?k=5
+```
+
++ `tweetHashtagGraph/topHashtags`: queries for the top hashtags in terms of tweets.  Use parameter `k` to specify number of results to return (default ten). Sample invocation:
+
+```
+curl http://localhost:8888/tweetHashtagGraph/topHashtags?k=5
+```
+
+The demo program does not illustrate actual recommendation algorithms on the user-tweet graph (as is deployed inside Twitter) because the public sample stream API is too sparse in terms of interactions to give good results. Instead, the demo illustrates similarity queries on the tweet-hashtag graph. The following endpoint offers related hashtags given an input hashtag:
 
 + `similarHashtags`: computes similar hashtag to the input hashtag based on real time data. Use parameter `hashtag` to specify hashtag (e.g., from `tweetHashtagGraph/topHashtags` above). Sample invocation:
 
