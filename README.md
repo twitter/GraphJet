@@ -81,7 +81,7 @@ curl http://localhost:8888/tweetHashtagGraphEdges/hashtags?hashtag=xxx
 + `tweetHashtagGraph/topTweets`: queries for the top tweets in terms of hashtags. Use parameter `k` to specify number of results to return (default ten). Sample invocation:
 
 ```
-curl http://localhost:8888/tweetHashtagGraph/topTweets/topTweets?k=5
+curl http://localhost:8888/tweetHashtagGraph/topTweets?k=5
 ```
 
 + `tweetHashtagGraph/topHashtags`: queries for the top hashtags in terms of tweets.  Use parameter `k` to specify number of results to return (default ten). Sample invocation:
