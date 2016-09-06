@@ -2,7 +2,24 @@
 
 [![Build Status](https://travis-ci.com/twitter/GraphJet.svg?token=CCxmTv4ejMPiyx81sXqe&branch=master)](https://travis-ci.com/twitter/GraphJet)
 
-GraphJet is a real-time graph processing library written in Java. It powers a variety of real-time recommendation services within Twitter.
+GraphJet is a real-time graph processing library written in Java that
+maintains a full graph index over a sliding time window in memory on a
+single server. This index supports a variety of graph algorithms
+including personalized recommendation algorithms based on
+collaborative filtering. These algorithms power a variety of real-time
+recommendation services within Twitter, notably content (tweets/URLs)
+recommendations that require collaborative filtering over a
+heterogenous, rapidly evolving graph.
+
+GraphJet is able to support rapid ingestion of edges in an evolving
+graph while concurrently serving lookup queries through a combination
+of compact edge encoding and a dynamic memory allocation scheme. Each
+GraphJet server can ingest up to one million graph edges per second,
+and in steady state, computes up to 500 recommendations per second,
+which translates into several million edge read operations per
+second. More information about the internals of GraphJet can be found
+in the
+[VLDB'16 paper](http://www.vldb.org/pvldb/vol9/p1281-sharma.pdf).
 
 # Quick Start and Example
 
@@ -36,7 +53,7 @@ $ mvn exec:java -pl graphjet-demo -Dexec.mainClass=com.twitter.graphjet.demo.Twi
 
 Once the demo starts up, it begins ingesting the Twitter public sample stream. The program will print out a sequence of status messages indicating the internal state of the user-tweet graph and the tweet-hashtag graph.
 
-You can interact with the graph via a REST API, running on port 8888 by default; use ` -Dexec.args="-port xxxx"` to specify a different port. 
+You can interact with the graph via a REST API, running on port 8888 by default; use ` -Dexec.args="-port xxxx"` to specify a different port.
 
 The following calls are available to query the state of the in-memory bipartite graph of user-tweet interactions:
 
@@ -90,7 +107,13 @@ curl http://localhost:8888/tweetHashtagGraph/topTweets?k=5
 curl http://localhost:8888/tweetHashtagGraph/topHashtags?k=5
 ```
 
-The demo program does not illustrate actual recommendation algorithms on the user-tweet graph (as is deployed inside Twitter) because the public sample stream API is too sparse in terms of interactions to give good results. Instead, the demo illustrates similarity queries on the tweet-hashtag graph. The following endpoint offers related hashtags given an input hashtag:
+The demo program illustrates collaborative filtering via similarity
+queries on the tweet-hashtag graph. Note that the demo does not offer
+personalized recommendation algorithms on the user-tweet graph (as is
+deployed inside Twitter) because the public sample stream API is too
+sparse in terms of interactions to give good results. The following
+endpoint for similarity queries offers related hashtags given an input
+hashtag:
 
 + `similarHashtags`: computes similar hashtag to the input hashtag based on real time data. Use parameter `hashtag` to specify hashtag (e.g., from `tweetHashtagGraph/topHashtags` above). Sample invocation:
 
