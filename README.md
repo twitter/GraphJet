@@ -66,18 +66,6 @@ curl http://localhost:8888/userTweetGraphEdges/users?id=xxx
 
 The following calls are available to query the state of the in-memory bipartite graph of tweet-hashtag contents:
 
-+ `tweetHashtagGraphEdges/tweets`: queries for the edges incident to a particular tweet in the tweet-hashtag graph, i.e., hashtags contained in the tweet. Use parameter `id` to specify tweetid (e.g., from `tweetHashtagGraph/topTweets` above). Sample invocation:
-
-```
-curl http://localhost:8888/tweetHashtagGraphEdges/tweets?id=xxx
-```
-
-+ `tweetHashtagGraphEdges/hashtags`: queries for the edges incident to a particular hashtag hashtag in the tweet-hashtag graph, i.e., tweets the given hashtag is contained in. Use parameter `id` to specify hashtagid (e.g., from `tweetHashtagGraph/topHashtags` above). Sample invocation:
-
-```
-curl http://localhost:8888/tweetHashtagGraphEdges/hashtags?hashtag=xxx
-```
-
 + `tweetHashtagGraph/topTweets`: queries for the top tweets in terms of hashtags. Use parameter `k` to specify number of results to return (default ten). Sample invocation:
 
 ```
@@ -88,6 +76,18 @@ curl http://localhost:8888/tweetHashtagGraph/topTweets?k=5
 
 ```
 curl http://localhost:8888/tweetHashtagGraph/topHashtags?k=5
+```
+
++ `tweetHashtagGraphEdges/tweets`: queries for the edges incident to a particular tweet in the tweet-hashtag graph, i.e., hashtags contained in the tweet. Use parameter `id` to specify tweetid (e.g., from `tweetHashtagGraph/topTweets` above). Sample invocation:
+
+```
+curl http://localhost:8888/tweetHashtagGraphEdges/tweets?id=xxx
+```
+
++ `tweetHashtagGraphEdges/hashtags`: queries for the edges incident to a particular hashtag hashtag in the tweet-hashtag graph, i.e., tweets the given hashtag is contained in. Use parameter `id` to specify hashtag id (e.g., from `tweetHashtagGraph/topHashtags` above). Sample invocation:
+
+```
+curl http://localhost:8888/tweetHashtagGraphEdges/hashtags?id=xxx
 ```
 
 The demo program does not illustrate actual recommendation algorithms on the user-tweet graph (as is deployed inside Twitter) because the public sample stream API is too sparse in terms of interactions to give good results. Instead, the demo illustrates similarity queries on the tweet-hashtag graph. The following endpoint offers related hashtags given an input hashtag:
