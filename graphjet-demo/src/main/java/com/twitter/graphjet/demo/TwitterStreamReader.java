@@ -223,15 +223,16 @@ public class TwitterStreamReader {
             TopTweetsServlet.GraphType.TWEET_HASHTAG)), "/tweetHashtagGraph/topTweets");
     context.addServlet(new ServletHolder(new TopHashtagsServlet(tweetHashtagBigraph, hashtags)),
             "/tweetHashtagGraph/topHashtags");
-    context.addServlet(new ServletHolder(new GetEdgesServlet(userTweetBigraph, GetEdgesServlet.Side.RIGHT)),
-            "/userTweetGraphEdges/users");
     context.addServlet(new ServletHolder(new GetEdgesServlet(userTweetBigraph, GetEdgesServlet.Side.LEFT)),
+            "/userTweetGraphEdges/users");
+    context.addServlet(new ServletHolder(new GetEdgesServlet(userTweetBigraph, GetEdgesServlet.Side.RIGHT)),
             "/userTweetGraphEdges/tweets");
-    context.addServlet(new ServletHolder(new GetEdgesServlet(tweetHashtagBigraph, GetEdgesServlet.Side.RIGHT)),
-            "/tweetHashtagGraphEdges/tweets");
     context.addServlet(new ServletHolder(new GetEdgesServlet(tweetHashtagBigraph, GetEdgesServlet.Side.LEFT)),
+            "/tweetHashtagGraphEdges/tweets");
+    context.addServlet(new ServletHolder(new GetEdgesServlet(tweetHashtagBigraph, GetEdgesServlet.Side.RIGHT)),
             "/tweetHashtagGraphEdges/hashtags");
-    context.addServlet(new ServletHolder(new GetSimilarHashtagsServlet(tweetHashtagBigraph, hashtags)), "/similarHashtags");
+    context.addServlet(new ServletHolder(new GetSimilarHashtagsServlet(tweetHashtagBigraph, hashtags)),
+            "/similarHashtags");
 
     System.out.println(String.format("%tc: Starting service on port %d", new Date(), args.port));
     try {
