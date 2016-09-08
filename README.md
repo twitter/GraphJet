@@ -101,7 +101,7 @@ curl http://localhost:8888/tweetHashtagGraph/topHashtags?k=5
 curl http://localhost:8888/tweetHashtagGraphEdges/tweets?id=xxx
 ```
 
-+ `tweetHashtagGraphEdges/hashtags`: queries for the edges incident to a particular hashtag hashtag in the tweet-hashtag graph, i.e., tweets the given hashtag is contained in. Use parameter `id` to specify hashtag id (e.g., from `tweetHashtagGraph/topHashtags` above). Sample invocation:
++ `tweetHashtagGraphEdges/hashtags`: queries for the edges incident to a particular hashtag in the tweet-hashtag graph, i.e., tweets the given hashtag is contained in. Use parameter `id` to specify hashtagId (e.g., from `tweetHashtagGraph/topHashtags` above). Sample invocation:
 
 ```
 curl http://localhost:8888/tweetHashtagGraphEdges/hashtags?id=xxx
