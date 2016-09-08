@@ -9,7 +9,7 @@ including personalized recommendation algorithms based on
 collaborative filtering. These algorithms power a variety of real-time
 recommendation services within Twitter, notably content (tweets/URLs)
 recommendations that require collaborative filtering over a
-heterogenous, rapidly evolving graph.
+heterogeneous, rapidly evolving graph.
 
 GraphJet is able to support rapid ingestion of edges in an evolving
 graph while concurrently serving lookup queries through a combination
