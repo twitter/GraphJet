@@ -69,13 +69,13 @@ curl http://localhost:8888/userTweetGraph/topTweets?k=5
 curl http://localhost:8888/userTweetGraph/topUsers?k=5
 ```
 
-+ `userTweetGraphEdges/tweets`: queries for the edges incident to a particular tweet in the user-tweet graph, i.e., users who have interacted with the tweet. Use parameter `id` to specify tweetid (e.g., from `userTweetGraph/topTweets` above). Sample invocation:
++ `userTweetGraphEdges/tweets`: queries for the edges incident to a particular tweet in the user-tweet graph, i.e., users who have interacted with the tweet. Use parameter `id` to specify tweetId (e.g., from `userTweetGraph/topTweets` above). Sample invocation:
 
 ```
 curl http://localhost:8888/userTweetGraphEdges/tweets?id=xxx
 ```
 
-+ `userTweetGraphEdges/users`: queries for the edges incident to a particular user in the user-tweet graph, i.e., tweets the user interacted with. Use parameter `id` to specify userid (e.g., from `userTweetGraph/topUsers` above). Sample invocation:
++ `userTweetGraphEdges/users`: queries for the edges incident to a particular user in the user-tweet graph, i.e., tweets the user interacted with. Use parameter `id` to specify userId (e.g., from `userTweetGraph/topUsers` above). Sample invocation:
 
 ```
 curl http://localhost:8888/userTweetGraphEdges/users?id=xxx
@@ -95,7 +95,7 @@ curl http://localhost:8888/tweetHashtagGraph/topTweets?k=5
 curl http://localhost:8888/tweetHashtagGraph/topHashtags?k=5
 ```
 
-+ `tweetHashtagGraphEdges/tweets`: queries for the edges incident to a particular tweet in the tweet-hashtag graph, i.e., hashtags contained in the tweet. Use parameter `id` to specify tweetid (e.g., from `tweetHashtagGraph/topTweets` above). Sample invocation:
++ `tweetHashtagGraphEdges/tweets`: queries for the edges incident to a particular tweet in the tweet-hashtag graph, i.e., hashtags contained in the tweet. Use parameter `id` to specify tweetId (e.g., from `tweetHashtagGraph/topTweets` above). Sample invocation:
 
 ```
 curl http://localhost:8888/tweetHashtagGraphEdges/tweets?id=xxx
