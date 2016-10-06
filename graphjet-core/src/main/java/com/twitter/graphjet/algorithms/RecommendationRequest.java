@@ -26,6 +26,7 @@ public abstract class RecommendationRequest {
   private final long queryNode;
   private final LongSet toBeFiltered;
   private final byte[] socialProofTypes;
+  public static final int MAX_RECOMMENDATION_RESULTS = 1000;
 
   protected RecommendationRequest(
     long queryNode,

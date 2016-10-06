@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
 
 import com.twitter.graphjet.algorithms.NodeInfo;
 import com.twitter.graphjet.algorithms.RecommendationInfo;
+import com.twitter.graphjet.algorithms.RecommendationRequest;
 import com.twitter.graphjet.algorithms.TweetIDMask;
 import com.twitter.graphjet.algorithms.TweetRecommendationInfo;
 import com.twitter.graphjet.bipartite.api.LeftIndexedBipartiteGraph;
@@ -62,8 +63,9 @@ public class SalsaSelectResults<T extends LeftIndexedBipartiteGraph> {
    * Picks the top-k visited nodes in SALSA.
    */
   public SalsaResponse pickTopNodes() {
-    PriorityQueue<NodeInfo> topResults = new PriorityQueue<NodeInfo>(
-        salsaInternalState.getSalsaRequest().getMaxNumResults());
+    int maxNumResults = Math.min(salsaInternalState.getSalsaRequest().getMaxNumResults(),
+      RecommendationRequest.MAX_RECOMMENDATION_RESULTS);
+    PriorityQueue<NodeInfo> topResults = new PriorityQueue<NodeInfo>(maxNumResults);
 
     int numFilteredNodes = 0;
     for (NodeInfo nodeInfo : salsaInternalState.getVisitedRightNodes().values()) {
@@ -76,7 +78,7 @@ public class SalsaSelectResults<T extends LeftIndexedBipartiteGraph> {
       }
       nodeInfo.setWeight(
           nodeInfo.getWeight() / salsaInternalState.getSalsaStats().getNumRHSVisits());
-      addResultToPriorityQueue(topResults, nodeInfo);
+      addResultToPriorityQueue(topResults, nodeInfo, maxNumResults);
     }
 
     List<RecommendationInfo> outputResults =
@@ -148,8 +150,9 @@ public class SalsaSelectResults<T extends LeftIndexedBipartiteGraph> {
 
   private void addResultToPriorityQueue(
       PriorityQueue<NodeInfo> topResults,
-      NodeInfo nodeInfo) {
-    if (topResults.size() < salsaInternalState.getSalsaRequest().getMaxNumResults()) {
+      NodeInfo nodeInfo,
+      int maxNumResults) {
+    if (topResults.size() < maxNumResults) {
       topResults.add(nodeInfo);
     } else if (nodeInfo.getWeight() > topResults.peek().getWeight()) {
       topResults.poll();

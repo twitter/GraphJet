@@ -24,6 +24,7 @@ import java.util.Random;
 
 import com.google.common.collect.Lists;
 
+import com.twitter.graphjet.algorithms.RecommendationRequest;
 import com.twitter.graphjet.algorithms.filters.RelatedTweetFilterChain;
 import com.twitter.graphjet.bipartite.api.BipartiteGraph;
 import com.twitter.graphjet.bipartite.api.EdgeIterator;
@@ -90,7 +91,10 @@ public class RandomMultiGraphNeighbors {
       RelatedTweetFilterChain filterChain) {
     Long2DoubleMap leftSeedNodeWithWeights = request.getLeftSeedNodesWithWeight();
     int maxNumSamples = request.getMaxNumSamples();
-    int maxNumResults = request.getMaxNumResults();
+    int maxNumResults = Math.min(
+      request.getMaxNumResults(),
+      RecommendationRequest.MAX_RECOMMENDATION_RESULTS
+    );
 
     // construct a IndexArray and AliasTableArray to sample from LHS seed nodes
     long[] indexArray = new long[leftSeedNodeWithWeights.size()];

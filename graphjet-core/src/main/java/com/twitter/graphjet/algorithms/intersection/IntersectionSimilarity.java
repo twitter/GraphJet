@@ -24,6 +24,7 @@ import java.util.Random;
 
 import com.google.common.collect.Lists;
 
+import com.twitter.graphjet.algorithms.RecommendationRequest;
 import com.twitter.graphjet.algorithms.SimilarityAlgorithm;
 import com.twitter.graphjet.algorithms.SimilarityInfo;
 import com.twitter.graphjet.algorithms.SimilarityResponse;
@@ -153,8 +154,11 @@ public class IntersectionSimilarity implements
       }
     }
     // finally, normalize and select top neighbors
-    PriorityQueue<SimilarityInfo> topResults = new PriorityQueue<SimilarityInfo>(
-        request.getMaxNumResults());
+    int maxNumResults = Math.min(
+      request.getMaxNumResults(),
+      RecommendationRequest.MAX_RECOMMENDATION_RESULTS
+    );
+    PriorityQueue<SimilarityInfo> topResults = new PriorityQueue<SimilarityInfo>(maxNumResults);
     for (long similarNode : nodeToWeightedCooccurenceCountsMap.keySet()) {
       double cooccurrence = nodeToWeightedCooccurenceCountsMap.get(similarNode);
       int rawCooccurrence = nodeToCooccurrenceCountsMap.get(similarNode);
@@ -167,7 +171,7 @@ public class IntersectionSimilarity implements
           cooccurrence, similarNodeDegree, queryNodeDegree);
       normWeight = Double.isInfinite(normWeight) ? 0 : normWeight;
       double score = cooccurrence * normWeight;
-      if (topResults.size() < request.getMaxNumResults()) {
+      if (topResults.size() < maxNumResults) {
         topResults.add(new SimilarityInfo(similarNode, score, rawCooccurrence, similarNodeDegree));
       } else if (score > topResults.peek().getWeight()) {
         topResults.poll();
