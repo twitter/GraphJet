@@ -123,7 +123,7 @@ public final class TopSecondDegreeByCountTweetRecsGenerator {
     int maxNumResults = request.getMaxNumResultsByType().containsKey(RecommendationType.TWEET)
       ? Math.min(request.getMaxNumResultsByType().get(RecommendationType.TWEET),
                  RecommendationRequest.MAX_RECOMMENDATION_RESULTS)
-      : RecommendationRequest.MAX_RECOMMENDATION_RESULTS;
+      : RecommendationRequest.DEFAULT_RECOMMENDATION_RESULTS;
 
     PriorityQueue<NodeInfo> topResults = new PriorityQueue<NodeInfo>(maxNumResults);
 

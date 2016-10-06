@@ -131,7 +131,7 @@ public final class TopSecondDegreeByCountTweetMetadataRecsGenerator {
       int maxNumResults = request.getMaxNumResultsByType().containsKey(recommendationType)
         ? Math.min(request.getMaxNumResultsByType().get(recommendationType),
                    RecommendationRequest.MAX_RECOMMENDATION_RESULTS)
-        : RecommendationRequest.MAX_RECOMMENDATION_RESULTS;
+        : RecommendationRequest.DEFAULT_RECOMMENDATION_RESULTS;
 
       for (Int2ObjectMap.Entry<TweetMetadataRecommendationInfo> entry
         : visitedMetadata.int2ObjectEntrySet()) {
