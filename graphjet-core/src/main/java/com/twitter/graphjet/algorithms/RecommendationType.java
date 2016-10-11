@@ -21,8 +21,8 @@ public enum RecommendationType {
   HASHTAG(0),       // hashtag metadata type
   URL(1),           // url metadata type
   METADATASIZE(2),  // the size of supported metadata types
-  TWEET(3);         // tweet, not a metadata type
-
+  TWEET(3),         // tweet, not a metadata type
+  USER(4);          // users, in follows, mentions & mediatags
   private final int value;
 
   private RecommendationType(int value) {

@@ -28,6 +28,7 @@ public abstract class RecommendationRequest {
   private final byte[] socialProofTypes;
   public static final int MAX_RECOMMENDATION_RESULTS = 1000;
   public static final int DEFAULT_RECOMMENDATION_RESULTS = 100;
+  public static final int DEFAULT_MIN_USER_SOCIAL_PROOF_SIZE = 1;
 
   protected RecommendationRequest(
     long queryNode,
