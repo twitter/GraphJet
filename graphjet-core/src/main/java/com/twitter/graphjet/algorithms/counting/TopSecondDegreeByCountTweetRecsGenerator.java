@@ -17,11 +17,7 @@
 
 package com.twitter.graphjet.algorithms.counting;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.PriorityQueue;
+import java.util.*;
 
 import com.google.common.collect.Lists;
 
@@ -94,13 +90,35 @@ public final class TopSecondDegreeByCountTweetRecsGenerator {
     return !keep;
   }
 
-  private static boolean isLessThantMinUserSocialProofSize(
+  private static boolean isLessThanMinUserSocialProofSize(
     SmallArrayBasedLongToDoubleMap[] socialProofs,
     int minUserSocialProofSize
   ) {
     boolean keep = false;
     for (int i = 0; i < socialProofs.length; i++) {
       if (socialProofs[i] != null && socialProofs[i].size() >= minUserSocialProofSize) {
+        keep = true;
+        break;
+      }
+    }
+
+    return !keep;
+  }
+
+  private static boolean isLessThanMinUserSocialProofSizeCombined(
+    SmallArrayBasedLongToDoubleMap[] socialProofs,
+    int minUserSocialProofSize,
+    Set<byte[]> socialProofTypeUnions
+  ) {
+    boolean keep = false;
+    for (byte[] socialProofTypeUnion: socialProofTypeUnions) {
+      Set<Long> uniqueNodes = Collections.<Long>emptySet();
+      for (byte socialProofType: socialProofTypeUnion) {
+        if (socialProofs[socialProofType] != null) {
+          uniqueNodes.addAll(new LongArrayList(socialProofs[socialProofType].keys()));
+        }
+      }
+      if (uniqueNodes.size() >= minUserSocialProofSize) {
         keep = true;
         break;
       }
@@ -139,9 +157,10 @@ public final class TopSecondDegreeByCountTweetRecsGenerator {
       if (isTweetSocialProofOnly(nodeInfo.getSocialProofs(), 4 /* tweet social proof type */)) {
         continue;
       }
-      if (isLessThantMinUserSocialProofSize(
-        nodeInfo.getSocialProofs(),
-        minUserSocialProofSize)
+      if (isLessThanMinUserSocialProofSize(nodeInfo.getSocialProofs(), minUserSocialProofSize) &&
+          isLessThanMinUserSocialProofSizeCombined(
+            nodeInfo.getSocialProofs(), minUserSocialProofSize, request.getSocialProofTypeUnions()
+          )
       ) {
         continue;
       }
