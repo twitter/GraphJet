@@ -112,7 +112,7 @@ public final class TopSecondDegreeByCountTweetRecsGenerator {
   ) {
     boolean keep = false;
     for (byte[] socialProofTypeUnion: socialProofTypeUnions) {
-      Set<Long> uniqueNodes = Collections.<Long>emptySet();
+      Set<Long> uniqueNodes = new HashSet<Long>();
       for (byte socialProofType: socialProofTypeUnion) {
         if (socialProofs[socialProofType] != null) {
           uniqueNodes.addAll(new LongArrayList(socialProofs[socialProofType].keys()));

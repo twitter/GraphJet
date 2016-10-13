@@ -17,6 +17,7 @@
 
 package com.twitter.graphjet.algorithms.counting;
 
+import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
@@ -56,6 +57,31 @@ public class TopSecondDegreeByCountRequest extends RecommendationRequest {
    * @param socialProofTypes          is the social proof types to return
    * @param resultFilterChain         is the chain of filters to be applied
    */
+  public TopSecondDegreeByCountRequest(
+    long queryNode,
+    Long2DoubleMap leftSeedNodesWithWeight,
+    LongSet toBeFiltered,
+    Set<RecommendationType> recommendationTypes,
+    Map<RecommendationType, Integer> maxNumResultsByType,
+    int maxSocialProofTypeSize,
+    int maxUserSocialProofSize,
+    int maxTweetSocialProofSize,
+    Map<RecommendationType, Integer> minUserSocialProofSizes,
+    byte[] socialProofTypes,
+    ResultFilterChain resultFilterChain
+  ) {
+    super(queryNode, toBeFiltered, socialProofTypes);
+    this.leftSeedNodesWithWeight = leftSeedNodesWithWeight;
+    this.recommendationTypes = recommendationTypes;
+    this.maxNumResultsByType = maxNumResultsByType;
+    this.maxSocialProofTypeSize = maxSocialProofTypeSize;
+    this.maxUserSocialProofSize = maxUserSocialProofSize;
+    this.maxTweetSocialProofSize = maxTweetSocialProofSize;
+    this.minUserSocialProofSizes = minUserSocialProofSizes;
+    this.resultFilterChain = resultFilterChain;
+    this.socialProofTypeUnions = Collections.emptySet();
+  }
+
   public TopSecondDegreeByCountRequest(
     long queryNode,
     Long2DoubleMap leftSeedNodesWithWeight,
