@@ -21,6 +21,7 @@ import java.util.Random;
 
 import com.twitter.graphjet.bipartite.NodeMetadataLeftIndexedMultiSegmentBipartiteGraph;
 import com.twitter.graphjet.bipartite.NodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraph;
+import com.twitter.graphjet.bipartite.segment.HigherBitsEdgeTypeMask;
 import com.twitter.graphjet.bipartite.segment.IdentityEdgeTypeMask;
 import com.twitter.graphjet.bipartite.segment.LeftRegularBipartiteGraphSegment;
 import com.twitter.graphjet.stats.NullStatsReceiver;
@@ -198,6 +199,47 @@ public final class BipartiteGraphTestHelper {
     );
     nodeMetadataGraph.addEdge(3, 11, (byte) 0, leftNodeMetadata, new int[][]{null, null});
     nodeMetadataGraph.addEdge(3, 1, (byte) 0, leftNodeMetadata, new int[][]{null, null});
+
+    return nodeMetadataGraph;
+  }
+
+  /**
+   * Build a small test NodeMetadataLeftIndexedMultiSegmentBipartiteGraph.
+   *
+   * @return a small test {@link NodeMetadataLeftIndexedMultiSegmentBipartiteGraph}
+   */
+  public static NodeMetadataLeftIndexedMultiSegmentBipartiteGraph
+    buildSmallTestNodeMetadataLeftIndexedMultiSegmentBipartiteGraphWithEdgeTypes() {
+    NodeMetadataLeftIndexedMultiSegmentBipartiteGraph nodeMetadataGraph =
+      new NodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraph(
+        2,
+        10,
+        2,
+        6,
+        2.0,
+        6,
+        2,
+        new HigherBitsEdgeTypeMask(),
+        new NullStatsReceiver()
+      );
+    int[][] leftNodeMetadata = new int[][]{};
+    int[][] rightNodeMetadata = new int[][]{};
+    nodeMetadataGraph.addEdge(1, 2, (byte) 0, leftNodeMetadata, rightNodeMetadata);
+
+    nodeMetadataGraph.addEdge(1, 3, (byte) 1, leftNodeMetadata, rightNodeMetadata);
+    nodeMetadataGraph.addEdge(2, 3, (byte) 1, leftNodeMetadata, rightNodeMetadata);
+    nodeMetadataGraph.addEdge(3, 3, (byte) 1, leftNodeMetadata, rightNodeMetadata);
+
+    nodeMetadataGraph.addEdge(1, 4, (byte) 2, leftNodeMetadata, rightNodeMetadata);
+
+    nodeMetadataGraph.addEdge(1, 5, (byte) 3, leftNodeMetadata, rightNodeMetadata);
+    nodeMetadataGraph.addEdge(2, 5, (byte) 0, leftNodeMetadata, rightNodeMetadata);
+
+    nodeMetadataGraph.addEdge(2, 6, (byte) 0, leftNodeMetadata, rightNodeMetadata);
+    nodeMetadataGraph.addEdge(2, 6, (byte) 1, leftNodeMetadata, rightNodeMetadata);
+
+    nodeMetadataGraph.addEdge(1, 7, (byte) 0, leftNodeMetadata, rightNodeMetadata);
+    nodeMetadataGraph.addEdge(2, 7, (byte) 1, leftNodeMetadata, rightNodeMetadata);
 
     return nodeMetadataGraph;
   }
