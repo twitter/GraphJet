@@ -79,6 +79,45 @@ public class TopSecondDegreeByCountRequest extends RecommendationRequest {
     this.resultFilterChain = resultFilterChain;
   }
 
+  /**
+   * Request constructor for TopSecondDegreeByCount. This constructor neglects maxTweetSocialProofSize,
+   * as it is only dedicated to user recommendation requests.
+   * @param queryNode                 User Id of the requester
+   * @param leftSeedNodesWithWeight   Weighted seed users
+   * @param toBeFiltered              Excluded User Ids
+   * @param recommendationTypes       Type of recommendation, aka "User" recommendation
+   * @param maxNumResultsByType       Maximum number of results per recommendation type
+   * @param maxSocialProofTypeSize    Number of social proof types
+   * @param maxUserSocialProofSize    Maximum number of users used as social proof. Used to limit network traffic
+   * @param minUserSocialProofSizes   Minimum number of users used as social proof. Used to guarantee social proof quality
+   * @param socialProofTypes          Social proof types, masked into a byte array. Types can be Follow, Mention, & Mediatag
+   * @param resultFilterChain         Filter chain to be applied after recommendation computation
+   */
+  public TopSecondDegreeByCountRequest(
+    long queryNode,
+    Long2DoubleMap leftSeedNodesWithWeight,
+    LongSet toBeFiltered,
+    Set<RecommendationType> recommendationTypes,
+    Map<RecommendationType, Integer> maxNumResultsByType,
+    int maxSocialProofTypeSize,
+    int maxUserSocialProofSize,
+    Map<RecommendationType, Integer> minUserSocialProofSizes,
+    byte[] socialProofTypes,
+    ResultFilterChain resultFilterChain
+  ) {
+    super(queryNode, toBeFiltered, socialProofTypes);
+    this.leftSeedNodesWithWeight = leftSeedNodesWithWeight;
+    this.recommendationTypes = recommendationTypes;
+    this.maxNumResultsByType = maxNumResultsByType;
+    this.maxSocialProofTypeSize = maxSocialProofTypeSize;
+    this.maxUserSocialProofSize = maxUserSocialProofSize;
+    this.minUserSocialProofSizes = minUserSocialProofSizes;
+    this.resultFilterChain = resultFilterChain;
+
+    // This constructor is dedicated to user recommendations, tweets are irrelevant
+    this.maxTweetSocialProofSize = 0;
+  }
+
   public Long2DoubleMap getLeftSeedNodesWithWeight() {
     return leftSeedNodesWithWeight;
   }

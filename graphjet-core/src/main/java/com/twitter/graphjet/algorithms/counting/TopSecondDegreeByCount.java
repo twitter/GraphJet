@@ -204,6 +204,7 @@ public class TopSecondDegreeByCount implements
     int numTweetResults = 0;
     int numHashtagResults = 0;
     int numUrlResults = 0;
+    int numUserResults = 0;
     List<RecommendationInfo> recommendations = new ArrayList<RecommendationInfo>();
 
     if (request.getRecommendationTypes().contains(RecommendationType.TWEET)) {
@@ -238,6 +239,16 @@ public class TopSecondDegreeByCount implements
       recommendations.addAll(urlRecommendations);
     }
 
+    if (request.getRecommendationTypes().contains(RecommendationType.USER)) {
+      List<RecommendationInfo> userRecommendations =
+        TopSecondDegreeByCountUserRecsGenerator.generateUserRecs(
+          request,
+          nodeInfosAfterFiltering
+        );
+      numUserResults = userRecommendations.size();
+      recommendations.addAll(userRecommendations);
+    }
+
     LOG.info("TopSecondDegreeByCount: after running algorithm for request_id = "
         + request.getQueryNode()
         + ", we get numDirectNeighbors = "
@@ -258,8 +269,10 @@ public class TopSecondDegreeByCount implements
         + numHashtagResults
         + ", numUrlResults = "
         + numUrlResults
+        + ", numUserResults = "
+        + numUserResults
         + ", totalResults = "
-        + (numTweetResults + numHashtagResults + numUrlResults)
+        + (numTweetResults + numHashtagResults + numUrlResults + numUserResults)
     );
 
     return new TopSecondDegreeByCountResponse(recommendations, topSecondDegreeByCountStats);
