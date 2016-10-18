@@ -1,0 +1,43 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>com.twitter</groupId>
+    <artifactId>graphjet</artifactId>
+    <version>1.0.0</version>
+  </parent>
+
+  <groupId>com.twitter</groupId>
+  <artifactId>graphjet-adapters</artifactId>
+  <version>1.0.0</version>
+  <packaging>jar</packaging>
+  <name>GraphJet Adapters</name>
+  <description>GraphJet is a real-time graph processing library: adapters for other graph systems</description>
+  <url>http://graphjet.io</url>
+
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.12</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.twitter</groupId>
+      <artifactId>graphjet-core</artifactId>
+      <version>1.0.0</version>
+    </dependency>
+    <dependency>
+      <groupId>com.twitter</groupId>
+      <artifactId>cassovary-core_2.10</artifactId>
+      <version>6.4.0</version>
+    </dependency>
+    <dependency>
+      <!-- Cassovary depends on v0.0.37, which isn't found on Maven central. Forcing newer version -->
+      <groupId>com.twitter.common</groupId>
+      <artifactId>metrics</artifactId>
+      <version>0.0.38</version>
+    </dependency>
+  </dependencies>
+</project>
