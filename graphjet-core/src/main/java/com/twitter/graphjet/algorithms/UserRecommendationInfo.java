@@ -21,6 +21,9 @@ import java.util.Map;
 import com.google.common.base.Objects;
 import it.unimi.dsi.fastutil.longs.LongList;
 
+/**
+ * This class specifies user recommendations based on user follow, mention, and mediatag
+ */
 public class UserRecommendationInfo implements RecommendationInfo {
     private final long recommendation;
     private final RecommendationType recommendationType;
