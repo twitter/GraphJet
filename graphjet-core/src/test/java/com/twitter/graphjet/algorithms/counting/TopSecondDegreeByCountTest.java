@@ -189,8 +189,7 @@ public class TopSecondDegreeByCountTest {
     final List<RecommendationInfo> expectedTopResults = new ArrayList<RecommendationInfo>();
     expectedTopResults.add(new TweetRecommendationInfo(3, 3.0, socialProof.get(0)));
     expectedTopResults.add(new TweetRecommendationInfo(5, 2.5, socialProof.get(1)));
-
-
+    
     List<RecommendationInfo> topSecondDegreeByCountResults =
       Lists.newArrayList(topSecondDegreeByCountResponse.getRankedRecommendations());
 
