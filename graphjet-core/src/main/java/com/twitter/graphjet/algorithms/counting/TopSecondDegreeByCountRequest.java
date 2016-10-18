@@ -56,32 +56,8 @@ public class TopSecondDegreeByCountRequest extends RecommendationRequest {
    *                                  type to return
    * @param socialProofTypes          is the social proof types to return
    * @param resultFilterChain         is the chain of filters to be applied
+   * @param socialProofTypeUnions     is the set of groups of social proofs to be combined
    */
-  public TopSecondDegreeByCountRequest(
-    long queryNode,
-    Long2DoubleMap leftSeedNodesWithWeight,
-    LongSet toBeFiltered,
-    Set<RecommendationType> recommendationTypes,
-    Map<RecommendationType, Integer> maxNumResultsByType,
-    int maxSocialProofTypeSize,
-    int maxUserSocialProofSize,
-    int maxTweetSocialProofSize,
-    Map<RecommendationType, Integer> minUserSocialProofSizes,
-    byte[] socialProofTypes,
-    ResultFilterChain resultFilterChain
-  ) {
-    super(queryNode, toBeFiltered, socialProofTypes);
-    this.leftSeedNodesWithWeight = leftSeedNodesWithWeight;
-    this.recommendationTypes = recommendationTypes;
-    this.maxNumResultsByType = maxNumResultsByType;
-    this.maxSocialProofTypeSize = maxSocialProofTypeSize;
-    this.maxUserSocialProofSize = maxUserSocialProofSize;
-    this.maxTweetSocialProofSize = maxTweetSocialProofSize;
-    this.minUserSocialProofSizes = minUserSocialProofSizes;
-    this.resultFilterChain = resultFilterChain;
-    this.socialProofTypeUnions = Collections.emptySet();
-  }
-
   public TopSecondDegreeByCountRequest(
     long queryNode,
     Long2DoubleMap leftSeedNodesWithWeight,
