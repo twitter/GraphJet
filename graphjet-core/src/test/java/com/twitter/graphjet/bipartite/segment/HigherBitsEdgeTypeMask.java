@@ -21,7 +21,7 @@ import com.google.common.base.Strings;
 import com.twitter.graphjet.bipartite.api.EdgeTypeMask;
 
 /**
- * This edge type mask returns the original node id, which means the edge in graph is untyped.
+ * This edge type mask adds the edge type in the highest order bits of the encoded int.
  */
 public class HigherBitsEdgeTypeMask implements EdgeTypeMask {
     private static final int BITS_IN_INT = 32;
