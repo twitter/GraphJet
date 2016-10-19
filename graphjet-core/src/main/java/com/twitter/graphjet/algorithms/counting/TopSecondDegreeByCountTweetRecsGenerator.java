@@ -81,30 +81,30 @@ public final class TopSecondDegreeByCountTweetRecsGenerator {
     SmallArrayBasedLongToDoubleMap[] socialProofs,
     int tweetSocialProofType
   ) {
-    boolean keep = false;
+    boolean lessThan = true;
     for (int i = 0; i < socialProofs.length; i++) {
       if (i != tweetSocialProofType && socialProofs[i] != null) {
-        keep = true;
+        lessThan = false;
         break;
       }
     }
 
-    return !keep;
+    return lessThan;
   }
 
   private static boolean isLessThanMinUserSocialProofSize(
     SmallArrayBasedLongToDoubleMap[] socialProofs,
     int minUserSocialProofSize
   ) {
-    boolean keep = false;
+    boolean lessThan = true;
     for (int i = 0; i < socialProofs.length; i++) {
       if (socialProofs[i] != null && socialProofs[i].size() >= minUserSocialProofSize) {
-        keep = true;
+        lessThan = false;
         break;
       }
     }
 
-    return !keep;
+    return lessThan;
   }
 
   private static boolean socialProofUnionSizeLessThanMin(
@@ -112,8 +112,8 @@ public final class TopSecondDegreeByCountTweetRecsGenerator {
     int minUserSocialProofSize,
     Set<byte[]> socialProofTypeUnions
   ) {
-    boolean keep = false;
-    long socialProofSizeSum;
+    boolean lessThan = true;
+    long socialProofSizeSum = 0;
 
     outerloop:
     for (byte[] socialProofTypeUnion: socialProofTypeUnions) {
@@ -122,14 +122,14 @@ public final class TopSecondDegreeByCountTweetRecsGenerator {
         if (socialProofs[socialProofType] != null) {
           socialProofSizeSum += socialProofs[socialProofType].size();
           if (socialProofSizeSum >= minUserSocialProofSize) {
-            keep = true;
+            lessThan = false;
             break outerloop;
           }
         }
       }
     }
 
-    return !keep;
+    return lessThan;
   }
 
   private static boolean isLessThanMinUserSocialProofSizeCombined(
@@ -137,12 +137,12 @@ public final class TopSecondDegreeByCountTweetRecsGenerator {
     int minUserSocialProofSize,
     Set<byte[]> socialProofTypeUnions
   ) {
-    boolean keep = false;
+    boolean lessThan = true;
     if (socialProofTypeUnions.isEmpty() ||
         // check if the size of any social proof union is greater than minUserSocialProofSize before dedupping
         socialProofUnionSizeLessThanMin(socialProofs, minUserSocialProofSize, socialProofTypeUnions)
     ) {
-      return !keep;
+      return lessThan;
     }
 
     LongSet uniqueNodes = new LongOpenHashSet(minUserSocialProofSize);
@@ -157,7 +157,7 @@ public final class TopSecondDegreeByCountTweetRecsGenerator {
           for (int i = 0; i < socialProofs[socialProofType].size(); i++) {
             uniqueNodes.add(socialProofs[socialProofType].keys()[i]);
             if (uniqueNodes.size() >= minUserSocialProofSize) {
-              keep = true;
+              lessThan = false;
               break outerloop;
             }
           }
@@ -165,7 +165,7 @@ public final class TopSecondDegreeByCountTweetRecsGenerator {
       }
     }
 
-    return !keep;
+    return lessThan;
   }
 
   /**
