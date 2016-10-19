@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-
 package com.twitter.graphjet.bipartite;
 
 import com.twitter.graphjet.bipartite.api.EdgeTypeMask;
@@ -28,7 +27,7 @@ import com.twitter.graphjet.stats.StatsReceiver;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 
 /**
- * This creates a multi-segment bipartite graph where each segment is a
+ * A multi-segment bipartite graph where each segment is a
  * {@link com.twitter.graphjet.bipartite.segment.PowerLawBipartiteGraphSegment}.
  *
  * This class is thread-safe as the underlying
@@ -37,28 +36,22 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
  */
 public class MultiSegmentPowerLawBipartiteGraph extends MultiSegmentBipartiteGraph {
   /**
-   * Create a multi-segment bipartite graph with both the left and right sides being power-law.
+   * Create a multi-segment bipartite graph where both the left and right degrees are characterized by power laws.
    *
-   * @param maxNumSegments           is the maximum number of segments we'll add to the graph.
-   *                                 At that point, the oldest segments will start getting dropped
-   * @param maxNumEdgesPerSegment    determines when the implementation decides to fork off a
-   *                                 new segment
-   * @param expectedNumLeftNodes     is the expected number of left nodes that would be inserted in
-   *                                 the segment
-   * @param expectedMaxLeftDegree    is the maximum degree expected for any left node
-   * @param leftPowerLawExponent     is the exponent of the LHS power-law graph. see
-   *                                  {@link
-   *                                    com.twitter.graphjet.bipartite.edgepool.PowerLawDegreeEdgePool}
-   *                                 for details
-   * @param expectedNumRightNodes    is the expected number of right nodes that would be inserted in
-   *                                 the segment
-   * @param expectedMaxRightDegree   is the maximum degree expected for any right node
-   * @param rightPowerLawExponent    is the exponent of the RHS power-law graph. see
-   *                                  {@link
-   *                                    com.twitter.graphjet.bipartite.edgepool.PowerLawDegreeEdgePool}
-   *                                 for details
-   * @param edgeTypeMask             is the mask to encode edge type into integer node id
-   * @param statsReceiver            tracks the internal stats
+   * @param maxNumSegments           the maximum number of segments in the graph, after which the oldest segment will
+   *                                 be dropped
+   * @param maxNumEdgesPerSegment    the maximum number of edges in each segment, after which a new segment will be
+   *                                 created
+   * @param expectedNumLeftNodes     the expected number of left nodes in each segment
+   * @param expectedMaxLeftDegree    the expected maximum degree for a left node (soft upper bound)
+   * @param leftPowerLawExponent     the exponent of the power law characterizing the left degree distribution, see
+   *                                 {@link com.twitter.graphjet.bipartite.edgepool.PowerLawDegreeEdgePool}
+   * @param expectedNumRightNodes    the expected number of right nodes in each segment
+   * @param expectedMaxRightDegree   the expected maximum degree for a left node (soft upper bound)
+   * @param rightPowerLawExponent    the exponent of the power law characterizing the left degree distribution, see
+   *                                 {@link com.twitter.graphjet.bipartite.edgepool.PowerLawDegreeEdgePool}
+   * @param edgeTypeMask             the mask to encode edge type into the integer node id
+   * @param statsReceiver            object for tracking internal stats
    */
   public MultiSegmentPowerLawBipartiteGraph(
       int maxNumSegments,
