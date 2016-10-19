@@ -1,3 +1,19 @@
+/**
+ * Copyright 2016 Twitter. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.twitter.graphjet.adapter.cassovary;
 
 import org.junit.Test;
@@ -14,9 +30,6 @@ import com.twitter.graphjet.bipartite.api.EdgeIterator;
 public class CassovaryOutIndexedDirectedGraphTest {
   @Test
   public void testG6() throws Exception {
-    DirectedGraph<Node> graph = com.twitter.cassovary.graph.TestGraphs.g6_onlyout();
-    System.out.println(graph.toString());
-
     CassovaryOutIndexedDirectedGraph g = new CassovaryOutIndexedDirectedGraph(TestGraphs.g6_onlyout());
     assertEquals(3, g.getOutDegree(10));
     assertEquals(2, g.getOutDegree(11));
@@ -63,5 +76,47 @@ public class CassovaryOutIndexedDirectedGraphTest {
   @Test(expected=IncompatibleCassovaryGraphException.class)
   public void testIncompatibleGraph2() throws Exception {
     CassovaryOutIndexedDirectedGraph g = new CassovaryOutIndexedDirectedGraph(TestGraphs.g6());
+  }
+
+  @Test
+  public void testSkipping() throws Exception {
+    CassovaryOutIndexedDirectedGraph g = new CassovaryOutIndexedDirectedGraph(TestGraphs.g6_onlyout());
+    // node 10 -> 11, 12, 13
+
+    EdgeIterator iter = g.getOutEdges(10);
+    assertEquals(true, iter.hasNext());
+    assertEquals(11, iter.nextLong());
+    assertEquals(true, iter.hasNext());
+    assertEquals(1, iter.skip(1));
+    assertEquals(true, iter.hasNext());
+    assertEquals(13, iter.nextLong());
+    assertEquals(false, iter.hasNext());
+
+    iter = g.getOutEdges(10);
+    assertEquals(true, iter.hasNext());
+    assertEquals(1, iter.skip(1));
+    assertEquals(true, iter.hasNext());
+    assertEquals(12, iter.nextLong());
+    assertEquals(1, iter.skip(1));
+    assertEquals(false, iter.hasNext());
+
+    iter = g.getOutEdges(10);
+    assertEquals(true, iter.hasNext());
+    assertEquals(3, iter.skip(10));
+    assertEquals(false, iter.hasNext());
+
+    iter = g.getOutEdges(10);
+    assertEquals(true, iter.hasNext());
+    assertEquals(11, iter.nextLong());
+    assertEquals(true, iter.hasNext());
+    assertEquals(2, iter.skip(10));
+    assertEquals(false, iter.hasNext());
+
+    iter = g.getOutEdges(10);
+    assertEquals(true, iter.hasNext());
+    assertEquals(2, iter.skip(2));
+    assertEquals(true, iter.hasNext());
+    assertEquals(13, iter.nextLong());
+    assertEquals(false, iter.hasNext());
   }
 }
