@@ -109,6 +109,25 @@ public final class TopSecondDegreeByCountTweetRecsGenerator {
 
   private static boolean isLessThanMinUserSocialProofSizeCombined(
     SmallArrayBasedLongToDoubleMap[] socialProofs,
+    int minUserSocialProofSize
+  ) {
+    boolean keep = false;
+    long socialProofSizeSum = 0;
+    for (int i = 0; i < socialProofs.length; i++) {
+      if (socialProofs[i] != null) {
+        socialProofSizeSum += socialProofs[i].size();
+        if (socialProofSizeSum >= minUserSocialProofSize) {
+          keep = true;
+          break;
+        }
+      }
+    }
+
+    return !keep;
+  }
+
+  private static boolean isLessThanMinUserSocialProofSizeDeduppedUnions(
+    SmallArrayBasedLongToDoubleMap[] socialProofs,
     int minUserSocialProofSize,
     Set<byte[]> socialProofTypeUnions
   ) {
@@ -159,17 +178,21 @@ public final class TopSecondDegreeByCountTweetRecsGenerator {
         ? request.getMinUserSocialProofSizes().get(RecommendationType.TWEET)
         : MIN_USER_SOCIAL_PROOF_SIZE;
 
-    // handling two specific rules of tweet recommendations
-    // 1. do not return tweet recommendations with only Tweet social proofs.
-    // 2. do not return social proofs less than minUserSocialProofSizeForTweetRecs.
+    // handling specific rules of tweet recommendations
     for (NodeInfo nodeInfo : nodeInfoList) {
+      // do not return tweet recommendations with only Tweet social proofs.
       if (isTweetSocialProofOnly(nodeInfo.getSocialProofs(), 4 /* tweet social proof type */)) {
         continue;
       }
-      if (isLessThanMinUserSocialProofSize(nodeInfo.getSocialProofs(), minUserSocialProofSize) &&
-          isLessThanMinUserSocialProofSizeCombined(
-            nodeInfo.getSocialProofs(), minUserSocialProofSize, request.getSocialProofTypeUnions()
-          )
+      // return if any social proof is greater than or equal to minUserSocialProofSize.
+      if (isLessThanMinUserSocialProofSize(nodeInfo.getSocialProofs(), minUserSocialProofSize) && (
+            // do not return if the total of all social proof sizes is less than minUserSocialProofSize.
+            isLessThanMinUserSocialProofSizeCombined(nodeInfo.getSocialProofs(), minUserSocialProofSize) ||
+            // do not return if social proof sizes of all dedupped unions is less than minUserSocialProofSize.
+            isLessThanMinUserSocialProofSizeDeduppedUnions(
+              nodeInfo.getSocialProofs(), minUserSocialProofSize, request.getSocialProofTypeUnions()
+            )
+         )
       ) {
         continue;
       }
