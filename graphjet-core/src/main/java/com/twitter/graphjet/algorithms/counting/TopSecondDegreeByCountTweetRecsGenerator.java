@@ -31,6 +31,8 @@ import com.twitter.graphjet.hashing.SmallArrayBasedLongToDoubleMap;
 
 import it.unimi.dsi.fastutil.longs.LongArrayList;
 import it.unimi.dsi.fastutil.longs.LongList;
+import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
+import it.unimi.dsi.fastutil.longs.LongSet;
 
 public final class TopSecondDegreeByCountTweetRecsGenerator {
   private static final int MIN_USER_SOCIAL_PROOF_SIZE = 1;
@@ -111,21 +113,23 @@ public final class TopSecondDegreeByCountTweetRecsGenerator {
     Set<byte[]> socialProofTypeUnions
   ) {
     boolean keep = false;
+    LongSet uniqueNodes = new LongOpenHashSet(minUserSocialProofSize);
 
+    outerloop:
     for (byte[] socialProofTypeUnion: socialProofTypeUnions) {
-      Set<Long> uniqueNodes = new HashSet<Long>();
+      // Clear removes all elements, but does not change the size of the set.
+      // Thus, we only use one LongOpenHashSet with at most a size of 2*minUserSocialProofSize
+      uniqueNodes.clear();
       for (byte socialProofType: socialProofTypeUnion) {
-        SmallArrayBasedLongToDoubleMap socialProof = socialProofs[socialProofType];
-        if (socialProof != null) {
-          long[] keys = socialProof.keys();
-          for (int i = 0; i < socialProof.size(); i++) {
-            uniqueNodes.add(keys[i]);
+        if (socialProofs[socialProofType] != null) {
+          for (int i = 0; i < socialProofs[socialProofType].size(); i++) {
+            uniqueNodes.add(socialProofs[socialProofType].keys()[i]);
+            if (uniqueNodes.size() >= minUserSocialProofSize) {
+              keep = true;
+              break outerloop;
+            }
           }
         }
-      }
-      if (uniqueNodes.size() >= minUserSocialProofSize) {
-        keep = true;
-        break;
       }
     }
 
