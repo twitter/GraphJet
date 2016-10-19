@@ -107,18 +107,24 @@ public final class TopSecondDegreeByCountTweetRecsGenerator {
     return !keep;
   }
 
-  private static boolean isLessThanMinUserSocialProofSizeCombined(
+  private static boolean socialProofUnionSizeLessThanMin(
     SmallArrayBasedLongToDoubleMap[] socialProofs,
-    int minUserSocialProofSize
+    int minUserSocialProofSize,
+    Set<byte[]> socialProofTypeUnions
   ) {
     boolean keep = false;
-    long socialProofSizeSum = 0;
-    for (int i = 0; i < socialProofs.length; i++) {
-      if (socialProofs[i] != null) {
-        socialProofSizeSum += socialProofs[i].size();
-        if (socialProofSizeSum >= minUserSocialProofSize) {
-          keep = true;
-          break;
+    long socialProofSizeSum;
+
+    outerloop:
+    for (byte[] socialProofTypeUnion: socialProofTypeUnions) {
+      socialProofSizeSum = 0;
+      for (byte socialProofType: socialProofTypeUnion) {
+        if (socialProofs[socialProofType] != null) {
+          socialProofSizeSum += socialProofs[socialProofType].size();
+          if (socialProofSizeSum >= minUserSocialProofSize) {
+            keep = true;
+            break outerloop;
+          }
         }
       }
     }
@@ -126,12 +132,19 @@ public final class TopSecondDegreeByCountTweetRecsGenerator {
     return !keep;
   }
 
-  private static boolean isLessThanMinUserSocialProofSizeDeduppedUnions(
+  private static boolean isLessThanMinUserSocialProofSizeCombined(
     SmallArrayBasedLongToDoubleMap[] socialProofs,
     int minUserSocialProofSize,
     Set<byte[]> socialProofTypeUnions
   ) {
     boolean keep = false;
+    if (socialProofTypeUnions.isEmpty() ||
+        // check if the size of any social proof union is greater than minUserSocialProofSize before dedupping
+        socialProofUnionSizeLessThanMin(socialProofs, minUserSocialProofSize, socialProofTypeUnions)
+    ) {
+      return !keep;
+    }
+
     LongSet uniqueNodes = new LongOpenHashSet(minUserSocialProofSize);
 
     outerloop:
@@ -184,15 +197,12 @@ public final class TopSecondDegreeByCountTweetRecsGenerator {
       if (isTweetSocialProofOnly(nodeInfo.getSocialProofs(), 4 /* tweet social proof type */)) {
         continue;
       }
-      // return if any social proof is greater than or equal to minUserSocialProofSize.
-      if (isLessThanMinUserSocialProofSize(nodeInfo.getSocialProofs(), minUserSocialProofSize) && (
-            // do not return if the total of all social proof sizes is less than minUserSocialProofSize.
-            isLessThanMinUserSocialProofSizeCombined(nodeInfo.getSocialProofs(), minUserSocialProofSize) ||
-            // do not return if social proof sizes of all dedupped unions is less than minUserSocialProofSize.
-            isLessThanMinUserSocialProofSizeDeduppedUnions(
-              nodeInfo.getSocialProofs(), minUserSocialProofSize, request.getSocialProofTypeUnions()
-            )
-         )
+      // do not return if size of each social proof is less than minUserSocialProofSize.
+      if (isLessThanMinUserSocialProofSize(nodeInfo.getSocialProofs(), minUserSocialProofSize) &&
+          // do not return if size of each social proof union is less than minUserSocialProofSize.
+          isLessThanMinUserSocialProofSizeCombined(
+            nodeInfo.getSocialProofs(), minUserSocialProofSize, request.getSocialProofTypeUnions()
+          )
       ) {
         continue;
       }
