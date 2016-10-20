@@ -17,11 +17,7 @@
 
 package com.twitter.graphjet.algorithms.counting;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.PriorityQueue;
+import java.util.*;
 
 import com.google.common.collect.Lists;
 
@@ -35,6 +31,8 @@ import com.twitter.graphjet.hashing.SmallArrayBasedLongToDoubleMap;
 
 import it.unimi.dsi.fastutil.longs.LongArrayList;
 import it.unimi.dsi.fastutil.longs.LongList;
+import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
+import it.unimi.dsi.fastutil.longs.LongSet;
 
 public final class TopSecondDegreeByCountTweetRecsGenerator {
   private static final int MIN_USER_SOCIAL_PROOF_SIZE = 1;
@@ -83,30 +81,91 @@ public final class TopSecondDegreeByCountTweetRecsGenerator {
     SmallArrayBasedLongToDoubleMap[] socialProofs,
     int tweetSocialProofType
   ) {
-    boolean keep = false;
+    boolean lessThan = true;
     for (int i = 0; i < socialProofs.length; i++) {
       if (i != tweetSocialProofType && socialProofs[i] != null) {
-        keep = true;
+        lessThan = false;
         break;
       }
     }
 
-    return !keep;
+    return lessThan;
   }
 
-  private static boolean isLessThantMinUserSocialProofSize(
+  private static boolean isLessThanMinUserSocialProofSize(
     SmallArrayBasedLongToDoubleMap[] socialProofs,
     int minUserSocialProofSize
   ) {
-    boolean keep = false;
+    boolean lessThan = true;
     for (int i = 0; i < socialProofs.length; i++) {
       if (socialProofs[i] != null && socialProofs[i].size() >= minUserSocialProofSize) {
-        keep = true;
+        lessThan = false;
         break;
       }
     }
 
-    return !keep;
+    return lessThan;
+  }
+
+  private static boolean socialProofUnionSizeLessThanMin(
+    SmallArrayBasedLongToDoubleMap[] socialProofs,
+    int minUserSocialProofSize,
+    Set<byte[]> socialProofTypeUnions
+  ) {
+    boolean lessThan = true;
+    long socialProofSizeSum = 0;
+
+    outerloop:
+    for (byte[] socialProofTypeUnion: socialProofTypeUnions) {
+      socialProofSizeSum = 0;
+      for (byte socialProofType: socialProofTypeUnion) {
+        if (socialProofs[socialProofType] != null) {
+          socialProofSizeSum += socialProofs[socialProofType].size();
+          if (socialProofSizeSum >= minUserSocialProofSize) {
+            lessThan = false;
+            break outerloop;
+          }
+        }
+      }
+    }
+
+    return lessThan;
+  }
+
+  private static boolean isLessThanMinUserSocialProofSizeCombined(
+    SmallArrayBasedLongToDoubleMap[] socialProofs,
+    int minUserSocialProofSize,
+    Set<byte[]> socialProofTypeUnions
+  ) {
+    boolean lessThan = true;
+    if (socialProofTypeUnions.isEmpty() ||
+        // check if the size of any social proof union is greater than minUserSocialProofSize before dedupping
+        socialProofUnionSizeLessThanMin(socialProofs, minUserSocialProofSize, socialProofTypeUnions)
+    ) {
+      return lessThan;
+    }
+
+    LongSet uniqueNodes = new LongOpenHashSet(minUserSocialProofSize);
+
+    outerloop:
+    for (byte[] socialProofTypeUnion: socialProofTypeUnions) {
+      // Clear removes all elements, but does not change the size of the set.
+      // Thus, we only use one LongOpenHashSet with at most a size of 2*minUserSocialProofSize
+      uniqueNodes.clear();
+      for (byte socialProofType: socialProofTypeUnion) {
+        if (socialProofs[socialProofType] != null) {
+          for (int i = 0; i < socialProofs[socialProofType].size(); i++) {
+            uniqueNodes.add(socialProofs[socialProofType].keys()[i]);
+            if (uniqueNodes.size() >= minUserSocialProofSize) {
+              lessThan = false;
+              break outerloop;
+            }
+          }
+        }
+      }
+    }
+
+    return lessThan;
   }
 
   /**
@@ -132,16 +191,18 @@ public final class TopSecondDegreeByCountTweetRecsGenerator {
         ? request.getMinUserSocialProofSizes().get(RecommendationType.TWEET)
         : MIN_USER_SOCIAL_PROOF_SIZE;
 
-    // handling two specific rules of tweet recommendations
-    // 1. do not return tweet recommendations with only Tweet social proofs.
-    // 2. do not return social proofs less than minUserSocialProofSizeForTweetRecs.
+    // handling specific rules of tweet recommendations
     for (NodeInfo nodeInfo : nodeInfoList) {
+      // do not return tweet recommendations with only Tweet social proofs.
       if (isTweetSocialProofOnly(nodeInfo.getSocialProofs(), 4 /* tweet social proof type */)) {
         continue;
       }
-      if (isLessThantMinUserSocialProofSize(
-        nodeInfo.getSocialProofs(),
-        minUserSocialProofSize)
+      // do not return if size of each social proof is less than minUserSocialProofSize.
+      if (isLessThanMinUserSocialProofSize(nodeInfo.getSocialProofs(), minUserSocialProofSize) &&
+          // do not return if size of each social proof union is less than minUserSocialProofSize.
+          isLessThanMinUserSocialProofSizeCombined(
+            nodeInfo.getSocialProofs(), minUserSocialProofSize, request.getSocialProofTypeUnions()
+          )
       ) {
         continue;
       }
