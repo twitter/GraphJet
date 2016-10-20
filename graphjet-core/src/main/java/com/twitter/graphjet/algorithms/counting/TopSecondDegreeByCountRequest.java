@@ -17,6 +17,7 @@
 
 package com.twitter.graphjet.algorithms.counting;
 
+import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
@@ -37,6 +38,7 @@ public class TopSecondDegreeByCountRequest extends RecommendationRequest {
   private final int maxTweetSocialProofSize;
   private final Map<RecommendationType, Integer> minUserSocialProofSizes;
   private final ResultFilterChain resultFilterChain;
+  private final Set<byte[]> socialProofTypeUnions;
 
   /**
    * The constructor of TopSecondDegreeByCountRequest.
@@ -54,6 +56,7 @@ public class TopSecondDegreeByCountRequest extends RecommendationRequest {
    *                                  type to return
    * @param socialProofTypes          is the social proof types to return
    * @param resultFilterChain         is the chain of filters to be applied
+   * @param socialProofTypeUnions     is the set of groups of social proofs to be combined
    */
   public TopSecondDegreeByCountRequest(
     long queryNode,
@@ -66,7 +69,8 @@ public class TopSecondDegreeByCountRequest extends RecommendationRequest {
     int maxTweetSocialProofSize,
     Map<RecommendationType, Integer> minUserSocialProofSizes,
     byte[] socialProofTypes,
-    ResultFilterChain resultFilterChain
+    ResultFilterChain resultFilterChain,
+    Set<byte[]> socialProofTypeUnions
   ) {
     super(queryNode, toBeFiltered, socialProofTypes);
     this.leftSeedNodesWithWeight = leftSeedNodesWithWeight;
@@ -77,6 +81,7 @@ public class TopSecondDegreeByCountRequest extends RecommendationRequest {
     this.maxTweetSocialProofSize = maxTweetSocialProofSize;
     this.minUserSocialProofSizes = minUserSocialProofSizes;
     this.resultFilterChain = resultFilterChain;
+    this.socialProofTypeUnions = socialProofTypeUnions;
   }
 
   /**
@@ -145,6 +150,8 @@ public class TopSecondDegreeByCountRequest extends RecommendationRequest {
   public Map<RecommendationType, Integer> getMinUserSocialProofSizes() {
     return minUserSocialProofSizes;
   }
+
+  public Set<byte[]> getSocialProofTypeUnions() { return socialProofTypeUnions; }
 
   public void resetFilters() {
     if (resultFilterChain != null) {
