@@ -28,8 +28,8 @@ import scala.collection.Seq;
 import scala.Option;
 
 /**
- * A GraphJet wrapper for an out-indexed Cassovary graph. Implements the GraphJet API by delegating to the underlying
- * Cassovary API.
+ * A GraphJet wrapper for an out-indexed Cassovary graph. Implements the GraphJet API by delegating methods to the 
+ * underlying Cassovary API.
  */
 public class CassovaryOutIndexedDirectedGraph implements OutIndexedDirectedGraph {
   // This is the Cassovary graph that's being wrapped.
