@@ -103,8 +103,8 @@
 
   <modules>
     <module>graphjet-core</module>
-    <module>graphjet-demo</module>
     <module>graphjet-adapters</module>
+    <module>graphjet-demo</module>
   </modules>
 
 </project>
