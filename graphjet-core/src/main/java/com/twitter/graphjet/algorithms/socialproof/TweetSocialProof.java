@@ -38,7 +38,7 @@ import it.unimi.dsi.fastutil.longs.LongArraySet;
 import it.unimi.dsi.fastutil.longs.LongSet;
 
 /**
- * TweetSocialProof shares similar logic with the TopSecondDegreeByCount class.
+ * TweetSocialProof shares similar logic with the TopSecondDegreeByCountForTweet class.
  * TweetSocialProof serves request with a seed user set and tweets set. It finds the social proof
  * for given tweets and return an empty map if there is none.
  */

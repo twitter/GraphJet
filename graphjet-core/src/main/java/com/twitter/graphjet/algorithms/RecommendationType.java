@@ -33,7 +33,7 @@ public enum RecommendationType {
     return value;
   }
 
-  private static final RecommendationType[] VALUES = {HASHTAG, URL, METADATASIZE, TWEET};
+  private static final RecommendationType[] VALUES = {HASHTAG, URL, METADATASIZE, TWEET, USER};
 
   public static RecommendationType at(int index) {
     return VALUES[index];

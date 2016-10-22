@@ -18,54 +18,88 @@ package com.twitter.graphjet.algorithms.counting;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.PriorityQueue;
 
 import com.google.common.collect.Lists;
 import com.twitter.graphjet.algorithms.*;
+import com.twitter.graphjet.hashing.SmallArrayBasedLongToDoubleMap;
+import it.unimi.dsi.fastutil.longs.LongList;
 
 public class TopSecondDegreeByCountUserRecsGenerator {
 
-    /**
-     * Generate a list of recommendations based on given list of candidate nodes and the original request
-     * @param request       original request message, contains filtering criteria
-     * @param nodeInfoList  list of candidate nodes
-     * @return              list of {@link UserRecommendationInfo}
-     */
-    public static List<RecommendationInfo> generateUserRecs(
-            TopSecondDegreeByCountRequest request,
-            List<NodeInfo> nodeInfoList) {
+  /**
+   * Generate a list of recommendations based on given list of candidate nodes and the original request
+   * @param request       original request message, contains filtering criteria
+   * @param candidataNodes  list of candidate nodes
+   * @return              list of {@link RecommendationInfoUser}
+   */
+  public static List<RecommendationInfo> generateUserRecs(
+      TopSecondDegreeUserByCountRequest request,
+      List<NodeInfo> candidataNodes) {
 
-        int maxNumResults = RecommendationRequest.DEFAULT_RECOMMENDATION_RESULTS;
-        if (request.getMaxNumResultsByType().containsKey(RecommendationType.USER)) {
-            maxNumResults = request.getMaxNumResultsByType().get(RecommendationType.USER);
-        }
-        PriorityQueue<NodeInfo> topResults = new PriorityQueue<>(maxNumResults);
+    // Recommend at most 100 users
+    int maxNumResults = Math.min(request.getMaxNumResults(),
+        RecommendationRequest.DEFAULT_RECOMMENDATION_RESULTS);
 
-        int minUserSocialProofSize = request.getMinUserSocialProofSizes().containsKey(RecommendationType.USER) ?
-                request.getMinUserSocialProofSizes().get(RecommendationType.USER) :
-                RecommendationRequest.DEFAULT_MIN_USER_SOCIAL_PROOF_SIZE;
+    PriorityQueue<NodeInfo> qualifiedNodes =
+        getQualifiedNodes(candidataNodes, request.getMinUserPerSocialProof(), maxNumResults);
 
-        for (NodeInfo nodeInfo : nodeInfoList) {
-            if (GeneratorUtils.isLessThantMinUserSocialProofSize(nodeInfo.getSocialProofs(), minUserSocialProofSize)) {
-                continue;
-            }
-            GeneratorUtils.addResultToPriorityQueue(topResults, nodeInfo, maxNumResults);
-        }
+    return getRecommendationsFromNodes(request, qualifiedNodes);
+  }
 
-        byte[] validSocialProofs = request.getSocialProofTypes();
-        int maxSocialProofSize = request.getMaxUserSocialProofSize();
+  private static PriorityQueue<NodeInfo> getQualifiedNodes(
+      List<NodeInfo> nodeInfoList,
+      Map<Byte, Integer> minSocialProofSizes,
+      int maxNumResults) {
+    PriorityQueue<NodeInfo> topResults = new PriorityQueue<>(maxNumResults);
 
-        List<RecommendationInfo> outputResults = Lists.newArrayListWithCapacity(topResults.size());
-        while (!topResults.isEmpty()) {
-            NodeInfo nodeInfo = topResults.poll();
-            UserRecommendationInfo userRecs = new UserRecommendationInfo(
-                    TweetIDMask.restore(nodeInfo.getValue()),
-                    nodeInfo.getWeight(),
-                    GeneratorUtils.pickTopSocialProofs(nodeInfo.getSocialProofs(), validSocialProofs, maxSocialProofSize));
-            outputResults.add(userRecs);
-        }
-        Collections.reverse(outputResults);
-
-        return outputResults;
+    for (NodeInfo nodeInfo : nodeInfoList) {
+      if (isQualifiedSocialProof(minSocialProofSizes, nodeInfo.getSocialProofs())) {
+        GeneratorUtils.addResultToPriorityQueue(topResults, nodeInfo, maxNumResults);
+      }
     }
+    return topResults;
+  }
+
+  private static boolean isQualifiedSocialProof(
+      Map<Byte, Integer> minSocialProofSizes,
+      SmallArrayBasedLongToDoubleMap[] socialProofs) {
+    for (int i = 0; i < socialProofs.length; i++) {
+      byte proofType = (byte)i;
+      if (!minSocialProofSizes.containsKey(proofType)) {
+        // if there is no limit on social proof size, qualified
+        continue;
+      }
+      if (socialProofs[proofType].size() < minSocialProofSizes.get(proofType)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  private static  List<RecommendationInfo> getRecommendationsFromNodes(
+      TopSecondDegreeUserByCountRequest request,
+      PriorityQueue<NodeInfo> topNodes) {
+    List<RecommendationInfo> outputResults = Lists.newArrayListWithCapacity(topNodes.size());
+    byte[] validSocialProofs = request.getSocialProofTypes();
+    int maxSocialProofSize = request.getMaxSocialProofTypeSize();
+
+    while (!topNodes.isEmpty()) {
+      NodeInfo nodeInfo = topNodes.poll();
+
+      Map<Byte, LongList> topSocialProofs = GeneratorUtils.pickTopSocialProofs(
+          nodeInfo.getSocialProofs(),
+          validSocialProofs,
+          maxSocialProofSize);
+
+      RecommendationInfoUser userRecs = new RecommendationInfoUser(
+          TweetIDMask.restore(nodeInfo.getValue()),
+          nodeInfo.getWeight(),
+          topSocialProofs);
+      outputResults.add(userRecs);
+    }
+    Collections.reverse(outputResults);
+    return outputResults;
+  }
 }

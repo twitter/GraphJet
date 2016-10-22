@@ -23,12 +23,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.twitter.graphjet.algorithms.NodeInfo;
-import com.twitter.graphjet.algorithms.RecommendationInfo;
-import com.twitter.graphjet.algorithms.RecommendationRequest;
-import com.twitter.graphjet.algorithms.RecommendationType;
-import com.twitter.graphjet.algorithms.TweetIDMask;
-import com.twitter.graphjet.algorithms.TweetMetadataRecommendationInfo;
+import com.twitter.graphjet.algorithms.*;
+import com.twitter.graphjet.algorithms.RecommendationInfoTweetMetadata;
 import com.twitter.graphjet.hashing.SmallArrayBasedLongToDoubleMap;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
@@ -43,7 +39,7 @@ public final class TopSecondDegreeByCountTweetMetadataRecsGenerator {
 
   private static void addToSocialProof(
     NodeInfo nodeInfo,
-    TweetMetadataRecommendationInfo recommendationInfo,
+    RecommendationInfoTweetMetadata recommendationInfo,
     int maxUserSocialProofSize,
     int maxTweetSocialProofSize
   ) {
@@ -81,11 +77,11 @@ public final class TopSecondDegreeByCountTweetMetadataRecsGenerator {
    * @return a list of recommendations of the recommendation type
    */
   public static List<RecommendationInfo> generateTweetMetadataRecs(
-    TopSecondDegreeByCountRequest request,
+    TopSecondDegreeTweetByCountRequest request,
     List<NodeInfo> nodeInfoList,
     RecommendationType recommendationType
   ) {
-    Int2ObjectMap<TweetMetadataRecommendationInfo> visitedMetadata = null;
+    Int2ObjectMap<RecommendationInfoTweetMetadata> visitedMetadata = null;
     List<RecommendationInfo> results = new ArrayList<RecommendationInfo>();
 
     for (NodeInfo nodeInfo : nodeInfoList) {
@@ -93,14 +89,14 @@ public final class TopSecondDegreeByCountTweetMetadataRecsGenerator {
 
       if (metadata != null) {
         if (visitedMetadata == null) {
-          visitedMetadata = new Int2ObjectOpenHashMap<TweetMetadataRecommendationInfo>();
+          visitedMetadata = new Int2ObjectOpenHashMap<RecommendationInfoTweetMetadata>();
         }
         for (int j = 0; j < metadata.length; j++) {
-          TweetMetadataRecommendationInfo recommendationInfo =
+          RecommendationInfoTweetMetadata recommendationInfo =
             visitedMetadata.get(metadata[j]);
 
           if (recommendationInfo == null) {
-            recommendationInfo = new TweetMetadataRecommendationInfo(
+            recommendationInfo = new RecommendationInfoTweetMetadata(
               metadata[j],
               RecommendationType.at(recommendationType.getValue()),
               0,
@@ -121,7 +117,7 @@ public final class TopSecondDegreeByCountTweetMetadataRecsGenerator {
     }
 
     if (visitedMetadata != null) {
-      List<TweetMetadataRecommendationInfo> filtered = null;
+      List<RecommendationInfoTweetMetadata> filtered = null;
 
       int minUserSocialProofSize =
         request.getMinUserSocialProofSizes().containsKey(recommendationType)
@@ -133,7 +129,7 @@ public final class TopSecondDegreeByCountTweetMetadataRecsGenerator {
                    RecommendationRequest.MAX_RECOMMENDATION_RESULTS)
         : RecommendationRequest.DEFAULT_RECOMMENDATION_RESULTS;
 
-      for (Int2ObjectMap.Entry<TweetMetadataRecommendationInfo> entry
+      for (Int2ObjectMap.Entry<RecommendationInfoTweetMetadata> entry
         : visitedMetadata.int2ObjectEntrySet()) {
         // handling one specific rule related to metadata recommendations.
         if (isLessThantMinUserSocialProofSize(
@@ -143,13 +139,13 @@ public final class TopSecondDegreeByCountTweetMetadataRecsGenerator {
         }
 
         if (filtered == null) {
-          filtered = new ArrayList<TweetMetadataRecommendationInfo>();
+          filtered = new ArrayList<RecommendationInfoTweetMetadata>();
         }
         filtered.add(entry.getValue());
       }
 
       if (filtered != null) {
-        // sort the list of TweetMetadataRecommendationInfo in ascending order
+        // sort the list of RecommendationInfoTweetMetadata in ascending order
         // according to their weights
         Collections.sort(filtered);
         int toIndex = Math.min(maxNumResults, filtered.size());

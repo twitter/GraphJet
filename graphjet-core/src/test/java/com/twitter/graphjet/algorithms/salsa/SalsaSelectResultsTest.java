@@ -32,7 +32,7 @@ import com.twitter.graphjet.algorithms.RecommendationInfo;
 import com.twitter.graphjet.algorithms.RequestedSetFilter;
 import com.twitter.graphjet.algorithms.ResultFilter;
 import com.twitter.graphjet.algorithms.ResultFilterChain;
-import com.twitter.graphjet.algorithms.TweetRecommendationInfo;
+import com.twitter.graphjet.algorithms.RecommendationInfoTweet;
 import com.twitter.graphjet.algorithms.salsa.fullgraph.SalsaInternalState;
 import com.twitter.graphjet.bipartite.api.BipartiteGraph;
 import com.twitter.graphjet.stats.NullStatsReceiver;
@@ -105,8 +105,8 @@ public class SalsaSelectResultsTest {
     socialProof.get(1).put((byte) 0, new LongArrayList(new long[]{4}));
 
     final List<RecommendationInfo> expectedTopResults = new ArrayList<RecommendationInfo>();
-    expectedTopResults.add(new TweetRecommendationInfo(4, 0.5, socialProof.get(0)));
-    expectedTopResults.add(new TweetRecommendationInfo(2, 0.3333333333333333, socialProof.get(1)));
+    expectedTopResults.add(new RecommendationInfoTweet(4, 0.5, socialProof.get(0)));
+    expectedTopResults.add(new RecommendationInfoTweet(2, 0.3333333333333333, socialProof.get(1)));
     SalsaStats expectedTopSalsaStats = new SalsaStats(1, 4, 3, 6, 1, 3, 1);
 
     List<RecommendationInfo> salsaResults =
