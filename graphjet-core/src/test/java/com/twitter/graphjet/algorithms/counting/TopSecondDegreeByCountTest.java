@@ -27,9 +27,11 @@ import java.util.Set;
 
 import com.google.common.collect.Lists;
 
-import com.twitter.graphjet.algorithms.UserRecommendationInfo;
-import com.twitter.graphjet.algorithms.counting.request.TopSecondDegreeByCountRequestForTweet;
-import com.twitter.graphjet.algorithms.counting.request.TopSecondDegreeByCountRequestForUser;
+import com.twitter.graphjet.algorithms.counting.user.UserRecommendationInfo;
+import com.twitter.graphjet.algorithms.counting.tweet.TopSecondDegreeByCountRequestForTweet;
+import com.twitter.graphjet.algorithms.counting.user.TopSecondDegreeByCountRequestForUser;
+import com.twitter.graphjet.algorithms.counting.tweet.TopSecondDegreeByCountForTweet;
+import com.twitter.graphjet.algorithms.counting.user.TopSecondDegreeByCountForUser;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -41,7 +43,7 @@ import com.twitter.graphjet.algorithms.RecommendationType;
 import com.twitter.graphjet.algorithms.RequestedSetFilter;
 import com.twitter.graphjet.algorithms.ResultFilter;
 import com.twitter.graphjet.algorithms.ResultFilterChain;
-import com.twitter.graphjet.algorithms.TweetRecommendationInfo;
+import com.twitter.graphjet.algorithms.counting.tweet.TweetRecommendationInfo;
 import com.twitter.graphjet.bipartite.NodeMetadataLeftIndexedMultiSegmentBipartiteGraph;
 import com.twitter.graphjet.stats.NullStatsReceiver;
 

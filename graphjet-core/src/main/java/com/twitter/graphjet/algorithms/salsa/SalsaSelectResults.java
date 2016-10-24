@@ -32,7 +32,7 @@ import com.twitter.graphjet.algorithms.NodeInfo;
 import com.twitter.graphjet.algorithms.RecommendationInfo;
 import com.twitter.graphjet.algorithms.RecommendationRequest;
 import com.twitter.graphjet.algorithms.TweetIDMask;
-import com.twitter.graphjet.algorithms.TweetRecommendationInfo;
+import com.twitter.graphjet.algorithms.counting.tweet.TweetRecommendationInfo;
 import com.twitter.graphjet.bipartite.api.LeftIndexedBipartiteGraph;
 import com.twitter.graphjet.hashing.SmallArrayBasedLongToDoubleMap;
 

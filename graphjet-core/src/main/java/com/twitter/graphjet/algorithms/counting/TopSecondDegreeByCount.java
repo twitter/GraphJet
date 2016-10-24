@@ -1,9 +1,24 @@
+/**
+ * Copyright 2016 Twitter. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.twitter.graphjet.algorithms.counting;
 
 import com.twitter.graphjet.algorithms.NodeInfo;
 import com.twitter.graphjet.algorithms.RecommendationAlgorithm;
 import com.twitter.graphjet.algorithms.RecommendationStats;
-import com.twitter.graphjet.algorithms.counting.request.TopSecondDegreeByCountRequest;
 import com.twitter.graphjet.bipartite.NodeMetadataLeftIndexedMultiSegmentBipartiteGraph;
 import com.twitter.graphjet.bipartite.NodeMetadataMultiSegmentIterator;
 import com.twitter.graphjet.stats.Counter;
@@ -18,20 +33,20 @@ import java.util.Random;
 
 /**
  * Generates recommended RHS nodes by calculating aggregated weights.
- * Weights are accumulated by weights of LHS nodes whose edges point to RHS nodes
+ * Weights are accumulated by weights of LHS nodes whose edges are incident to RHS nodes
  */
 public abstract class TopSecondDegreeByCount<Request extends TopSecondDegreeByCountRequest,
-                                        Response extends TopSecondDegreeByCountResponse>
-    implements RecommendationAlgorithm<Request, Response> {
+  Response extends TopSecondDegreeByCountResponse>
+  implements RecommendationAlgorithm<Request, Response> {
 
   protected static final Logger LOG = LoggerFactory.getLogger("graph");
   protected static final int MAX_EDGES_PER_NODE = 500;
 
   // Static variables for better memory reuse. Avoids re-allocation on every request
   private final NodeMetadataLeftIndexedMultiSegmentBipartiteGraph leftIndexedBipartiteGraph;
-  private final Long2ObjectMap<NodeInfo> visitedRightNodes;
-  private final List<NodeInfo> nodeInfosAfterFiltering;
   private final Long2ByteMap seenEdgesPerNode;
+  protected final Long2ObjectMap<NodeInfo> visitedRightNodes;
+  protected final List<NodeInfo> nodeInfosAfterFiltering;
   protected final RecommendationStats topSecondDegreeByCountStats;
   protected final StatsReceiver statsReceiver;
   protected final Counter numRequestsCounter;
@@ -50,9 +65,9 @@ public abstract class TopSecondDegreeByCount<Request extends TopSecondDegreeByCo
    * @param statsReceiver             tracks the internal stats
    */
   public TopSecondDegreeByCount(
-      NodeMetadataLeftIndexedMultiSegmentBipartiteGraph leftIndexedBipartiteGraph,
-      int expectedNodesToHit,
-      StatsReceiver statsReceiver) {
+    NodeMetadataLeftIndexedMultiSegmentBipartiteGraph leftIndexedBipartiteGraph,
+    int expectedNodesToHit,
+    StatsReceiver statsReceiver) {
     this.leftIndexedBipartiteGraph = leftIndexedBipartiteGraph;
     this.visitedRightNodes = new Long2ObjectOpenHashMap<>(expectedNodesToHit);
     this.nodeInfosAfterFiltering = new ArrayList<>();
@@ -64,20 +79,23 @@ public abstract class TopSecondDegreeByCount<Request extends TopSecondDegreeByCo
 
   /**
    * Interface method for updating information gathered about each RHS node.
+   * Updates visitedRightNodes
    * @param leftNode                is the LHS node from which traversal initialized
    * @param rightNode               is the RHS node at which traversal arrived
    * @param edgeType                is the edge from which LHS and RHS nodes are connected
    * @param weight                  is the weight contributed to a RHS node in this traversal
    * @param edgeIterator            is the iterator for traversing edges from LHS node
    * @param maxSocialProofTypeSize  is the maximum social proof types to keep
-   * @param collectedRightNodeInfo  is a map of visited nodes, containing their info such as weights
    */
   protected abstract void updateNodeInfo(
-      long leftNode, long rightNode, byte edgeType, double weight,
-      NodeMetadataMultiSegmentIterator edgeIterator, int maxSocialProofTypeSize,
-      Long2ObjectMap<NodeInfo> collectedRightNodeInfo);
+    long leftNode,
+    long rightNode,
+    byte edgeType,
+    double weight,
+    NodeMetadataMultiSegmentIterator edgeIterator,
+    int maxSocialProofTypeSize);
 
-  protected abstract Response generateRecommendationFromNodeInfo(Request request, List<NodeInfo> filteredNodeInfos);
+  protected abstract Response generateRecommendationFromNodeInfo(Request request);
 
   /**
    * Computes recommendations using TopSecondDegreeByCount algorithm.
@@ -90,10 +108,10 @@ public abstract class TopSecondDegreeByCount<Request extends TopSecondDegreeByCo
     numRequestsCounter.incr();
     reset(request);
 
-    collectRightNodeInfo(request, visitedRightNodes);
-    recordIntermediateStats(request.getQueryNode(), visitedRightNodes);
-    filterNodeInfo(request, visitedRightNodes, nodeInfosAfterFiltering);
-    return generateRecommendationFromNodeInfo(request, nodeInfosAfterFiltering);
+    collectRightNodeInfo(request);
+    updateAlgorithmStats(request.getQueryNode(), visitedRightNodes);
+    filterNodeInfo(request, visitedRightNodes);
+    return generateRecommendationFromNodeInfo(request);
   }
 
   private void reset(Request request) {
@@ -104,13 +122,13 @@ public abstract class TopSecondDegreeByCount<Request extends TopSecondDegreeByCo
     topSecondDegreeByCountStats.reset();
   }
 
-  private void collectRightNodeInfo(Request request, Long2ObjectMap<NodeInfo> collectedNodeInfo) {
+  private void collectRightNodeInfo(Request request) {
     for (Long2DoubleMap.Entry entry: request.getLeftSeedNodesWithWeight().long2DoubleEntrySet()) {
       long leftNode = entry.getLongKey();
       double weight = entry.getDoubleValue();
       int numEdgesPerNode = 0;
       NodeMetadataMultiSegmentIterator edgeIterator =
-          (NodeMetadataMultiSegmentIterator) leftIndexedBipartiteGraph.getLeftNodeEdges(leftNode);
+        (NodeMetadataMultiSegmentIterator) leftIndexedBipartiteGraph.getLeftNodeEdges(leftNode);
       seenEdgesPerNode.clear();
 
       if (edgeIterator == null) {
@@ -122,23 +140,26 @@ public abstract class TopSecondDegreeByCount<Request extends TopSecondDegreeByCo
         byte edgeType = edgeIterator.currentEdgeType();
 
         boolean hasSeenRightNodeFromEdge =
-            seenEdgesPerNode.containsKey(rightNode) && seenEdgesPerNode.get(rightNode) == edgeType;
+          seenEdgesPerNode.containsKey(rightNode) && seenEdgesPerNode.get(rightNode) == edgeType;
 
         if (!hasSeenRightNodeFromEdge) {
           seenEdgesPerNode.put(rightNode, edgeType);
           int maxSocialProofTypeSize = request.getMaxSocialProofTypeSize();
           updateNodeInfo(
-              leftNode, rightNode,
-              edgeType, weight,
-              edgeIterator, maxSocialProofTypeSize, collectedNodeInfo);
+            leftNode,
+            rightNode,
+            edgeType,
+            weight,
+            edgeIterator,
+            maxSocialProofTypeSize);
         }
       }
     }
   }
 
-  private void recordIntermediateStats(long queryNode, Long2ObjectMap<NodeInfo> collectedNodeInfo) {
+  private void updateAlgorithmStats(long queryNode, Long2ObjectMap<NodeInfo> collectedNodeInfo) {
     topSecondDegreeByCountStats.setNumDirectNeighbors(
-        leftIndexedBipartiteGraph.getLeftNodeDegree(queryNode)
+      leftIndexedBipartiteGraph.getLeftNodeDegree(queryNode)
     );
 
     int minVisitsPerRightNode = Integer.MAX_VALUE;
@@ -160,26 +181,26 @@ public abstract class TopSecondDegreeByCount<Request extends TopSecondDegreeByCo
     topSecondDegreeByCountStats.setNumRightNodesReached(collectedNodeInfo.size());
   }
 
-  private void filterNodeInfo(Request request, Long2ObjectMap<NodeInfo> collectedNodeInfo, List<NodeInfo> resultNodes) {
+  private void filterNodeInfo(Request request, Long2ObjectMap<NodeInfo> collectedNodeInfo) {
     int numFilteredNodes = 0;
     for (NodeInfo nodeInfo : collectedNodeInfo.values()) {
       if (request.filterResult(nodeInfo.getValue(), nodeInfo.getSocialProofs())) {
         numFilteredNodes++;
         continue;
       }
-      resultNodes.add(nodeInfo);
+      this.nodeInfosAfterFiltering.add(nodeInfo);
     }
     topSecondDegreeByCountStats.setNumRightNodesFiltered(numFilteredNodes);
   }
 
   protected String getResultLogMessage(Request request) {
     return "TopSecondDegreeByCount: after running algorithm for request_id = "
-        + request.getQueryNode()
-        + ", we get numDirectNeighbors = " + topSecondDegreeByCountStats.getNumDirectNeighbors()
-        + ", numRHSVisits = " + topSecondDegreeByCountStats.getNumRHSVisits()
-        + ", numRightNodesReached = " + topSecondDegreeByCountStats.getNumRightNodesReached()
-        + ", numRightNodesFiltered = " + topSecondDegreeByCountStats.getNumRightNodesFiltered()
-        + ", minVisitsPerRightNode = " + topSecondDegreeByCountStats.getMinVisitsPerRightNode()
-        + ", maxVisitsPerRightNode = " + topSecondDegreeByCountStats.getMaxVisitsPerRightNode();
+      + request.getQueryNode()
+      + ", we get numDirectNeighbors = " + topSecondDegreeByCountStats.getNumDirectNeighbors()
+      + ", numRHSVisits = " + topSecondDegreeByCountStats.getNumRHSVisits()
+      + ", numRightNodesReached = " + topSecondDegreeByCountStats.getNumRightNodesReached()
+      + ", numRightNodesFiltered = " + topSecondDegreeByCountStats.getNumRightNodesFiltered()
+      + ", minVisitsPerRightNode = " + topSecondDegreeByCountStats.getMinVisitsPerRightNode()
+      + ", maxVisitsPerRightNode = " + topSecondDegreeByCountStats.getMaxVisitsPerRightNode();
   }
 }

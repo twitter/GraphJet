@@ -29,8 +29,8 @@ public class TopSecondDegreeByCountResponse extends RecommendationResponse {
   private final RecommendationStats topSecondDegreeByCountStats;
 
   public TopSecondDegreeByCountResponse(
-      Iterable<RecommendationInfo> rankedRecommendations,
-      RecommendationStats topSecondDegreeByCountStats) {
+    Iterable<RecommendationInfo> rankedRecommendations,
+    RecommendationStats topSecondDegreeByCountStats) {
     super(rankedRecommendations);
     this.topSecondDegreeByCountStats = topSecondDegreeByCountStats;
   }

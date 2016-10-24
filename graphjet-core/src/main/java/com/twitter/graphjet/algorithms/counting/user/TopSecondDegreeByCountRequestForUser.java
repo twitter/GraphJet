@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package com.twitter.graphjet.algorithms.counting.request;
+package com.twitter.graphjet.algorithms.counting.user;
 
 import com.twitter.graphjet.algorithms.RecommendationType;
 import com.twitter.graphjet.algorithms.ResultFilterChain;
+import com.twitter.graphjet.algorithms.counting.TopSecondDegreeByCountRequest;
 import it.unimi.dsi.fastutil.longs.Long2DoubleMap;
 import it.unimi.dsi.fastutil.longs.LongSet;
 
@@ -32,25 +33,25 @@ public class TopSecondDegreeByCountRequestForUser extends TopSecondDegreeByCount
   private final RecommendationType recommendationType = RecommendationType.USER;
 
   /**
-   * @param queryNode                 LHS user node we generate recommendations for
-   * @param leftSeedNodesWithWeight   List of seed LFS nodes we use for RHS node weight calculation
-   * @param toBeFiltered              List of users to be excluded from recommendations
-   * @param maxNumResults             Maximum number of recommendations returned in the response
-   * @param maxSocialProofTypeSize    Number of social proofs
-   * @param minUserPerSocialProof     For each social proof, require a minimum number of users to be valid
-   * @param socialProofTypes          List of valid social proofs, (i.e, Follow, Mention, Mediatag)
-   * @param resultFilterChain         Chain of filters for results
+   * @param queryNode                 is the query node for running TopSecondDegreeByCountForUser
+   * @param leftSeedNodesWithWeight   is the set of seed nodes and their weights to use for calculation
+   * @param toBeFiltered              is the list of users to be excluded from recommendations
+   * @param maxNumResults             is the maximum number of recommendations returned in the response
+   * @param maxSocialProofTypeSize    is the number of social proof types in the graph
+   * @param minUserPerSocialProof     for each social proof, require a minimum number of users to be valid
+   * @param socialProofTypes          is the list of valid social proofs, (i.e, Follow, Mention, Mediatag)
+   * @param resultFilterChain         is the chain of filters to be applied
    */
   public TopSecondDegreeByCountRequestForUser(
-      long queryNode,
-      Long2DoubleMap leftSeedNodesWithWeight,
-      LongSet toBeFiltered,
-      int maxNumResults,
-      int maxSocialProofTypeSize,
-      Map<Byte, Integer> minUserPerSocialProof,
-      byte[] socialProofTypes,
-      ResultFilterChain resultFilterChain) {
-    super(queryNode, leftSeedNodesWithWeight, toBeFiltered, maxSocialProofTypeSize, socialProofTypes,resultFilterChain);
+    long queryNode,
+    Long2DoubleMap leftSeedNodesWithWeight,
+    LongSet toBeFiltered,
+    int maxNumResults,
+    int maxSocialProofTypeSize,
+    Map<Byte, Integer> minUserPerSocialProof,
+    byte[] socialProofTypes,
+    ResultFilterChain resultFilterChain) {
+    super(queryNode, leftSeedNodesWithWeight, toBeFiltered, maxSocialProofTypeSize, socialProofTypes, resultFilterChain);
     this.maxNumResults = maxNumResults;
     this.minUserPerSocialProof = minUserPerSocialProof;
   }

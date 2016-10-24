@@ -14,11 +14,13 @@
  * limitations under the License.
  */
 
-package com.twitter.graphjet.algorithms;
+package com.twitter.graphjet.algorithms.counting.user;
 
 import java.util.Map;
 
 import com.google.common.base.Objects;
+import com.twitter.graphjet.algorithms.RecommendationInfo;
+import com.twitter.graphjet.algorithms.RecommendationType;
 import it.unimi.dsi.fastutil.longs.LongList;
 
 /**
@@ -26,13 +28,12 @@ import it.unimi.dsi.fastutil.longs.LongList;
  */
 public class UserRecommendationInfo implements RecommendationInfo {
   private final long recommendation;
-  private final RecommendationType recommendationType;
+  private final RecommendationType recommendationType = RecommendationType.USER;
   private final double weight;
   private final Map<Byte, LongList> socialProof;
 
   public UserRecommendationInfo(long recommendation, double weight, Map<Byte, LongList> socialProof) {
     this.recommendation = recommendation;
-    this.recommendationType = RecommendationType.USER;
     this.weight = weight;
     this.socialProof = socialProof;
   }

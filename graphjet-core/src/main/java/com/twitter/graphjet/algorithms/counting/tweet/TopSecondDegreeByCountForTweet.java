@@ -15,7 +15,7 @@
  */
 
 
-package com.twitter.graphjet.algorithms.counting;
+package com.twitter.graphjet.algorithms.counting.tweet;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,18 +23,15 @@ import java.util.List;
 import com.twitter.graphjet.algorithms.NodeInfo;
 import com.twitter.graphjet.algorithms.RecommendationInfo;
 import com.twitter.graphjet.algorithms.RecommendationType;
-import com.twitter.graphjet.algorithms.counting.recommendationGenerator.TopSecondDegreeByCountTweetMetadataRecsGenerator;
-import com.twitter.graphjet.algorithms.counting.recommendationGenerator.TopSecondDegreeByCountTweetRecsGenerator;
-import com.twitter.graphjet.algorithms.counting.request.TopSecondDegreeByCountRequestForTweet;
+import com.twitter.graphjet.algorithms.counting.TopSecondDegreeByCount;
+import com.twitter.graphjet.algorithms.counting.TopSecondDegreeByCountResponse;
 import com.twitter.graphjet.bipartite.NodeMetadataLeftIndexedMultiSegmentBipartiteGraph;
 import com.twitter.graphjet.bipartite.NodeMetadataMultiSegmentIterator;
 import com.twitter.graphjet.hashing.IntArrayIterator;
 import com.twitter.graphjet.stats.StatsReceiver;
 
-import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
-
 public class TopSecondDegreeByCountForTweet extends
-    TopSecondDegreeByCount<TopSecondDegreeByCountRequestForTweet, TopSecondDegreeByCountResponse> {
+  TopSecondDegreeByCount<TopSecondDegreeByCountRequestForTweet, TopSecondDegreeByCountResponse> {
 
   /**
    * This initializes all the state needed to run TopSecondDegreeByCountForTweet. Note that the object can
@@ -59,23 +56,22 @@ public class TopSecondDegreeByCountForTweet extends
 
   @Override
   protected void updateNodeInfo(
-      long leftNode,
-      long rightNode,
-      byte edgeType,
-      double weight,
-      NodeMetadataMultiSegmentIterator edgeIterator,
-      int maxSocialProofTypeSize,
-      Long2ObjectMap<NodeInfo> collectedRightNodeInfo) {
+    long leftNode,
+    long rightNode,
+    byte edgeType,
+    double weight,
+    NodeMetadataMultiSegmentIterator edgeIterator,
+    int maxSocialProofTypeSize) {
     NodeInfo nodeInfo;
 
-    if (!collectedRightNodeInfo.containsKey(rightNode)) {
+    if (!super.visitedRightNodes.containsKey(rightNode)) {
       int metadataSize = RecommendationType.METADATASIZE.getValue();
 
       int[][] nodeMetadata = new int[metadataSize][];
 
       for (int i = 0; i < metadataSize; i++) {
         IntArrayIterator metadataIterator =
-            (IntArrayIterator) edgeIterator.getRightNodeMetadata((byte) i);
+          (IntArrayIterator) edgeIterator.getRightNodeMetadata((byte) i);
 
         if (metadataIterator.size() > 0) {
           int[] metadata = new int[metadataIterator.size()];
@@ -88,9 +84,9 @@ public class TopSecondDegreeByCountForTweet extends
       }
 
       nodeInfo = new NodeInfo(rightNode, nodeMetadata, 0.0, maxSocialProofTypeSize);
-      collectedRightNodeInfo.put(rightNode, nodeInfo);
+      super.visitedRightNodes.put(rightNode, nodeInfo);
     } else {
-      nodeInfo = collectedRightNodeInfo.get(rightNode);
+      nodeInfo = super.visitedRightNodes.get(rightNode);
     }
 
     nodeInfo.addToWeight(weight);
@@ -99,8 +95,7 @@ public class TopSecondDegreeByCountForTweet extends
 
   @Override
   public TopSecondDegreeByCountResponse generateRecommendationFromNodeInfo(
-      TopSecondDegreeByCountRequestForTweet request,
-      List<NodeInfo> filteredNodeInfo) {
+    TopSecondDegreeByCountRequestForTweet request) {
     int numTweetResults = 0;
     int numHashtagResults = 0;
     int numUrlResults = 0;
@@ -111,7 +106,7 @@ public class TopSecondDegreeByCountForTweet extends
       List<RecommendationInfo> tweetRecommendations =
         TopSecondDegreeByCountTweetRecsGenerator.generateTweetRecs(
           request,
-          filteredNodeInfo);
+          super.nodeInfosAfterFiltering);
       numTweetResults = tweetRecommendations.size();
       recommendations.addAll(tweetRecommendations);
     }
@@ -120,7 +115,7 @@ public class TopSecondDegreeByCountForTweet extends
       List<RecommendationInfo> hashtagRecommendations =
         TopSecondDegreeByCountTweetMetadataRecsGenerator.generateTweetMetadataRecs(
           request,
-          filteredNodeInfo,
+          super.nodeInfosAfterFiltering,
           RecommendationType.HASHTAG);
       numHashtagResults = hashtagRecommendations.size();
       recommendations.addAll(hashtagRecommendations);
@@ -130,17 +125,17 @@ public class TopSecondDegreeByCountForTweet extends
       List<RecommendationInfo> urlRecommendations =
         TopSecondDegreeByCountTweetMetadataRecsGenerator.generateTweetMetadataRecs(
           request,
-          filteredNodeInfo,
+          super.nodeInfosAfterFiltering,
           RecommendationType.URL);
       numUrlResults = urlRecommendations.size();
       recommendations.addAll(urlRecommendations);
     }
 
     LOG.info(getResultLogMessage(request)
-        + ", numTweetResults = " + numTweetResults
-        + ", numHashtagResults = " + numHashtagResults
-        + ", numUrlResults = " + numUrlResults
-        + ", totalResults = " + (numTweetResults + numHashtagResults + numUrlResults)
+      + ", numTweetResults = " + numTweetResults
+      + ", numHashtagResults = " + numHashtagResults
+      + ", numUrlResults = " + numUrlResults
+      + ", totalResults = " + (numTweetResults + numHashtagResults + numUrlResults)
     );
 
     return new TopSecondDegreeByCountResponse(recommendations, topSecondDegreeByCountStats);

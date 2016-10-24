@@ -15,7 +15,7 @@
  */
 
 
-package com.twitter.graphjet.algorithms.counting.recommendationGenerator;
+package com.twitter.graphjet.algorithms.counting.tweet;
 
 import java.util.*;
 
@@ -26,14 +26,12 @@ import com.twitter.graphjet.algorithms.RecommendationInfo;
 import com.twitter.graphjet.algorithms.RecommendationRequest;
 import com.twitter.graphjet.algorithms.RecommendationType;
 import com.twitter.graphjet.algorithms.TweetIDMask;
-import com.twitter.graphjet.algorithms.TweetRecommendationInfo;
-import com.twitter.graphjet.algorithms.counting.request.TopSecondDegreeByCountRequestForTweet;
+import com.twitter.graphjet.algorithms.counting.GeneratorHelper;
 import com.twitter.graphjet.hashing.SmallArrayBasedLongToDoubleMap;
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import it.unimi.dsi.fastutil.longs.LongSet;
 
-public final class TopSecondDegreeByCountTweetRecsGenerator implements GeneratorHelper {
-
+public final class TopSecondDegreeByCountTweetRecsGenerator {
   /**
    * Return tweet recommendations
    *
@@ -46,7 +44,7 @@ public final class TopSecondDegreeByCountTweetRecsGenerator implements Generator
     List<NodeInfo> nodeInfoList) {
     int maxNumResults = request.getMaxNumResultsByType().containsKey(RecommendationType.TWEET)
       ? Math.min(request.getMaxNumResultsByType().get(RecommendationType.TWEET),
-                 RecommendationRequest.MAX_RECOMMENDATION_RESULTS)
+      RecommendationRequest.MAX_RECOMMENDATION_RESULTS)
       : RecommendationRequest.DEFAULT_RECOMMENDATION_RESULTS;
 
     PriorityQueue<NodeInfo> topResults = new PriorityQueue<NodeInfo>(maxNumResults);
@@ -64,9 +62,9 @@ public final class TopSecondDegreeByCountTweetRecsGenerator implements Generator
       }
       // do not return if size of each social proof is less than minUserSocialProofSize.
       if (isLessThanMinUserSocialProofSize(nodeInfo.getSocialProofs(), minUserSocialProofSize) &&
-          // do not return if size of each social proof union is less than minUserSocialProofSize.
-          isLessThanMinUserSocialProofSizeCombined(
-              nodeInfo.getSocialProofs(), minUserSocialProofSize, request.getSocialProofTypeUnions())) {
+        // do not return if size of each social proof union is less than minUserSocialProofSize.
+        isLessThanMinUserSocialProofSizeCombined(
+          nodeInfo.getSocialProofs(), minUserSocialProofSize, request.getSocialProofTypeUnions())) {
         continue;
       }
       GeneratorHelper.addResultToPriorityQueue(topResults, nodeInfo, maxNumResults);
@@ -91,9 +89,9 @@ public final class TopSecondDegreeByCountTweetRecsGenerator implements Generator
   }
 
   private static boolean isSocialProofUnionSizeLessThanMin(
-      SmallArrayBasedLongToDoubleMap[] socialProofs,
-      int minUserSocialProofSize,
-      Set<byte[]> socialProofTypeUnions) {
+    SmallArrayBasedLongToDoubleMap[] socialProofs,
+    int minUserSocialProofSize,
+    Set<byte[]> socialProofTypeUnions) {
     long socialProofSizeSum = 0;
 
     for (byte[] socialProofTypeUnion: socialProofTypeUnions) {
@@ -111,12 +109,12 @@ public final class TopSecondDegreeByCountTweetRecsGenerator implements Generator
   }
 
   private static boolean isLessThanMinUserSocialProofSizeCombined(
-      SmallArrayBasedLongToDoubleMap[] socialProofs,
-      int minUserSocialProofSize,
-      Set<byte[]> socialProofTypeUnions) {
+    SmallArrayBasedLongToDoubleMap[] socialProofs,
+    int minUserSocialProofSize,
+    Set<byte[]> socialProofTypeUnions) {
     if (socialProofTypeUnions.isEmpty() ||
-        // check if the size of any social proof union is greater than minUserSocialProofSize before dedupping
-        isSocialProofUnionSizeLessThanMin(socialProofs, minUserSocialProofSize, socialProofTypeUnions)) {
+      // check if the size of any social proof union is greater than minUserSocialProofSize before dedupping
+      isSocialProofUnionSizeLessThanMin(socialProofs, minUserSocialProofSize, socialProofTypeUnions)) {
       return true;
     }
 
@@ -141,8 +139,8 @@ public final class TopSecondDegreeByCountTweetRecsGenerator implements Generator
   }
 
   private static boolean isLessThanMinUserSocialProofSize(
-      SmallArrayBasedLongToDoubleMap[] socialProofs,
-      int minUserSocialProofSize) {
+    SmallArrayBasedLongToDoubleMap[] socialProofs,
+    int minUserSocialProofSize) {
     for (int i = 0; i < socialProofs.length; i++) {
       if (socialProofs[i] != null && socialProofs[i].size() >= minUserSocialProofSize) {
         return false;
@@ -152,8 +150,8 @@ public final class TopSecondDegreeByCountTweetRecsGenerator implements Generator
   }
 
   private static boolean isTweetSocialProofOnly(
-      SmallArrayBasedLongToDoubleMap[] socialProofs,
-      int tweetSocialProofType) {
+    SmallArrayBasedLongToDoubleMap[] socialProofs,
+    int tweetSocialProofType) {
     for (int i = 0; i < socialProofs.length; i++) {
       if (i != tweetSocialProofType && socialProofs[i] != null) {
         return false;
@@ -161,5 +159,4 @@ public final class TopSecondDegreeByCountTweetRecsGenerator implements Generator
     }
     return true;
   }
-
 }

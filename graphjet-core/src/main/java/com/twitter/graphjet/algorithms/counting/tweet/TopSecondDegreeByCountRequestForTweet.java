@@ -15,7 +15,7 @@
  */
 
 
-package com.twitter.graphjet.algorithms.counting.request;
+package com.twitter.graphjet.algorithms.counting.tweet;
 
 import java.util.Map;
 import java.util.Set;
@@ -23,6 +23,7 @@ import java.util.Set;
 import com.twitter.graphjet.algorithms.RecommendationType;
 import com.twitter.graphjet.algorithms.ResultFilterChain;
 
+import com.twitter.graphjet.algorithms.counting.TopSecondDegreeByCountRequest;
 import it.unimi.dsi.fastutil.longs.Long2DoubleMap;
 import it.unimi.dsi.fastutil.longs.LongSet;
 
@@ -38,14 +39,14 @@ public class TopSecondDegreeByCountRequestForTweet extends TopSecondDegreeByCoun
    * The constructor of tweet related recommendations using TopSecondDegreeByCountForTweet algorithm
    * @param queryNode                 is the query node for running TopSecondDegreeByCountForTweet
    * @param leftSeedNodesWithWeight   is the set of seed nodes and their weights to use for
-   *                                  TopSecondDegreeByCountForTweet.
+   *                                  TopSecondDegreeByCountForTweet
    * @param toBeFiltered              is the set of RHS nodes to be filtered from the output
    * @param recommendationTypes       is the list of recommendation types requested by clients
    * @param maxNumResultsByRecType    is the maximum number of results requested by clients per recommendation type
-   * @param maxSocialProofTypeSize    is the maximum size of social proof types in the graph.
-   * @param maxUserSocialProofSize    is the maximum size of user social proof per type to return.
+   * @param maxSocialProofTypeSize    is the maximum size of social proof types in the graph
+   * @param maxUserSocialProofSize    is the maximum size of user social proof per type to return
    *                                  Set this to 0 to return no social proof
-   * @param maxTweetSocialProofSize   is the maximum size of tweet social proof per user to return.
+   * @param maxTweetSocialProofSize   is the maximum size of tweet social proof per user to return
    * @param minUserSocialProofSizes   is the minimum size of user social proof per recommendation
    *                                  type to return
    * @param socialProofTypes          is the social proof types to return
@@ -67,7 +68,7 @@ public class TopSecondDegreeByCountRequestForTweet extends TopSecondDegreeByCoun
     Set<byte[]> socialProofTypeUnions
   ) {
     super(queryNode, leftSeedNodesWithWeight, toBeFiltered, maxSocialProofTypeSize,
-            socialProofTypes, resultFilterChain);
+      socialProofTypes, resultFilterChain);
     this.recommendationTypes = recommendationTypes;
     this.maxNumResultsByType = maxNumResultsByRecType;
     this.maxUserSocialProofSize = maxUserSocialProofSize;

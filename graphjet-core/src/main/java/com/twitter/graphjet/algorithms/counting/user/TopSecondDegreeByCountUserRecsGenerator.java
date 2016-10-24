@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.twitter.graphjet.algorithms.counting.recommendationGenerator;
+package com.twitter.graphjet.algorithms.counting.user;
 
 import java.util.Collections;
 import java.util.List;
@@ -24,8 +24,7 @@ import java.util.PriorityQueue;
 import com.google.common.collect.Lists;
 import com.twitter.graphjet.algorithms.*;
 import com.twitter.graphjet.algorithms.RecommendationInfo;
-import com.twitter.graphjet.algorithms.UserRecommendationInfo;
-import com.twitter.graphjet.algorithms.counting.request.TopSecondDegreeByCountRequestForUser;
+import com.twitter.graphjet.algorithms.counting.GeneratorHelper;
 import com.twitter.graphjet.hashing.SmallArrayBasedLongToDoubleMap;
 import it.unimi.dsi.fastutil.longs.LongList;
 
@@ -38,23 +37,21 @@ public class TopSecondDegreeByCountUserRecsGenerator {
    * @return                list of {@link UserRecommendationInfo}
    */
   public static List<RecommendationInfo> generateUserRecs(
-      TopSecondDegreeByCountRequestForUser request,
-      List<NodeInfo> candidateNodes) {
+    TopSecondDegreeByCountRequestForUser request,
+    List<NodeInfo> candidateNodes) {
 
-    // Recommend at most 100 users
-    int maxNumResults = Math.min(request.getMaxNumResults(),
-        RecommendationRequest.DEFAULT_RECOMMENDATION_RESULTS);
+    int maxNumResults = Math.min(request.getMaxNumResults(), RecommendationRequest.MAX_RECOMMENDATION_RESULTS);
 
     PriorityQueue<NodeInfo> qualifiedNodes =
-        getQualifiedNodes(candidateNodes, request.getMinUserPerSocialProof(), maxNumResults);
+      getQualifiedNodes(candidateNodes, request.getMinUserPerSocialProof(), maxNumResults);
 
     return getRecommendationsFromNodes(request, qualifiedNodes);
   }
 
   private static PriorityQueue<NodeInfo> getQualifiedNodes(
-      List<NodeInfo> nodeInfoList,
-      Map<Byte, Integer> minSocialProofSizes,
-      int maxNumResults) {
+    List<NodeInfo> nodeInfoList,
+    Map<Byte, Integer> minSocialProofSizes,
+    int maxNumResults) {
     PriorityQueue<NodeInfo> topResults = new PriorityQueue<>(maxNumResults);
 
     for (NodeInfo nodeInfo : nodeInfoList) {
@@ -66,8 +63,8 @@ public class TopSecondDegreeByCountUserRecsGenerator {
   }
 
   private static boolean isQualifiedSocialProof(
-      Map<Byte, Integer> minSocialProofSizes,
-      SmallArrayBasedLongToDoubleMap[] socialProofs) {
+    Map<Byte, Integer> minSocialProofSizes,
+    SmallArrayBasedLongToDoubleMap[] socialProofs) {
     for (int i = 0; i < socialProofs.length; i++) {
       byte proofType = (byte)i;
       if (!minSocialProofSizes.containsKey(proofType)) {
@@ -87,8 +84,8 @@ public class TopSecondDegreeByCountUserRecsGenerator {
   }
 
   private static  List<RecommendationInfo> getRecommendationsFromNodes(
-      TopSecondDegreeByCountRequestForUser request,
-      PriorityQueue<NodeInfo> topNodes) {
+    TopSecondDegreeByCountRequestForUser request,
+    PriorityQueue<NodeInfo> topNodes) {
     List<RecommendationInfo> outputResults = Lists.newArrayListWithCapacity(topNodes.size());
     byte[] validSocialProofs = request.getSocialProofTypes();
     int maxSocialProofSize = request.getMaxSocialProofTypeSize();
@@ -97,14 +94,14 @@ public class TopSecondDegreeByCountUserRecsGenerator {
       NodeInfo nodeInfo = topNodes.poll();
 
       Map<Byte, LongList> topSocialProofs = GeneratorHelper.pickTopSocialProofs(
-          nodeInfo.getSocialProofs(),
-          validSocialProofs,
-          maxSocialProofSize);
+        nodeInfo.getSocialProofs(),
+        validSocialProofs,
+        maxSocialProofSize);
 
       UserRecommendationInfo userRecs = new UserRecommendationInfo(
-          nodeInfo.getValue(),
-          nodeInfo.getWeight(),
-          topSocialProofs);
+        nodeInfo.getValue(),
+        nodeInfo.getWeight(),
+        topSocialProofs);
       outputResults.add(userRecs);
     }
     Collections.reverse(outputResults);
