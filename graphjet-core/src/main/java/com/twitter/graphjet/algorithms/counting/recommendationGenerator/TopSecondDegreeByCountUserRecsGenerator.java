@@ -59,7 +59,7 @@ public class TopSecondDegreeByCountUserRecsGenerator {
 
     for (NodeInfo nodeInfo : nodeInfoList) {
       if (isQualifiedSocialProof(minSocialProofSizes, nodeInfo.getSocialProofs())) {
-        GeneratorUtils.addResultToPriorityQueue(topResults, nodeInfo, maxNumResults);
+        GeneratorHelper.addResultToPriorityQueue(topResults, nodeInfo, maxNumResults);
       }
     }
     return topResults;
@@ -96,7 +96,7 @@ public class TopSecondDegreeByCountUserRecsGenerator {
     while (!topNodes.isEmpty()) {
       NodeInfo nodeInfo = topNodes.poll();
 
-      Map<Byte, LongList> topSocialProofs = GeneratorUtils.pickTopSocialProofs(
+      Map<Byte, LongList> topSocialProofs = GeneratorHelper.pickTopSocialProofs(
           nodeInfo.getSocialProofs(),
           validSocialProofs,
           maxSocialProofSize);

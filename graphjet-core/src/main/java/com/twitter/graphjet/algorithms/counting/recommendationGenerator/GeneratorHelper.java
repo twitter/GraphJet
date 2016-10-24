@@ -12,7 +12,7 @@ import java.util.PriorityQueue;
 /**
  * Shared utility functions among RecsGenerators
  */
-public interface GeneratorUtils {
+public interface GeneratorHelper {
   /**
    * Pick the top social proofs for each RHS node
    */

@@ -32,7 +32,7 @@ import com.twitter.graphjet.hashing.SmallArrayBasedLongToDoubleMap;
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import it.unimi.dsi.fastutil.longs.LongSet;
 
-public final class TopSecondDegreeByCountTweetRecsGenerator implements GeneratorUtils {
+public final class TopSecondDegreeByCountTweetRecsGenerator implements GeneratorHelper {
 
   /**
    * Return tweet recommendations
@@ -69,7 +69,7 @@ public final class TopSecondDegreeByCountTweetRecsGenerator implements Generator
               nodeInfo.getSocialProofs(), minUserSocialProofSize, request.getSocialProofTypeUnions())) {
         continue;
       }
-      GeneratorUtils.addResultToPriorityQueue(topResults, nodeInfo, maxNumResults);
+      GeneratorHelper.addResultToPriorityQueue(topResults, nodeInfo, maxNumResults);
     }
 
     byte[] validSocialProofs = request.getSocialProofTypes();
@@ -83,7 +83,7 @@ public final class TopSecondDegreeByCountTweetRecsGenerator implements Generator
         new RecommendationInfoTweet(
           TweetIDMask.restore(nodeInfo.getValue()),
           nodeInfo.getWeight(),
-          GeneratorUtils.pickTopSocialProofs(nodeInfo.getSocialProofs(), validSocialProofs, maxSocialProofSize)));
+          GeneratorHelper.pickTopSocialProofs(nodeInfo.getSocialProofs(), validSocialProofs, maxSocialProofSize)));
     }
     Collections.reverse(outputResults);
 
@@ -140,7 +140,7 @@ public final class TopSecondDegreeByCountTweetRecsGenerator implements Generator
     return true;
   }
 
-  public static boolean isLessThanMinUserSocialProofSize(
+  private static boolean isLessThanMinUserSocialProofSize(
       SmallArrayBasedLongToDoubleMap[] socialProofs,
       int minUserSocialProofSize) {
     for (int i = 0; i < socialProofs.length; i++) {
