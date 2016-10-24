@@ -27,8 +27,8 @@ import com.twitter.graphjet.hashing.SmallArrayBasedLongToDoubleMap;
 import it.unimi.dsi.fastutil.longs.LongArrayList;
 import it.unimi.dsi.fastutil.longs.LongList;
 
-public class RecommendationInfoTweetMetadata
-  implements RecommendationInfo, Comparable<RecommendationInfoTweetMetadata> {
+public class TweetMetadataRecommendationInfo
+  implements RecommendationInfo, Comparable<TweetMetadataRecommendationInfo> {
   private final int recommendation;
   private final RecommendationType recommendationType;
   private double weight;
@@ -38,7 +38,7 @@ public class RecommendationInfoTweetMetadata
   /**
    * This class specifies the metadata recommendation, such as hashtag and url.
    */
-  public RecommendationInfoTweetMetadata(int recommendation, RecommendationType type, double weight,
+  public TweetMetadataRecommendationInfo(int recommendation, RecommendationType type, double weight,
                                          Map<Byte, Map<Long, LongList>> socialProof) {
     this.recommendation = recommendation;
     this.recommendationType = type;
@@ -120,8 +120,8 @@ public class RecommendationInfoTweetMetadata
     this.weight += delta;
   }
 
-  //sort the list of RecommendationInfoTweetMetadata in ascending order according to their weights
-  public int compareTo(RecommendationInfoTweetMetadata otherRecommendationInfo) {
+  //sort the list of TweetMetadataRecommendationInfo in ascending order according to their weights
+  public int compareTo(TweetMetadataRecommendationInfo otherRecommendationInfo) {
     return Double.compare(otherRecommendationInfo.getWeight(), this.weight);
   }
 
@@ -142,7 +142,7 @@ public class RecommendationInfoTweetMetadata
       return false;
     }
 
-    RecommendationInfoTweetMetadata other = (RecommendationInfoTweetMetadata) obj;
+    TweetMetadataRecommendationInfo other = (TweetMetadataRecommendationInfo) obj;
 
     return
       Objects.equal(getRecommendation(), other.getRecommendation())

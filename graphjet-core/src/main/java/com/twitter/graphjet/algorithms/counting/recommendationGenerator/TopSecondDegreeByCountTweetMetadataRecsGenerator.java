@@ -25,7 +25,7 @@ import java.util.Map;
 
 import com.twitter.graphjet.algorithms.*;
 import com.twitter.graphjet.algorithms.RecommendationInfo;
-import com.twitter.graphjet.algorithms.RecommendationInfoTweetMetadata;
+import com.twitter.graphjet.algorithms.TweetMetadataRecommendationInfo;
 import com.twitter.graphjet.algorithms.counting.request.TopSecondDegreeByCountRequestForTweet;
 import com.twitter.graphjet.hashing.SmallArrayBasedLongToDoubleMap;
 
@@ -41,7 +41,7 @@ public final class TopSecondDegreeByCountTweetMetadataRecsGenerator {
 
   private static void addToSocialProof(
     NodeInfo nodeInfo,
-    RecommendationInfoTweetMetadata recommendationInfo,
+    TweetMetadataRecommendationInfo recommendationInfo,
     int maxUserSocialProofSize,
     int maxTweetSocialProofSize
   ) {
@@ -83,7 +83,7 @@ public final class TopSecondDegreeByCountTweetMetadataRecsGenerator {
     List<NodeInfo> nodeInfoList,
     RecommendationType recommendationType
   ) {
-    Int2ObjectMap<RecommendationInfoTweetMetadata> visitedMetadata = null;
+    Int2ObjectMap<TweetMetadataRecommendationInfo> visitedMetadata = null;
     List<RecommendationInfo> results = new ArrayList<RecommendationInfo>();
 
     for (NodeInfo nodeInfo : nodeInfoList) {
@@ -91,14 +91,14 @@ public final class TopSecondDegreeByCountTweetMetadataRecsGenerator {
 
       if (metadata != null) {
         if (visitedMetadata == null) {
-          visitedMetadata = new Int2ObjectOpenHashMap<RecommendationInfoTweetMetadata>();
+          visitedMetadata = new Int2ObjectOpenHashMap<TweetMetadataRecommendationInfo>();
         }
         for (int j = 0; j < metadata.length; j++) {
-          RecommendationInfoTweetMetadata recommendationInfo =
+          TweetMetadataRecommendationInfo recommendationInfo =
             visitedMetadata.get(metadata[j]);
 
           if (recommendationInfo == null) {
-            recommendationInfo = new RecommendationInfoTweetMetadata(
+            recommendationInfo = new TweetMetadataRecommendationInfo(
               metadata[j],
               RecommendationType.at(recommendationType.getValue()),
               0,
@@ -119,7 +119,7 @@ public final class TopSecondDegreeByCountTweetMetadataRecsGenerator {
     }
 
     if (visitedMetadata != null) {
-      List<RecommendationInfoTweetMetadata> filtered = null;
+      List<TweetMetadataRecommendationInfo> filtered = null;
 
       int minUserSocialProofSize =
         request.getMinUserSocialProofSizes().containsKey(recommendationType)
@@ -131,7 +131,7 @@ public final class TopSecondDegreeByCountTweetMetadataRecsGenerator {
                    RecommendationRequest.MAX_RECOMMENDATION_RESULTS)
         : RecommendationRequest.DEFAULT_RECOMMENDATION_RESULTS;
 
-      for (Int2ObjectMap.Entry<RecommendationInfoTweetMetadata> entry
+      for (Int2ObjectMap.Entry<TweetMetadataRecommendationInfo> entry
         : visitedMetadata.int2ObjectEntrySet()) {
         // handling one specific rule related to metadata recommendations.
         if (isLessThantMinUserSocialProofSize(
@@ -141,13 +141,13 @@ public final class TopSecondDegreeByCountTweetMetadataRecsGenerator {
         }
 
         if (filtered == null) {
-          filtered = new ArrayList<RecommendationInfoTweetMetadata>();
+          filtered = new ArrayList<TweetMetadataRecommendationInfo>();
         }
         filtered.add(entry.getValue());
       }
 
       if (filtered != null) {
-        // sort the list of RecommendationInfoTweetMetadata in ascending order
+        // sort the list of TweetMetadataRecommendationInfo in ascending order
         // according to their weights
         Collections.sort(filtered);
         int toIndex = Math.min(maxNumResults, filtered.size());

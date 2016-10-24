@@ -14,11 +14,7 @@
  * limitations under the License.
  */
 
-
 package com.twitter.graphjet.algorithms;
-
-import com.twitter.graphjet.algorithms.RecommendationAlgorithm;
-import com.twitter.graphjet.algorithms.RecommendationType;
 
 /**
  * This interface specifies the required information from each of the recommendations returned by

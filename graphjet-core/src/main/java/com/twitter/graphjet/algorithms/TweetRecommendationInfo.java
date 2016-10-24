@@ -23,7 +23,7 @@ import com.google.common.base.Objects;
 
 import it.unimi.dsi.fastutil.longs.LongList;
 
-public class RecommendationInfoTweet implements RecommendationInfo {
+public class TweetRecommendationInfo implements RecommendationInfo {
   private final long recommendation;
   private final RecommendationType recommendationType;
   private final double weight;
@@ -32,7 +32,7 @@ public class RecommendationInfoTweet implements RecommendationInfo {
   /**
    * This class specifies the tweet recommendation.
    */
-  public RecommendationInfoTweet(long recommendation, double weight,
+  public TweetRecommendationInfo(long recommendation, double weight,
                                  Map<Byte, LongList> socialProof) {
     this.recommendation = recommendation;
     this.recommendationType = RecommendationType.TWEET;
@@ -73,7 +73,7 @@ public class RecommendationInfoTweet implements RecommendationInfo {
       return false;
     }
 
-    RecommendationInfoTweet other = (RecommendationInfoTweet) obj;
+    TweetRecommendationInfo other = (TweetRecommendationInfo) obj;
 
     return
       Objects.equal(getRecommendation(), other.getRecommendation())

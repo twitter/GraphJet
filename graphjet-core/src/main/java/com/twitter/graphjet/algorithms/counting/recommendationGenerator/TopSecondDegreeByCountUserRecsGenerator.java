@@ -24,7 +24,7 @@ import java.util.PriorityQueue;
 import com.google.common.collect.Lists;
 import com.twitter.graphjet.algorithms.*;
 import com.twitter.graphjet.algorithms.RecommendationInfo;
-import com.twitter.graphjet.algorithms.RecommendationInfoUser;
+import com.twitter.graphjet.algorithms.UserRecommendationInfo;
 import com.twitter.graphjet.algorithms.counting.request.TopSecondDegreeByCountRequestForUser;
 import com.twitter.graphjet.hashing.SmallArrayBasedLongToDoubleMap;
 import it.unimi.dsi.fastutil.longs.LongList;
@@ -35,7 +35,7 @@ public class TopSecondDegreeByCountUserRecsGenerator {
    * Generate a list of recommendations based on given list of candidate nodes and the original request
    * @param request         original request message, contains filtering criteria
    * @param candidateNodes  list of candidate nodes
-   * @return                list of {@link RecommendationInfoUser}
+   * @return                list of {@link UserRecommendationInfo}
    */
   public static List<RecommendationInfo> generateUserRecs(
       TopSecondDegreeByCountRequestForUser request,
@@ -101,7 +101,7 @@ public class TopSecondDegreeByCountUserRecsGenerator {
           validSocialProofs,
           maxSocialProofSize);
 
-      RecommendationInfoUser userRecs = new RecommendationInfoUser(
+      UserRecommendationInfo userRecs = new UserRecommendationInfo(
           nodeInfo.getValue(),
           nodeInfo.getWeight(),
           topSocialProofs);

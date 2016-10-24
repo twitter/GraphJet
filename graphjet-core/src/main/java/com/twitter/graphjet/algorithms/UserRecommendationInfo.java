@@ -24,13 +24,13 @@ import it.unimi.dsi.fastutil.longs.LongList;
 /**
  * This class specifies user recommendations based on user follow, mention, and mediatag
  */
-public class RecommendationInfoUser implements RecommendationInfo {
+public class UserRecommendationInfo implements RecommendationInfo {
   private final long recommendation;
   private final RecommendationType recommendationType;
   private final double weight;
   private final Map<Byte, LongList> socialProof;
 
-  public RecommendationInfoUser(long recommendation, double weight, Map<Byte, LongList> socialProof) {
+  public UserRecommendationInfo(long recommendation, double weight, Map<Byte, LongList> socialProof) {
     this.recommendation = recommendation;
     this.recommendationType = RecommendationType.USER;
     this.weight = weight;
@@ -70,7 +70,7 @@ public class RecommendationInfoUser implements RecommendationInfo {
       return false;
     }
 
-    RecommendationInfoUser other = (RecommendationInfoUser) obj;
+    UserRecommendationInfo other = (UserRecommendationInfo) obj;
 
     return Objects.equal(getRecommendation(), other.getRecommendation())
         && Objects.equal(getRecommendationType(), other.getRecommendationType())
