@@ -69,7 +69,7 @@ public final class TopSecondDegreeByCountTweetRecsGenerator implements Generator
               nodeInfo.getSocialProofs(), minUserSocialProofSize, request.getSocialProofTypeUnions())) {
         continue;
       }
-      addResultToPriorityQueue(topResults, nodeInfo, maxNumResults);
+      GeneratorUtils.addResultToPriorityQueue(topResults, nodeInfo, maxNumResults);
     }
 
     byte[] validSocialProofs = request.getSocialProofTypes();
@@ -83,7 +83,7 @@ public final class TopSecondDegreeByCountTweetRecsGenerator implements Generator
         new RecommendationInfoTweet(
           TweetIDMask.restore(nodeInfo.getValue()),
           nodeInfo.getWeight(),
-          pickTopSocialProofs(nodeInfo.getSocialProofs(), validSocialProofs, maxSocialProofSize)));
+          GeneratorUtils.pickTopSocialProofs(nodeInfo.getSocialProofs(), validSocialProofs, maxSocialProofSize)));
     }
     Collections.reverse(outputResults);
 

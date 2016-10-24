@@ -27,6 +27,7 @@ import java.util.Set;
 
 import com.google.common.collect.Lists;
 
+import com.twitter.graphjet.algorithms.counting.recommendationInfo.RecommendationInfoUser;
 import com.twitter.graphjet.algorithms.counting.request.TopSecondDegreeByCountRequestForTweet;
 import com.twitter.graphjet.algorithms.counting.request.TopSecondDegreeByCountRequestForUser;
 import com.twitter.graphjet.algorithms.counting.response.TopSecondDegreeByCountResponse;
@@ -354,8 +355,8 @@ public class TopSecondDegreeByCountTest {
     socialProof.get(1).put((byte) 3, new LongArrayList(new long[]{1}));
 
     final List<RecommendationInfo> expectedTopResults = new ArrayList<RecommendationInfo>();
-    expectedTopResults.add(new RecommendationInfoTweet(3, 3.0, socialProof.get(0)));
-    expectedTopResults.add(new RecommendationInfoTweet(5, 2.5, socialProof.get(1)));
+    expectedTopResults.add(new RecommendationInfoUser(3, 3.0, socialProof.get(0)));
+    expectedTopResults.add(new RecommendationInfoUser(5, 2.5, socialProof.get(1)));
 
     List<RecommendationInfo> topSecondDegreeByCountResults =
         Lists.newArrayList(response.getRankedRecommendations());
