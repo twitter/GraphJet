@@ -1,7 +1,10 @@
 package com.twitter.graphjet.algorithms.counting;
 
 import com.twitter.graphjet.algorithms.NodeInfo;
-import com.twitter.graphjet.algorithms.RecommendationInfo;
+import com.twitter.graphjet.algorithms.counting.recommendationInfo.RecommendationInfo;
+import com.twitter.graphjet.algorithms.counting.recommendationGenerator.TopSecondDegreeByCountUserRecsGenerator;
+import com.twitter.graphjet.algorithms.counting.request.TopSecondDegreeByCountRequestForUser;
+import com.twitter.graphjet.algorithms.counting.response.TopSecondDegreeByCountResponse;
 import com.twitter.graphjet.bipartite.NodeMetadataLeftIndexedMultiSegmentBipartiteGraph;
 import com.twitter.graphjet.bipartite.NodeMetadataMultiSegmentIterator;
 import com.twitter.graphjet.stats.StatsReceiver;
@@ -10,7 +13,7 @@ import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import java.util.List;
 
 public class TopSecondDegreeByCountForUser extends
-    TopSecondDegreeByCount<TopSecondDegreeUserByCountRequest, TopSecondDegreeByCountResponse> {
+    TopSecondDegreeByCount<TopSecondDegreeByCountRequestForUser, TopSecondDegreeByCountResponse> {
 
   public TopSecondDegreeByCountForUser(
       NodeMetadataLeftIndexedMultiSegmentBipartiteGraph leftIndexedBipartiteGraph,
@@ -20,7 +23,7 @@ public class TopSecondDegreeByCountForUser extends
   }
 
   @Override
-  protected void updateRightNodeInfo(
+  protected void updateNodeInfo(
       long leftNode,
       long rightNode,
       byte edgeType,
@@ -43,14 +46,14 @@ public class TopSecondDegreeByCountForUser extends
 
   @Override
   public TopSecondDegreeByCountResponse generateRecommendationFromNodeInfo(
-      TopSecondDegreeUserByCountRequest request,
+      TopSecondDegreeByCountRequestForUser request,
       List<NodeInfo> filteredNodeInfos) {
     List<RecommendationInfo> userRecommendations =
         TopSecondDegreeByCountUserRecsGenerator.generateUserRecs(
             request,
             filteredNodeInfos);
 
-    LOG.info(getLogMessage(request)
+    LOG.info(getResultLogMessage(request)
         + ", numUserResults = " + userRecommendations.size()
         + ", totalResults = " + userRecommendations.size());
     return new TopSecondDegreeByCountResponse(userRecommendations, topSecondDegreeByCountStats);

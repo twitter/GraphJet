@@ -15,18 +15,19 @@
  */
 
 
-package com.twitter.graphjet.algorithms.counting;
+package com.twitter.graphjet.algorithms.counting.recommendationGenerator;
 
 import java.util.*;
 
 import com.google.common.collect.Lists;
 
 import com.twitter.graphjet.algorithms.NodeInfo;
-import com.twitter.graphjet.algorithms.RecommendationInfo;
+import com.twitter.graphjet.algorithms.counting.recommendationInfo.RecommendationInfo;
 import com.twitter.graphjet.algorithms.RecommendationRequest;
 import com.twitter.graphjet.algorithms.RecommendationType;
 import com.twitter.graphjet.algorithms.TweetIDMask;
-import com.twitter.graphjet.algorithms.RecommendationInfoTweet;
+import com.twitter.graphjet.algorithms.counting.recommendationInfo.RecommendationInfoTweet;
+import com.twitter.graphjet.algorithms.counting.request.TopSecondDegreeByCountRequestForTweet;
 import com.twitter.graphjet.hashing.SmallArrayBasedLongToDoubleMap;
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import it.unimi.dsi.fastutil.longs.LongSet;
@@ -41,7 +42,7 @@ public final class TopSecondDegreeByCountTweetRecsGenerator implements Generator
    * @return a list of tweet recommendations
    */
   public static List<RecommendationInfo> generateTweetRecs(
-    TopSecondDegreeTweetByCountRequest request,
+    TopSecondDegreeByCountRequestForTweet request,
     List<NodeInfo> nodeInfoList) {
     int maxNumResults = request.getMaxNumResultsByType().containsKey(RecommendationType.TWEET)
       ? Math.min(request.getMaxNumResultsByType().get(RecommendationType.TWEET),
@@ -68,7 +69,7 @@ public final class TopSecondDegreeByCountTweetRecsGenerator implements Generator
               nodeInfo.getSocialProofs(), minUserSocialProofSize, request.getSocialProofTypeUnions())) {
         continue;
       }
-      GeneratorUtils.addResultToPriorityQueue(topResults, nodeInfo, maxNumResults);
+      addResultToPriorityQueue(topResults, nodeInfo, maxNumResults);
     }
 
     byte[] validSocialProofs = request.getSocialProofTypes();
@@ -82,7 +83,7 @@ public final class TopSecondDegreeByCountTweetRecsGenerator implements Generator
         new RecommendationInfoTweet(
           TweetIDMask.restore(nodeInfo.getValue()),
           nodeInfo.getWeight(),
-          GeneratorUtils.pickTopSocialProofs(nodeInfo.getSocialProofs(), validSocialProofs, maxSocialProofSize)));
+          pickTopSocialProofs(nodeInfo.getSocialProofs(), validSocialProofs, maxSocialProofSize)));
     }
     Collections.reverse(outputResults);
 

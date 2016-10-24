@@ -14,28 +14,26 @@
  * limitations under the License.
  */
 
-
-package com.twitter.graphjet.algorithms;
+package com.twitter.graphjet.algorithms.counting.recommendationInfo;
 
 import java.util.Map;
 
 import com.google.common.base.Objects;
-
+import com.twitter.graphjet.algorithms.RecommendationType;
 import it.unimi.dsi.fastutil.longs.LongList;
 
-public class RecommendationInfoTweet implements RecommendationInfo {
+/**
+ * This class specifies user recommendations based on user follow, mention, and mediatag
+ */
+public class RecommendationInfoUser implements RecommendationInfo {
   private final long recommendation;
   private final RecommendationType recommendationType;
   private final double weight;
   private final Map<Byte, LongList> socialProof;
 
-  /**
-   * This class specifies the tweet recommendation.
-   */
-  public RecommendationInfoTweet(long recommendation, double weight,
-                                 Map<Byte, LongList> socialProof) {
+  public RecommendationInfoUser(long recommendation, double weight, Map<Byte, LongList> socialProof) {
     this.recommendation = recommendation;
-    this.recommendationType = RecommendationType.TWEET;
+    this.recommendationType = RecommendationType.USER;
     this.weight = weight;
     this.socialProof = socialProof;
   }
@@ -75,8 +73,7 @@ public class RecommendationInfoTweet implements RecommendationInfo {
 
     RecommendationInfoTweet other = (RecommendationInfoTweet) obj;
 
-    return
-      Objects.equal(getRecommendation(), other.getRecommendation())
+    return Objects.equal(getRecommendation(), other.getRecommendation())
         && Objects.equal(getRecommendationType(), other.getRecommendationType())
         && Objects.equal(getWeight(), other.getWeight())
         && Objects.equal(getSocialProof(), other.getSocialProof());
@@ -85,10 +82,10 @@ public class RecommendationInfoTweet implements RecommendationInfo {
   @Override
   public String toString() {
     return Objects.toStringHelper(this)
-      .add("recommendation", recommendation)
-      .add("recommendationType", recommendationType)
-      .add("weight", weight)
-      .add("socialProof", socialProof)
-      .toString();
+        .add("recommendation", recommendation)
+        .add("recommendationType", recommendationType)
+        .add("weight", weight)
+        .add("socialProof", socialProof)
+        .toString();
   }
 }

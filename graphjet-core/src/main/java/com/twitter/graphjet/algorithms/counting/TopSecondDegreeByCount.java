@@ -3,6 +3,8 @@ package com.twitter.graphjet.algorithms.counting;
 import com.twitter.graphjet.algorithms.NodeInfo;
 import com.twitter.graphjet.algorithms.RecommendationAlgorithm;
 import com.twitter.graphjet.algorithms.RecommendationStats;
+import com.twitter.graphjet.algorithms.counting.request.TopSecondDegreeByCountRequest;
+import com.twitter.graphjet.algorithms.counting.response.TopSecondDegreeByCountResponse;
 import com.twitter.graphjet.bipartite.NodeMetadataLeftIndexedMultiSegmentBipartiteGraph;
 import com.twitter.graphjet.bipartite.NodeMetadataMultiSegmentIterator;
 import com.twitter.graphjet.stats.Counter;
@@ -16,7 +18,8 @@ import java.util.List;
 import java.util.Random;
 
 /**
- * TODO (gtang): Change descriptions, and all the documentations
+ * Generates recommended RHS nodes by calculating aggregated weights.
+ * Weights are accumulated by weights of LHS nodes whose edges point to RHS nodes
  */
 public abstract class TopSecondDegreeByCount<Request extends TopSecondDegreeByCountRequest,
                                         Response extends TopSecondDegreeByCountResponse>
@@ -59,8 +62,18 @@ public abstract class TopSecondDegreeByCount<Request extends TopSecondDegreeByCo
     this.statsReceiver = statsReceiver.scope("TopSecondDegreeByCount");
     this.numRequestsCounter = this.statsReceiver.counter("numRequests");
   }
-  // TODO (gtang): better naming?
-  protected abstract void updateRightNodeInfo(
+
+  /**
+   * Interface method for updating information gathered about each RHS node.
+   * @param leftNode                is the LHS node from which traversal initialized
+   * @param rightNode               is the RHS node at which traversal arrived
+   * @param edgeType                is the edge from which LHS and RHS nodes are connected
+   * @param weight                  is the weight contributed to a RHS node in this traversal
+   * @param edgeIterator            is the iterator for traversing edges from LHS node
+   * @param maxSocialProofTypeSize  is the maximum social proof types to keep
+   * @param collectedRightNodeInfo  is a map of visited nodes, containing their info such as weights
+   */
+  protected abstract void updateNodeInfo(
       long leftNode, long rightNode, byte edgeType, double weight,
       NodeMetadataMultiSegmentIterator edgeIterator, int maxSocialProofTypeSize,
       Long2ObjectMap<NodeInfo> collectedRightNodeInfo);
@@ -69,7 +82,6 @@ public abstract class TopSecondDegreeByCount<Request extends TopSecondDegreeByCo
 
   /**
    * Computes recommendations using TopSecondDegreeByCount algorithm.
-   * TODO (gtang): put a better description here
    * @param request  is the request for the algorithm
    * @param random   is used for all random choices within the algorithm
    * @return         Right hand side nodes with largest weights
@@ -116,7 +128,7 @@ public abstract class TopSecondDegreeByCount<Request extends TopSecondDegreeByCo
         if (!hasSeenRightNodeFromEdge) {
           seenEdgesPerNode.put(rightNode, edgeType);
           int maxSocialProofTypeSize = request.getMaxSocialProofTypeSize();
-          updateRightNodeInfo(
+          updateNodeInfo(
               leftNode, rightNode,
               edgeType, weight,
               edgeIterator, maxSocialProofTypeSize, collectedNodeInfo);
@@ -161,7 +173,7 @@ public abstract class TopSecondDegreeByCount<Request extends TopSecondDegreeByCo
     topSecondDegreeByCountStats.setNumRightNodesFiltered(numFilteredNodes);
   }
 
-  protected String getLogMessage(Request request) {
+  protected String getResultLogMessage(Request request) {
     return "TopSecondDegreeByCount: after running algorithm for request_id = "
         + request.getQueryNode()
         + ", we get numDirectNeighbors = " + topSecondDegreeByCountStats.getNumDirectNeighbors()

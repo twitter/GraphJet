@@ -15,13 +15,14 @@
  */
 
 
-package com.twitter.graphjet.algorithms;
+package com.twitter.graphjet.algorithms.counting.recommendationInfo;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import com.google.common.base.Objects;
 
+import com.twitter.graphjet.algorithms.RecommendationType;
 import com.twitter.graphjet.hashing.SmallArrayBasedLongToDoubleMap;
 
 import it.unimi.dsi.fastutil.longs.LongArrayList;

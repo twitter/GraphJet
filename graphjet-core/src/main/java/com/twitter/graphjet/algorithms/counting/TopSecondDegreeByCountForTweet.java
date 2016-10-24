@@ -21,18 +21,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.twitter.graphjet.algorithms.NodeInfo;
-import com.twitter.graphjet.algorithms.RecommendationInfo;
+import com.twitter.graphjet.algorithms.counting.recommendationInfo.RecommendationInfo;
 import com.twitter.graphjet.algorithms.RecommendationType;
+import com.twitter.graphjet.algorithms.counting.recommendationGenerator.TopSecondDegreeByCountTweetMetadataRecsGenerator;
+import com.twitter.graphjet.algorithms.counting.recommendationGenerator.TopSecondDegreeByCountTweetRecsGenerator;
+import com.twitter.graphjet.algorithms.counting.request.TopSecondDegreeByCountRequestForTweet;
+import com.twitter.graphjet.algorithms.counting.response.TopSecondDegreeByCountResponse;
 import com.twitter.graphjet.bipartite.NodeMetadataLeftIndexedMultiSegmentBipartiteGraph;
 import com.twitter.graphjet.bipartite.NodeMetadataMultiSegmentIterator;
 import com.twitter.graphjet.hashing.IntArrayIterator;
 import com.twitter.graphjet.stats.StatsReceiver;
 
-import it.unimi.dsi.fastutil.longs.Long2DoubleMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 
 public class TopSecondDegreeByCountForTweet extends
-    TopSecondDegreeByCount<TopSecondDegreeTweetByCountRequest, TopSecondDegreeByCountResponse> {
+    TopSecondDegreeByCount<TopSecondDegreeByCountRequestForTweet, TopSecondDegreeByCountResponse> {
 
   /**
    * This initializes all the state needed to run TopSecondDegreeByCountForTweet. Note that the object can
@@ -56,7 +59,7 @@ public class TopSecondDegreeByCountForTweet extends
   }
 
   @Override
-  protected void updateRightNodeInfo(
+  protected void updateNodeInfo(
       long leftNode,
       long rightNode,
       byte edgeType,
@@ -97,7 +100,7 @@ public class TopSecondDegreeByCountForTweet extends
 
   @Override
   public TopSecondDegreeByCountResponse generateRecommendationFromNodeInfo(
-      TopSecondDegreeTweetByCountRequest request,
+      TopSecondDegreeByCountRequestForTweet request,
       List<NodeInfo> filteredNodeInfo) {
     int numTweetResults = 0;
     int numHashtagResults = 0;
@@ -134,7 +137,7 @@ public class TopSecondDegreeByCountForTweet extends
       recommendations.addAll(urlRecommendations);
     }
 
-    LOG.info(getLogMessage(request)
+    LOG.info(getResultLogMessage(request)
         + ", numTweetResults = " + numTweetResults
         + ", numHashtagResults = " + numHashtagResults
         + ", numUrlResults = " + numUrlResults

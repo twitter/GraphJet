@@ -27,18 +27,20 @@ import java.util.Set;
 
 import com.google.common.collect.Lists;
 
+import com.twitter.graphjet.algorithms.counting.request.TopSecondDegreeByCountRequestForTweet;
+import com.twitter.graphjet.algorithms.counting.response.TopSecondDegreeByCountResponse;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
 import com.twitter.graphjet.algorithms.BipartiteGraphTestHelper;
-import com.twitter.graphjet.algorithms.RecommendationInfo;
+import com.twitter.graphjet.algorithms.counting.recommendationInfo.RecommendationInfo;
 import com.twitter.graphjet.algorithms.RecommendationStats;
 import com.twitter.graphjet.algorithms.RecommendationType;
 import com.twitter.graphjet.algorithms.RequestedSetFilter;
 import com.twitter.graphjet.algorithms.ResultFilter;
 import com.twitter.graphjet.algorithms.ResultFilterChain;
-import com.twitter.graphjet.algorithms.RecommendationInfoTweet;
+import com.twitter.graphjet.algorithms.counting.recommendationInfo.RecommendationInfoTweet;
 import com.twitter.graphjet.bipartite.NodeMetadataLeftIndexedMultiSegmentBipartiteGraph;
 import com.twitter.graphjet.stats.NullStatsReceiver;
 
@@ -86,7 +88,7 @@ public class TopSecondDegreeByCountForTweetTest {
     ));
     Set<byte[]> socialProofTypeUnions = new HashSet<>();
 
-    TopSecondDegreeTweetByCountRequest topSecondDegreeTweetByCountRequest = new TopSecondDegreeTweetByCountRequest(
+    TopSecondDegreeByCountRequestForTweet topSecondDegreeByCountRequestForTweet = new TopSecondDegreeByCountRequestForTweet(
       queryNode,
       seedsMap,
       toBeFiltered,
@@ -105,7 +107,7 @@ public class TopSecondDegreeByCountForTweetTest {
       bipartiteGraph,
       expectedNodesToHit,
       new NullStatsReceiver()
-    ).computeRecommendations(topSecondDegreeTweetByCountRequest, random);
+    ).computeRecommendations(topSecondDegreeByCountRequestForTweet, random);
 
     ArrayList<HashMap<Byte, LongList>> socialProof = new ArrayList<HashMap<Byte, LongList>>();
     for (int i = 0; i < 3; i++) {
@@ -159,7 +161,7 @@ public class TopSecondDegreeByCountForTweetTest {
       new RequestedSetFilter(new NullStatsReceiver())
     ));
 
-    TopSecondDegreeTweetByCountRequest topSecondDegreeTweetByCountRequest = new TopSecondDegreeTweetByCountRequest(
+    TopSecondDegreeByCountRequestForTweet topSecondDegreeByCountRequestForTweet = new TopSecondDegreeByCountRequestForTweet(
       queryNode,
       seedsMap,
       toBeFiltered,
@@ -178,7 +180,7 @@ public class TopSecondDegreeByCountForTweetTest {
       bipartiteGraph,
       expectedNodesToHit,
       new NullStatsReceiver()
-    ).computeRecommendations(topSecondDegreeTweetByCountRequest, random);
+    ).computeRecommendations(topSecondDegreeByCountRequestForTweet, random);
 
     ArrayList<HashMap<Byte, LongList>> socialProof = new ArrayList<HashMap<Byte, LongList>>();
     for (int i = 0; i < 2; i++) {
@@ -254,7 +256,7 @@ public class TopSecondDegreeByCountForTweetTest {
 
     Set<byte[]> socialProofTypeUnions = new HashSet<>();
 
-    TopSecondDegreeTweetByCountRequest topSecondDegreeTweetByCountRequest = new TopSecondDegreeTweetByCountRequest(
+    TopSecondDegreeByCountRequestForTweet topSecondDegreeByCountRequestForTweet = new TopSecondDegreeByCountRequestForTweet(
       queryNode,
       seedsMap,
       toBeFiltered,
@@ -273,7 +275,7 @@ public class TopSecondDegreeByCountForTweetTest {
       bipartiteGraph,
       expectedNodesToHit,
       new NullStatsReceiver()
-    ).computeRecommendations(topSecondDegreeTweetByCountRequest, random);
+    ).computeRecommendations(topSecondDegreeByCountRequestForTweet, random);
 
     ArrayList<HashMap<Byte, LongList>> socialProof = new ArrayList<HashMap<Byte, LongList>>();
     for (int i = 0; i < 3; i++) {

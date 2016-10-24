@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.twitter.graphjet.algorithms.counting;
+package com.twitter.graphjet.algorithms.counting.request;
 
 import com.twitter.graphjet.algorithms.RecommendationType;
 import com.twitter.graphjet.algorithms.ResultFilterChain;
@@ -22,12 +22,11 @@ import it.unimi.dsi.fastutil.longs.Long2DoubleMap;
 import it.unimi.dsi.fastutil.longs.LongSet;
 
 import java.util.Map;
-import java.util.Set;
 
 /**
- * TODO (gtang): Change description
+ * Request data structure for calculating user recommendations
  */
-public class TopSecondDegreeUserByCountRequest extends TopSecondDegreeByCountRequest {
+public class TopSecondDegreeByCountRequestForUser extends TopSecondDegreeByCountRequest {
   private final Map<Byte, Integer> minUserPerSocialProof;
   private final int maxNumResults;
   public final RecommendationType recommendationType = RecommendationType.USER;
@@ -42,7 +41,7 @@ public class TopSecondDegreeUserByCountRequest extends TopSecondDegreeByCountReq
    * @param socialProofTypes          List of valid social proofs, (i.e, Follow, Mention, Mediatag)
    * @param resultFilterChain         Chain of filters for results
    */
-  public TopSecondDegreeUserByCountRequest(
+  public TopSecondDegreeByCountRequestForUser(
       long queryNode,
       Long2DoubleMap leftSeedNodesWithWeight,
       LongSet toBeFiltered,

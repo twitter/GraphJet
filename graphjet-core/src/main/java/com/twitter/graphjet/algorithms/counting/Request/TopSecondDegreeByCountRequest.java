@@ -1,12 +1,10 @@
-package com.twitter.graphjet.algorithms.counting;
+package com.twitter.graphjet.algorithms.counting.request;
 
 import com.twitter.graphjet.algorithms.RecommendationRequest;
 import com.twitter.graphjet.algorithms.ResultFilterChain;
 import com.twitter.graphjet.hashing.SmallArrayBasedLongToDoubleMap;
 import it.unimi.dsi.fastutil.longs.Long2DoubleMap;
 import it.unimi.dsi.fastutil.longs.LongSet;
-
-import java.util.Set;
 
 /**
  * Parent class of all requests using TopSecondDegreeByCountForTweet algorithm

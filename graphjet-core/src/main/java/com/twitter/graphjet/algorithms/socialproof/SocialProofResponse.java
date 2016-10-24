@@ -19,7 +19,7 @@ package com.twitter.graphjet.algorithms.socialproof;
 
 import java.util.List;
 
-import com.twitter.graphjet.algorithms.RecommendationInfo;
+import com.twitter.graphjet.algorithms.counting.recommendationInfo.RecommendationInfo;
 import com.twitter.graphjet.algorithms.RecommendationResponse;
 
 /**

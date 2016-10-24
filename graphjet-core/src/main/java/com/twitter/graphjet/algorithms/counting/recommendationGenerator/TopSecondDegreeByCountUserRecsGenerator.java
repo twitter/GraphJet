@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.twitter.graphjet.algorithms.counting;
+package com.twitter.graphjet.algorithms.counting.recommendationGenerator;
 
 import java.util.Collections;
 import java.util.List;
@@ -23,6 +23,9 @@ import java.util.PriorityQueue;
 
 import com.google.common.collect.Lists;
 import com.twitter.graphjet.algorithms.*;
+import com.twitter.graphjet.algorithms.counting.recommendationInfo.RecommendationInfo;
+import com.twitter.graphjet.algorithms.counting.recommendationInfo.RecommendationInfoUser;
+import com.twitter.graphjet.algorithms.counting.request.TopSecondDegreeByCountRequestForUser;
 import com.twitter.graphjet.hashing.SmallArrayBasedLongToDoubleMap;
 import it.unimi.dsi.fastutil.longs.LongList;
 
@@ -35,7 +38,7 @@ public class TopSecondDegreeByCountUserRecsGenerator {
    * @return              list of {@link RecommendationInfoUser}
    */
   public static List<RecommendationInfo> generateUserRecs(
-      TopSecondDegreeUserByCountRequest request,
+      TopSecondDegreeByCountRequestForUser request,
       List<NodeInfo> candidataNodes) {
 
     // Recommend at most 100 users
@@ -79,7 +82,7 @@ public class TopSecondDegreeByCountUserRecsGenerator {
   }
 
   private static  List<RecommendationInfo> getRecommendationsFromNodes(
-      TopSecondDegreeUserByCountRequest request,
+      TopSecondDegreeByCountRequestForUser request,
       PriorityQueue<NodeInfo> topNodes) {
     List<RecommendationInfo> outputResults = Lists.newArrayListWithCapacity(topNodes.size());
     byte[] validSocialProofs = request.getSocialProofTypes();

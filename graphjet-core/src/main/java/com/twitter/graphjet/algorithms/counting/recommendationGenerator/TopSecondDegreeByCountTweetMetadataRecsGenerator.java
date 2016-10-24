@@ -15,7 +15,7 @@
  */
 
 
-package com.twitter.graphjet.algorithms.counting;
+package com.twitter.graphjet.algorithms.counting.recommendationGenerator;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -24,7 +24,9 @@ import java.util.List;
 import java.util.Map;
 
 import com.twitter.graphjet.algorithms.*;
-import com.twitter.graphjet.algorithms.RecommendationInfoTweetMetadata;
+import com.twitter.graphjet.algorithms.counting.recommendationInfo.RecommendationInfo;
+import com.twitter.graphjet.algorithms.counting.recommendationInfo.RecommendationInfoTweetMetadata;
+import com.twitter.graphjet.algorithms.counting.request.TopSecondDegreeByCountRequestForTweet;
 import com.twitter.graphjet.hashing.SmallArrayBasedLongToDoubleMap;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
@@ -77,7 +79,7 @@ public final class TopSecondDegreeByCountTweetMetadataRecsGenerator {
    * @return a list of recommendations of the recommendation type
    */
   public static List<RecommendationInfo> generateTweetMetadataRecs(
-    TopSecondDegreeTweetByCountRequest request,
+    TopSecondDegreeByCountRequestForTweet request,
     List<NodeInfo> nodeInfoList,
     RecommendationType recommendationType
   ) {

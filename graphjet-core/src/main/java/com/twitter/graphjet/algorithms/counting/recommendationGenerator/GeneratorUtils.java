@@ -1,16 +1,13 @@
-package com.twitter.graphjet.algorithms.counting;
+package com.twitter.graphjet.algorithms.counting.recommendationGenerator;
 
 import com.twitter.graphjet.algorithms.NodeInfo;
 import com.twitter.graphjet.hashing.SmallArrayBasedLongToDoubleMap;
 import it.unimi.dsi.fastutil.longs.LongArrayList;
 import it.unimi.dsi.fastutil.longs.LongList;
-import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
-import it.unimi.dsi.fastutil.longs.LongSet;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.PriorityQueue;
-import java.util.Set;
 
 /**
  * Shared utility functions among RecsGenerators

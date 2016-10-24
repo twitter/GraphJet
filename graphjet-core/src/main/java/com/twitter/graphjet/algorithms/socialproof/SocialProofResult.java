@@ -17,7 +17,7 @@
 
 package com.twitter.graphjet.algorithms.socialproof;
 
-import com.twitter.graphjet.algorithms.RecommendationInfo;
+import com.twitter.graphjet.algorithms.counting.recommendationInfo.RecommendationInfo;
 import com.twitter.graphjet.algorithms.RecommendationType;
 
 import it.unimi.dsi.fastutil.bytes.Byte2ObjectMap;

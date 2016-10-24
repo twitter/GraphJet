@@ -15,7 +15,7 @@
  */
 
 
-package com.twitter.graphjet.algorithms.counting;
+package com.twitter.graphjet.algorithms.counting.request;
 
 import java.util.Map;
 import java.util.Set;
@@ -26,7 +26,7 @@ import com.twitter.graphjet.algorithms.ResultFilterChain;
 import it.unimi.dsi.fastutil.longs.Long2DoubleMap;
 import it.unimi.dsi.fastutil.longs.LongSet;
 
-public class TopSecondDegreeTweetByCountRequest extends TopSecondDegreeByCountRequest {
+public class TopSecondDegreeByCountRequestForTweet extends TopSecondDegreeByCountRequest {
   private final Set<RecommendationType> recommendationTypes;
   private final Map<RecommendationType, Integer> maxNumResultsByType;
   private final int maxUserSocialProofSize;
@@ -52,7 +52,7 @@ public class TopSecondDegreeTweetByCountRequest extends TopSecondDegreeByCountRe
    * @param resultFilterChain         is the chain of filters to be applied
    * @param socialProofTypeUnions     is the set of groups of social proofs to be combined
    */
-  public TopSecondDegreeTweetByCountRequest(
+  public TopSecondDegreeByCountRequestForTweet(
     long queryNode,
     Long2DoubleMap leftSeedNodesWithWeight,
     LongSet toBeFiltered,
