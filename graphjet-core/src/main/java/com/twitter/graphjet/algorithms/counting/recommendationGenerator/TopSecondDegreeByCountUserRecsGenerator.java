@@ -23,7 +23,7 @@ import java.util.PriorityQueue;
 
 import com.google.common.collect.Lists;
 import com.twitter.graphjet.algorithms.*;
-import com.twitter.graphjet.algorithms.counting.recommendationInfo.RecommendationInfo;
+import com.twitter.graphjet.algorithms.RecommendationInfo;
 import com.twitter.graphjet.algorithms.counting.recommendationInfo.RecommendationInfoUser;
 import com.twitter.graphjet.algorithms.counting.request.TopSecondDegreeByCountRequestForUser;
 import com.twitter.graphjet.hashing.SmallArrayBasedLongToDoubleMap;

@@ -29,7 +29,7 @@ import java.util.Map;
 public class TopSecondDegreeByCountRequestForUser extends TopSecondDegreeByCountRequest {
   private final Map<Byte, Integer> minUserPerSocialProof;
   private final int maxNumResults;
-  public final RecommendationType recommendationType = RecommendationType.USER;
+  private final RecommendationType recommendationType = RecommendationType.USER;
 
   /**
    * @param queryNode                 LHS user node we generate recommendations for
@@ -58,4 +58,6 @@ public class TopSecondDegreeByCountRequestForUser extends TopSecondDegreeByCount
   public Map<Byte, Integer> getMinUserPerSocialProof() { return minUserPerSocialProof; }
 
   public int getMaxNumResults() { return maxNumResults; }
+
+  public RecommendationType getRecommendationType() { return recommendationType;}
 }

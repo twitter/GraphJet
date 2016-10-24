@@ -21,6 +21,7 @@ import java.util.Map;
 
 import com.google.common.base.Objects;
 
+import com.twitter.graphjet.algorithms.RecommendationInfo;
 import com.twitter.graphjet.algorithms.RecommendationType;
 import it.unimi.dsi.fastutil.longs.LongList;
 

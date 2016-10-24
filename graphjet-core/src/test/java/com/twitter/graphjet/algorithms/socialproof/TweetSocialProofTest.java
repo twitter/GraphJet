@@ -25,7 +25,7 @@ import com.google.common.collect.Lists;
 import org.junit.Test;
 
 import com.twitter.graphjet.algorithms.BipartiteGraphTestHelper;
-import com.twitter.graphjet.algorithms.counting.recommendationInfo.RecommendationInfo;
+import com.twitter.graphjet.algorithms.RecommendationInfo;
 import com.twitter.graphjet.bipartite.NodeMetadataLeftIndexedMultiSegmentBipartiteGraph;
 
 import it.unimi.dsi.fastutil.bytes.Byte2ObjectMap;

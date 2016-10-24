@@ -17,7 +17,7 @@
 
 package com.twitter.graphjet.algorithms.salsa;
 
-import com.twitter.graphjet.algorithms.counting.recommendationInfo.RecommendationInfo;
+import com.twitter.graphjet.algorithms.RecommendationInfo;
 import com.twitter.graphjet.algorithms.RecommendationResponse;
 
 /**

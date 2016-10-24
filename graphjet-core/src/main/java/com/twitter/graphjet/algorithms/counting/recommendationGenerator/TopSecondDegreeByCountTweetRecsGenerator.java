@@ -22,7 +22,7 @@ import java.util.*;
 import com.google.common.collect.Lists;
 
 import com.twitter.graphjet.algorithms.NodeInfo;
-import com.twitter.graphjet.algorithms.counting.recommendationInfo.RecommendationInfo;
+import com.twitter.graphjet.algorithms.RecommendationInfo;
 import com.twitter.graphjet.algorithms.RecommendationRequest;
 import com.twitter.graphjet.algorithms.RecommendationType;
 import com.twitter.graphjet.algorithms.TweetIDMask;

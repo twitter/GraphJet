@@ -1,7 +1,7 @@
 package com.twitter.graphjet.algorithms.counting;
 
 import com.twitter.graphjet.algorithms.NodeInfo;
-import com.twitter.graphjet.algorithms.counting.recommendationInfo.RecommendationInfo;
+import com.twitter.graphjet.algorithms.RecommendationInfo;
 import com.twitter.graphjet.algorithms.counting.recommendationGenerator.TopSecondDegreeByCountUserRecsGenerator;
 import com.twitter.graphjet.algorithms.counting.request.TopSecondDegreeByCountRequestForUser;
 import com.twitter.graphjet.algorithms.counting.response.TopSecondDegreeByCountResponse;

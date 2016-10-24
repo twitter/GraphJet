@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Random;
 
 import com.twitter.graphjet.algorithms.RecommendationAlgorithm;
-import com.twitter.graphjet.algorithms.counting.recommendationInfo.RecommendationInfo;
+import com.twitter.graphjet.algorithms.RecommendationInfo;
 import com.twitter.graphjet.bipartite.NodeMetadataLeftIndexedMultiSegmentBipartiteGraph;
 import com.twitter.graphjet.bipartite.NodeMetadataMultiSegmentIterator;
 

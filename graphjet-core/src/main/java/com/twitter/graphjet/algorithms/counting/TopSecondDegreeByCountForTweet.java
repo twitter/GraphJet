@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.twitter.graphjet.algorithms.NodeInfo;
-import com.twitter.graphjet.algorithms.counting.recommendationInfo.RecommendationInfo;
+import com.twitter.graphjet.algorithms.RecommendationInfo;
 import com.twitter.graphjet.algorithms.RecommendationType;
 import com.twitter.graphjet.algorithms.counting.recommendationGenerator.TopSecondDegreeByCountTweetMetadataRecsGenerator;
 import com.twitter.graphjet.algorithms.counting.recommendationGenerator.TopSecondDegreeByCountTweetRecsGenerator;

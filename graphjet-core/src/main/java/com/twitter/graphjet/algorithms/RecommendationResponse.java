@@ -17,8 +17,6 @@
 
 package com.twitter.graphjet.algorithms;
 
-import com.twitter.graphjet.algorithms.counting.recommendationInfo.RecommendationInfo;
-
 /**
  * This class encapsulates the required response from a {@link RecommendationAlgorithm}.
  */
