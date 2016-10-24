@@ -4,7 +4,6 @@ import com.twitter.graphjet.algorithms.NodeInfo;
 import com.twitter.graphjet.algorithms.RecommendationAlgorithm;
 import com.twitter.graphjet.algorithms.RecommendationStats;
 import com.twitter.graphjet.algorithms.counting.request.TopSecondDegreeByCountRequest;
-import com.twitter.graphjet.algorithms.counting.response.TopSecondDegreeByCountResponse;
 import com.twitter.graphjet.bipartite.NodeMetadataLeftIndexedMultiSegmentBipartiteGraph;
 import com.twitter.graphjet.bipartite.NodeMetadataMultiSegmentIterator;
 import com.twitter.graphjet.stats.Counter;

@@ -15,7 +15,7 @@
  */
 
 
-package com.twitter.graphjet.algorithms.counting.response;
+package com.twitter.graphjet.algorithms.counting;
 
 import com.twitter.graphjet.algorithms.RecommendationInfo;
 import com.twitter.graphjet.algorithms.RecommendationResponse;

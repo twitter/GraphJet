@@ -26,7 +26,6 @@ import com.twitter.graphjet.algorithms.RecommendationType;
 import com.twitter.graphjet.algorithms.counting.recommendationGenerator.TopSecondDegreeByCountTweetMetadataRecsGenerator;
 import com.twitter.graphjet.algorithms.counting.recommendationGenerator.TopSecondDegreeByCountTweetRecsGenerator;
 import com.twitter.graphjet.algorithms.counting.request.TopSecondDegreeByCountRequestForTweet;
-import com.twitter.graphjet.algorithms.counting.response.TopSecondDegreeByCountResponse;
 import com.twitter.graphjet.bipartite.NodeMetadataLeftIndexedMultiSegmentBipartiteGraph;
 import com.twitter.graphjet.bipartite.NodeMetadataMultiSegmentIterator;
 import com.twitter.graphjet.hashing.IntArrayIterator;

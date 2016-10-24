@@ -26,7 +26,7 @@ import com.twitter.graphjet.algorithms.RecommendationInfo;
 import com.twitter.graphjet.algorithms.RecommendationRequest;
 import com.twitter.graphjet.algorithms.RecommendationType;
 import com.twitter.graphjet.algorithms.TweetIDMask;
-import com.twitter.graphjet.algorithms.counting.recommendationInfo.RecommendationInfoTweet;
+import com.twitter.graphjet.algorithms.RecommendationInfoTweet;
 import com.twitter.graphjet.algorithms.counting.request.TopSecondDegreeByCountRequestForTweet;
 import com.twitter.graphjet.hashing.SmallArrayBasedLongToDoubleMap;
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;

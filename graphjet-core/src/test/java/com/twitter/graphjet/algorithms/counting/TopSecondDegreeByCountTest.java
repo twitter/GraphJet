@@ -27,10 +27,9 @@ import java.util.Set;
 
 import com.google.common.collect.Lists;
 
-import com.twitter.graphjet.algorithms.counting.recommendationInfo.RecommendationInfoUser;
+import com.twitter.graphjet.algorithms.RecommendationInfoUser;
 import com.twitter.graphjet.algorithms.counting.request.TopSecondDegreeByCountRequestForTweet;
 import com.twitter.graphjet.algorithms.counting.request.TopSecondDegreeByCountRequestForUser;
-import com.twitter.graphjet.algorithms.counting.response.TopSecondDegreeByCountResponse;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -42,7 +41,7 @@ import com.twitter.graphjet.algorithms.RecommendationType;
 import com.twitter.graphjet.algorithms.RequestedSetFilter;
 import com.twitter.graphjet.algorithms.ResultFilter;
 import com.twitter.graphjet.algorithms.ResultFilterChain;
-import com.twitter.graphjet.algorithms.counting.recommendationInfo.RecommendationInfoTweet;
+import com.twitter.graphjet.algorithms.RecommendationInfoTweet;
 import com.twitter.graphjet.bipartite.NodeMetadataLeftIndexedMultiSegmentBipartiteGraph;
 import com.twitter.graphjet.stats.NullStatsReceiver;
 
@@ -312,16 +311,52 @@ public class TopSecondDegreeByCountTest {
 
   @Test
   public void testTopSecondDegreeByCountWithSocialProofUsersWithSmallGraph() throws Exception {
+    HashMap<Byte, LongList> socialProofFor3 = new HashMap<> ();
+    socialProofFor3.put((byte) 1, new LongArrayList(new long[]{1, 2, 3}));
 
+    HashMap<Byte, LongList> socialProofFor5 = new HashMap<> ();
+    socialProofFor5.put((byte) 0, new LongArrayList(new long[]{2}));
+    socialProofFor5.put((byte) 3, new LongArrayList(new long[]{1}));
+
+    HashMap<Byte, LongList> socialProofFor7 = new HashMap<> ();
+    socialProofFor7.put((byte) 0, new LongArrayList(new long[]{1}));
+    socialProofFor7.put((byte) 1, new LongArrayList(new long[]{2}));
+
+    Map<Byte, Integer> minUserPerSocialProof = new HashMap<>();
+    List<RecommendationInfoUser> expectedTopResults = new ArrayList<>();
+
+    // Test 1: Test regular test case without max result limitations
+    int maxNumResults = 3;
+    expectedTopResults.add(new RecommendationInfoUser(3, 3.0, socialProofFor3));
+    expectedTopResults.add(new RecommendationInfoUser(5, 2.5, socialProofFor5));
+    expectedTopResults.add(new RecommendationInfoUser(7, 2.5, socialProofFor7));
+    testTopSecondDegreeByCountHelper(maxNumResults, minUserPerSocialProof, expectedTopResults);
+
+    // Test 2: Test with small maxNumResults
+    maxNumResults = 1;
+    expectedTopResults.clear();
+    expectedTopResults.add(new RecommendationInfoUser(3, 3.0, socialProofFor3));
+    testTopSecondDegreeByCountHelper(maxNumResults, minUserPerSocialProof, expectedTopResults);
+
+    // Test 3: Test limiting minimum number of users per social proof
+    maxNumResults = 3;
+    minUserPerSocialProof.put((byte) 1, 3); // 3 users per proof
+    expectedTopResults.clear();
+    expectedTopResults.add(new RecommendationInfoUser(3, 3.0, socialProofFor3));
+    testTopSecondDegreeByCountHelper(maxNumResults, minUserPerSocialProof, expectedTopResults);
+  }
+
+  private void testTopSecondDegreeByCountHelper(
+      int maxNumResults,
+      Map<Byte, Integer> minUserPerSocialProof,
+      List<RecommendationInfoUser> expectedTopResults) throws Exception {
     NodeMetadataLeftIndexedMultiSegmentBipartiteGraph bipartiteGraph =
         BipartiteGraphTestHelper.buildSmallTestNodeMetadataLeftIndexedMultiSegmentBipartiteGraphWithEdgeTypes();
 
     long queryNode = 1;
+    int maxSocialProofSize = 4;
     Long2DoubleMap seedsMap = new Long2DoubleArrayMap(new long[]{1, 2, 3}, new double[]{1.5, 1.0, 0.5});
     LongSet toBeFiltered = new LongOpenHashSet(new long[]{});
-    int maxNumResults = 3;
-    int maxSocialProofSize = 10;
-    Map<Byte, Integer> minUserPerSocialProof = new HashMap<>();
     byte[] socialProofTypes = new byte[]{0, 1, 2, 3};
     ResultFilterChain resultFilterChain = new ResultFilterChain(Lists.<ResultFilter>newArrayList(
         new RequestedSetFilter(new NullStatsReceiver())));
@@ -340,33 +375,24 @@ public class TopSecondDegreeByCountTest {
         socialProofTypes,
         resultFilterChain);
 
-    TopSecondDegreeByCountResponse response = new TopSecondDegreeByCountForUser(
-        bipartiteGraph,
-        expectedNodesToHit,
-        new NullStatsReceiver()
-    ).computeRecommendations(request, random);
+    try {
+      TopSecondDegreeByCountResponse response = new TopSecondDegreeByCountForUser(
+          bipartiteGraph,
+          expectedNodesToHit,
+          new NullStatsReceiver()
+      ).computeRecommendations(request, random);
 
-    ArrayList<HashMap<Byte, LongList>> socialProof = new ArrayList<HashMap<Byte, LongList>>();
-    for (int i = 0; i < 2; i++) {
-      socialProof.add(new HashMap<>());
+      List<RecommendationInfo> topSecondDegreeByCountResults =
+          Lists.newArrayList(response.getRankedRecommendations());
+
+      final RecommendationStats expectedTopSecondDegreeByCountStats = new RecommendationStats(5, 6, 17, 2, 4, 0);
+      RecommendationStats topSecondDegreeByCountStats = response.getTopSecondDegreeByCountStats();
+
+      assertEquals(expectedTopSecondDegreeByCountStats, topSecondDegreeByCountStats);
+      assertEquals(expectedTopResults, topSecondDegreeByCountResults);
     }
-    socialProof.get(0).put((byte) 1, new LongArrayList(new long[]{1, 2, 3}));
-    socialProof.get(1).put((byte) 0, new LongArrayList(new long[]{2}));
-    socialProof.get(1).put((byte) 3, new LongArrayList(new long[]{1}));
-
-    final List<RecommendationInfo> expectedTopResults = new ArrayList<RecommendationInfo>();
-    expectedTopResults.add(new RecommendationInfoUser(3, 3.0, socialProof.get(0)));
-    expectedTopResults.add(new RecommendationInfoUser(5, 2.5, socialProof.get(1)));
-
-    List<RecommendationInfo> topSecondDegreeByCountResults =
-        Lists.newArrayList(response.getRankedRecommendations());
-
-    final RecommendationStats expectedTopSecondDegreeByCountStats =
-        new RecommendationStats(5, 6, 17, 2, 4, 0);
-    RecommendationStats topSecondDegreeByCountStats =
-        response.getTopSecondDegreeByCountStats();
-
-    assertEquals(expectedTopSecondDegreeByCountStats, topSecondDegreeByCountStats);
-    assertEquals(expectedTopResults, topSecondDegreeByCountResults);
+    catch (Exception e) {
+      e.printStackTrace();
+    }
   }
 }

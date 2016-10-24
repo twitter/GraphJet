@@ -24,7 +24,7 @@ import java.util.PriorityQueue;
 import com.google.common.collect.Lists;
 import com.twitter.graphjet.algorithms.*;
 import com.twitter.graphjet.algorithms.RecommendationInfo;
-import com.twitter.graphjet.algorithms.counting.recommendationInfo.RecommendationInfoUser;
+import com.twitter.graphjet.algorithms.RecommendationInfoUser;
 import com.twitter.graphjet.algorithms.counting.request.TopSecondDegreeByCountRequestForUser;
 import com.twitter.graphjet.hashing.SmallArrayBasedLongToDoubleMap;
 import it.unimi.dsi.fastutil.longs.LongList;
@@ -33,20 +33,20 @@ public class TopSecondDegreeByCountUserRecsGenerator {
 
   /**
    * Generate a list of recommendations based on given list of candidate nodes and the original request
-   * @param request       original request message, contains filtering criteria
-   * @param candidataNodes  list of candidate nodes
-   * @return              list of {@link RecommendationInfoUser}
+   * @param request         original request message, contains filtering criteria
+   * @param candidateNodes  list of candidate nodes
+   * @return                list of {@link RecommendationInfoUser}
    */
   public static List<RecommendationInfo> generateUserRecs(
       TopSecondDegreeByCountRequestForUser request,
-      List<NodeInfo> candidataNodes) {
+      List<NodeInfo> candidateNodes) {
 
     // Recommend at most 100 users
     int maxNumResults = Math.min(request.getMaxNumResults(),
         RecommendationRequest.DEFAULT_RECOMMENDATION_RESULTS);
 
     PriorityQueue<NodeInfo> qualifiedNodes =
-        getQualifiedNodes(candidataNodes, request.getMinUserPerSocialProof(), maxNumResults);
+        getQualifiedNodes(candidateNodes, request.getMinUserPerSocialProof(), maxNumResults);
 
     return getRecommendationsFromNodes(request, qualifiedNodes);
   }
@@ -74,7 +74,12 @@ public class TopSecondDegreeByCountUserRecsGenerator {
         // if there is no limit on social proof size, qualified
         continue;
       }
+      if (socialProofs[proofType] == null) {
+        // if node does not have this type of social proof, not qualified
+        return false;
+      }
       if (socialProofs[proofType].size() < minSocialProofSizes.get(proofType)) {
+        // if number of social proofs below threashold, not qualified
         return false;
       }
     }
@@ -97,7 +102,7 @@ public class TopSecondDegreeByCountUserRecsGenerator {
           maxSocialProofSize);
 
       RecommendationInfoUser userRecs = new RecommendationInfoUser(
-          TweetIDMask.restore(nodeInfo.getValue()),
+          nodeInfo.getValue(),
           nodeInfo.getWeight(),
           topSocialProofs);
       outputResults.add(userRecs);

@@ -36,7 +36,7 @@ public class TopSecondDegreeByCountRequestForUser extends TopSecondDegreeByCount
    * @param leftSeedNodesWithWeight   List of seed LFS nodes we use for RHS node weight calculation
    * @param toBeFiltered              List of users to be excluded from recommendations
    * @param maxNumResults             Maximum number of recommendations returned in the response
-   * @param maxSocialProofSize        Maximum number of all social proofs, which helps restrict network bandwidth
+   * @param maxSocialProofTypeSize    Number of social proofs
    * @param minUserPerSocialProof     For each social proof, require a minimum number of users to be valid
    * @param socialProofTypes          List of valid social proofs, (i.e, Follow, Mention, Mediatag)
    * @param resultFilterChain         Chain of filters for results
@@ -46,11 +46,11 @@ public class TopSecondDegreeByCountRequestForUser extends TopSecondDegreeByCount
       Long2DoubleMap leftSeedNodesWithWeight,
       LongSet toBeFiltered,
       int maxNumResults,
-      int maxSocialProofSize,
+      int maxSocialProofTypeSize,
       Map<Byte, Integer> minUserPerSocialProof,
       byte[] socialProofTypes,
       ResultFilterChain resultFilterChain) {
-    super(queryNode, leftSeedNodesWithWeight, toBeFiltered, maxSocialProofSize, socialProofTypes,resultFilterChain);
+    super(queryNode, leftSeedNodesWithWeight, toBeFiltered, maxSocialProofTypeSize, socialProofTypes,resultFilterChain);
     this.maxNumResults = maxNumResults;
     this.minUserPerSocialProof = minUserPerSocialProof;
   }

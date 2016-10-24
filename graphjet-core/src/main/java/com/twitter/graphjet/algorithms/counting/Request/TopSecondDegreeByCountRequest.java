@@ -17,10 +17,11 @@ public abstract class TopSecondDegreeByCountRequest extends RecommendationReques
 
   /**
    * Parent class constructor for requests to TopSecondDegreeByCountForTweet
-   * @param queryNode                 User Id of the requester
-   * @param leftSeedNodesWithWeight   Weighted seed users
-   * @param toBeFiltered              Excluded User Ids
-   * @param maxSocialProofTypeSize    Number of social proof types
+   * @param queryNode                 is the query node for running TopSecondDegreeByCount
+   * @param leftSeedNodesWithWeight   is the set of seed nodes and their weights to use for
+   *                                  TopSecondDegreeByCount.
+   * @param toBeFiltered              is the set of RHS nodes to be filtered from the output
+   * @param maxSocialProofTypeSize    is the number of social proof types in the graph.
    * @param socialProofTypes          Social proof types, masked into a byte array
    * @param resultFilterChain         Filter chain to be applied after recommendation computation
    */

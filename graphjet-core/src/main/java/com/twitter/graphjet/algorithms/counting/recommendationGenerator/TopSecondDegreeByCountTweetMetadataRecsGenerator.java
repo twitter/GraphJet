@@ -25,7 +25,7 @@ import java.util.Map;
 
 import com.twitter.graphjet.algorithms.*;
 import com.twitter.graphjet.algorithms.RecommendationInfo;
-import com.twitter.graphjet.algorithms.counting.recommendationInfo.RecommendationInfoTweetMetadata;
+import com.twitter.graphjet.algorithms.RecommendationInfoTweetMetadata;
 import com.twitter.graphjet.algorithms.counting.request.TopSecondDegreeByCountRequestForTweet;
 import com.twitter.graphjet.hashing.SmallArrayBasedLongToDoubleMap;
 
