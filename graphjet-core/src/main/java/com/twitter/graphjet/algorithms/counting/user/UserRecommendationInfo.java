@@ -74,18 +74,18 @@ public class UserRecommendationInfo implements RecommendationInfo {
     UserRecommendationInfo other = (UserRecommendationInfo) obj;
 
     return Objects.equal(getRecommendation(), other.getRecommendation())
-        && Objects.equal(getRecommendationType(), other.getRecommendationType())
-        && Objects.equal(getWeight(), other.getWeight())
-        && Objects.equal(getSocialProof(), other.getSocialProof());
+      && Objects.equal(getRecommendationType(), other.getRecommendationType())
+      && Objects.equal(getWeight(), other.getWeight())
+      && Objects.equal(getSocialProof(), other.getSocialProof());
   }
 
   @Override
   public String toString() {
     return Objects.toStringHelper(this)
-        .add("recommendation", recommendation)
-        .add("recommendationType", recommendationType)
-        .add("weight", weight)
-        .add("socialProof", socialProof)
-        .toString();
+      .add("recommendation", recommendation)
+      .add("recommendationType", recommendationType)
+      .add("weight", weight)
+      .add("socialProof", socialProof)
+      .toString();
   }
 }

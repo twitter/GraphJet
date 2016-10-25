@@ -109,8 +109,8 @@ public abstract class TopSecondDegreeByCount<Request extends TopSecondDegreeByCo
     reset(request);
 
     collectRightNodeInfo(request);
-    updateAlgorithmStats(request.getQueryNode(), visitedRightNodes);
-    filterNodeInfo(request, visitedRightNodes);
+    updateAlgorithmStats(request.getQueryNode());
+    filterNodeInfo(request);
     return generateRecommendationFromNodeInfo(request);
   }
 
@@ -157,7 +157,7 @@ public abstract class TopSecondDegreeByCount<Request extends TopSecondDegreeByCo
     }
   }
 
-  private void updateAlgorithmStats(long queryNode, Long2ObjectMap<NodeInfo> collectedNodeInfo) {
+  private void updateAlgorithmStats(long queryNode) {
     topSecondDegreeByCountStats.setNumDirectNeighbors(
       leftIndexedBipartiteGraph.getLeftNodeDegree(queryNode)
     );
@@ -166,7 +166,7 @@ public abstract class TopSecondDegreeByCount<Request extends TopSecondDegreeByCo
     int maxVisitsPerRightNode = 0;
     int numRHSVisits = 0;
 
-    for (Long2ObjectMap.Entry<NodeInfo> entry: collectedNodeInfo.long2ObjectEntrySet()) {
+    for (Long2ObjectMap.Entry<NodeInfo> entry: this.visitedRightNodes.long2ObjectEntrySet()) {
       NodeInfo nodeInfo = entry.getValue();
       int numVisits = nodeInfo.getNumVisits();
 
@@ -178,12 +178,12 @@ public abstract class TopSecondDegreeByCount<Request extends TopSecondDegreeByCo
     topSecondDegreeByCountStats.setMinVisitsPerRightNode(minVisitsPerRightNode);
     topSecondDegreeByCountStats.setMaxVisitsPerRightNode(maxVisitsPerRightNode);
     topSecondDegreeByCountStats.setNumRHSVisits(numRHSVisits);
-    topSecondDegreeByCountStats.setNumRightNodesReached(collectedNodeInfo.size());
+    topSecondDegreeByCountStats.setNumRightNodesReached(this.visitedRightNodes.size());
   }
 
-  private void filterNodeInfo(Request request, Long2ObjectMap<NodeInfo> collectedNodeInfo) {
+  private void filterNodeInfo(Request request) {
     int numFilteredNodes = 0;
-    for (NodeInfo nodeInfo : collectedNodeInfo.values()) {
+    for (NodeInfo nodeInfo : this.visitedRightNodes.values()) {
       if (request.filterResult(nodeInfo.getValue(), nodeInfo.getSocialProofs())) {
         numFilteredNodes++;
         continue;
