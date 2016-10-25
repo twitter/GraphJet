@@ -32,7 +32,6 @@ public abstract class TopSecondDegreeByCountRequest extends RecommendationReques
   private final ResultFilterChain resultFilterChain;
 
   /**
-   * Parent class constructor for requests to TopSecondDegreeByCountForTweet
    * @param queryNode                 is the query node for running TopSecondDegreeByCount
    * @param leftSeedNodesWithWeight   is the set of seed nodes and their weights to use for
    *                                  TopSecondDegreeByCount

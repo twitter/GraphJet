@@ -52,9 +52,6 @@ public abstract class TopSecondDegreeByCount<Request extends TopSecondDegreeByCo
   protected final Counter numRequestsCounter;
 
   /**
-   * This initializes all the state needed to run TopSecondDegreeByCount. Note that the object can
-   * be reused for answering many different queries on the same graph, which allows for
-   * optimizations such as reusing internally allocated maps etc.
    *
    * @param leftIndexedBipartiteGraph is the
    *                                  {@link NodeMetadataLeftIndexedMultiSegmentBipartiteGraph}
@@ -166,7 +163,7 @@ public abstract class TopSecondDegreeByCount<Request extends TopSecondDegreeByCo
     int maxVisitsPerRightNode = 0;
     int numRHSVisits = 0;
 
-    for (Long2ObjectMap.Entry<NodeInfo> entry: this.visitedRightNodes.long2ObjectEntrySet()) {
+    for (Long2ObjectMap.Entry<NodeInfo> entry: visitedRightNodes.long2ObjectEntrySet()) {
       NodeInfo nodeInfo = entry.getValue();
       int numVisits = nodeInfo.getNumVisits();
 
@@ -178,17 +175,17 @@ public abstract class TopSecondDegreeByCount<Request extends TopSecondDegreeByCo
     topSecondDegreeByCountStats.setMinVisitsPerRightNode(minVisitsPerRightNode);
     topSecondDegreeByCountStats.setMaxVisitsPerRightNode(maxVisitsPerRightNode);
     topSecondDegreeByCountStats.setNumRHSVisits(numRHSVisits);
-    topSecondDegreeByCountStats.setNumRightNodesReached(this.visitedRightNodes.size());
+    topSecondDegreeByCountStats.setNumRightNodesReached(visitedRightNodes.size());
   }
 
   private void filterNodeInfo(Request request) {
     int numFilteredNodes = 0;
-    for (NodeInfo nodeInfo : this.visitedRightNodes.values()) {
+    for (NodeInfo nodeInfo : visitedRightNodes.values()) {
       if (request.filterResult(nodeInfo.getValue(), nodeInfo.getSocialProofs())) {
         numFilteredNodes++;
         continue;
       }
-      this.nodeInfosAfterFiltering.add(nodeInfo);
+      nodeInfosAfterFiltering.add(nodeInfo);
     }
     topSecondDegreeByCountStats.setNumRightNodesFiltered(numFilteredNodes);
   }

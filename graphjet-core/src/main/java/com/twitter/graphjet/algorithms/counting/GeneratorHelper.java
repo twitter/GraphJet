@@ -28,7 +28,11 @@ import java.util.PriorityQueue;
 /**
  * Shared utility functions among RecsGenerators
  */
-public class GeneratorHelper {
+public final class GeneratorHelper {
+
+  private GeneratorHelper() {
+  }
+
   /**
    * Pick the top social proofs for each RHS node
    */

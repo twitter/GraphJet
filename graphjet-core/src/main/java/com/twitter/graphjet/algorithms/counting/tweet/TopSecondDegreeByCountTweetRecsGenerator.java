@@ -32,6 +32,10 @@ import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import it.unimi.dsi.fastutil.longs.LongSet;
 
 public final class TopSecondDegreeByCountTweetRecsGenerator {
+
+  private TopSecondDegreeByCountTweetRecsGenerator() {
+  }
+
   /**
    * Return tweet recommendations
    *

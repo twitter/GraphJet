@@ -91,7 +91,7 @@ public class TopSecondDegreeByCountTest {
     ));
     Set<byte[]> socialProofTypeUnions = new HashSet<>();
 
-    TopSecondDegreeByCountRequestForTweet topSecondDegreeByCountRequestForTweet = new TopSecondDegreeByCountRequestForTweet(
+    TopSecondDegreeByCountRequestForTweet request = new TopSecondDegreeByCountRequestForTweet(
       queryNode,
       seedsMap,
       toBeFiltered,
@@ -106,11 +106,11 @@ public class TopSecondDegreeByCountTest {
       socialProofTypeUnions
     );
 
-    TopSecondDegreeByCountResponse topSecondDegreeByCountResponse = new TopSecondDegreeByCountForTweet(
+    TopSecondDegreeByCountResponse response = new TopSecondDegreeByCountForTweet(
       bipartiteGraph,
       expectedNodesToHit,
       new NullStatsReceiver()
-    ).computeRecommendations(topSecondDegreeByCountRequestForTweet, random);
+    ).computeRecommendations(request, random);
 
     ArrayList<HashMap<Byte, LongList>> socialProof = new ArrayList<HashMap<Byte, LongList>>();
     for (int i = 0; i < 3; i++) {
@@ -126,12 +126,12 @@ public class TopSecondDegreeByCountTest {
     expectedTopResults.add(new TweetRecommendationInfo(8, 0.5, socialProof.get(2)));
 
     List<RecommendationInfo> topSecondDegreeByCountResults =
-      Lists.newArrayList(topSecondDegreeByCountResponse.getRankedRecommendations());
+      Lists.newArrayList(response.getRankedRecommendations());
 
     final RecommendationStats expectedTopSecondDegreeByCountStats =
       new RecommendationStats(4, 9, 20, 2, 3, 2);
     RecommendationStats topSecondDegreeByCountStats =
-      topSecondDegreeByCountResponse.getTopSecondDegreeByCountStats();
+      response.getTopSecondDegreeByCountStats();
 
     assertEquals(expectedTopSecondDegreeByCountStats, topSecondDegreeByCountStats);
     assertEquals(expectedTopResults, topSecondDegreeByCountResults);
@@ -164,7 +164,7 @@ public class TopSecondDegreeByCountTest {
       new RequestedSetFilter(new NullStatsReceiver())
     ));
 
-    TopSecondDegreeByCountRequestForTweet topSecondDegreeByCountRequestForTweet = new TopSecondDegreeByCountRequestForTweet(
+    TopSecondDegreeByCountRequestForTweet request = new TopSecondDegreeByCountRequestForTweet(
       queryNode,
       seedsMap,
       toBeFiltered,
@@ -179,11 +179,11 @@ public class TopSecondDegreeByCountTest {
       socialProofTypeUnions
     );
 
-    TopSecondDegreeByCountResponse topSecondDegreeByCountResponse = new TopSecondDegreeByCountForTweet(
+    TopSecondDegreeByCountResponse response = new TopSecondDegreeByCountForTweet(
       bipartiteGraph,
       expectedNodesToHit,
       new NullStatsReceiver()
-    ).computeRecommendations(topSecondDegreeByCountRequestForTweet, random);
+    ).computeRecommendations(request, random);
 
     ArrayList<HashMap<Byte, LongList>> socialProof = new ArrayList<HashMap<Byte, LongList>>();
     for (int i = 0; i < 2; i++) {
@@ -198,12 +198,12 @@ public class TopSecondDegreeByCountTest {
     expectedTopResults.add(new TweetRecommendationInfo(5, 2.5, socialProof.get(1)));
 
     List<RecommendationInfo> topSecondDegreeByCountResults =
-      Lists.newArrayList(topSecondDegreeByCountResponse.getRankedRecommendations());
+      Lists.newArrayList(response.getRankedRecommendations());
 
     final RecommendationStats expectedTopSecondDegreeByCountStats =
       new RecommendationStats(5, 6, 17, 2, 4, 0);
     RecommendationStats topSecondDegreeByCountStats =
-      topSecondDegreeByCountResponse.getTopSecondDegreeByCountStats();
+      response.getTopSecondDegreeByCountStats();
 
     assertEquals(expectedTopSecondDegreeByCountStats, topSecondDegreeByCountStats);
     assertEquals(expectedTopResults, topSecondDegreeByCountResults);
@@ -259,7 +259,7 @@ public class TopSecondDegreeByCountTest {
 
     Set<byte[]> socialProofTypeUnions = new HashSet<>();
 
-    TopSecondDegreeByCountRequestForTweet topSecondDegreeByCountRequestForTweet = new TopSecondDegreeByCountRequestForTweet(
+    TopSecondDegreeByCountRequestForTweet request = new TopSecondDegreeByCountRequestForTweet(
       queryNode,
       seedsMap,
       toBeFiltered,
@@ -274,11 +274,11 @@ public class TopSecondDegreeByCountTest {
       socialProofTypeUnions
     );
 
-    TopSecondDegreeByCountResponse topSecondDegreeByCountResponse = new TopSecondDegreeByCountForTweet(
+    TopSecondDegreeByCountResponse response = new TopSecondDegreeByCountForTweet(
       bipartiteGraph,
       expectedNodesToHit,
       new NullStatsReceiver()
-    ).computeRecommendations(topSecondDegreeByCountRequestForTweet, random);
+    ).computeRecommendations(request, random);
 
     ArrayList<HashMap<Byte, LongList>> socialProof = new ArrayList<HashMap<Byte, LongList>>();
     for (int i = 0; i < 3; i++) {
@@ -300,12 +300,12 @@ public class TopSecondDegreeByCountTest {
     );
 
     List<RecommendationInfo> topSecondDegreeByCountResults =
-      Lists.newArrayList(topSecondDegreeByCountResponse.getRankedRecommendations());
+      Lists.newArrayList(response.getRankedRecommendations());
 
     final RecommendationStats expectedTopSecondDegreeByCountStats =
       new RecommendationStats(0, 398, 798, 2, 3, 0);
     RecommendationStats topSecondDegreeByCountStats =
-      topSecondDegreeByCountResponse.getTopSecondDegreeByCountStats();
+      response.getTopSecondDegreeByCountStats();
 
     assertEquals(expectedTopSecondDegreeByCountStats, topSecondDegreeByCountStats);
     assertEquals(expectedTopResults, topSecondDegreeByCountResults);
