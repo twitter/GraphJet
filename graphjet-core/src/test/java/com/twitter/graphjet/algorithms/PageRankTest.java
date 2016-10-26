@@ -302,7 +302,7 @@ public class PageRankTest {
       graph.addEdge(LES_MIS_GRAPH[i][0], LES_MIS_GRAPH[i][1], (byte) 0);
     }
 
-    // Spot check the graph to make sur it's been loaded correctly.
+    // Spot check the graph to make sure it's been loaded correctly.
     assertEquals(7, graph.getOutDegree(76));
     assertEquals(new LongArrayList(new long[]{64, 65, 66, 63, 62, 48, 58}), new LongArrayList(graph.getOutEdges(76)));
 

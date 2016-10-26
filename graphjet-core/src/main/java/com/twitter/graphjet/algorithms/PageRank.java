@@ -16,7 +16,6 @@
 
 package com.twitter.graphjet.algorithms;
 
-import com.google.common.util.concurrent.AtomicDouble;
 import com.twitter.graphjet.bipartite.api.EdgeIterator;
 import com.twitter.graphjet.directed.api.OutIndexedDirectedGraph;
 import it.unimi.dsi.fastutil.longs.LongArrayList;
@@ -24,9 +23,13 @@ import it.unimi.dsi.fastutil.longs.LongIterator;
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 
 /**
- * Implementation of PageRank. This implementation initializes an array of doubles to hold PageRank values, where the
- * node id is used as the index into the array. Therefore, the algorithm needs to know the max node id as well as the
- * set of nodes, in the case where the node ids are not assigned sequentially.
+ * Implementation of PageRank. This implementation initializes an array of doubles to hold the
+ * PageRank vector, where the node id is used as the index into the array. In other words, we use
+ * a dense vector representation: this is ideal if all the nodes are assigned sequential (and
+ * consecutive) node ids, but potentially wasteful if the node ids are sparsely assigned. Either
+ * way, the implementation needs to know the max node id in order to properly instantiate the
+ * PageRank vector. Furthermore, the implementation needs to be given the set of node ids that
+ * comprise the graph, because this information is not currently accessible from the graph APIs.
  */
 public class PageRank {
   final private OutIndexedDirectedGraph graph;
@@ -37,7 +40,7 @@ public class PageRank {
   final private int maxIterations;
   final private double tolerance;
 
-  final private AtomicDouble normL1 = new AtomicDouble(Double.MAX_VALUE);
+  private double normL1 = Double.MAX_VALUE;
   private double[] prVector = null;
 
   /**
@@ -50,8 +53,8 @@ public class PageRank {
    * @param maxIterations  maximum number of iterations to run
    * @param tolerance      L1 norm threshold for convergence
    */
-  public PageRank(OutIndexedDirectedGraph graph, LongOpenHashSet nodes, long maxNodesId, double dampingFactor,
-                  int maxIterations, double tolerance) {
+  public PageRank(OutIndexedDirectedGraph graph, LongOpenHashSet nodes, long maxNodesId,
+                  double dampingFactor, int maxIterations, double tolerance) {
     this.graph = graph;
     this.nodes = nodes;
     this.maxNodeId = maxNodesId;
@@ -73,12 +76,12 @@ public class PageRank {
     double nextPR[] = new double[(int) (maxNodeId + 1)]; // PageRank vector after the iteration.
 
     // First compute how much mass is trapped at the dangling nodes.
-    AtomicDouble dangleSum = new AtomicDouble();
+    double dangleSum = 0.0;
     LongIterator iter = noOuts.iterator();
     while (iter.hasNext()) {
-      dangleSum.addAndGet(prevPR[(int) iter.nextLong()]);
+      dangleSum += prevPR[(int) iter.nextLong()];
     }
-    dangleSum.set(dampingFactor * dangleSum.get() / nodeCount);
+    dangleSum = dampingFactor * dangleSum / nodeCount;
 
     // Distribute PageRank mass.
     iter = nodes.iterator();
@@ -94,10 +97,10 @@ public class PageRank {
         }
       }
 
-      nextPR[(int) v] += dampingAmount + dangleSum.get();
+      nextPR[(int) v] += dampingAmount + dangleSum;
     }
 
-    normL1.set(computeL1Norm(prevPR, nextPR));
+    normL1 = computeL1Norm(prevPR, nextPR);
     return nextPR;
   }
 
@@ -108,8 +111,8 @@ public class PageRank {
   }
 
   /**
-   * Runs PageRank, either until the max number of iterations has been reached or the L1 norm of the difference between
-   * PageRank vectors drops below the tolerance
+   * Runs PageRank, either until the max number of iterations has been reached or the L1 norm of
+   * the difference between PageRank vectors drops below the tolerance.
    *
    * @return number of iterations that was actually run
    */
@@ -127,7 +130,7 @@ public class PageRank {
     double pr[] = initializePageRankVector(nodeCount);
 
     int i = 0;
-    while (i < this.maxIterations && normL1.get() > tolerance) {
+    while (i < this.maxIterations && normL1 > tolerance) {
       pr = iterate(pr, dampingAmount, noOuts);
       i++;
     }
@@ -142,7 +145,7 @@ public class PageRank {
    * @return the final L1 norm value after PageRank has been run
    */
   public double getL1Norm() {
-    return normL1.get();
+    return normL1;
   }
 
   /**
