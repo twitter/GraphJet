@@ -24,7 +24,7 @@ import com.twitter.graphjet.algorithms.RecommendationType;
 import it.unimi.dsi.fastutil.longs.LongList;
 
 /**
- * User recommendation information based on user interactions, including follow, mention, and mediatag.
+ * User recommendation based on user-user interactions, including follow, mention, and mediatag.
  */
 public class UserRecommendationInfo implements RecommendationInfo {
   private final long recommendation;

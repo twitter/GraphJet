@@ -30,7 +30,8 @@ import it.unimi.dsi.fastutil.longs.LongArrayList;
 import it.unimi.dsi.fastutil.longs.LongList;
 
 /**
- * Tweet recommendation information based on tweet metadata, such as hashtags and urls.
+ * Hashtag and url recommendation based on user-tweet interactions,
+ * such as tweet creation, retweet, reply, favorite and quote.
  */
 
 public class TweetMetadataRecommendationInfo
