@@ -29,6 +29,10 @@ import com.twitter.graphjet.hashing.SmallArrayBasedLongToDoubleMap;
 import it.unimi.dsi.fastutil.longs.LongArrayList;
 import it.unimi.dsi.fastutil.longs.LongList;
 
+/**
+ * Tweet recommendation information based on tweet metadata, such as hashtags and urls.
+ */
+
 public class TweetMetadataRecommendationInfo
   implements RecommendationInfo, Comparable<TweetMetadataRecommendationInfo> {
   private final int recommendation;
@@ -38,7 +42,7 @@ public class TweetMetadataRecommendationInfo
   private static final int INITIAL_TWEET_ARRAY_SIZE = 4;
 
   /**
-   * This class specifies the metadata recommendation, such as hashtag and url.
+   * Specify the metadata recommendation, such as hashtag and url.
    */
   public TweetMetadataRecommendationInfo(int recommendation, RecommendationType type, double weight,
                                          Map<Byte, Map<Long, LongList>> socialProof) {
@@ -65,7 +69,7 @@ public class TweetMetadataRecommendationInfo
   }
 
   /**
-   * This method updates the user and tweet social proofs associated with each metadata
+   * Update the user and tweet social proofs associated with each metadata
    * recommendation.
    *
    * @param socialProofType          the social proof type, such as like, retweet, reply

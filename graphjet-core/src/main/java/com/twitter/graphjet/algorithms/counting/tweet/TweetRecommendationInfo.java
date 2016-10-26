@@ -25,6 +25,9 @@ import com.twitter.graphjet.algorithms.RecommendationInfo;
 import com.twitter.graphjet.algorithms.RecommendationType;
 import it.unimi.dsi.fastutil.longs.LongList;
 
+/**
+ * Tweet recommendation information based on tweet interactions, such as tweet and reply.
+ */
 public class TweetRecommendationInfo implements RecommendationInfo {
   private final long recommendation;
   private final RecommendationType recommendationType;

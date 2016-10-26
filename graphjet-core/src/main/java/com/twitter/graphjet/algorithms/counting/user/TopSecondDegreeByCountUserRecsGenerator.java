@@ -34,7 +34,7 @@ public final class TopSecondDegreeByCountUserRecsGenerator {
   }
 
   /**
-   * Generate a list of recommendations based on given list of candidate nodes and the original request
+   * Generate a list of recommendations based on given list of candidate nodes and the original request.
    * @param request         original request message, contains filtering criteria
    * @param candidateNodes  list of candidate nodes
    * @return                list of {@link UserRecommendationInfo}

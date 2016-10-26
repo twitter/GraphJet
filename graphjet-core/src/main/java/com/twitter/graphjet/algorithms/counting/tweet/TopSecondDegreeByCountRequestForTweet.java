@@ -36,7 +36,7 @@ public class TopSecondDegreeByCountRequestForTweet extends TopSecondDegreeByCoun
   private final Set<byte[]> socialProofTypeUnions;
 
   /**
-   * The constructor of tweet related recommendations using TopSecondDegreeByCountForTweet algorithm
+   * Construct a TopSecondDegreeByCount algorithm runner for tweet related recommendations.
    * @param queryNode                 is the query node for running TopSecondDegreeByCountForTweet
    * @param leftSeedNodesWithWeight   is the set of seed nodes and their weights to use for
    *                                  TopSecondDegreeByCountForTweet

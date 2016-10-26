@@ -23,7 +23,7 @@ import it.unimi.dsi.fastutil.longs.Long2DoubleMap;
 import it.unimi.dsi.fastutil.longs.LongSet;
 
 /**
- * Parent class of all requests using TopSecondDegreeByCount algorithm
+ * Parent class of all requests using TopSecondDegreeByCount algorithm.
  */
 public abstract class TopSecondDegreeByCountRequest extends RecommendationRequest {
 
@@ -68,7 +68,7 @@ public abstract class TopSecondDegreeByCountRequest extends RecommendationReques
   }
 
   /**
-   * filter the given result
+   * Filter the given result using the filter chain
    * @param result is the node to check for filtering
    * @param socialProofs is the socialProofs of different types associated with the node
    * @return true if the node should be discarded, false otherwise

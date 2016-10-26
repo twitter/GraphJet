@@ -37,7 +37,7 @@ public final class TopSecondDegreeByCountTweetRecsGenerator {
   }
 
   /**
-   * Return tweet recommendations
+   * Return tweet recommendations.
    *
    * @param request       topSecondDegreeByCount request
    * @param nodeInfoList  a list of node info containing engagement social proof and weights

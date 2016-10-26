@@ -29,6 +29,16 @@ import java.util.List;
 public class TopSecondDegreeByCountForUser extends
   TopSecondDegreeByCount<TopSecondDegreeByCountRequestForUser, TopSecondDegreeByCountResponse> {
 
+  /**
+   * Construct a TopSecondDegreeByCount algorithm runner for user related recommendations.
+   * @param leftIndexedBipartiteGraph is the
+   *                                  {@link NodeMetadataLeftIndexedMultiSegmentBipartiteGraph}
+   *                                  to run TopSecondDegreeByCountForTweet on
+   * @param expectedNodesToHit        is an estimate of how many nodes can be hit in
+   *                                  TopSecondDegreeByCountForUser. This is purely for allocating needed
+   *                                  memory right up front to make requests fast.
+   * @param statsReceiver             tracks the internal stats
+   */
   public TopSecondDegreeByCountForUser(
     NodeMetadataLeftIndexedMultiSegmentBipartiteGraph leftIndexedBipartiteGraph,
     int expectedNodesToHit,

@@ -34,7 +34,7 @@ public class TopSecondDegreeByCountForTweet extends
   TopSecondDegreeByCount<TopSecondDegreeByCountRequestForTweet, TopSecondDegreeByCountResponse> {
 
   /**
-   * This initializes all the state needed to run TopSecondDegreeByCountForTweet. Note that the object can
+   * Initialize all the states needed to run TopSecondDegreeByCountForTweet. Note that the object can
    * be reused for answering many different queries on the same graph, which allows for
    * optimizations such as reusing internally allocated maps etc.
    *

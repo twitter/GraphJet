@@ -68,7 +68,7 @@ public final class TopSecondDegreeByCountTweetMetadataRecsGenerator {
   }
 
   /**
-   * Return tweet metadata recommendations, like hashtags and urls
+   * Return tweet metadata recommendations, like hashtags and urls.
    *
    * @param request            topSecondDegreeByCount request
    * @param nodeInfoList       a list of node info containing engagement social proof and weights

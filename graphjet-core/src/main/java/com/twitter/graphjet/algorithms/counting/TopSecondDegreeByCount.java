@@ -32,8 +32,8 @@ import java.util.List;
 import java.util.Random;
 
 /**
- * Generates recommended RHS nodes by calculating aggregated weights.
- * Weights are accumulated by weights of LHS nodes whose edges are incident to RHS nodes
+ * Generate recommended RHS nodes by calculating aggregated weights.
+ * Weights are accumulated by weights of LHS nodes whose edges are incident to RHS nodes.
  */
 public abstract class TopSecondDegreeByCount<Request extends TopSecondDegreeByCountRequest,
   Response extends TopSecondDegreeByCountResponse>
@@ -52,7 +52,6 @@ public abstract class TopSecondDegreeByCount<Request extends TopSecondDegreeByCo
   protected final Counter numRequestsCounter;
 
   /**
-   *
    * @param leftIndexedBipartiteGraph is the
    *                                  {@link NodeMetadataLeftIndexedMultiSegmentBipartiteGraph}
    *                                  to run TopSecondDegreeByCountForTweet on
@@ -75,8 +74,8 @@ public abstract class TopSecondDegreeByCount<Request extends TopSecondDegreeByCo
   }
 
   /**
-   * Interface method for updating information gathered about each RHS node.
-   * Updates visitedRightNodes
+   * Update node information gathered about each RHS node, such as metadata and weights.
+   * This method update nodes in {@link TopSecondDegreeByCount#visitedRightNodes}.
    * @param leftNode                is the LHS node from which traversal initialized
    * @param rightNode               is the RHS node at which traversal arrived
    * @param edgeType                is the edge from which LHS and RHS nodes are connected
@@ -92,10 +91,17 @@ public abstract class TopSecondDegreeByCount<Request extends TopSecondDegreeByCo
     NodeMetadataMultiSegmentIterator edgeIterator,
     int maxSocialProofTypeSize);
 
+  /**
+   * Generate and return recommendation response. As the last step in the calculation,
+   * this method should utilize filtered information gathered in
+   * {@link TopSecondDegreeByCount#nodeInfosAfterFiltering}.
+   * @param request                 is the original request object
+   * @return                        is the recommendations
+   */
   protected abstract Response generateRecommendationFromNodeInfo(Request request);
 
   /**
-   * Computes recommendations using TopSecondDegreeByCount algorithm.
+   * Compute recommendations using the TopSecondDegreeByCount algorithm.
    * @param request  is the request for the algorithm
    * @param random   is used for all random choices within the algorithm
    * @return         Right hand side nodes with largest weights

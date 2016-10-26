@@ -25,7 +25,7 @@ import it.unimi.dsi.fastutil.longs.LongSet;
 import java.util.Map;
 
 /**
- * Request data structure for calculating user recommendations
+ * Request data structure for calculating user recommendations.
  */
 public class TopSecondDegreeByCountRequestForUser extends TopSecondDegreeByCountRequest {
   private final Map<Byte, Integer> minUserPerSocialProof;

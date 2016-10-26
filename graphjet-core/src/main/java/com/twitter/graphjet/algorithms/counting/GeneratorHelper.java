@@ -26,7 +26,7 @@ import java.util.Map;
 import java.util.PriorityQueue;
 
 /**
- * Shared utility functions among RecsGenerators
+ * Shared utility functions among RecsGenerators.
  */
 public final class GeneratorHelper {
 
