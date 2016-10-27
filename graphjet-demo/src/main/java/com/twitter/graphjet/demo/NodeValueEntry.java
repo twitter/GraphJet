@@ -22,9 +22,9 @@ package com.twitter.graphjet.demo;
  */
 public class NodeValueEntry implements Comparable<NodeValueEntry> {
   private final long node;
-  private final int value;
+  private final double value;
 
-  public NodeValueEntry(long node, int value) {
+  public NodeValueEntry(long node, double value) {
     this.node = node;
     this.value = value;
   }
@@ -33,7 +33,7 @@ public class NodeValueEntry implements Comparable<NodeValueEntry> {
     return node;
   }
 
-  public long getValue() {
+  public double getValue() {
     return value;
   }
 
