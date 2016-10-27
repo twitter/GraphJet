@@ -36,7 +36,7 @@ import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
  * <p>
  * Note that one limitation of using an array to store the PageRank vector is that we are limited
  * by the size of Java arrays, capped at {@code Integer.MAX_VALUE}. Since GraphJet nodes are longs,
- * this means there are graphs valid graphs that this algorithm can't run on. For these, the
+ * this means there are valid graphs that this algorithm can't run on. For these, the current
  * implementation throws an {@code UnsupportedOperationException}.
  * </p>
  */
