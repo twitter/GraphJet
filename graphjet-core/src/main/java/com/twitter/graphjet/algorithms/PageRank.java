@@ -23,6 +23,7 @@ import it.unimi.dsi.fastutil.longs.LongIterator;
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 
 /**
+ * <p>
  * Implementation of PageRank. This implementation initializes an array of doubles to hold the
  * PageRank vector, where the node id is used as the index into the array. In other words, we use
  * a dense vector representation: this is ideal if all the nodes are assigned sequential (and
@@ -30,6 +31,14 @@ import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
  * way, the implementation needs to know the max node id in order to properly instantiate the
  * PageRank vector. Furthermore, the implementation needs to be given the set of node ids that
  * comprise the graph, because this information is not currently accessible from the graph APIs.
+ * </p>
+ *
+ * <p>
+ * Note that one limitation of using an array to store the PageRank vector is that we are limited
+ * by the size of Java arrays, capped at {@code Integer.MAX_VALUE}. Since GraphJet nodes are longs,
+ * this means there are graphs valid graphs that this algorithm can't run on. For these, the
+ * implementation throws an {@code UnsupportedOperationException}.
+ * </p>
  */
 public class PageRank {
   final private OutIndexedDirectedGraph graph;
@@ -48,16 +57,19 @@ public class PageRank {
    *
    * @param graph          the directed graph
    * @param nodes          nodes in the graph
-   * @param maxNodesId     maximum node id
+   * @param maxNodeId     maximum node id
    * @param dampingFactor  damping factor
    * @param maxIterations  maximum number of iterations to run
    * @param tolerance      L1 norm threshold for convergence
    */
-  public PageRank(OutIndexedDirectedGraph graph, LongOpenHashSet nodes, long maxNodesId,
+  public PageRank(OutIndexedDirectedGraph graph, LongOpenHashSet nodes, long maxNodeId,
                   double dampingFactor, int maxIterations, double tolerance) {
+    if (maxNodeId > Integer.MAX_VALUE) {
+      throw new UnsupportedOperationException("maxNodeId exceeds Integer.MAX_VALUE!");
+    }
     this.graph = graph;
     this.nodes = nodes;
-    this.maxNodeId = maxNodesId;
+    this.maxNodeId = maxNodeId;
     this.dampingFactor = dampingFactor;
     this.nodeCount = nodes.size();
     this.maxIterations = maxIterations;
