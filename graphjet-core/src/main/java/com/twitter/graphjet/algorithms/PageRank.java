@@ -67,6 +67,7 @@ public class PageRank {
     if (maxNodeId > Integer.MAX_VALUE) {
       throw new UnsupportedOperationException("maxNodeId exceeds Integer.MAX_VALUE!");
     }
+
     this.graph = graph;
     this.nodes = nodes;
     this.maxNodeId = maxNodeId;
