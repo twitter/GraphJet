@@ -1,3 +1,19 @@
+/**
+ * Copyright 2016 Twitter. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.twitter.graphjet.demo;
 
 import com.twitter.graphjet.algorithms.PageRank;
@@ -18,25 +34,46 @@ import java.nio.file.Paths;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.zip.GZIPInputStream;
 
+/**
+ * Simple benchmark program that loads a graph and runs PageRank over it.
+ */
 public class PageRankGraphJetDemo {
   private static class PageRankGraphJetDemoArgs {
-    @Option(name = "-inputFile", metaVar = "[value]", usage = "maximum number of segments", required = true)
+    @Option(name = "-inputFile", metaVar = "[value]",
+        usage = "input data", required = true)
     String inputFile;
 
-    @Option(name = "-maxSegments", metaVar = "[value]", usage = "maximum number of segments")
-    int maxSegments = 15;
+    @Option(name = "-maxSegments", metaVar = "[value]",
+        usage = "maximum number of segments")
+    int maxSegments = 20;
 
-    @Option(name = "-maxEdgesPerSegment", metaVar = "[value]", usage = "maximum number of edges in each segment")
-    int maxEdgesPerSegment = 5000000;
+    @Option(name = "-maxEdgesPerSegment", metaVar = "[value]",
+        usage = "maximum number of edges in each segment")
+    int maxEdgesPerSegment = 10000000;
 
-    @Option(name = "-leftSize", metaVar = "[value]", usage = "expected number of nodes on left side")
-    int leftSize = 5000000;
+    @Option(name = "-numNodes", metaVar = "[value]",
+        usage = "expected number of nodes in each segment")
+    int leftSize = 1000000;
 
-    @Option(name = "-leftDegree", metaVar = "[value]", usage = "expected maximum degree on left side")
+    @Option(name = "-expectedMaxDegree", metaVar = "[value]",
+        usage = "expected maximum degree")
     int leftDegree = 5000000;
 
-    @Option(name = "-leftPowerLawExponent", metaVar = "[value]", usage = "left side Power Law exponent")
+    @Option(name = "-powerLawExponent", metaVar = "[value]",
+        usage = "power Law exponent")
     float leftPowerLawExponent = 2.0f;
+
+    @Option(name = "-dumpTopK", metaVar = "[value]",
+        usage = "dump top k nodes to stdout")
+    int k = 0;
+
+    @Option(name = "-iterations", metaVar = "[value]",
+        usage = "number of iterations to run per trial")
+    int iterations = 10;
+
+    @Option(name = "-iterations", metaVar = "[value]",
+        usage = "number of trials to run")
+    int trials = 10;
   }
 
   public static void main(String[] argv) throws Exception {
@@ -89,7 +126,7 @@ public class PageRankGraphJetDemo {
                     fileEdgeCounter.get()/1000000, (System.currentTimeMillis() - loadStart)/1000.0));
               }
 
-              // Note, LongOpenHashSet not thread safe so we need to synchronize manually
+              // Note, LongOpenHashSet not thread safe so we need to synchronize manually.
               synchronized(nodes) {
                 if (!nodes.contains(from)) {
                   nodes.add(from);
@@ -130,20 +167,35 @@ public class PageRankGraphJetDemo {
     }
     System.out.println("Count of graph edges verified!");
 
-    long numRuns = 10;
+    double prVector[] = null;
     long total = 0;
-    for (int i = 0; i < numRuns; ++i) {
+    for (int i = 0; i < args.trials; ++i) {
       long startTime = System.currentTimeMillis();
       System.out.print("Trial " + i + ": Running PageRank for 10 iterations... ");
 
-      PageRank pr = new PageRank(bigraph, nodes, maxNodeId.get(), 0.85, 10, 1e-15);
+      PageRank pr = new PageRank(bigraph, nodes, maxNodeId.get(), 0.85, args.iterations, 1e-15);
       pr.run();
-      double prVector[] = pr.getPageRankVector();
+      prVector = pr.getPageRankVector();
       long endTime = System.currentTimeMillis();
 
       System.out.println("Complete! Elapsed time = " + (endTime-startTime) + " ms");
       total += endTime-startTime;
     }
-    System.out.println("Averaged over " + numRuns + " trials: " + total/numRuns + " ms");
+    System.out.println("Averaged over " + args.trials + " trials: " + total/args.trials + " ms");
+
+    // Extract the top k.
+    if (args.k != 0) {
+      TopNodes top = new TopNodes(args.k);
+      it.unimi.dsi.fastutil.longs.LongIterator nodeIter = nodes.iterator();
+      while (nodeIter.hasNext()) {
+        long nodeId = nodeIter.nextLong();
+        System.out.println(nodeId);
+        top.offer(nodeId, prVector[(int) nodeId]);
+      }
+
+      for (NodeValueEntry entry : top.getNodes()) {
+        System.out.println(entry.getNode() + " " + entry.getValue());
+      }
+    }
   }
 }

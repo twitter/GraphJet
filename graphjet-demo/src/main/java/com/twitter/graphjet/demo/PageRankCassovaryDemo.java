@@ -1,3 +1,19 @@
+/**
+ * Copyright 2016 Twitter. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.twitter.graphjet.demo;
 
 import com.twitter.cassovary.graph.DirectedGraph;
@@ -14,16 +30,31 @@ import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
 import org.kohsuke.args4j.ParserProperties;
 
+/**
+ * Simple benchmark program that loads a Cassovary graph and runs GraphJet's implementation of
+ * PageRank over it.
+ */
 public class PageRankCassovaryDemo {
   private static class PageRankCassovaryDemoArgs {
-    @Option(name = "-inputDir", metaVar = "[value]", usage = "maximum number of segments", required = true)
+    @Option(name = "-inputDir", metaVar = "[path]",
+        usage = "input directory", required = true)
     String inputDir;
 
-    @Option(name = "-inputFile", metaVar = "[value]", usage = "maximum number of segments", required = true)
+    @Option(name = "-inputFilePrefix", metaVar = "[string]",
+        usage = "prefix of input files", required = true)
     String inputFile;
 
-    @Option(name = "-dumpTopK", metaVar = "[value]", usage = "Dump top k nodes to stdout")
+    @Option(name = "-dumpTopK", metaVar = "[value]",
+        usage = "dump top k nodes to stdout")
     int k = 0;
+
+    @Option(name = "-iterations", metaVar = "[value]",
+        usage = "number of iterations to run per trial")
+    int iterations = 10;
+
+    @Option(name = "-iterations", metaVar = "[value]",
+        usage = "number of trials to run")
+    int trials = 10;
   }
 
   public static void main(String[] argv) throws Exception {
@@ -42,6 +73,7 @@ public class PageRankCassovaryDemo {
         new NodeNumberer.IntIdentity(), false, false, '\t', StoredGraphDir.OnlyOut())
           .toSharedArrayBasedDirectedGraph(scala.Option.apply(null));
 
+    // Wrap the Cassovary graph.
     CassovaryOutIndexedDirectedGraph graph = new CassovaryOutIndexedDirectedGraph(cgraph);
 
     // Extract the nodes and the max node id.
@@ -58,13 +90,12 @@ public class PageRankCassovaryDemo {
     }
 
     double prVector[] = null;
-    long numRuns = 10;
     long total = 0;
-    for (int i = 0; i < numRuns; ++i) {
+    for (int i = 0; i < args.trials; ++i) {
       long startTime = System.currentTimeMillis();
       System.out.print("Trial " + i + ": Running PageRank for 10 iterations... ");
 
-      PageRank pr = new PageRank(graph, nodes, maxNodeId, 0.85, 10, 1e-15);
+      PageRank pr = new PageRank(graph, nodes, maxNodeId, 0.85, args.iterations, 1e-15);
       pr.run();
       prVector = pr.getPageRankVector();
       long endTime = System.currentTimeMillis();
@@ -72,8 +103,9 @@ public class PageRankCassovaryDemo {
       System.out.println("Complete! Elapsed time = " + (endTime-startTime) + " ms");
       total += endTime-startTime;
     }
-    System.out.println("Averaged over " + numRuns + " trials: " + total/numRuns + " ms");
+    System.out.println("Averaged over " + args.trials + " trials: " + total/args.trials + " ms");
 
+    // Extract the top k.
     if (args.k != 0) {
       TopNodes top = new TopNodes(args.k);
       LongIterator nodeIter = nodes.iterator();
