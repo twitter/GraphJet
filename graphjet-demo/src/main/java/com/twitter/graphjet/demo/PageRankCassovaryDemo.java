@@ -52,7 +52,7 @@ public class PageRankCassovaryDemo {
         usage = "number of iterations to run per trial")
     int iterations = 10;
 
-    @Option(name = "-iterations", metaVar = "[value]",
+    @Option(name = "-trials", metaVar = "[value]",
         usage = "number of trials to run")
     int trials = 10;
   }
@@ -91,9 +91,10 @@ public class PageRankCassovaryDemo {
 
     double prVector[] = null;
     long total = 0;
-    for (int i = 0; i < args.trials; ++i) {
+    for (int i = 0; i < args.trials; i++) {
       long startTime = System.currentTimeMillis();
-      System.out.print("Trial " + i + ": Running PageRank for 10 iterations... ");
+      System.out.print("Trial " + i + ": Running PageRank for " +
+          args.iterations + " iterations... ");
 
       PageRank pr = new PageRank(graph, nodes, maxNodeId, 0.85, args.iterations, 1e-15);
       pr.run();
