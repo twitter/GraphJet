@@ -90,7 +90,7 @@ public class PageRankGraphJetDemo {
 
     String graphPath = args.inputFile;
 
-    OutIndexedPowerLawMultiSegmentDirectedGraph bigraph =
+    OutIndexedPowerLawMultiSegmentDirectedGraph graph =
         new OutIndexedPowerLawMultiSegmentDirectedGraph(args.maxSegments, args.maxEdgesPerSegment,
             args.leftSize, args.leftDegree, args.leftPowerLawExponent,
             new IdentityEdgeTypeMask(),
@@ -117,7 +117,7 @@ public class PageRankGraphJetDemo {
             if (tokens.length > 1) {
               final long from = Long.parseLong(tokens[0]);
               final long to = Long.parseLong(tokens[1]);
-              bigraph.addEdge(from, to, (byte) 1);
+              graph.addEdge(from, to, (byte) 1);
               fileEdgeCounter.incrementAndGet();
 
               // Print logging output every 10 million edges.
@@ -155,26 +155,26 @@ public class PageRankGraphJetDemo {
         fileEdgeCounter.get()/((float) (loadEnd-loadStart))*1000));
 
     System.out.println("Verifying loaded graph...");
+    long startTime = System.currentTimeMillis();
     AtomicLong graphEdgeCounter = new AtomicLong();
-    nodes.forEach(v -> graphEdgeCounter.addAndGet(bigraph.getOutDegree(v)));
+    nodes.forEach(v -> graphEdgeCounter.addAndGet(graph.getOutDegree(v)));
+    System.out.println(graphEdgeCounter.get() + " edges traversed in " +
+        (System.currentTimeMillis() - startTime) + "ms");
 
-    if (fileEdgeCounter.get() == graphEdgeCounter.get()) {
-      System.out.println("Edge count: " + fileEdgeCounter.get());
-    } else {
+    if (fileEdgeCounter.get() != graphEdgeCounter.get()) {
       System.err.println(String.format("Error, edge counts don't match! Expected: %d, Actual: %d",
           fileEdgeCounter.get(), graphEdgeCounter.get()));
       System.exit(-1);
     }
-    System.out.println("Count of graph edges verified!");
 
     double prVector[] = null;
     long total = 0;
     for (int i = 0; i < args.trials; i++) {
-      long startTime = System.currentTimeMillis();
+      startTime = System.currentTimeMillis();
       System.out.print("Trial " + i + ": Running PageRank for " +
           args.iterations + " iterations... ");
 
-      PageRank pr = new PageRank(bigraph, nodes, maxNodeId.get(), 0.85, args.iterations, 1e-15);
+      PageRank pr = new PageRank(graph, nodes, maxNodeId.get(), 0.85, args.iterations, 1e-15);
       pr.run();
       prVector = pr.getPageRankVector();
       long endTime = System.currentTimeMillis();

@@ -30,6 +30,8 @@ import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
 import org.kohsuke.args4j.ParserProperties;
 
+import java.util.concurrent.atomic.AtomicLong;
+
 /**
  * Simple benchmark program that loads a Cassovary graph and runs GraphJet's implementation of
  * PageRank over it.
@@ -89,10 +91,17 @@ public class PageRankCassovaryDemo {
       }
     }
 
+    System.out.println("Verifying loaded graph...");
+    long startTime = System.currentTimeMillis();
+    AtomicLong graphEdgeCounter = new AtomicLong();
+    nodes.forEach(v -> graphEdgeCounter.addAndGet(graph.getOutDegree(v)));
+    System.out.println(graphEdgeCounter.get() + " edges traversed in " +
+        (System.currentTimeMillis() - startTime) + "ms");
+
     double prVector[] = null;
     long total = 0;
     for (int i = 0; i < args.trials; i++) {
-      long startTime = System.currentTimeMillis();
+      startTime = System.currentTimeMillis();
       System.out.print("Trial " + i + ": Running PageRank for " +
           args.iterations + " iterations... ");
 
