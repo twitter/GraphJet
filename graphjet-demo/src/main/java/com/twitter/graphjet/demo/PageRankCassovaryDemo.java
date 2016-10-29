@@ -121,7 +121,6 @@ public class PageRankCassovaryDemo {
       LongIterator nodeIter = nodes.iterator();
       while (nodeIter.hasNext()) {
         long nodeId = nodeIter.nextLong();
-        System.out.println(nodeId);
         top.offer(nodeId, prVector[(int) nodeId]);
       }
 
