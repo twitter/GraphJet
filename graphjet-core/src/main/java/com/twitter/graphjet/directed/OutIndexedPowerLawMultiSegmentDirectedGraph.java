@@ -38,13 +38,14 @@ public class OutIndexedPowerLawMultiSegmentDirectedGraph implements OutIndexedDi
    *
    * @param maxNumSegments         the maximum number of segments in the graph, after which the oldest segment will
    *                               be dropped
-   * @param maxNumEdgesPerSegment  determines when the implementation starts a new segment
+   * @param maxNumEdgesPerSegment  the maximum number of edges in each segment, after which a new segment will be
+   *                               created
    * @param expectedNumNodes       the expected number of nodes in each segment
-   * @param expectedMaxDegree      the expected maximum degree for each node
-   * @param powerLawExponent       the exponent of the power-law graph, see
-   *                               {@link com.twitter.graphjet.bipartite.edgepool.PowerLawDegreeEdgePool} for details
+   * @param expectedMaxDegree      the expected maximum degree for a node (soft upper bound)
+   * @param powerLawExponent       the exponent of the power law characterizing the left degree distributions, see
+   *                               {@link com.twitter.graphjet.bipartite.edgepool.PowerLawDegreeEdgePool}
    * @param edgeTypeMask           the bit mask for edge types
-   * @param statsReceiver          for tracking internal stats
+   * @param statsReceiver          object for tracking internal stats
    */
   public OutIndexedPowerLawMultiSegmentDirectedGraph(
       int maxNumSegments,
