@@ -89,8 +89,9 @@ public class TopSecondDegreeByCountForTweet extends
       nodeInfo = super.visitedRightNodes.get(rightNode);
     }
 
-    nodeInfo.addToWeight(weight);
-    nodeInfo.addToSocialProof(leftNode, edgeType, weight);
+    if (nodeInfo.addToSocialProof(leftNode, edgeType, weight)) {
+      nodeInfo.addToWeight(weight);
+    }
   }
 
   @Override

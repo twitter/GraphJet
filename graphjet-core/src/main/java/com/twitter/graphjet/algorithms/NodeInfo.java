@@ -108,8 +108,7 @@ public class NodeInfo implements Comparable<NodeInfo> {
       socialProofs[edgeType] = new SmallArrayBasedLongToDoubleMap();
     }
 
-    socialProofs[edgeType].put(node, nodeWeight);
-    return true;
+    return socialProofs[edgeType].put(node, nodeWeight);
   }
 
   public int[] getNodeMetadata(int nodeMetadataType) {
