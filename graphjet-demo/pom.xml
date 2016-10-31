@@ -5,12 +5,12 @@
   <parent>
     <groupId>com.twitter</groupId>
     <artifactId>graphjet</artifactId>
-    <version>1.0.4-SNAPSHOT</version>
+    <version>1.0.5-SNAPSHOT</version>
   </parent>
 
   <groupId>com.twitter</groupId>
   <artifactId>graphjet-demo</artifactId>
-  <version>1.0.4-SNAPSHOT</version>
+  <version>1.0.5-SNAPSHOT</version>
   <packaging>jar</packaging>
   <name>GraphJet Demo</name>
   <description>GraphJet is a real-time graph processing library: demo of core graph library</description>
