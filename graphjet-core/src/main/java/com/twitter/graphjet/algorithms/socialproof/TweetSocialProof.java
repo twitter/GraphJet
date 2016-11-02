@@ -23,6 +23,7 @@ import java.util.Random;
 
 import com.twitter.graphjet.algorithms.RecommendationAlgorithm;
 import com.twitter.graphjet.algorithms.RecommendationInfo;
+import com.twitter.graphjet.algorithms.TweetIDMask;
 import com.twitter.graphjet.bipartite.NodeMetadataLeftIndexedMultiSegmentBipartiteGraph;
 import com.twitter.graphjet.bipartite.NodeMetadataMultiSegmentIterator;
 
@@ -86,7 +87,7 @@ public class TweetSocialProof implements
       if (edgeIterator != null) {
         // Iterate through all the tweets that are engaged by the current user.
         while (edgeIterator.hasNext() && numEdgePerNode++ < MAX_EDGES_PER_NODE) {
-          long rightNode = edgeIterator.nextLong();
+          long rightNode = TweetIDMask.restore(edgeIterator.nextLong());
           byte edgeType = edgeIterator.currentEdgeType();
           // If the set of inputTweets contains the current tweet,
           // we find and store its social proof.
