@@ -89,6 +89,7 @@ public class TweetSocialProof implements
         while (edgeIterator.hasNext() && numEdgePerNode++ < MAX_EDGES_PER_NODE) {
           long rightNode = TweetIDMask.restore(edgeIterator.nextLong());
           byte edgeType = edgeIterator.currentEdgeType();
+
           // If the set of inputTweets contains the current tweet,
           // we find and store its social proof.
           if (inputTweets.contains(rightNode) && socialProofTypes.contains(edgeType)) {
