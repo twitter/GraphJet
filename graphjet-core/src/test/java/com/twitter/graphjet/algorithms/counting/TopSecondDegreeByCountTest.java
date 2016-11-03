@@ -32,6 +32,8 @@ import com.twitter.graphjet.algorithms.counting.tweet.TopSecondDegreeByCountRequ
 import com.twitter.graphjet.algorithms.counting.user.TopSecondDegreeByCountRequestForUser;
 import com.twitter.graphjet.algorithms.counting.tweet.TopSecondDegreeByCountForTweet;
 import com.twitter.graphjet.algorithms.counting.user.TopSecondDegreeByCountForUser;
+import com.twitter.graphjet.bipartite.LeftIndexedMultiSegmentBipartiteGraph;
+import com.twitter.graphjet.bipartite.LeftIndexedPowerLawMultiSegmentBipartiteGraph;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -352,11 +354,12 @@ public class TopSecondDegreeByCountTest {
       int maxNumResults,
       Map<Byte, Integer> minUserPerSocialProof,
       List<UserRecommendationInfo> expectedTopResults) throws Exception {
-    NodeMetadataLeftIndexedMultiSegmentBipartiteGraph bipartiteGraph =
-        BipartiteGraphTestHelper.buildSmallTestNodeMetadataLeftIndexedMultiSegmentBipartiteGraphWithEdgeTypes();
+    LeftIndexedPowerLawMultiSegmentBipartiteGraph bipartiteGraph =
+        BipartiteGraphTestHelper.buildSmallTestLeftIndexedPowerLawMultiSegmentBipartiteGraphWithEdgeTypes();
 
     long queryNode = 1;
     int maxSocialProofSize = 4;
+    int maxNumSocialProofs = 100;
     Long2DoubleMap seedsMap = new Long2DoubleArrayMap(new long[]{1, 2, 3}, new double[]{1.5, 1.0, 0.5});
     LongSet toBeFiltered = new LongOpenHashSet(new long[]{});
     byte[] socialProofTypes = new byte[]{0, 1, 2, 3};
@@ -368,14 +371,15 @@ public class TopSecondDegreeByCountTest {
     Random random = new Random(randomSeed);
 
     TopSecondDegreeByCountRequestForUser request = new TopSecondDegreeByCountRequestForUser(
-        queryNode,
-        seedsMap,
-        toBeFiltered,
-        maxNumResults,
-        maxSocialProofSize,
-        minUserPerSocialProof,
-        socialProofTypes,
-        resultFilterChain);
+      queryNode,
+      seedsMap,
+      toBeFiltered,
+      maxNumResults,
+      maxNumSocialProofs,
+      maxSocialProofSize,
+      minUserPerSocialProof,
+      socialProofTypes,
+      resultFilterChain);
 
     try {
       TopSecondDegreeByCountResponse response = new TopSecondDegreeByCountForUser(

@@ -19,6 +19,7 @@ package com.twitter.graphjet.algorithms;
 
 import java.util.Random;
 
+import com.twitter.graphjet.bipartite.LeftIndexedPowerLawMultiSegmentBipartiteGraph;
 import com.twitter.graphjet.bipartite.NodeMetadataLeftIndexedMultiSegmentBipartiteGraph;
 import com.twitter.graphjet.bipartite.NodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraph;
 import com.twitter.graphjet.bipartite.segment.HigherBitsEdgeTypeMask;
@@ -244,6 +245,43 @@ public final class BipartiteGraphTestHelper {
     return nodeMetadataGraph;
   }
 
+  /**
+   * Build a small test LeftIndexedPowerLawMultiSegmentBipartiteGraph.
+   *
+   * @return a small test {@link LeftIndexedPowerLawMultiSegmentBipartiteGraph}
+   */
+  public static LeftIndexedPowerLawMultiSegmentBipartiteGraph
+  buildSmallTestLeftIndexedPowerLawMultiSegmentBipartiteGraphWithEdgeTypes() {
+    LeftIndexedPowerLawMultiSegmentBipartiteGraph nodeMetadataGraph =
+      new LeftIndexedPowerLawMultiSegmentBipartiteGraph(
+        2,
+        10,
+        2,
+        6,
+        2.0,
+        6,
+        new HigherBitsEdgeTypeMask(),
+        new NullStatsReceiver()
+      );
+    nodeMetadataGraph.addEdge(1, 2, (byte) 0);
+
+    nodeMetadataGraph.addEdge(1, 3, (byte) 1);
+    nodeMetadataGraph.addEdge(2, 3, (byte) 1);
+    nodeMetadataGraph.addEdge(3, 3, (byte) 1);
+
+    nodeMetadataGraph.addEdge(1, 4, (byte) 2);
+
+    nodeMetadataGraph.addEdge(1, 5, (byte) 3);
+    nodeMetadataGraph.addEdge(2, 5, (byte) 0);
+
+    nodeMetadataGraph.addEdge(2, 6, (byte) 0);
+    nodeMetadataGraph.addEdge(2, 6, (byte) 1);
+
+    nodeMetadataGraph.addEdge(1, 7, (byte) 0);
+    nodeMetadataGraph.addEdge(2, 7, (byte) 1);
+
+    return nodeMetadataGraph;
+  }
 
   /**
    * Build a random NodeMetadataLeftIndexedMultiSegmentBipartiteGraph of given left size.
