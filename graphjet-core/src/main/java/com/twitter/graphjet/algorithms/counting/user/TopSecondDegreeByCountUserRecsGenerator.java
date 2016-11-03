@@ -91,7 +91,7 @@ public final class TopSecondDegreeByCountUserRecsGenerator {
     PriorityQueue<NodeInfo> topNodes) {
     List<RecommendationInfo> outputResults = Lists.newArrayListWithCapacity(topNodes.size());
     byte[] validSocialProofs = request.getSocialProofTypes();
-    int maxSocialProofSize = request.getMaxSocialProofTypeSize();
+    int maxNumSocialProofs = request.getMaxNumSocialProofs();
 
     while (!topNodes.isEmpty()) {
       NodeInfo nodeInfo = topNodes.poll();
@@ -99,7 +99,7 @@ public final class TopSecondDegreeByCountUserRecsGenerator {
       Map<Byte, LongList> topSocialProofs = GeneratorHelper.pickTopSocialProofs(
         nodeInfo.getSocialProofs(),
         validSocialProofs,
-        maxSocialProofSize);
+        maxNumSocialProofs);
 
       UserRecommendationInfo userRecs = new UserRecommendationInfo(
         nodeInfo.getValue(),

@@ -19,8 +19,8 @@ package com.twitter.graphjet.algorithms.counting;
 import com.twitter.graphjet.algorithms.NodeInfo;
 import com.twitter.graphjet.algorithms.RecommendationAlgorithm;
 import com.twitter.graphjet.algorithms.RecommendationStats;
-import com.twitter.graphjet.bipartite.NodeMetadataLeftIndexedMultiSegmentBipartiteGraph;
-import com.twitter.graphjet.bipartite.NodeMetadataMultiSegmentIterator;
+import com.twitter.graphjet.bipartite.LeftIndexedMultiSegmentBipartiteGraph;
+import com.twitter.graphjet.bipartite.api.EdgeIterator;
 import com.twitter.graphjet.stats.Counter;
 import com.twitter.graphjet.stats.StatsReceiver;
 import it.unimi.dsi.fastutil.longs.*;
@@ -43,7 +43,7 @@ public abstract class TopSecondDegreeByCount<Request extends TopSecondDegreeByCo
   protected static final int MAX_EDGES_PER_NODE = 500;
 
   // Static variables for better memory reuse. Avoids re-allocation on every request
-  private final NodeMetadataLeftIndexedMultiSegmentBipartiteGraph leftIndexedBipartiteGraph;
+  private final LeftIndexedMultiSegmentBipartiteGraph leftIndexedBipartiteGraph;
   private final Long2ByteMap seenEdgesPerNode;
   protected final Long2ObjectMap<NodeInfo> visitedRightNodes;
   protected final List<NodeInfo> nodeInfosAfterFiltering;
@@ -53,7 +53,7 @@ public abstract class TopSecondDegreeByCount<Request extends TopSecondDegreeByCo
 
   /**
    * @param leftIndexedBipartiteGraph is the
-   *                                  {@link NodeMetadataLeftIndexedMultiSegmentBipartiteGraph}
+   *                                  {@link LeftIndexedMultiSegmentBipartiteGraph
    *                                  to run TopSecondDegreeByCountForTweet on
    * @param expectedNodesToHit        is an estimate of how many nodes can be hit in
    *                                  TopSecondDegreeByCountForTweet. This is purely for allocating needed
@@ -61,7 +61,7 @@ public abstract class TopSecondDegreeByCount<Request extends TopSecondDegreeByCo
    * @param statsReceiver             tracks the internal stats
    */
   public TopSecondDegreeByCount(
-    NodeMetadataLeftIndexedMultiSegmentBipartiteGraph leftIndexedBipartiteGraph,
+    LeftIndexedMultiSegmentBipartiteGraph leftIndexedBipartiteGraph,
     int expectedNodesToHit,
     StatsReceiver statsReceiver) {
     this.leftIndexedBipartiteGraph = leftIndexedBipartiteGraph;
@@ -88,7 +88,7 @@ public abstract class TopSecondDegreeByCount<Request extends TopSecondDegreeByCo
     long rightNode,
     byte edgeType,
     double weight,
-    NodeMetadataMultiSegmentIterator edgeIterator,
+    EdgeIterator edgeIterator,
     int maxSocialProofTypeSize);
 
   /**
@@ -130,8 +130,7 @@ public abstract class TopSecondDegreeByCount<Request extends TopSecondDegreeByCo
       long leftNode = entry.getLongKey();
       double weight = entry.getDoubleValue();
       int numEdgesPerNode = 0;
-      NodeMetadataMultiSegmentIterator edgeIterator =
-        (NodeMetadataMultiSegmentIterator) leftIndexedBipartiteGraph.getLeftNodeEdges(leftNode);
+      EdgeIterator edgeIterator = leftIndexedBipartiteGraph.getLeftNodeEdges(leftNode);
       seenEdgesPerNode.clear();
 
       if (edgeIterator == null) {

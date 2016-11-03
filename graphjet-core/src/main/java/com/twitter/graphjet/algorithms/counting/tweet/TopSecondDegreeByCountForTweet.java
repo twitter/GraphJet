@@ -27,6 +27,7 @@ import com.twitter.graphjet.algorithms.counting.TopSecondDegreeByCount;
 import com.twitter.graphjet.algorithms.counting.TopSecondDegreeByCountResponse;
 import com.twitter.graphjet.bipartite.NodeMetadataLeftIndexedMultiSegmentBipartiteGraph;
 import com.twitter.graphjet.bipartite.NodeMetadataMultiSegmentIterator;
+import com.twitter.graphjet.bipartite.api.EdgeIterator;
 import com.twitter.graphjet.hashing.IntArrayIterator;
 import com.twitter.graphjet.stats.StatsReceiver;
 
@@ -60,7 +61,7 @@ public class TopSecondDegreeByCountForTweet extends
     long rightNode,
     byte edgeType,
     double weight,
-    NodeMetadataMultiSegmentIterator edgeIterator,
+    EdgeIterator edgeIterator,
     int maxSocialProofTypeSize) {
     NodeInfo nodeInfo;
 
@@ -71,7 +72,7 @@ public class TopSecondDegreeByCountForTweet extends
 
       for (int i = 0; i < metadataSize; i++) {
         IntArrayIterator metadataIterator =
-          (IntArrayIterator) edgeIterator.getRightNodeMetadata((byte) i);
+          (IntArrayIterator) ((NodeMetadataMultiSegmentIterator)edgeIterator).getRightNodeMetadata((byte) i);
 
         if (metadataIterator.size() > 0) {
           int[] metadata = new int[metadataIterator.size()];

@@ -30,13 +30,14 @@ import java.util.Map;
 public class TopSecondDegreeByCountRequestForUser extends TopSecondDegreeByCountRequest {
   private final Map<Byte, Integer> minUserPerSocialProof;
   private final int maxNumResults;
+  private final int maxNumSocialProofs;
   private final RecommendationType recommendationType = RecommendationType.USER;
-
   /**
    * @param queryNode                 is the query node for running TopSecondDegreeByCountForUser
    * @param leftSeedNodesWithWeight   is the set of seed nodes and their weights to use for calculation
    * @param toBeFiltered              is the list of users to be excluded from recommendations
    * @param maxNumResults             is the maximum number of recommendations returned in the response
+   * @param maxNumSocialProofs        is the maximum number of social proofs per recommendation
    * @param maxSocialProofTypeSize    is the number of social proof types in the graph
    * @param minUserPerSocialProof     for each social proof, require a minimum number of users to be valid
    * @param socialProofTypes          is the list of valid social proofs, (i.e, Follow, Mention, Mediatag)
@@ -47,12 +48,14 @@ public class TopSecondDegreeByCountRequestForUser extends TopSecondDegreeByCount
     Long2DoubleMap leftSeedNodesWithWeight,
     LongSet toBeFiltered,
     int maxNumResults,
+    int maxNumSocialProofs,
     int maxSocialProofTypeSize,
     Map<Byte, Integer> minUserPerSocialProof,
     byte[] socialProofTypes,
     ResultFilterChain resultFilterChain) {
     super(queryNode, leftSeedNodesWithWeight, toBeFiltered, maxSocialProofTypeSize, socialProofTypes, resultFilterChain);
     this.maxNumResults = maxNumResults;
+    this.maxNumSocialProofs = maxNumSocialProofs;
     this.minUserPerSocialProof = minUserPerSocialProof;
   }
 
@@ -60,5 +63,7 @@ public class TopSecondDegreeByCountRequestForUser extends TopSecondDegreeByCount
 
   public int getMaxNumResults() { return maxNumResults; }
 
-  public RecommendationType getRecommendationType() { return recommendationType;}
+  public int getMaxNumSocialProofs() {return maxNumSocialProofs; }
+
+  public RecommendationType getRecommendationType() { return recommendationType; }
 }

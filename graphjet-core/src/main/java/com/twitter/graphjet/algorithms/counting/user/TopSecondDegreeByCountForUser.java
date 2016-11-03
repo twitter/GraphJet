@@ -20,8 +20,8 @@ import com.twitter.graphjet.algorithms.NodeInfo;
 import com.twitter.graphjet.algorithms.RecommendationInfo;
 import com.twitter.graphjet.algorithms.counting.TopSecondDegreeByCount;
 import com.twitter.graphjet.algorithms.counting.TopSecondDegreeByCountResponse;
-import com.twitter.graphjet.bipartite.NodeMetadataLeftIndexedMultiSegmentBipartiteGraph;
-import com.twitter.graphjet.bipartite.NodeMetadataMultiSegmentIterator;
+import com.twitter.graphjet.bipartite.LeftIndexedPowerLawMultiSegmentBipartiteGraph;
+import com.twitter.graphjet.bipartite.api.EdgeIterator;
 import com.twitter.graphjet.stats.StatsReceiver;
 
 import java.util.List;
@@ -32,15 +32,15 @@ public class TopSecondDegreeByCountForUser extends
   /**
    * Construct a TopSecondDegreeByCount algorithm runner for user related recommendations.
    * @param leftIndexedBipartiteGraph is the
-   *                                  {@link NodeMetadataLeftIndexedMultiSegmentBipartiteGraph}
-   *                                  to run TopSecondDegreeByCountForTweet on
+   *                                  {@link LeftIndexedPowerLawMultiSegmentBipartiteGraph}
+   *                                  to run TopSecondDegreeByCountForUser on
    * @param expectedNodesToHit        is an estimate of how many nodes can be hit in
    *                                  TopSecondDegreeByCountForUser. This is purely for allocating needed
    *                                  memory right up front to make requests fast.
    * @param statsReceiver             tracks the internal stats
    */
   public TopSecondDegreeByCountForUser(
-    NodeMetadataLeftIndexedMultiSegmentBipartiteGraph leftIndexedBipartiteGraph,
+    LeftIndexedPowerLawMultiSegmentBipartiteGraph leftIndexedBipartiteGraph,
     int expectedNodesToHit,
     StatsReceiver statsReceiver) {
     super(leftIndexedBipartiteGraph, expectedNodesToHit, statsReceiver);
@@ -52,7 +52,7 @@ public class TopSecondDegreeByCountForUser extends
     long rightNode,
     byte edgeType,
     double weight,
-    NodeMetadataMultiSegmentIterator edgeIterator,
+    EdgeIterator edgeIterator,
     int maxSocialProofTypeSize) {
     NodeInfo nodeInfo;
 
