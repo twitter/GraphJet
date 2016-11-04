@@ -63,7 +63,7 @@ public class TopSecondDegreeByCountRequestForUser extends TopSecondDegreeByCount
 
   public int getMaxNumResults() { return maxNumResults; }
 
-  public int getMaxNumSocialProofs() {return maxNumSocialProofs; }
+  public int getMaxNumSocialProofs() { return maxNumSocialProofs; }
 
   public RecommendationType getRecommendationType() { return recommendationType; }
 }
