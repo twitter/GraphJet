@@ -130,7 +130,7 @@ public class TweetSocialProof implements
 
     List<RecommendationInfo> socialProofList = new LinkedList<>();
     for (Long tweetId : request.getInputTweets()) {
-      // Return tweets with at least one social proof
+      // Return only tweets with at least one social proof
       if (tweetsInteractions.containsKey(tweetId)) {
         socialProofList.add(new SocialProofResult(
           tweetId,
