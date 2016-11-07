@@ -130,10 +130,13 @@ public class TweetSocialProof implements
 
     List<RecommendationInfo> socialProofList = new LinkedList<>();
     for (Long tweetId : request.getInputTweets()) {
-      socialProofList.add(new SocialProofResult(
-        tweetId,
-        tweetsInteractions.getOrDefault(tweetId, EMPTY_SOCIALPROOF_MAP),
-        tweetsSocialProofWeights.getOrDefault(tweetId, 0.0)));
+      // Return tweets with at least one social proof
+      if (tweetsInteractions.containsKey(tweetId)) {
+        socialProofList.add(new SocialProofResult(
+          tweetId,
+          tweetsInteractions.getOrDefault(tweetId, EMPTY_SOCIALPROOF_MAP),
+          tweetsSocialProofWeights.getOrDefault(tweetId, 0.0)));
+      }
     }
 
     return new SocialProofResponse(socialProofList);
