@@ -145,7 +145,7 @@ public abstract class TopSecondDegreeByCount<Request extends TopSecondDegreeByCo
           seenEdgesPerNode.containsKey(rightNode) && seenEdgesPerNode.get(rightNode) == edgeType;
 
         if (!hasSeenRightNodeFromEdge) {
-          seenEdgesPerNode.put(rightNode, edgeType);
+          seenEdgesPerNode.put(rightNode, edgeType); // This only checks the most recently engaged edge type
           int maxSocialProofTypeSize = request.getMaxSocialProofTypeSize();
           updateNodeInfo(
             leftNode,
