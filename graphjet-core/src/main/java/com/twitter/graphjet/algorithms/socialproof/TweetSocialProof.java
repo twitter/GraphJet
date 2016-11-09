@@ -40,8 +40,8 @@ import it.unimi.dsi.fastutil.longs.LongSet;
 
 /**
  * TweetSocialProof shares similar logic with the TopSecondDegreeByCountForTweet class.
- * TweetSocialProof serves request with a seed user set and tweets set. It finds the social proof
- * for given tweets and return an empty map if there is none.
+ * TweetSocialProof serves request with a seed user set and tweets set. All tweets with at least one
+ * social proof will be returned to clients, and tweets without social proofs will not be returned.
  */
 public class TweetSocialProof implements
   RecommendationAlgorithm<SocialProofRequest, SocialProofResponse> {
