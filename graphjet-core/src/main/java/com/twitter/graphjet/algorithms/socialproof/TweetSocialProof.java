@@ -39,9 +39,12 @@ import it.unimi.dsi.fastutil.longs.LongArraySet;
 import it.unimi.dsi.fastutil.longs.LongSet;
 
 /**
- * TweetSocialProof shares similar logic with the TopSecondDegreeByCountForTweet class.
- * TweetSocialProof serves request with a seed user set and tweets set. All tweets with at least one
- * social proof will be returned to clients, and tweets without social proofs will not be returned.
+ * TweetSocialProof shares similar logic with
+ * {@link com.twitter.graphjet.algorithms.counting.tweet.TopSecondDegreeByCountForTweet}. In the
+ * request, clients specify a seed user set and a tweet set. TweetSocialProof finds the intersection
+ * between the seed user's tweet engagement set and the given tweet set from clients. All tweets
+ * with at least one social proof will be returned to clients, and tweets without social proofs will
+ * not appear in the list of the results.
  */
 public class TweetSocialProof implements
   RecommendationAlgorithm<SocialProofRequest, SocialProofResponse> {
