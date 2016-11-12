@@ -76,6 +76,8 @@ public class PageRankGraphJetDemo {
     int trials = 10;
   }
 
+  private static final byte EDGE_TYPE = (byte) 1;
+
   public static void main(String[] argv) throws Exception {
     final PageRankGraphJetDemoArgs args = new PageRankGraphJetDemoArgs();
     CmdLineParser parser = new CmdLineParser(args, ParserProperties.defaults().withUsageWidth(90));
@@ -117,7 +119,7 @@ public class PageRankGraphJetDemo {
             if (tokens.length > 1) {
               final long from = Long.parseLong(tokens[0]);
               final long to = Long.parseLong(tokens[1]);
-              graph.addEdge(from, to, (byte) 1);
+              graph.addEdge(from, to, EDGE_TYPE);
               fileEdgeCounter.incrementAndGet();
 
               // Print logging output every 10 million edges.

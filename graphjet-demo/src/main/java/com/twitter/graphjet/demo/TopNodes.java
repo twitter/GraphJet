@@ -66,7 +66,7 @@ public class TopNodes {
    */
   public List<NodeValueEntry> getNodes() {
     NodeValueEntry e;
-    List<NodeValueEntry> entries = new ArrayList<>(queue.size());
+    final List<NodeValueEntry> entries = new ArrayList<>(queue.size());
     while ((e = queue.poll()) != null) {
       entries.add(e);
     }
