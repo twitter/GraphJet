@@ -14,28 +14,26 @@
  * limitations under the License.
  */
 
-
-package com.twitter.graphjet.algorithms;
+package com.twitter.graphjet.algorithms.counting.user;
 
 import java.util.Map;
 
 import com.google.common.base.Objects;
-
+import com.twitter.graphjet.algorithms.RecommendationInfo;
+import com.twitter.graphjet.algorithms.RecommendationType;
 import it.unimi.dsi.fastutil.longs.LongList;
 
-public class TweetRecommendationInfo implements RecommendationInfo {
+/**
+ * User recommendation based on user-user interactions, including follow, mention, and mediatag.
+ */
+public class UserRecommendationInfo implements RecommendationInfo {
   private final long recommendation;
-  private final RecommendationType recommendationType;
+  private final RecommendationType recommendationType = RecommendationType.USER;
   private final double weight;
   private final Map<Byte, LongList> socialProof;
 
-  /**
-   * This class specifies the tweet recommendation.
-   */
-  public TweetRecommendationInfo(long recommendation, double weight,
-                                 Map<Byte, LongList> socialProof) {
+  public UserRecommendationInfo(long recommendation, double weight, Map<Byte, LongList> socialProof) {
     this.recommendation = recommendation;
-    this.recommendationType = RecommendationType.TWEET;
     this.weight = weight;
     this.socialProof = socialProof;
   }
@@ -73,13 +71,12 @@ public class TweetRecommendationInfo implements RecommendationInfo {
       return false;
     }
 
-    TweetRecommendationInfo other = (TweetRecommendationInfo) obj;
+    UserRecommendationInfo other = (UserRecommendationInfo) obj;
 
-    return
-      Objects.equal(getRecommendation(), other.getRecommendation())
-        && Objects.equal(getRecommendationType(), other.getRecommendationType())
-        && Objects.equal(getWeight(), other.getWeight())
-        && Objects.equal(getSocialProof(), other.getSocialProof());
+    return Objects.equal(getRecommendation(), other.getRecommendation())
+      && Objects.equal(getRecommendationType(), other.getRecommendationType())
+      && Objects.equal(getWeight(), other.getWeight())
+      && Objects.equal(getSocialProof(), other.getSocialProof());
   }
 
   @Override

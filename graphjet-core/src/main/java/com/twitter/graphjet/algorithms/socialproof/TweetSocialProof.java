@@ -23,6 +23,7 @@ import java.util.Random;
 
 import com.twitter.graphjet.algorithms.RecommendationAlgorithm;
 import com.twitter.graphjet.algorithms.RecommendationInfo;
+import com.twitter.graphjet.algorithms.TweetIDMask;
 import com.twitter.graphjet.bipartite.NodeMetadataLeftIndexedMultiSegmentBipartiteGraph;
 import com.twitter.graphjet.bipartite.NodeMetadataMultiSegmentIterator;
 
@@ -38,9 +39,12 @@ import it.unimi.dsi.fastutil.longs.LongArraySet;
 import it.unimi.dsi.fastutil.longs.LongSet;
 
 /**
- * TweetSocialProof shares similar logic with the TopSecondDegreeByCount class.
- * TweetSocialProof serves request with a seed user set and tweets set. It finds the social proof
- * for given tweets and return an empty map if there is none.
+ * TweetSocialProof shares similar logic with
+ * {@link com.twitter.graphjet.algorithms.counting.tweet.TopSecondDegreeByCountForTweet}. In the
+ * request, clients specify a seed user set and a tweet set. TweetSocialProof finds the intersection
+ * between the seed user's tweet engagement set and the given tweet set from clients. All tweets
+ * with at least one social proof will be returned to clients, and tweets without social proofs will
+ * not appear in the list of the results.
  */
 public class TweetSocialProof implements
   RecommendationAlgorithm<SocialProofRequest, SocialProofResponse> {
@@ -86,8 +90,9 @@ public class TweetSocialProof implements
       if (edgeIterator != null) {
         // Iterate through all the tweets that are engaged by the current user.
         while (edgeIterator.hasNext() && numEdgePerNode++ < MAX_EDGES_PER_NODE) {
-          long rightNode = edgeIterator.nextLong();
+          long rightNode = TweetIDMask.restore(edgeIterator.nextLong());
           byte edgeType = edgeIterator.currentEdgeType();
+
           // If the set of inputTweets contains the current tweet,
           // we find and store its social proof.
           if (inputTweets.contains(rightNode) && socialProofTypes.contains(edgeType)) {
@@ -128,10 +133,13 @@ public class TweetSocialProof implements
 
     List<RecommendationInfo> socialProofList = new LinkedList<>();
     for (Long tweetId : request.getInputTweets()) {
-      socialProofList.add(new SocialProofResult(
-        tweetId,
-        tweetsInteractions.getOrDefault(tweetId, EMPTY_SOCIALPROOF_MAP),
-        tweetsSocialProofWeights.getOrDefault(tweetId, 0.0)));
+      // Return only tweet ids with at least one social proof
+      if (tweetsInteractions.containsKey(tweetId)) {
+        socialProofList.add(new SocialProofResult(
+          tweetId,
+          tweetsInteractions.getOrDefault(tweetId, EMPTY_SOCIALPROOF_MAP),
+          tweetsSocialProofWeights.getOrDefault(tweetId, 0.0)));
+      }
     }
 
     return new SocialProofResponse(socialProofList);
