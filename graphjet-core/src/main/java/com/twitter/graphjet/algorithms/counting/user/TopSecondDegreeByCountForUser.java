@@ -22,6 +22,7 @@ import com.twitter.graphjet.algorithms.counting.TopSecondDegreeByCount;
 import com.twitter.graphjet.algorithms.counting.TopSecondDegreeByCountResponse;
 import com.twitter.graphjet.bipartite.LeftIndexedPowerLawMultiSegmentBipartiteGraph;
 import com.twitter.graphjet.bipartite.api.EdgeIterator;
+import com.twitter.graphjet.bipartite.api.TimestampEdgeIterator;
 import com.twitter.graphjet.stats.StatsReceiver;
 
 import java.util.List;
@@ -62,7 +63,8 @@ public class TopSecondDegreeByCountForUser extends
     } else {
       nodeInfo = super.visitedRightNodes.get(rightNode);
     }
-
+    // TODO (gtang): add Timestamp information here
+    // ((TimestampEdgeIterator)edgeIterator).currentSegmentCreationTime()
     nodeInfo.addToWeight(weight);
     nodeInfo.addToSocialProof(leftNode, edgeType, weight);
   }

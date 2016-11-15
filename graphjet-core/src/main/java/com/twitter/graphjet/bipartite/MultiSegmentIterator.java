@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-
 package com.twitter.graphjet.bipartite;
 
 import com.twitter.graphjet.bipartite.api.EdgeIterator;
+import com.twitter.graphjet.bipartite.api.TimestampEdgeIterator;
 import com.twitter.graphjet.bipartite.segment.LeftIndexedBipartiteGraphSegment;
 
 /**
@@ -27,7 +27,7 @@ import com.twitter.graphjet.bipartite.segment.LeftIndexedBipartiteGraphSegment;
  * chronological ordering over all the edges.
  */
 public class MultiSegmentIterator<T extends LeftIndexedBipartiteGraphSegment>
-    implements EdgeIterator, ReusableNodeLongIterator {
+    implements EdgeIterator, TimestampEdgeIterator, ReusableNodeLongIterator {
   protected final LeftIndexedMultiSegmentBipartiteGraph<T> multiSegmentBipartiteGraph;
   protected final SegmentEdgeAccessor<T> segmentEdgeAccessor;
   protected MultiSegmentReaderAccessibleInfo<T> readerAccessibleInfo;
@@ -123,5 +123,10 @@ public class MultiSegmentIterator<T extends LeftIndexedBipartiteGraphSegment>
   @Override
   public void remove() {
     currentSegmentIterator.remove();
+  }
+
+  @Override
+  public long currentSegmentCreationTime() {
+    return readerAccessibleInfo.segments.get(currentSegmentId).getCreationTime();
   }
 }
