@@ -29,6 +29,14 @@ import java.util.concurrent.CountDownLatch;
  * Multithreaded Implementation of PageRank. This implementation is the multi-threaded version of
  * {@link PageRank}, inheriting its design and thus its limitations also.
  * </p>
+ *
+ * <p>
+ * This implementation partitions the adjaceny lists by nodes and assigns each partition to a
+ * thread during each iteration. Each partition distributes PageRank mass for the nodes that are
+ * assigned to it. The PageRank vector is stored centrally as an {@link AtomicDoubleArray}, which
+ * ensures all mutations are atomic, so concurrent access to the PageRank vector is appropriately
+ * mediated.
+ * </p>
  */
 public class MultiThreadedPageRank {
   final private OutIndexedDirectedGraph graph;
@@ -91,7 +99,8 @@ public class MultiThreadedPageRank {
     dangleSum = dampingFactor * dangleSum / nodeCount;
     final double d = dangleSum;
 
-    // Sync barrier.
+    // We use a CountDownLatch as a sync barrier to wait for all threads to finish on their
+    // respective partitions.
     final CountDownLatch latch = new CountDownLatch(threads);
 
     // Start all the worker threads over each partition.
@@ -202,6 +211,8 @@ public class MultiThreadedPageRank {
 
     @Override
     public void run() {
+      // Each thread runs on its own partition of the nodes, distributing PageRank mass for the
+      // nodes that were assigned to it.
       final LongIterator iter = nodes.iterator();
       while (iter.hasNext()) {
         long v = iter.nextLong();
@@ -211,6 +222,8 @@ public class MultiThreadedPageRank {
           EdgeIterator edges = graph.getOutEdges(v);
           while (edges.hasNext()) {
             int nbr = (int) edges.nextLong();
+            // Note that getAndAdd is implemented as an atomic operation with CAS, so
+            // it's fine to have concurrent accesses to the PageRank vector.
             nextPR.getAndAdd(nbr, outWeight);
           }
         }
