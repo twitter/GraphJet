@@ -34,10 +34,16 @@ import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
  * </p>
  *
  * <p>
- * Note that one limitation of using an array to store the PageRank vector is that we are limited
- * by the size of Java arrays, capped at {@code Integer.MAX_VALUE}. Since GraphJet nodes are longs,
- * this means there are valid graphs that this algorithm can't run on. For these, the current
- * implementation throws an {@code UnsupportedOperationException}.
+ * One limitation of using an array to store the PageRank vector is that we are limited by the size
+ * of Java arrays, capped at {@code Integer.MAX_VALUE}. Since GraphJet nodes are longs, this means
+ * there are valid graphs that this algorithm can't run on. For these, the current implementation
+ * throws an {@code UnsupportedOperationException}.
+ * </p>
+ *
+ * <p>
+ * This implementation has a somewhat unconventional consistency model: the nodes under
+ * consideration are fixed throughout the computation (i.e., across iterations), but the edges are
+ * dynamic. That is, if an edge is added, the next iteration will traverse it.
  * </p>
  */
 public class PageRank {
@@ -57,7 +63,7 @@ public class PageRank {
    *
    * @param graph          the directed graph
    * @param nodes          nodes in the graph
-   * @param maxNodeId     maximum node id
+   * @param maxNodeId      maximum node id
    * @param dampingFactor  damping factor
    * @param maxIterations  maximum number of iterations to run
    * @param tolerance      L1 norm threshold for convergence
@@ -85,14 +91,14 @@ public class PageRank {
     return ret;
   }
 
-  private double[] iterate(double[] prevPR, double dampingAmount, LongArrayList noOuts) {
+  private void iterate(double dampingAmount, LongArrayList noOuts) {
     double nextPR[] = new double[(int) (maxNodeId + 1)]; // PageRank vector after the iteration.
 
     // First compute how much mass is trapped at the dangling nodes.
     double dangleSum = 0.0;
     LongIterator iter = noOuts.iterator();
     while (iter.hasNext()) {
-      dangleSum += prevPR[(int) iter.nextLong()];
+      dangleSum += prVector[(int) iter.nextLong()];
     }
     dangleSum = dampingFactor * dangleSum / nodeCount;
 
@@ -102,7 +108,7 @@ public class PageRank {
       long v = iter.nextLong();
       int outDegree = graph.getOutDegree(v);
       if (outDegree > 0) {
-        double outWeight = dampingFactor * prevPR[(int) v] / outDegree;
+        double outWeight = dampingFactor * prVector[(int) v] / outDegree;
         EdgeIterator edges = graph.getOutEdges(v);
         while (edges.hasNext()) {
           int nbr = (int) edges.nextLong();
@@ -113,14 +119,8 @@ public class PageRank {
       nextPR[(int) v] += dampingAmount + dangleSum;
     }
 
-    normL1 = computeL1Norm(prevPR, nextPR);
-    return nextPR;
-  }
-
-  private double[] initializePageRankVector(int nodeCount) {
-    double pr[] = new double[(int) (maxNodeId + 1)];
-    nodes.forEach(v -> pr[(int) (long) v] = 1.0 / nodeCount);
-    return pr;
+    normL1 = computeL1Norm(prVector, nextPR);
+    prVector = nextPR;
   }
 
   /**
@@ -140,15 +140,15 @@ public class PageRank {
     }
 
     double dampingAmount = (1.0 - dampingFactor) / nodeCount;
-    double pr[] = initializePageRankVector(nodeCount);
+    prVector = new double[(int) (maxNodeId + 1)];
+    nodes.forEach(v -> prVector[(int) (long) v] = 1.0 / nodeCount);
 
     int i = 0;
     while (i < this.maxIterations && normL1 > tolerance) {
-      pr = iterate(pr, dampingAmount, noOuts);
+      iterate(dampingAmount, noOuts);
       i++;
     }
 
-    prVector = pr;
     return i;
   }
 

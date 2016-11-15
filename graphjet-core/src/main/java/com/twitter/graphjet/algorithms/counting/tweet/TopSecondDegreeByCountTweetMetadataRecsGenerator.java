@@ -15,7 +15,7 @@
  */
 
 
-package com.twitter.graphjet.algorithms.counting;
+package com.twitter.graphjet.algorithms.counting.tweet;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -23,12 +23,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.twitter.graphjet.algorithms.NodeInfo;
+import com.twitter.graphjet.algorithms.*;
 import com.twitter.graphjet.algorithms.RecommendationInfo;
-import com.twitter.graphjet.algorithms.RecommendationRequest;
-import com.twitter.graphjet.algorithms.RecommendationType;
-import com.twitter.graphjet.algorithms.TweetIDMask;
-import com.twitter.graphjet.algorithms.TweetMetadataRecommendationInfo;
 import com.twitter.graphjet.hashing.SmallArrayBasedLongToDoubleMap;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
@@ -36,7 +32,6 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.longs.LongList;
 
 public final class TopSecondDegreeByCountTweetMetadataRecsGenerator {
-  private static final int MIN_USER_SOCIAL_PROOF_SIZE = 1;
 
   private TopSecondDegreeByCountTweetMetadataRecsGenerator() {
   }
@@ -61,7 +56,7 @@ public final class TopSecondDegreeByCountTweetMetadataRecsGenerator {
     }
   }
 
-  private static boolean isLessThantMinUserSocialProofSize(
+  private static boolean isLessThanMinUserSocialProofSize(
     Map<Byte, Map<Long, LongList>> socialProofs,
     int minUserSocialProofSize
   ) {
@@ -73,7 +68,7 @@ public final class TopSecondDegreeByCountTweetMetadataRecsGenerator {
   }
 
   /**
-   * Return tweet metadata recommendations, like hashtags and urls
+   * Return tweet metadata recommendations, like hashtags and urls.
    *
    * @param request            topSecondDegreeByCount request
    * @param nodeInfoList       a list of node info containing engagement social proof and weights
@@ -81,7 +76,7 @@ public final class TopSecondDegreeByCountTweetMetadataRecsGenerator {
    * @return a list of recommendations of the recommendation type
    */
   public static List<RecommendationInfo> generateTweetMetadataRecs(
-    TopSecondDegreeByCountRequest request,
+    TopSecondDegreeByCountRequestForTweet request,
     List<NodeInfo> nodeInfoList,
     RecommendationType recommendationType
   ) {
@@ -126,17 +121,17 @@ public final class TopSecondDegreeByCountTweetMetadataRecsGenerator {
       int minUserSocialProofSize =
         request.getMinUserSocialProofSizes().containsKey(recommendationType)
           ? request.getMinUserSocialProofSizes().get(recommendationType)
-          : MIN_USER_SOCIAL_PROOF_SIZE;
+          : RecommendationRequest.DEFAULT_MIN_USER_SOCIAL_PROOF_SIZE;
 
       int maxNumResults = request.getMaxNumResultsByType().containsKey(recommendationType)
         ? Math.min(request.getMaxNumResultsByType().get(recommendationType),
-                   RecommendationRequest.MAX_RECOMMENDATION_RESULTS)
+        RecommendationRequest.MAX_RECOMMENDATION_RESULTS)
         : RecommendationRequest.DEFAULT_RECOMMENDATION_RESULTS;
 
       for (Int2ObjectMap.Entry<TweetMetadataRecommendationInfo> entry
         : visitedMetadata.int2ObjectEntrySet()) {
         // handling one specific rule related to metadata recommendations.
-        if (isLessThantMinUserSocialProofSize(
+        if (isLessThanMinUserSocialProofSize(
           entry.getValue().getSocialProof(),
           minUserSocialProofSize)) {
           continue;

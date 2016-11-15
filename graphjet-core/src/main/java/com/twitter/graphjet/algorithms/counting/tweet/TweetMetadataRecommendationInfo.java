@@ -15,17 +15,24 @@
  */
 
 
-package com.twitter.graphjet.algorithms;
+package com.twitter.graphjet.algorithms.counting.tweet;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import com.google.common.base.Objects;
 
+import com.twitter.graphjet.algorithms.RecommendationInfo;
+import com.twitter.graphjet.algorithms.RecommendationType;
 import com.twitter.graphjet.hashing.SmallArrayBasedLongToDoubleMap;
 
 import it.unimi.dsi.fastutil.longs.LongArrayList;
 import it.unimi.dsi.fastutil.longs.LongList;
+
+/**
+ * Hashtag and url recommendation based on user-tweet interactions,
+ * such as tweet creation, retweet, reply, favorite and quote.
+ */
 
 public class TweetMetadataRecommendationInfo
   implements RecommendationInfo, Comparable<TweetMetadataRecommendationInfo> {
@@ -36,7 +43,7 @@ public class TweetMetadataRecommendationInfo
   private static final int INITIAL_TWEET_ARRAY_SIZE = 4;
 
   /**
-   * This class specifies the metadata recommendation, such as hashtag and url.
+   * Specify the metadata recommendation, such as hashtag and url.
    */
   public TweetMetadataRecommendationInfo(int recommendation, RecommendationType type, double weight,
                                          Map<Byte, Map<Long, LongList>> socialProof) {
@@ -63,7 +70,7 @@ public class TweetMetadataRecommendationInfo
   }
 
   /**
-   * This method updates the user and tweet social proofs associated with each metadata
+   * Update the user and tweet social proofs associated with each metadata
    * recommendation.
    *
    * @param socialProofType          the social proof type, such as like, retweet, reply
