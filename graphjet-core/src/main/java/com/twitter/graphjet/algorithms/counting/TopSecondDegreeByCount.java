@@ -53,7 +53,7 @@ public abstract class TopSecondDegreeByCount<Request extends TopSecondDegreeByCo
 
   /**
    * @param leftIndexedBipartiteGraph is the
-   *                                  {@link LeftIndexedMultiSegmentBipartiteGraph
+   *                                  {@link LeftIndexedMultiSegmentBipartiteGraph}
    *                                  to run TopSecondDegreeByCountForTweet on
    * @param expectedNodesToHit        is an estimate of how many nodes can be hit in
    *                                  TopSecondDegreeByCountForTweet. This is purely for allocating needed
