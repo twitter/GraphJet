@@ -16,33 +16,33 @@
 
 package com.twitter.graphjet.adapter.cassovary;
 
+import com.twitter.cassovary.graph.DirectedGraph;
+import com.twitter.cassovary.graph.GraphDir;
+import com.twitter.cassovary.graph.Node;
+import com.twitter.graphjet.bipartite.api.EdgeIterator;
+import com.twitter.graphjet.directed.api.OutIndexedDirectedGraph;
+import scala.Option;
+import scala.collection.Seq;
+
 import java.util.Random;
 
-import com.twitter.cassovary.graph.DirectedGraph;
-import com.twitter.cassovary.graph.Node;
-import com.twitter.cassovary.graph.GraphDir;
-import com.twitter.graphjet.directed.api.OutIndexedDirectedGraph;
-import com.twitter.graphjet.bipartite.api.EdgeIterator;
-
-import scala.collection.Seq;
-import scala.Option;
-
 /**
- * A GraphJet wrapper for an out-indexed Cassovary graph. Implements the GraphJet API by delegating methods to the 
- * underlying Cassovary API.
+ * A GraphJet wrapper for an out-indexed Cassovary graph. Implements the GraphJet API by
+ * delegating methods to the underlying Cassovary API.
  */
 public class CassovaryOutIndexedDirectedGraph implements OutIndexedDirectedGraph {
   // This is the Cassovary graph that's being wrapped.
   final private DirectedGraph<Node> graph;
 
   /**
-   * Constructs a GraphJet wrapper for an out-indexed Cassovart graph.
+   * Constructs a GraphJet wrapper for an out-indexed Cassovary graph.
    *
    * @param graph the Cassovary graph
    */
   public CassovaryOutIndexedDirectedGraph(DirectedGraph<Node> graph) {
     if (!graph.isDirStored(GraphDir.OutDir()) || graph.isBiDirectional()) {
-      // If the graph isn't out-indexed or if the graph is bidirectional, we should be using a different wrapper class.
+      // If the graph isn't out-indexed or if the graph is bidirectional, we should be using a
+      // different wrapper class.
       throw new IncompatibleCassovaryGraphException();
     }
     this.graph = graph;
@@ -60,7 +60,9 @@ public class CassovaryOutIndexedDirectedGraph implements OutIndexedDirectedGraph
       return new EmptyEdgeIterator();
     }
 
-    return new SeqEdgeIteratorWrapper(opt.get().outboundNodes());
+    // Note that outboundNodes returns a CSeq, whereas randomOutboundNodeSet returns a Seq, so we
+    // need different wrapper classes.
+    return new CSeqEdgeIteratorWrapper(opt.get().outboundNodes());
   }
 
   @Override
@@ -70,6 +72,8 @@ public class CassovaryOutIndexedDirectedGraph implements OutIndexedDirectedGraph
       return new EmptyEdgeIterator();
     }
 
+    // Note that randomOutboundNodeSet returns a Seq, whereas outboundNodes returns a CSeq, so we
+    // need different wrapper classes.
     return new SeqEdgeIteratorWrapper(opt.get().randomOutboundNodeSet(
         numSamples, scala.util.Random.javaRandomToRandom(random)));
   }
@@ -82,6 +86,52 @@ public class CassovaryOutIndexedDirectedGraph implements OutIndexedDirectedGraph
     private int index = 0;
 
     public SeqEdgeIteratorWrapper(Seq seq) {
+      this.seq = seq;
+      index = 0;
+    }
+
+    @Override
+    public byte currentEdgeType() {
+      // Always return 0 since Cassovary edges aren't typed.
+      return 0;
+    }
+
+    @Override
+    public boolean hasNext() {
+      return index < seq.length();
+    }
+
+    @Override
+    public long nextLong() {
+      return (long) (int) seq.apply(index++);
+    }
+
+    @Override
+    public Long next() {
+      return (Long) seq.apply(index++);
+    }
+
+    @Override
+    public int skip(int n) {
+      if ( index+n < seq.length()) {
+        index+=n;
+        return n;
+      }
+
+      int skipped = seq.length()-index;
+      index = seq.length();
+      return skipped;
+    }
+  }
+
+  /**
+   * Wrapper for CSeq as an EdgeIterator.
+   */
+  private class CSeqEdgeIteratorWrapper implements EdgeIterator {
+    final private com.twitter.cassovary.collections.CSeq seq;
+    private int index = 0;
+
+    public CSeqEdgeIteratorWrapper(com.twitter.cassovary.collections.CSeq seq) {
       this.seq = seq;
       index = 0;
     }
