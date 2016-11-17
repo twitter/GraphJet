@@ -16,10 +16,12 @@
 
 package com.twitter.graphjet.demo;
 
+import com.twitter.graphjet.algorithms.MultiThreadedPageRank;
 import com.twitter.graphjet.algorithms.PageRank;
 import com.twitter.graphjet.bipartite.segment.IdentityEdgeTypeMask;
 import com.twitter.graphjet.directed.OutIndexedPowerLawMultiSegmentDirectedGraph;
 import com.twitter.graphjet.stats.NullStatsReceiver;
+import it.unimi.dsi.fastutil.longs.LongArrayList;
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
@@ -74,6 +76,10 @@ public class PageRankGraphJetDemo {
     @Option(name = "-trials", metaVar = "[value]",
         usage = "number of trials to run")
     int trials = 10;
+
+    @Option(name = "-threads", metaVar = "[value]",
+        usage = "number of threads")
+    int threads = 1;
   }
 
   private static final byte EDGE_TYPE = (byte) 1;
@@ -176,10 +182,29 @@ public class PageRankGraphJetDemo {
       System.out.print("Trial " + i + ": Running PageRank for " +
           args.iterations + " iterations... ");
 
-      PageRank pr = new PageRank(graph, nodes, maxNodeId.get(), 0.85, args.iterations, 1e-15);
-      pr.run();
-      prVector = pr.getPageRankVector();
-      long endTime = System.currentTimeMillis();
+      long endTime;
+      if (args.threads == 1) {
+        System.out.print("single-threaded: ");
+        PageRank pr = new PageRank(graph, nodes, maxNodeId.get(), 0.85, args.iterations, 1e-15);
+        pr.run();
+        prVector = pr.getPageRankVector();
+        endTime = System.currentTimeMillis();
+      } else {
+        System.out.print(String.format("multi-threaded (%d threads): ", args.threads));
+        MultiThreadedPageRank pr = new MultiThreadedPageRank(graph,
+            new LongArrayList(nodes), maxNodeId.get(), 0.85, args.iterations, 1e-15, args.threads);
+        pr.run();
+        endTime = System.currentTimeMillis();
+        com.google.common.util.concurrent.AtomicDoubleArray prValues = pr.getPageRankVector();
+        // We need to convert the AtomicDoubleArray into an ordinary double array.
+        // No need to do this more than once.
+        if ( prVector == null ) {
+          prVector = new double[prValues.length()];
+          for (int n = 0; n < prValues.length(); n++) {
+            prVector[n] = prValues.get(n);
+          }
+        }
+      }
 
       System.out.println("Complete! Elapsed time = " + (endTime-startTime) + " ms");
       total += endTime-startTime;
