@@ -49,12 +49,12 @@ public class TopSecondDegreeByCountForUser extends
 
   @Override
   protected void updateNodeInfo(
+    TopSecondDegreeByCountRequestForUser request,
     long leftNode,
     long rightNode,
     byte edgeType,
     double weight,
-    EdgeIterator edgeIterator,
-    TopSecondDegreeByCountRequestForUser request) {
+    EdgeIterator edgeIterator) {
     NodeInfo nodeInfo;
 
     long segmentCreationTime = ((TimestampEdgeIterator)edgeIterator).currentSegmentCreationTime();

@@ -58,12 +58,12 @@ public class TopSecondDegreeByCountForTweet extends
 
   @Override
   protected void updateNodeInfo(
+    TopSecondDegreeByCountRequestForTweet request,
     long leftNode,
     long rightNode,
     byte edgeType,
     double weight,
-    EdgeIterator edgeIterator,
-    TopSecondDegreeByCountRequestForTweet request) {
+    EdgeIterator edgeIterator) {
     NodeInfo nodeInfo;
 
     int maxSocialProofTypeSize = request.getMaxSocialProofTypeSize();

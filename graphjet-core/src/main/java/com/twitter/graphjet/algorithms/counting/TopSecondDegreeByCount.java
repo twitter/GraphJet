@@ -76,20 +76,20 @@ public abstract class TopSecondDegreeByCount<Request extends TopSecondDegreeByCo
   /**
    * Update node information gathered about each RHS node, such as metadata and weights.
    * This method update nodes in {@link TopSecondDegreeByCount#visitedRightNodes}.
+   * @param request                 is the original request
    * @param leftNode                is the LHS node from which traversal initialized
    * @param rightNode               is the RHS node at which traversal arrived
    * @param edgeType                is the edge from which LHS and RHS nodes are connected
    * @param weight                  is the weight contributed to a RHS node in this traversal
    * @param edgeIterator            is the iterator for traversing edges from LHS node
-   * @param request                 is the original request
    */
   protected abstract void updateNodeInfo(
+    Request request,
     long leftNode,
     long rightNode,
     byte edgeType,
     double weight,
-    EdgeIterator edgeIterator,
-    Request request);
+    EdgeIterator edgeIterator);
 
   /**
    * Generate and return recommendation response. As the last step in the calculation,
@@ -147,12 +147,12 @@ public abstract class TopSecondDegreeByCount<Request extends TopSecondDegreeByCo
         if (!hasSeenRightNodeFromEdge) {
           seenEdgesPerNode.put(rightNode, edgeType);
           updateNodeInfo(
+            request,
             leftNode,
             rightNode,
             edgeType,
             weight,
-            edgeIterator,
-            request);
+            edgeIterator);
         }
       }
     }
