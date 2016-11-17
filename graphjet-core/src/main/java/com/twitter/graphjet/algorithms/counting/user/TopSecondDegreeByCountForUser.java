@@ -54,17 +54,21 @@ public class TopSecondDegreeByCountForUser extends
     byte edgeType,
     double weight,
     EdgeIterator edgeIterator,
-    int maxSocialProofTypeSize) {
+    TopSecondDegreeByCountRequestForUser request) {
     NodeInfo nodeInfo;
 
+    long segmentCreationTime = ((TimestampEdgeIterator)edgeIterator).currentSegmentCreationTime();
+    if (segmentCreationTime < request.getEarliestValidTimeForSocialProof()) {
+      return;
+    }
+
+    int maxSocialProofTypeSize = request.getMaxSocialProofTypeSize();
     if (!super.visitedRightNodes.containsKey(rightNode)) {
       nodeInfo = new NodeInfo(rightNode, 0.0, maxSocialProofTypeSize);
       super.visitedRightNodes.put(rightNode, nodeInfo);
     } else {
       nodeInfo = super.visitedRightNodes.get(rightNode);
     }
-    // TODO (gtang): add Timestamp information here
-    // ((TimestampEdgeIterator)edgeIterator).currentSegmentCreationTime()
     nodeInfo.addToWeight(weight);
     nodeInfo.addToSocialProof(leftNode, edgeType, weight);
   }

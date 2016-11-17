@@ -81,7 +81,7 @@ public abstract class TopSecondDegreeByCount<Request extends TopSecondDegreeByCo
    * @param edgeType                is the edge from which LHS and RHS nodes are connected
    * @param weight                  is the weight contributed to a RHS node in this traversal
    * @param edgeIterator            is the iterator for traversing edges from LHS node
-   * @param maxSocialProofTypeSize  is the maximum social proof types to keep
+   * @param request                 is the original request
    */
   protected abstract void updateNodeInfo(
     long leftNode,
@@ -89,7 +89,7 @@ public abstract class TopSecondDegreeByCount<Request extends TopSecondDegreeByCo
     byte edgeType,
     double weight,
     EdgeIterator edgeIterator,
-    int maxSocialProofTypeSize);
+    Request request);
 
   /**
    * Generate and return recommendation response. As the last step in the calculation,
@@ -146,14 +146,13 @@ public abstract class TopSecondDegreeByCount<Request extends TopSecondDegreeByCo
 
         if (!hasSeenRightNodeFromEdge) {
           seenEdgesPerNode.put(rightNode, edgeType);
-          int maxSocialProofTypeSize = request.getMaxSocialProofTypeSize();
           updateNodeInfo(
             leftNode,
             rightNode,
             edgeType,
             weight,
             edgeIterator,
-            maxSocialProofTypeSize);
+            request);
         }
       }
     }

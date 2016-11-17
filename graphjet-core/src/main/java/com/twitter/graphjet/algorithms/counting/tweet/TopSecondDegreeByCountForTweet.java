@@ -24,6 +24,7 @@ import com.twitter.graphjet.algorithms.NodeInfo;
 import com.twitter.graphjet.algorithms.RecommendationInfo;
 import com.twitter.graphjet.algorithms.RecommendationType;
 import com.twitter.graphjet.algorithms.counting.TopSecondDegreeByCount;
+import com.twitter.graphjet.algorithms.counting.TopSecondDegreeByCountRequest;
 import com.twitter.graphjet.algorithms.counting.TopSecondDegreeByCountResponse;
 import com.twitter.graphjet.bipartite.NodeMetadataLeftIndexedMultiSegmentBipartiteGraph;
 import com.twitter.graphjet.bipartite.NodeMetadataMultiSegmentIterator;
@@ -62,9 +63,10 @@ public class TopSecondDegreeByCountForTweet extends
     byte edgeType,
     double weight,
     EdgeIterator edgeIterator,
-    int maxSocialProofTypeSize) {
+    TopSecondDegreeByCountRequestForTweet request) {
     NodeInfo nodeInfo;
 
+    int maxSocialProofTypeSize = request.getMaxSocialProofTypeSize();
     if (!super.visitedRightNodes.containsKey(rightNode)) {
       int metadataSize = RecommendationType.METADATASIZE.getValue();
 

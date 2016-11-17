@@ -173,7 +173,7 @@ public abstract class LeftIndexedBipartiteGraphSegment implements
     return maxNumberOfEdges;
   }
 
-  public long getCreationTime() {return creationTime; }
+  public long getCreationTime() { return creationTime; }
 
   @Override
   public void addEdge(long leftNode, long rightNode, byte edgeType) {

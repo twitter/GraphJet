@@ -32,6 +32,7 @@ public class TopSecondDegreeByCountRequestForUser extends TopSecondDegreeByCount
   private final int maxNumResults;
   private final int maxNumSocialProofs;
   private final RecommendationType recommendationType = RecommendationType.USER;
+  private final long earliestValidSocialProofTime;
   /**
    * @param queryNode                 is the query node for running TopSecondDegreeByCountForUser
    * @param leftSeedNodesWithWeight   is the set of seed nodes and their weights to use for calculation
@@ -41,6 +42,7 @@ public class TopSecondDegreeByCountRequestForUser extends TopSecondDegreeByCount
    * @param maxSocialProofTypeSize    is the number of social proof types in the graph
    * @param minUserPerSocialProof     for each social proof, require a minimum number of users to be valid
    * @param socialProofTypes          is the list of valid social proofs, (i.e, Follow, Mention, Mediatag)
+   * @param earliestValidTimeForSocialProof only social proofs after this timestamp are considered valid
    * @param resultFilterChain         is the chain of filters to be applied
    */
   public TopSecondDegreeByCountRequestForUser(
@@ -52,11 +54,13 @@ public class TopSecondDegreeByCountRequestForUser extends TopSecondDegreeByCount
     int maxSocialProofTypeSize,
     Map<Byte, Integer> minUserPerSocialProof,
     byte[] socialProofTypes,
+    long earliestValidTimeForSocialProof,
     ResultFilterChain resultFilterChain) {
     super(queryNode, leftSeedNodesWithWeight, toBeFiltered, maxSocialProofTypeSize, socialProofTypes, resultFilterChain);
     this.maxNumResults = maxNumResults;
     this.maxNumSocialProofs = maxNumSocialProofs;
     this.minUserPerSocialProof = minUserPerSocialProof;
+    this.earliestValidSocialProofTime = earliestValidTimeForSocialProof;
   }
 
   public Map<Byte, Integer> getMinUserPerSocialProof() { return minUserPerSocialProof; }
@@ -64,6 +68,8 @@ public class TopSecondDegreeByCountRequestForUser extends TopSecondDegreeByCount
   public int getMaxNumResults() { return maxNumResults; }
 
   public int getMaxNumSocialProofs() { return maxNumSocialProofs; }
+
+  public long getEarliestValidTimeForSocialProof() { return earliestValidSocialProofTime; }
 
   public RecommendationType getRecommendationType() { return recommendationType; }
 }
