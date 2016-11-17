@@ -368,6 +368,7 @@ public class TopSecondDegreeByCountTest {
 
     int expectedNodesToHit = 100;
     long randomSeed = 918324701982347L;
+    long dummyTimestamp = 0L;
     Random random = new Random(randomSeed);
 
     TopSecondDegreeByCountRequestForUser request = new TopSecondDegreeByCountRequestForUser(
@@ -379,6 +380,7 @@ public class TopSecondDegreeByCountTest {
       maxSocialProofSize,
       minUserPerSocialProof,
       socialProofTypes,
+      dummyTimestamp,
       resultFilterChain);
 
     try {
