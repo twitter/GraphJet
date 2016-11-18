@@ -67,8 +67,14 @@ public class TopSecondDegreeByCountRequestForTweet extends TopSecondDegreeByCoun
     ResultFilterChain resultFilterChain,
     Set<byte[]> socialProofTypeUnions
   ) {
-    super(queryNode, leftSeedNodesWithWeight, toBeFiltered, maxSocialProofTypeSize,
-      socialProofTypes, resultFilterChain);
+    super(
+      queryNode,
+      leftSeedNodesWithWeight,
+      toBeFiltered,
+      maxSocialProofTypeSize,
+      socialProofTypes,
+      Long.MAX_VALUE, // tweet recommendations currently do not use time based filtering
+      resultFilterChain);
     this.recommendationTypes = recommendationTypes;
     this.maxNumResultsByType = maxNumResultsByRecType;
     this.maxUserSocialProofSize = maxUserSocialProofSize;

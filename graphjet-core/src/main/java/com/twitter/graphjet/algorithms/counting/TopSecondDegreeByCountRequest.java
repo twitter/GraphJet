@@ -30,7 +30,7 @@ public abstract class TopSecondDegreeByCountRequest extends RecommendationReques
   private final Long2DoubleMap leftSeedNodesWithWeight;
   private final int maxSocialProofTypeSize;
   private final ResultFilterChain resultFilterChain;
-
+  private final long keepSocialProofsWithinTime;
   /**
    * @param queryNode                 is the query node for running TopSecondDegreeByCount
    * @param leftSeedNodesWithWeight   is the set of seed nodes and their weights to use for
@@ -38,6 +38,7 @@ public abstract class TopSecondDegreeByCountRequest extends RecommendationReques
    * @param toBeFiltered              is the set of RHS nodes to be filtered from the output
    * @param maxSocialProofTypeSize    is the number of social proof types in the graph
    * @param socialProofTypes          Social proof types, masked into a byte array
+   * @param keepSocialProofsWithinTime  only social proofs engaged within this time are valid
    * @param resultFilterChain         Filter chain to be applied after recommendation computation
    */
   public TopSecondDegreeByCountRequest(
@@ -46,10 +47,12 @@ public abstract class TopSecondDegreeByCountRequest extends RecommendationReques
     LongSet toBeFiltered,
     int maxSocialProofTypeSize,
     byte[] socialProofTypes,
+    long keepSocialProofsWithinTime,
     ResultFilterChain resultFilterChain) {
     super(queryNode, toBeFiltered, socialProofTypes);
     this.leftSeedNodesWithWeight = leftSeedNodesWithWeight;
     this.maxSocialProofTypeSize = maxSocialProofTypeSize;
+    this.keepSocialProofsWithinTime = keepSocialProofsWithinTime;
     this.resultFilterChain = resultFilterChain;
   }
 
@@ -60,6 +63,8 @@ public abstract class TopSecondDegreeByCountRequest extends RecommendationReques
   public int getMaxSocialProofTypeSize() {
     return maxSocialProofTypeSize;
   }
+
+  public long getKeepSocialProofsWithinTime() { return keepSocialProofsWithinTime; }
 
   public void resetFilters() {
     if (resultFilterChain != null) {

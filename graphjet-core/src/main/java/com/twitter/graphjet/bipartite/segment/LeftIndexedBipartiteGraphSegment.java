@@ -84,7 +84,7 @@ public abstract class LeftIndexedBipartiteGraphSegment implements
   private final int maxNumberOfEdges;
 
   // The timestamp at which this segment was created
-  private final long creationTime;
+  private final long creationTimeInMillis;
 
   // This object contains ALL the reader-accessible data
   private final LeftIndexedReaderAccessibleInfoProvider leftIndexedReaderAccessibleInfoProvider;
@@ -123,7 +123,7 @@ public abstract class LeftIndexedBipartiteGraphSegment implements
     Preconditions.checkArgument(expectedNumLeftNodes > 0, "Need to have at least one left node!");
     Preconditions.checkArgument(expectedNumRightNodes > 0, "Need to have at least one right node!");
     this.maxNumberOfEdges = maxNumberOfEdges;
-    this.creationTime = System.currentTimeMillis();
+    this.creationTimeInMillis = System.currentTimeMillis();
     this.edgeTypeMask = edgeTypeMask;
     this.statsReceiver = statsReceiver;
     this.numEdgesCounter = this.statsReceiver.counter("numEdges");
@@ -173,7 +173,7 @@ public abstract class LeftIndexedBipartiteGraphSegment implements
     return maxNumberOfEdges;
   }
 
-  public long getCreationTime() { return creationTime; }
+  public long getCreationTimeInMillis() { return creationTimeInMillis; }
 
   @Override
   public void addEdge(long leftNode, long rightNode, byte edgeType) {

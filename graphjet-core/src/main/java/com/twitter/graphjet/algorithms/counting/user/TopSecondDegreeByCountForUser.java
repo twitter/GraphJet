@@ -49,20 +49,20 @@ public class TopSecondDegreeByCountForUser extends
 
   @Override
   protected void updateNodeInfo(
-    TopSecondDegreeByCountRequestForUser request,
     long leftNode,
     long rightNode,
     byte edgeType,
     double weight,
-    EdgeIterator edgeIterator) {
-    NodeInfo nodeInfo;
+    EdgeIterator edgeIterator,
+    int maxSocialProofTypeSize,
+    long keepEdgeWithinTime) {
 
-    long segmentCreationTime = ((TimestampEdgeIterator)edgeIterator).currentSegmentCreationTime();
-    if (segmentCreationTime < request.getEarliestValidTimeForSocialProof()) {
+    NodeInfo nodeInfo;
+    long edgeLastEngagedTime = ((TimestampEdgeIterator)edgeIterator).getCurrentEdgeEngagementTime();
+    if (edgeLastEngagedTime + keepEdgeWithinTime < System.currentTimeMillis()) {
       return;
     }
 
-    int maxSocialProofTypeSize = request.getMaxSocialProofTypeSize();
     if (!super.visitedRightNodes.containsKey(rightNode)) {
       nodeInfo = new NodeInfo(rightNode, 0.0, maxSocialProofTypeSize);
       super.visitedRightNodes.put(rightNode, nodeInfo);

@@ -5,5 +5,5 @@ public interface TimestampEdgeIterator {
    * Returns the time at which current segment was created.
    * @return the time at which current segment was created.
    */
-  long currentSegmentCreationTime();
+  long getCurrentEdgeEngagementTime();
 }
