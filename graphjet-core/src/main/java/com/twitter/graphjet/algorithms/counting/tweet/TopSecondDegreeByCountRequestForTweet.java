@@ -73,7 +73,6 @@ public class TopSecondDegreeByCountRequestForTweet extends TopSecondDegreeByCoun
       toBeFiltered,
       maxSocialProofTypeSize,
       socialProofTypes,
-      Long.MAX_VALUE, // tweet recommendations currently do not use time based filtering
       resultFilterChain);
     this.recommendationTypes = recommendationTypes;
     this.maxNumResultsByType = maxNumResultsByRecType;

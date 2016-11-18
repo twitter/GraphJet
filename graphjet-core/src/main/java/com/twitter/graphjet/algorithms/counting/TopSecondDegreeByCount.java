@@ -73,6 +73,34 @@ public abstract class TopSecondDegreeByCount<Request extends TopSecondDegreeByCo
     this.numRequestsCounter = this.statsReceiver.counter("numRequests");
   }
 
+  private void validateAndUpdateNodeInfo(
+    Request request,
+    long leftNode,
+    long rightNode,
+    byte edgeType,
+    double weight,
+    EdgeIterator edgeIterator) {
+    if (isValidNodeInfoUpdate(request, edgeIterator)) {
+      updateNodeInfo(
+        leftNode,
+        rightNode,
+        edgeType,
+        weight,
+        edgeIterator,
+        request.getMaxSocialProofTypeSize());
+    }
+  }
+
+  /**
+   * Returns whether we should update the node info, according the request requirements.
+   * It is used to filter information of unwanted edges from being aggregated.
+   * @param request       is the request given by the requester
+   * @param edgeIterator  is the iterator being used to iterate node's edges.
+   *                      It carries information such as last engagement time of the current edge
+   * @return true if this update is valid, false otherwise
+   */
+  protected abstract boolean isValidNodeInfoUpdate(Request request, EdgeIterator edgeIterator);
+
   /**
    * Update node information gathered about each RHS node, such as metadata and weights.
    * This method update nodes in {@link TopSecondDegreeByCount#visitedRightNodes}.
@@ -88,8 +116,7 @@ public abstract class TopSecondDegreeByCount<Request extends TopSecondDegreeByCo
     byte edgeType,
     double weight,
     EdgeIterator edgeIterator,
-    int maxSocialProofTypeSize,
-    long keepEdgeWithinTime);
+    int maxSocialProofTypeSize);
 
   /**
    * Generate and return recommendation response. As the last step in the calculation,
@@ -146,14 +173,13 @@ public abstract class TopSecondDegreeByCount<Request extends TopSecondDegreeByCo
 
         if (!hasSeenRightNodeFromEdge) {
           seenEdgesPerNode.put(rightNode, edgeType);
-          updateNodeInfo(
+          validateAndUpdateNodeInfo(
+            request,
             leftNode,
             rightNode,
             edgeType,
             weight,
-            edgeIterator,
-            request.getMaxSocialProofTypeSize(),
-            request.getKeepSocialProofsWithinTime());
+            edgeIterator);
         }
       }
     }

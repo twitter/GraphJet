@@ -56,6 +56,12 @@ public class TopSecondDegreeByCountForTweet extends
     super(leftIndexedBipartiteGraph, expectedNodesToHit, statsReceiver);
   }
 
+  protected boolean isValidNodeInfoUpdate(
+    TopSecondDegreeByCountRequestForTweet request,
+    EdgeIterator edgeIterator) {
+    return true;
+  }
+
   @Override
   protected void updateNodeInfo(
     long leftNode,
@@ -63,8 +69,7 @@ public class TopSecondDegreeByCountForTweet extends
     byte edgeType,
     double weight,
     EdgeIterator edgeIterator,
-    int maxSocialProofTypeSize,
-    long keepEdgeWithinTime) {
+    int maxSocialProofTypeSize) {
 
     NodeInfo nodeInfo;
     if (!super.visitedRightNodes.containsKey(rightNode)) {

@@ -46,6 +46,13 @@ public class TopSecondDegreeByCountForUser extends
     StatsReceiver statsReceiver) {
     super(leftIndexedBipartiteGraph, expectedNodesToHit, statsReceiver);
   }
+  protected boolean isValidNodeInfoUpdate(
+      TopSecondDegreeByCountRequestForUser request,
+      EdgeIterator edgeIterator) {
+    long keepEdgeWithinTime = request.getKeepSocialProofsWithinTime();
+    long edgeLastEngagedTime = ((TimestampEdgeIterator)edgeIterator).getCurrentEdgeEngagementTime();
+    return (edgeLastEngagedTime >= System.currentTimeMillis() - keepEdgeWithinTime);
+  }
 
   @Override
   protected void updateNodeInfo(
@@ -54,14 +61,9 @@ public class TopSecondDegreeByCountForUser extends
     byte edgeType,
     double weight,
     EdgeIterator edgeIterator,
-    int maxSocialProofTypeSize,
-    long keepEdgeWithinTime) {
+    int maxSocialProofTypeSize) {
 
     NodeInfo nodeInfo;
-    long edgeLastEngagedTime = ((TimestampEdgeIterator)edgeIterator).getCurrentEdgeEngagementTime();
-    if (edgeLastEngagedTime + keepEdgeWithinTime < System.currentTimeMillis()) {
-      return;
-    }
 
     if (!super.visitedRightNodes.containsKey(rightNode)) {
       nodeInfo = new NodeInfo(rightNode, 0.0, maxSocialProofTypeSize);
