@@ -73,24 +73,6 @@ public abstract class TopSecondDegreeByCount<Request extends TopSecondDegreeByCo
     this.numRequestsCounter = this.statsReceiver.counter("numRequests");
   }
 
-  private void validateAndUpdateNodeInfo(
-    Request request,
-    long leftNode,
-    long rightNode,
-    byte edgeType,
-    double weight,
-    EdgeIterator edgeIterator) {
-    if (isValidNodeInfoUpdate(request, edgeIterator)) {
-      updateNodeInfo(
-        leftNode,
-        rightNode,
-        edgeType,
-        weight,
-        edgeIterator,
-        request.getMaxSocialProofTypeSize());
-    }
-  }
-
   /**
    * Returns whether we should update the node info, according the request requirements.
    * It is used to filter information of unwanted edges from being aggregated.
@@ -99,7 +81,7 @@ public abstract class TopSecondDegreeByCount<Request extends TopSecondDegreeByCo
    *                      It carries information such as last engagement time of the current edge
    * @return true if this update is valid, false otherwise
    */
-  protected abstract boolean isValidNodeInfoUpdate(Request request, EdgeIterator edgeIterator);
+  protected abstract boolean isEdgeEngagementWithinAgeLimit(Request request, EdgeIterator edgeIterator);
 
   /**
    * Update node information gathered about each RHS node, such as metadata and weights.
@@ -173,13 +155,15 @@ public abstract class TopSecondDegreeByCount<Request extends TopSecondDegreeByCo
 
         if (!hasSeenRightNodeFromEdge) {
           seenEdgesPerNode.put(rightNode, edgeType);
-          validateAndUpdateNodeInfo(
-            request,
-            leftNode,
-            rightNode,
-            edgeType,
-            weight,
-            edgeIterator);
+          if (isEdgeEngagementWithinAgeLimit(request, edgeIterator)) {
+            updateNodeInfo(
+              leftNode,
+              rightNode,
+              edgeType,
+              weight,
+              edgeIterator,
+              request.getMaxSocialProofTypeSize());
+          }
         }
       }
     }

@@ -32,7 +32,7 @@ public class TopSecondDegreeByCountRequestForUser extends TopSecondDegreeByCount
   private final int maxNumResults;
   private final int maxNumSocialProofs;
   private final RecommendationType recommendationType = RecommendationType.USER;
-  private final long keepSocialProofsWithinTime;
+  private final long maxEdgeEngagementAgeInMillis;
 
   /**
    * @param queryNode                 is the query node for running TopSecondDegreeByCountForUser
@@ -43,7 +43,7 @@ public class TopSecondDegreeByCountRequestForUser extends TopSecondDegreeByCount
    * @param maxSocialProofTypeSize    is the number of social proof types in the graph
    * @param minUserPerSocialProof     for each social proof, require a minimum number of users to be valid
    * @param socialProofTypes          is the list of valid social proofs, (i.e, Follow, Mention, Mediatag)
-   * @param keepSocialProofsWithinTime  only social proofs engaged within this time are valid
+   * @param maxEdgeEngagementAgeInMillis  only social proofs engaged within this time are valid
    * @param resultFilterChain         is the chain of filters to be applied
    */
   public TopSecondDegreeByCountRequestForUser(
@@ -55,13 +55,13 @@ public class TopSecondDegreeByCountRequestForUser extends TopSecondDegreeByCount
     int maxSocialProofTypeSize,
     Map<Byte, Integer> minUserPerSocialProof,
     byte[] socialProofTypes,
-    long keepSocialProofsWithinTime,
+    long maxEdgeEngagementAgeInMillis,
     ResultFilterChain resultFilterChain) {
     super(queryNode, leftSeedNodesWithWeight, toBeFiltered, maxSocialProofTypeSize,
         socialProofTypes, resultFilterChain);
     this.maxNumResults = maxNumResults;
     this.maxNumSocialProofs = maxNumSocialProofs;
-    this.keepSocialProofsWithinTime = keepSocialProofsWithinTime;
+    this.maxEdgeEngagementAgeInMillis = maxEdgeEngagementAgeInMillis;
     this.minUserPerSocialProof = minUserPerSocialProof;
   }
 
@@ -71,7 +71,7 @@ public class TopSecondDegreeByCountRequestForUser extends TopSecondDegreeByCount
 
   public int getMaxNumSocialProofs() { return maxNumSocialProofs; }
 
-  public long getKeepSocialProofsWithinTime() { return keepSocialProofsWithinTime; }
+  public long getMaxEdgeEngagementAgeInMillis() { return maxEdgeEngagementAgeInMillis; }
 
   public RecommendationType getRecommendationType() { return recommendationType; }
 }

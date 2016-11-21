@@ -56,7 +56,7 @@ public class TopSecondDegreeByCountForTweet extends
     super(leftIndexedBipartiteGraph, expectedNodesToHit, statsReceiver);
   }
 
-  protected boolean isValidNodeInfoUpdate(
+  protected boolean isEdgeEngagementWithinAgeLimit(
     TopSecondDegreeByCountRequestForTweet request,
     EdgeIterator edgeIterator) {
     return true;

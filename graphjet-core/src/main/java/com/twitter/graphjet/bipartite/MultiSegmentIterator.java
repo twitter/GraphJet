@@ -126,7 +126,7 @@ public class MultiSegmentIterator<T extends LeftIndexedBipartiteGraphSegment>
   }
 
   @Override
-  public long getCurrentEdgeEngagementTime() {
+  public long getCurrentEdgeEngagementTimeInMillis() {
     return readerAccessibleInfo.segments.get(currentSegmentId).getCreationTimeInMillis();
   }
 }

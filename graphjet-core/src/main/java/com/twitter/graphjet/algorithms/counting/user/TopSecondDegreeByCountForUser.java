@@ -46,12 +46,12 @@ public class TopSecondDegreeByCountForUser extends
     StatsReceiver statsReceiver) {
     super(leftIndexedBipartiteGraph, expectedNodesToHit, statsReceiver);
   }
-  protected boolean isValidNodeInfoUpdate(
+  protected boolean isEdgeEngagementWithinAgeLimit(
       TopSecondDegreeByCountRequestForUser request,
       EdgeIterator edgeIterator) {
-    long keepEdgeWithinTime = request.getKeepSocialProofsWithinTime();
-    long edgeLastEngagedTime = ((TimestampEdgeIterator)edgeIterator).getCurrentEdgeEngagementTime();
-    return (edgeLastEngagedTime >= System.currentTimeMillis() - keepEdgeWithinTime);
+    long keepEdgeWithinTime = request.getMaxEdgeEngagementAgeInMillis();
+    long edgeEngagementTime = ((TimestampEdgeIterator)edgeIterator).getCurrentEdgeEngagementTimeInMillis();
+    return (edgeEngagementTime >= System.currentTimeMillis() - keepEdgeWithinTime);
   }
 
   @Override
