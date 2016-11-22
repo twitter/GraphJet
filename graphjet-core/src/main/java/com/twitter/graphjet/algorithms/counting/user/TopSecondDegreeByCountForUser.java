@@ -46,6 +46,8 @@ public class TopSecondDegreeByCountForUser extends
     StatsReceiver statsReceiver) {
     super(leftIndexedBipartiteGraph, expectedNodesToHit, statsReceiver);
   }
+
+  @Override
   protected boolean isEdgeEngagementWithinAgeLimit(
       TopSecondDegreeByCountRequestForUser request,
       EdgeIterator edgeIterator) {

@@ -74,12 +74,12 @@ public abstract class TopSecondDegreeByCount<Request extends TopSecondDegreeByCo
   }
 
   /**
-   * Returns whether we should update the node info, according the request requirements.
+   * Return whether the edge is within the age limit which is specified in the request.
    * It is used to filter information of unwanted edges from being aggregated.
    * @param request       is the request given by the requester
    * @param edgeIterator  is the iterator being used to iterate node's edges.
-   *                      It carries information such as last engagement time of the current edge
-   * @return true if this update is valid, false otherwise
+   *                      It carries information such as the engagement time of the current edge
+   * @return true if this edge is within the max age limit, false otherwise.
    */
   protected abstract boolean isEdgeEngagementWithinAgeLimit(Request request, EdgeIterator edgeIterator);
 
