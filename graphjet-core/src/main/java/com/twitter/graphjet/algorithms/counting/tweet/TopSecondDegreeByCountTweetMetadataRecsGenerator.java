@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.twitter.graphjet.algorithms.*;
+import com.twitter.graphjet.algorithms.counting.GeneratorHelper;
 import com.twitter.graphjet.algorithms.RecommendationInfo;
 import com.twitter.graphjet.hashing.SmallArrayBasedLongToDoubleMap;
 
@@ -116,17 +117,10 @@ public final class TopSecondDegreeByCountTweetMetadataRecsGenerator {
     }
 
     if (visitedMetadata != null) {
+      int maxNumResults = GeneratorHelper.getMaxNumResults(request, recommendationType);
+      int minUserSocialProofSize = GeneratorHelper.getMinUserSocialProofSize(request, recommendationType);
+
       List<TweetMetadataRecommendationInfo> filtered = null;
-
-      int minUserSocialProofSize =
-        request.getMinUserSocialProofSizes().containsKey(recommendationType)
-          ? request.getMinUserSocialProofSizes().get(recommendationType)
-          : RecommendationRequest.DEFAULT_MIN_USER_SOCIAL_PROOF_SIZE;
-
-      int maxNumResults = request.getMaxNumResultsByType().containsKey(recommendationType)
-        ? Math.min(request.getMaxNumResultsByType().get(recommendationType),
-        RecommendationRequest.MAX_RECOMMENDATION_RESULTS)
-        : RecommendationRequest.DEFAULT_RECOMMENDATION_RESULTS;
 
       for (Int2ObjectMap.Entry<TweetMetadataRecommendationInfo> entry
         : visitedMetadata.int2ObjectEntrySet()) {

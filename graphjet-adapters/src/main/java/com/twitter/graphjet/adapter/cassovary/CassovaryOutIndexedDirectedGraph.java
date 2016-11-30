@@ -113,6 +113,52 @@ public class CassovaryOutIndexedDirectedGraph implements OutIndexedDirectedGraph
 
     @Override
     public int skip(int n) {
+      if (index + n < seq.length()) {
+        index += n;
+        return n;
+      }
+
+      int skipped = seq.length() - index;
+      index = seq.length();
+      return skipped;
+    }
+  }
+
+  /**
+   * Wrapper for CSeq as an EdgeIterator.
+   */
+  private class CSeqEdgeIteratorWrapper implements EdgeIterator {
+    final private com.twitter.cassovary.collections.CSeq seq;
+    private int index = 0;
+
+    public CSeqEdgeIteratorWrapper(com.twitter.cassovary.collections.CSeq seq) {
+      this.seq = seq;
+      index = 0;
+    }
+
+    @Override
+    public byte currentEdgeType() {
+      // Always return 0 since Cassovary edges aren't typed.
+      return 0;
+    }
+
+    @Override
+    public boolean hasNext() {
+      return index < seq.length();
+    }
+
+    @Override
+    public long nextLong() {
+      return (long) (int) seq.apply(index++);
+    }
+
+    @Override
+    public Long next() {
+      return (Long) seq.apply(index++);
+    }
+
+    @Override
+    public int skip(int n) {
       if ( index+n < seq.length()) {
         index+=n;
         return n;

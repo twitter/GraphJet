@@ -45,14 +45,11 @@ public class SocialProofTypesFilter extends ResultFilter {
   @Override
   public boolean filterResult(long resultNode, SmallArrayBasedLongToDoubleMap[] socialProofs) {
     int size = socialProofTypes.length;
-    boolean keep = false;
     for (int i = 0; i < size; i++) {
       if (socialProofs[socialProofTypes[i]] != null) {
-        keep = true;
-        break;
+        return false;
       }
     }
-
-    return !keep;
+    return true;
   }
 }
