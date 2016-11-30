@@ -55,15 +55,15 @@ public class PageRankGraphJetDemo {
 
     @Option(name = "-numNodes", metaVar = "[value]",
         usage = "expected number of nodes in each segment")
-    int leftSize = 1000000;
+    int numNodes = 1000000;
 
     @Option(name = "-expectedMaxDegree", metaVar = "[value]",
         usage = "expected maximum degree")
-    int leftDegree = 5000000;
+    int expectedMaxDegree = 5000000;
 
     @Option(name = "-powerLawExponent", metaVar = "[value]",
         usage = "power Law exponent")
-    float leftPowerLawExponent = 2.0f;
+    float powerLawExponent = 2.0f;
 
     @Option(name = "-dumpTopK", metaVar = "[value]",
         usage = "dump top k nodes to stdout")
@@ -100,7 +100,7 @@ public class PageRankGraphJetDemo {
 
     OutIndexedPowerLawMultiSegmentDirectedGraph graph =
         new OutIndexedPowerLawMultiSegmentDirectedGraph(args.maxSegments, args.maxEdgesPerSegment,
-            args.leftSize, args.leftDegree, args.leftPowerLawExponent,
+            args.numNodes, args.expectedMaxDegree, args.powerLawExponent,
             new IdentityEdgeTypeMask(),
             new NullStatsReceiver());
 
