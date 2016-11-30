@@ -137,11 +137,16 @@ public final class TopSecondDegreeByCountTweetRecsGenerator {
     byte[] validSocialProofs,
     int minUserSocialProofSize) {
     int length = validSocialProofs.length;
-    long authorId = getAuthorId(socialProofs); //TODO process
+    long authorId = getAuthorId(socialProofs);
     for (int i = 0; i < length; i++) {
-      if (socialProofs[validSocialProofs[i]] != null &&
-          socialProofs[validSocialProofs[i]].size() >= minUserSocialProofSize) {
-        return false;
+      if (socialProofs[validSocialProofs[i]] != null) {
+        int minUserSocialProofThreshold = minUserSocialProofSize;
+        if (authorId != -1 && socialProofs[validSocialProofs[i]].contains(authorId)) {
+          minUserSocialProofThreshold += 1;
+        }
+        if (socialProofs[validSocialProofs[i]].size() >= minUserSocialProofThreshold) {
+          return false;
+        }
       }
     }
     return true;
@@ -157,12 +162,13 @@ public final class TopSecondDegreeByCountTweetRecsGenerator {
     return true;
   }
 
-  // Return the authorId of the Tweet, if the author is in the seedNodes;
+  // Return the authorId of the Tweet, if the author is in the leftSeedNodesWithWeight; otherwise, return -1.
   private static long getAuthorId(SmallArrayBasedLongToDoubleMap[] socialProofs) {
-    int tweetSocialProofType = TweetSocialProofType.TWEET.getValue();
+    int socialProofTypeTweet = TweetSocialProofType.TWEET.getValue();
     long authorId = -1;
-    if (socialProofs[tweetSocialProofType] != null && socialProofs[tweetSocialProofType].size() > 0) { //TODO check if size is necessary
-      authorId = socialProofs[tweetSocialProofType].keys()[0];
+    if (socialProofs[socialProofTypeTweet] != null) {
+      // There cannot be more than one key associated with the Tweet socialProofType
+      authorId = socialProofs[socialProofTypeTweet].keys()[0];
     }
     return authorId;
   }
