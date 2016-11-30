@@ -55,7 +55,7 @@ public final class TopSecondDegreeByCountTweetRecsGenerator {
     // handling specific rules of tweet recommendations
     for (NodeInfo nodeInfo : nodeInfoList) {
       // do not return tweet recommendations with only Tweet social proofs.
-      if (isTweetSocialProofOnly(nodeInfo.getSocialProofs(), 4 /* tweet social proof type */)) {
+      if (isTweetSocialProofOnly(nodeInfo.getSocialProofs())) {
         continue;
       }
       // do not return if size of each social proof is less than minUserSocialProofSize.
@@ -137,6 +137,7 @@ public final class TopSecondDegreeByCountTweetRecsGenerator {
     byte[] validSocialProofs,
     int minUserSocialProofSize) {
     int length = validSocialProofs.length;
+    long authorId = getAuthorId(socialProofs); //TODO process
     for (int i = 0; i < length; i++) {
       if (socialProofs[validSocialProofs[i]] != null &&
           socialProofs[validSocialProofs[i]].size() >= minUserSocialProofSize) {
@@ -146,14 +147,23 @@ public final class TopSecondDegreeByCountTweetRecsGenerator {
     return true;
   }
 
-  private static boolean isTweetSocialProofOnly(
-    SmallArrayBasedLongToDoubleMap[] socialProofs,
-    int tweetSocialProofType) {
+  private static boolean isTweetSocialProofOnly(SmallArrayBasedLongToDoubleMap[] socialProofs) {
+    int tweetSocialProofType = TweetSocialProofType.TWEET.getValue();
     for (int i = 0; i < socialProofs.length; i++) {
       if (i != tweetSocialProofType && socialProofs[i] != null) {
         return false;
       }
     }
     return true;
+  }
+
+  // Return the authorId of the Tweet, if the author is in the seedNodes;
+  private static long getAuthorId(SmallArrayBasedLongToDoubleMap[] socialProofs) {
+    int tweetSocialProofType = TweetSocialProofType.TWEET.getValue();
+    long authorId = -1;
+    if (socialProofs[tweetSocialProofType] != null && socialProofs[tweetSocialProofType].size() > 0) { //TODO check if size is necessary
+      authorId = socialProofs[tweetSocialProofType].keys()[0];
+    }
+    return authorId;
   }
 }
