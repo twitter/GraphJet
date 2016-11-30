@@ -46,17 +46,11 @@ public final class TopSecondDegreeByCountTweetRecsGenerator {
   public static List<RecommendationInfo> generateTweetRecs(
     TopSecondDegreeByCountRequestForTweet request,
     List<NodeInfo> nodeInfoList) {
-    int maxNumResults = request.getMaxNumResultsByType().containsKey(RecommendationType.TWEET)
-      ? Math.min(request.getMaxNumResultsByType().get(RecommendationType.TWEET),
-      RecommendationRequest.MAX_RECOMMENDATION_RESULTS)
-      : RecommendationRequest.DEFAULT_RECOMMENDATION_RESULTS;
+    int maxNumResults = GeneratorHelper.getMaxNumResults(request, RecommendationType.TWEET);
+    int minUserSocialProofSize = GeneratorHelper.getMinUserSocialProofSize(request, RecommendationType.TWEET);
+    byte[] validSocialProofs = request.getSocialProofTypes();
 
     PriorityQueue<NodeInfo> topResults = new PriorityQueue<NodeInfo>(maxNumResults);
-
-    int minUserSocialProofSize =
-      request.getMinUserSocialProofSizes().containsKey(RecommendationType.TWEET)
-        ? request.getMinUserSocialProofSizes().get(RecommendationType.TWEET)
-        : RecommendationRequest.DEFAULT_MIN_USER_SOCIAL_PROOF_SIZE;
 
     // handling specific rules of tweet recommendations
     for (NodeInfo nodeInfo : nodeInfoList) {
@@ -65,7 +59,7 @@ public final class TopSecondDegreeByCountTweetRecsGenerator {
         continue;
       }
       // do not return if size of each social proof is less than minUserSocialProofSize.
-      if (isLessThanMinUserSocialProofSize(nodeInfo.getSocialProofs(), minUserSocialProofSize) &&
+      if (isLessThanMinUserSocialProofSize(nodeInfo.getSocialProofs(), validSocialProofs, minUserSocialProofSize) &&
         // do not return if size of each social proof union is less than minUserSocialProofSize.
         isLessThanMinUserSocialProofSizeCombined(
           nodeInfo.getSocialProofs(), minUserSocialProofSize, request.getSocialProofTypeUnions())) {
@@ -74,18 +68,14 @@ public final class TopSecondDegreeByCountTweetRecsGenerator {
       GeneratorHelper.addResultToPriorityQueue(topResults, nodeInfo, maxNumResults);
     }
 
-    byte[] validSocialProofs = request.getSocialProofTypes();
-    int maxSocialProofSize = request.getMaxUserSocialProofSize();
-
-    List<RecommendationInfo> outputResults =
-      Lists.newArrayListWithCapacity(topResults.size());
+    List<RecommendationInfo> outputResults = Lists.newArrayListWithCapacity(topResults.size());
     while (!topResults.isEmpty()) {
       NodeInfo nodeInfo = topResults.poll();
       outputResults.add(
         new TweetRecommendationInfo(
           TweetIDMask.restore(nodeInfo.getValue()),
           nodeInfo.getWeight(),
-          GeneratorHelper.pickTopSocialProofs(nodeInfo.getSocialProofs(), validSocialProofs, maxSocialProofSize)));
+          GeneratorHelper.pickTopSocialProofs(nodeInfo.getSocialProofs(), request.getMaxUserSocialProofSize())));
     }
     Collections.reverse(outputResults);
 
@@ -144,9 +134,12 @@ public final class TopSecondDegreeByCountTweetRecsGenerator {
 
   private static boolean isLessThanMinUserSocialProofSize(
     SmallArrayBasedLongToDoubleMap[] socialProofs,
+    byte[] validSocialProofs,
     int minUserSocialProofSize) {
-    for (int i = 0; i < socialProofs.length; i++) {
-      if (socialProofs[i] != null && socialProofs[i].size() >= minUserSocialProofSize) {
+    int length = validSocialProofs.length;
+    for (int i = 0; i < length; i++) {
+      if (socialProofs[validSocialProofs[i]] != null &&
+          socialProofs[validSocialProofs[i]].size() >= minUserSocialProofSize) {
         return false;
       }
     }

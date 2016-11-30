@@ -30,8 +30,8 @@
     </dependency>
     <dependency>
       <groupId>com.twitter</groupId>
-      <artifactId>cassovary-core_2.10</artifactId>
-      <version>6.4.0</version>
+      <artifactId>cassovary-core_2.11</artifactId>
+      <version>7.1.0</version>
     </dependency>
     <dependency>
       <!-- Cassovary depends on v0.0.37, which isn't found on Maven central. Forcing newer version.

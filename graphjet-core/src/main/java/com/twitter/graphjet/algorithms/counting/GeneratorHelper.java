@@ -17,6 +17,9 @@
 package com.twitter.graphjet.algorithms.counting;
 
 import com.twitter.graphjet.algorithms.NodeInfo;
+import com.twitter.graphjet.algorithms.RecommendationRequest;
+import com.twitter.graphjet.algorithms.RecommendationType;
+import com.twitter.graphjet.algorithms.counting.tweet.TopSecondDegreeByCountRequestForTweet;
 import com.twitter.graphjet.hashing.SmallArrayBasedLongToDoubleMap;
 import it.unimi.dsi.fastutil.longs.LongArrayList;
 import it.unimi.dsi.fastutil.longs.LongList;
@@ -38,24 +41,41 @@ public final class GeneratorHelper {
    */
   public static Map<Byte, LongList> pickTopSocialProofs(
     SmallArrayBasedLongToDoubleMap[] socialProofs,
-    byte[] validSocialProofs,
     int maxSocialProofSize) {
 
     Map<Byte, LongList> results = new HashMap<>();
-    int length = validSocialProofs.length;
 
-    for (int i = 0; i < length; i++) {
-      SmallArrayBasedLongToDoubleMap socialProof = socialProofs[validSocialProofs[i]];
+    for (int i = 0; i < socialProofs.length; i++) {
+      SmallArrayBasedLongToDoubleMap socialProof = socialProofs[i];
       if (socialProof != null) {
         if (socialProof.size() > 1) {
           socialProof.sort();
         }
         socialProof.trim(maxSocialProofSize);
-        results.put(validSocialProofs[i], new LongArrayList(socialProof.keys()));
+        results.put((byte)i, new LongArrayList(socialProof.keys()));
       }
     }
 
     return results;
+  }
+
+  public static int getMinUserSocialProofSize(
+    TopSecondDegreeByCountRequestForTweet request,
+    RecommendationType recommendationType
+  ) {
+    return request.getMinUserSocialProofSizes().containsKey(recommendationType)
+      ? request.getMinUserSocialProofSizes().get(recommendationType)
+      : RecommendationRequest.DEFAULT_MIN_USER_SOCIAL_PROOF_SIZE;
+  }
+
+  public static int getMaxNumResults(
+    TopSecondDegreeByCountRequestForTweet request,
+    RecommendationType recommendationType
+  ) {
+    return request.getMaxNumResultsByType().containsKey(recommendationType)
+      ? Math.min(request.getMaxNumResultsByType().get(recommendationType),
+        RecommendationRequest.MAX_RECOMMENDATION_RESULTS)
+      : RecommendationRequest.DEFAULT_RECOMMENDATION_RESULTS;
   }
 
   public static void addResultToPriorityQueue(
