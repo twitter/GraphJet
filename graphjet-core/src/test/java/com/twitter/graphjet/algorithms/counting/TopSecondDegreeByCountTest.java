@@ -161,6 +161,7 @@ public class TopSecondDegreeByCountTest {
     socialProofTypeUnions.add(new byte[]{0, 3});
     int expectedNodesToHit = 100;
     long randomSeed = 918324701982347L;
+
     Random random = new Random(randomSeed);
     ResultFilterChain resultFilterChain = new ResultFilterChain(Lists.<ResultFilter>newArrayList(
       new RequestedSetFilter(new NullStatsReceiver())
@@ -368,6 +369,7 @@ public class TopSecondDegreeByCountTest {
 
     int expectedNodesToHit = 100;
     long randomSeed = 918324701982347L;
+    long dummyKeepEdgeWithinTime = Long.MAX_VALUE;
     Random random = new Random(randomSeed);
 
     TopSecondDegreeByCountRequestForUser request = new TopSecondDegreeByCountRequestForUser(
@@ -379,6 +381,7 @@ public class TopSecondDegreeByCountTest {
       maxSocialProofSize,
       minUserPerSocialProof,
       socialProofTypes,
+      dummyKeepEdgeWithinTime,
       resultFilterChain);
 
     try {

@@ -22,6 +22,7 @@ import com.twitter.graphjet.algorithms.counting.TopSecondDegreeByCount;
 import com.twitter.graphjet.algorithms.counting.TopSecondDegreeByCountResponse;
 import com.twitter.graphjet.bipartite.LeftIndexedPowerLawMultiSegmentBipartiteGraph;
 import com.twitter.graphjet.bipartite.api.EdgeIterator;
+import com.twitter.graphjet.bipartite.api.TimestampEdgeIterator;
 import com.twitter.graphjet.stats.StatsReceiver;
 
 import java.util.List;
@@ -47,6 +48,15 @@ public class TopSecondDegreeByCountForUser extends
   }
 
   @Override
+  protected boolean isEdgeEngagementWithinAgeLimit(
+      TopSecondDegreeByCountRequestForUser request,
+      EdgeIterator edgeIterator) {
+    long keepEdgeWithinTime = request.getMaxEdgeEngagementAgeInMillis();
+    long edgeEngagementTime = ((TimestampEdgeIterator)edgeIterator).getCurrentEdgeEngagementTimeInMillis();
+    return (edgeEngagementTime >= System.currentTimeMillis() - keepEdgeWithinTime);
+  }
+
+  @Override
   protected void updateNodeInfo(
     long leftNode,
     long rightNode,
@@ -54,6 +64,7 @@ public class TopSecondDegreeByCountForUser extends
     double weight,
     EdgeIterator edgeIterator,
     int maxSocialProofTypeSize) {
+
     NodeInfo nodeInfo;
 
     if (!super.visitedRightNodes.containsKey(rightNode)) {
@@ -62,7 +73,6 @@ public class TopSecondDegreeByCountForUser extends
     } else {
       nodeInfo = super.visitedRightNodes.get(rightNode);
     }
-
     nodeInfo.addToWeight(weight);
     nodeInfo.addToSocialProof(leftNode, edgeType, weight);
   }

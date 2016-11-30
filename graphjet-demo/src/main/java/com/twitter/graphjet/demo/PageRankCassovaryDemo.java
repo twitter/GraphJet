@@ -72,7 +72,7 @@ public class PageRankCassovaryDemo {
     }
 
     DirectedGraph<Node> cgraph = ListOfEdgesGraphReader.forIntIds(args.inputDir, args.inputFile,
-        new NodeNumberer.IntIdentity(), false, false, '\t', StoredGraphDir.OnlyOut())
+        new NodeNumberer.IntIdentity(), false, false, '\t', StoredGraphDir.OnlyOut(), true)
           .toSharedArrayBasedDirectedGraph(scala.Option.apply(null));
 
     // Wrap the Cassovary graph.
