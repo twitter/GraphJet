@@ -198,7 +198,7 @@ public class PageRankGraphJetDemo {
         com.google.common.util.concurrent.AtomicDoubleArray prValues = pr.getPageRankVector();
         // We need to convert the AtomicDoubleArray into an ordinary double array.
         // No need to do this more than once.
-        if ( prVector == null ) {
+        if (prVector == null) {
           prVector = new double[prValues.length()];
           for (int n = 0; n < prValues.length(); n++) {
             prVector[n] = prValues.get(n);
