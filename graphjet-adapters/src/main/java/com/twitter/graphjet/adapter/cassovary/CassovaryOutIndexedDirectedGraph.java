@@ -113,12 +113,12 @@ public class CassovaryOutIndexedDirectedGraph implements OutIndexedDirectedGraph
 
     @Override
     public int skip(int n) {
-      if ( index+n < seq.length()) {
-        index+=n;
+      if (index + n < seq.length()) {
+        index += n;
         return n;
       }
 
-      int skipped = seq.length()-index;
+      int skipped = seq.length() - index;
       index = seq.length();
       return skipped;
     }
