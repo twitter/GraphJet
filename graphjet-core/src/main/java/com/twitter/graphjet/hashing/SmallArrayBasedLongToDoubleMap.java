@@ -173,6 +173,8 @@ public class SmallArrayBasedLongToDoubleMap {
   /**
    * @param key the input capacity that clients want to trim the map to
    * @return true if the key is in the Map.
+   *
+   * Note: Use this function with caution since it is linear to ADD_KEYS_TO_SET_THRESHOLD.
    */
   public boolean contains(long key) {
     if (size < ADD_KEYS_TO_SET_THRESHOLD) {

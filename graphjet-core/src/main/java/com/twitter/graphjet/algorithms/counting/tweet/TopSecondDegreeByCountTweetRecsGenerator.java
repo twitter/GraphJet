@@ -153,9 +153,8 @@ public final class TopSecondDegreeByCountTweetRecsGenerator {
   }
 
   private static boolean isTweetSocialProofOnly(SmallArrayBasedLongToDoubleMap[] socialProofs) {
-    int tweetSocialProofType = TweetSocialProofType.TWEET.getValue();
     for (int i = 0; i < socialProofs.length; i++) {
-      if (i != tweetSocialProofType && socialProofs[i] != null) {
+      if (i != RecommendationRequest.SOCIAL_PROOF_TYPE_TWEET && socialProofs[i] != null) {
         return false;
       }
     }
@@ -164,7 +163,7 @@ public final class TopSecondDegreeByCountTweetRecsGenerator {
 
   // Return the authorId of the Tweet, if the author is in the leftSeedNodesWithWeight; otherwise, return -1.
   private static long getAuthorId(SmallArrayBasedLongToDoubleMap[] socialProofs) {
-    int socialProofTypeTweet = TweetSocialProofType.TWEET.getValue();
+    int socialProofTypeTweet = RecommendationRequest.SOCIAL_PROOF_TYPE_TWEET;
     long authorId = -1;
     if (socialProofs[socialProofTypeTweet] != null) {
       // There cannot be more than one key associated with the Tweet socialProofType

@@ -62,10 +62,9 @@ public final class TopSecondDegreeByCountTweetMetadataRecsGenerator {
     int minUserSocialProofSize
   ) {
     // the sum of tweet users and retweet users needs to be greater than a threshold
-    int tweetUsers = socialProofs.get(TweetSocialProofType.TWEET.getValue()) == null ? 0 :
-      socialProofs.get(TweetSocialProofType.TWEET.getValue()).size();
-    int retweetUsers = socialProofs.get(TweetSocialProofType.RETWEET.getValue()) == null ? 0 :
-      socialProofs.get(TweetSocialProofType.RETWEET.getValue()).size();
+    int tweetUsers = socialProofs.get((byte) RecommendationRequest.SOCIAL_PROOF_TYPE_TWEET) == null ? 0 :
+      socialProofs.get((byte) RecommendationRequest.SOCIAL_PROOF_TYPE_TWEET).size();
+    int retweetUsers = socialProofs.get((byte) 2) == null ? 0 : socialProofs.get((byte) 2).size();
 
     return tweetUsers + retweetUsers < minUserSocialProofSize;
   }
