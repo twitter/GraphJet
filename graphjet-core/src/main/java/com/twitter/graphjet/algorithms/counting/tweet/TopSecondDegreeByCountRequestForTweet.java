@@ -65,7 +65,8 @@ public class TopSecondDegreeByCountRequestForTweet extends TopSecondDegreeByCoun
     Map<RecommendationType, Integer> minUserSocialProofSizes,
     byte[] socialProofTypes,
     ResultFilterChain resultFilterChain,
-    Set<byte[]> socialProofTypeUnions
+    Set<byte[]> socialProofTypeUnions,
+    LongSet authoredByUsers
   ) {
     super(
       queryNode,
@@ -73,6 +74,7 @@ public class TopSecondDegreeByCountRequestForTweet extends TopSecondDegreeByCoun
       toBeFiltered,
       maxSocialProofTypeSize,
       socialProofTypes,
+      authoredByUsers,
       resultFilterChain);
     this.recommendationTypes = recommendationTypes;
     this.maxNumResultsByType = maxNumResultsByRecType;

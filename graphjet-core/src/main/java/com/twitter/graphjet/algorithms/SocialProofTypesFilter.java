@@ -36,10 +36,6 @@ public class SocialProofTypesFilter extends ResultFilter {
   }
 
   /**
-   * discard results without valid social proof types specified by clients
-   *
-   * @param resultNode is the result node to be checked
-   * @param socialProofs is the socialProofs of different types associated with the node
    * @return true if none of the specified socialProofTypes are present in the socialProofs map
    */
   @Override

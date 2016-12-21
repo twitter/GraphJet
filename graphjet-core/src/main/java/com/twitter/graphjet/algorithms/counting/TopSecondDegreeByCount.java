@@ -18,6 +18,7 @@ package com.twitter.graphjet.algorithms.counting;
 
 import com.twitter.graphjet.algorithms.NodeInfo;
 import com.twitter.graphjet.algorithms.RecommendationAlgorithm;
+import com.twitter.graphjet.algorithms.RecommendationRequest;
 import com.twitter.graphjet.algorithms.RecommendationStats;
 import com.twitter.graphjet.bipartite.LeftIndexedMultiSegmentBipartiteGraph;
 import com.twitter.graphjet.bipartite.api.EdgeIterator;
@@ -45,7 +46,7 @@ public abstract class TopSecondDegreeByCount<Request extends TopSecondDegreeByCo
   // Static variables for better memory reuse. Avoids re-allocation on every request
   private final LeftIndexedMultiSegmentBipartiteGraph leftIndexedBipartiteGraph;
   private final Long2ByteMap seenEdgesPerNode;
-  protected final Long2ObjectMap<NodeInfo> visitedRightNodes;
+  protected Long2ObjectMap<NodeInfo> visitedRightNodes;
   protected final List<NodeInfo> nodeInfosAfterFiltering;
   protected final RecommendationStats topSecondDegreeByCountStats;
   protected final StatsReceiver statsReceiver;
@@ -122,6 +123,7 @@ public abstract class TopSecondDegreeByCount<Request extends TopSecondDegreeByCo
 
     collectRightNodeInfo(request);
     updateAlgorithmStats(request.getQueryNode());
+    filterAuthoredByUsers(request.getAuthoredByUsers());
     filterNodeInfo(request);
     return generateRecommendationFromNodeInfo(request);
   }
@@ -137,14 +139,14 @@ public abstract class TopSecondDegreeByCount<Request extends TopSecondDegreeByCo
   private void collectRightNodeInfo(Request request) {
     for (Long2DoubleMap.Entry entry: request.getLeftSeedNodesWithWeight().long2DoubleEntrySet()) {
       long leftNode = entry.getLongKey();
-      double weight = entry.getDoubleValue();
-      int numEdgesPerNode = 0;
       EdgeIterator edgeIterator = leftIndexedBipartiteGraph.getLeftNodeEdges(leftNode);
-      seenEdgesPerNode.clear();
-
       if (edgeIterator == null) {
         continue;
       }
+
+      int numEdgesPerNode = 0;
+      double weight = entry.getDoubleValue();
+      seenEdgesPerNode.clear();
       // Sequentially iterating through the latest MAX_EDGES_PER_NODE edges per node
       while (edgeIterator.hasNext() && numEdgesPerNode++ < MAX_EDGES_PER_NODE) {
         long rightNode = edgeIterator.nextLong();
@@ -166,6 +168,33 @@ public abstract class TopSecondDegreeByCount<Request extends TopSecondDegreeByCo
           }
         }
       }
+    }
+  }
+
+  private void filterAuthoredByUsers(LongSet authoredByUsers) {
+    if (!authoredByUsers.isEmpty()) {
+      Long2ObjectMap<NodeInfo> authoredByUsersVisitedRightNodes =
+        new Long2ObjectOpenHashMap<>(visitedRightNodes.size());
+
+      for (long leftNode: authoredByUsers) {
+        EdgeIterator edgeIterator = leftIndexedBipartiteGraph.getLeftNodeEdges(leftNode);
+        if (edgeIterator == null) {
+          continue;
+        }
+
+        // Sequentially iterating through the latest MAX_EDGES_PER_NODE edges per node
+        int numEdgesPerNode = 0;
+        while (edgeIterator.hasNext() && numEdgesPerNode++ < MAX_EDGES_PER_NODE) {
+          long rightNode = edgeIterator.nextLong();
+          byte edgeType = edgeIterator.currentEdgeType();
+          if (edgeType == RecommendationRequest.AUTHOR_SOCIAL_PROOF_TYPE &&
+              visitedRightNodes.containsKey(rightNode)) {
+            authoredByUsersVisitedRightNodes.put(rightNode, visitedRightNodes.get(rightNode));
+          }
+        }
+      }
+
+      visitedRightNodes = authoredByUsersVisitedRightNodes;
     }
   }
 
@@ -195,7 +224,7 @@ public abstract class TopSecondDegreeByCount<Request extends TopSecondDegreeByCo
 
   private void filterNodeInfo(Request request) {
     int numFilteredNodes = 0;
-    for (NodeInfo nodeInfo : visitedRightNodes.values()) {
+    for (NodeInfo nodeInfo: visitedRightNodes.values()) {
       if (request.filterResult(nodeInfo.getValue(), nodeInfo.getSocialProofs())) {
         numFilteredNodes++;
         continue;
