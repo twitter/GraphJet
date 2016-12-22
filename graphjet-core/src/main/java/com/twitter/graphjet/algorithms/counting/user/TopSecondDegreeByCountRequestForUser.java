@@ -20,7 +20,9 @@ import com.twitter.graphjet.algorithms.RecommendationType;
 import com.twitter.graphjet.algorithms.ResultFilterChain;
 import com.twitter.graphjet.algorithms.counting.TopSecondDegreeByCountRequest;
 import it.unimi.dsi.fastutil.longs.Long2DoubleMap;
+import it.unimi.dsi.fastutil.longs.LongArraySet;
 import it.unimi.dsi.fastutil.longs.LongSet;
+import it.unimi.dsi.fastutil.longs.LongSets;
 
 import java.util.Map;
 
@@ -58,7 +60,7 @@ public class TopSecondDegreeByCountRequestForUser extends TopSecondDegreeByCount
     long maxEdgeEngagementAgeInMillis,
     ResultFilterChain resultFilterChain) {
     super(queryNode, leftSeedNodesWithWeight, toBeFiltered, maxSocialProofTypeSize,
-        socialProofTypes, resultFilterChain);
+            socialProofTypes, new LongArraySet(), resultFilterChain);
     this.maxNumResults = maxNumResults;
     this.maxNumSocialProofs = maxNumSocialProofs;
     this.maxEdgeEngagementAgeInMillis = maxEdgeEngagementAgeInMillis;
