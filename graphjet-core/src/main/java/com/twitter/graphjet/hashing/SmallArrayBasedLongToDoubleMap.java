@@ -171,6 +171,26 @@ public class SmallArrayBasedLongToDoubleMap {
   }
 
   /**
+   * @param key the input capacity that clients want to trim the map to
+   * @return true if the key is in the Map.
+   *
+   * Note: Use this function with caution since it is linear to ADD_KEYS_TO_SET_THRESHOLD.
+   */
+  public boolean contains(long key) {
+    if (size < ADD_KEYS_TO_SET_THRESHOLD) {
+      for (int i = 0; i < size; i++) {
+        if (key == keys[i]) {
+          return true;
+        }
+      }
+    } else if (keySet.contains(key)) {
+      return true;
+    }
+
+    return false;
+  }
+
+  /**
    * Copy keys and values to new arrays.
    *
    * @param newLength the length of new arrays.

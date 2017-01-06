@@ -16,13 +16,16 @@
 
 package com.twitter.graphjet.demo;
 
+import com.google.common.util.concurrent.AtomicDoubleArray;
 import com.twitter.cassovary.graph.DirectedGraph;
 import com.twitter.cassovary.graph.Node;
 import com.twitter.cassovary.graph.StoredGraphDir;
 import com.twitter.cassovary.util.NodeNumberer;
 import com.twitter.cassovary.util.io.ListOfEdgesGraphReader;
 import com.twitter.graphjet.adapter.cassovary.CassovaryOutIndexedDirectedGraph;
+import com.twitter.graphjet.algorithms.MultiThreadedPageRank;
 import com.twitter.graphjet.algorithms.PageRank;
+import it.unimi.dsi.fastutil.longs.LongArrayList;
 import it.unimi.dsi.fastutil.longs.LongIterator;
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import org.kohsuke.args4j.CmdLineException;
@@ -57,6 +60,10 @@ public class PageRankCassovaryDemo {
     @Option(name = "-trials", metaVar = "[value]",
         usage = "number of trials to run")
     int trials = 10;
+
+    @Option(name = "-threads", metaVar = "[value]",
+        usage = "number of threads")
+    int threads = 1;
   }
 
   public static void main(String[] argv) throws Exception {
@@ -103,12 +110,31 @@ public class PageRankCassovaryDemo {
     for (int i = 0; i < args.trials; i++) {
       startTime = System.currentTimeMillis();
       System.out.print("Trial " + i + ": Running PageRank for " +
-          args.iterations + " iterations... ");
+          args.iterations + " iterations - ");
 
-      PageRank pr = new PageRank(graph, nodes, maxNodeId, 0.85, args.iterations, 1e-15);
-      pr.run();
-      prVector = pr.getPageRankVector();
-      long endTime = System.currentTimeMillis();
+      long endTime;
+      if (args.threads == 1) {
+        System.out.print("single-threaded: ");
+        PageRank pr = new PageRank(graph, nodes, maxNodeId, 0.85, args.iterations, 1e-15);
+        pr.run();
+        prVector = pr.getPageRankVector();
+        endTime = System.currentTimeMillis();
+      } else {
+        System.out.print(String.format("multi-threaded (%d threads): ", args.threads));
+        MultiThreadedPageRank pr = new MultiThreadedPageRank(graph,
+            new LongArrayList(nodes), maxNodeId, 0.85, args.iterations, 1e-15, args.threads);
+        pr.run();
+        endTime = System.currentTimeMillis();
+        AtomicDoubleArray prValues = pr.getPageRankVector();
+        // We need to convert the AtomicDoubleArray into an ordinary double array.
+        // No need to do this more than once.
+        if (prVector == null) {
+          prVector = new double[prValues.length()];
+          for (int n = 0; n < prValues.length(); n++) {
+            prVector[n] = prValues.get(n);
+          }
+        }
+      }
 
       System.out.println("Complete! Elapsed time = " + (endTime-startTime) + " ms");
       total += endTime-startTime;
