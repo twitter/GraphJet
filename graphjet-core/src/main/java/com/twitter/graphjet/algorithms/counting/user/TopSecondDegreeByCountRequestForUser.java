@@ -22,7 +22,6 @@ import com.twitter.graphjet.algorithms.counting.TopSecondDegreeByCountRequest;
 import it.unimi.dsi.fastutil.longs.Long2DoubleMap;
 import it.unimi.dsi.fastutil.longs.LongArraySet;
 import it.unimi.dsi.fastutil.longs.LongSet;
-import it.unimi.dsi.fastutil.longs.LongSets;
 
 import java.util.Map;
 
