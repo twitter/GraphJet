@@ -26,10 +26,11 @@ public abstract class RecommendationRequest {
   private final long queryNode;
   private final LongSet toBeFiltered;
   private final byte[] socialProofTypes;
-  public static final int MAX_RECOMMENDATION_RESULTS = 1000;
-  public static final int DEFAULT_RECOMMENDATION_RESULTS = 100;
-  public static final int DEFAULT_MIN_USER_SOCIAL_PROOF_SIZE = 1;
   public static final int AUTHOR_SOCIAL_PROOF_TYPE = 4;
+  public static final int DEFAULT_MIN_USER_SOCIAL_PROOF_SIZE = 1;
+  public static final int DEFAULT_RECOMMENDATION_RESULTS = 100;
+  public static final int MAX_EDGES_PER_NODE = 500;
+  public static final int MAX_RECOMMENDATION_RESULTS = 1000;
 
   protected RecommendationRequest(
     long queryNode,

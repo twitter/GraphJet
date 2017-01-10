@@ -18,6 +18,7 @@ package com.twitter.graphjet.algorithms.counting;
 
 import com.twitter.graphjet.algorithms.NodeInfo;
 import com.twitter.graphjet.algorithms.RecommendationAlgorithm;
+import com.twitter.graphjet.algorithms.RecommendationRequest;
 import com.twitter.graphjet.algorithms.RecommendationStats;
 import com.twitter.graphjet.bipartite.LeftIndexedMultiSegmentBipartiteGraph;
 import com.twitter.graphjet.bipartite.api.EdgeIterator;
@@ -40,7 +41,6 @@ public abstract class TopSecondDegreeByCount<Request extends TopSecondDegreeByCo
   implements RecommendationAlgorithm<Request, Response> {
 
   protected static final Logger LOG = LoggerFactory.getLogger("graph");
-  protected static final int MAX_EDGES_PER_NODE = 500;
 
   // Static variables for better memory reuse. Avoids re-allocation on every request
   private final LeftIndexedMultiSegmentBipartiteGraph leftIndexedBipartiteGraph;
@@ -137,16 +137,16 @@ public abstract class TopSecondDegreeByCount<Request extends TopSecondDegreeByCo
   private void collectRightNodeInfo(Request request) {
     for (Long2DoubleMap.Entry entry: request.getLeftSeedNodesWithWeight().long2DoubleEntrySet()) {
       long leftNode = entry.getLongKey();
-      double weight = entry.getDoubleValue();
-      int numEdgesPerNode = 0;
       EdgeIterator edgeIterator = leftIndexedBipartiteGraph.getLeftNodeEdges(leftNode);
-      seenEdgesPerNode.clear();
-
       if (edgeIterator == null) {
         continue;
       }
+
+      int numEdgesPerNode = 0;
+      double weight = entry.getDoubleValue();
+      seenEdgesPerNode.clear();
       // Sequentially iterating through the latest MAX_EDGES_PER_NODE edges per node
-      while (edgeIterator.hasNext() && numEdgesPerNode++ < MAX_EDGES_PER_NODE) {
+      while (edgeIterator.hasNext() && numEdgesPerNode++ < RecommendationRequest.MAX_EDGES_PER_NODE) {
         long rightNode = edgeIterator.nextLong();
         byte edgeType = edgeIterator.currentEdgeType();
 
