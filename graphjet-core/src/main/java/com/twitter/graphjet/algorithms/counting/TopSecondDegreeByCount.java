@@ -18,7 +18,6 @@ package com.twitter.graphjet.algorithms.counting;
 
 import com.twitter.graphjet.algorithms.NodeInfo;
 import com.twitter.graphjet.algorithms.RecommendationAlgorithm;
-import com.twitter.graphjet.algorithms.RecommendationRequest;
 import com.twitter.graphjet.algorithms.RecommendationStats;
 import com.twitter.graphjet.bipartite.LeftIndexedMultiSegmentBipartiteGraph;
 import com.twitter.graphjet.bipartite.api.EdgeIterator;
@@ -45,8 +44,8 @@ public abstract class TopSecondDegreeByCount<Request extends TopSecondDegreeByCo
 
   // Static variables for better memory reuse. Avoids re-allocation on every request
   private final Long2ByteMap seenEdgesPerNode;
-  protected final LeftIndexedMultiSegmentBipartiteGraph leftIndexedBipartiteGraph;
   protected Long2ObjectMap<NodeInfo> visitedRightNodes;
+  protected final LeftIndexedMultiSegmentBipartiteGraph leftIndexedBipartiteGraph;
   protected final List<NodeInfo> nodeInfosAfterFiltering;
   protected final RecommendationStats topSecondDegreeByCountStats;
   protected final StatsReceiver statsReceiver;
