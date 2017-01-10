@@ -22,15 +22,17 @@ import java.util.List;
 
 import com.twitter.graphjet.algorithms.NodeInfo;
 import com.twitter.graphjet.algorithms.RecommendationInfo;
+import com.twitter.graphjet.algorithms.RecommendationRequest;
 import com.twitter.graphjet.algorithms.RecommendationType;
 import com.twitter.graphjet.algorithms.counting.TopSecondDegreeByCount;
-import com.twitter.graphjet.algorithms.counting.TopSecondDegreeByCountRequest;
 import com.twitter.graphjet.algorithms.counting.TopSecondDegreeByCountResponse;
 import com.twitter.graphjet.bipartite.NodeMetadataLeftIndexedMultiSegmentBipartiteGraph;
 import com.twitter.graphjet.bipartite.NodeMetadataMultiSegmentIterator;
 import com.twitter.graphjet.bipartite.api.EdgeIterator;
 import com.twitter.graphjet.hashing.IntArrayIterator;
 import com.twitter.graphjet.stats.StatsReceiver;
+import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 
 public class TopSecondDegreeByCountForTweet extends
   TopSecondDegreeByCount<TopSecondDegreeByCountRequestForTweet, TopSecondDegreeByCountResponse> {
@@ -60,6 +62,34 @@ public class TopSecondDegreeByCountForTweet extends
     TopSecondDegreeByCountRequestForTweet request,
     EdgeIterator edgeIterator) {
     return true;
+  }
+
+  @Override
+  protected void filterAuthoredByUsers(TopSecondDegreeByCountRequestForTweet request) {
+    if (!request.getAuthoredByUsers().isEmpty()) {
+      Long2ObjectMap<NodeInfo> authoredByUsersVisitedRightNodes =
+        new Long2ObjectOpenHashMap<>(super.visitedRightNodes.size());
+
+      for (long leftNode: request.getAuthoredByUsers()) {
+        EdgeIterator edgeIterator = super.leftIndexedBipartiteGraph.getLeftNodeEdges(leftNode);
+        if (edgeIterator == null) {
+          continue;
+        }
+
+        // Sequentially iterating through the latest MAX_EDGES_PER_NODE edges per node
+        int numEdgesPerNode = 0;
+        while (edgeIterator.hasNext() && numEdgesPerNode++ < MAX_EDGES_PER_NODE) {
+          long rightNode = edgeIterator.nextLong();
+          byte edgeType = edgeIterator.currentEdgeType();
+          if (edgeType == RecommendationRequest.AUTHOR_SOCIAL_PROOF_TYPE &&
+              super.visitedRightNodes.containsKey(rightNode)) {
+            authoredByUsersVisitedRightNodes.put(rightNode, super.visitedRightNodes.get(rightNode));
+          }
+        }
+      }
+
+      super.visitedRightNodes = authoredByUsersVisitedRightNodes;
+    }
   }
 
   @Override

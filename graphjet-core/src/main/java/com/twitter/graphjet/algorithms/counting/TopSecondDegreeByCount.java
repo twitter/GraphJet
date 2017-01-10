@@ -44,8 +44,8 @@ public abstract class TopSecondDegreeByCount<Request extends TopSecondDegreeByCo
   protected static final int MAX_EDGES_PER_NODE = 500;
 
   // Static variables for better memory reuse. Avoids re-allocation on every request
-  private final LeftIndexedMultiSegmentBipartiteGraph leftIndexedBipartiteGraph;
   private final Long2ByteMap seenEdgesPerNode;
+  protected final LeftIndexedMultiSegmentBipartiteGraph leftIndexedBipartiteGraph;
   protected Long2ObjectMap<NodeInfo> visitedRightNodes;
   protected final List<NodeInfo> nodeInfosAfterFiltering;
   protected final RecommendationStats topSecondDegreeByCountStats;
@@ -83,6 +83,8 @@ public abstract class TopSecondDegreeByCount<Request extends TopSecondDegreeByCo
    * @return true if this edge is within the max age limit, false otherwise.
    */
   protected abstract boolean isEdgeEngagementWithinAgeLimit(Request request, EdgeIterator edgeIterator);
+
+  protected void filterAuthoredByUsers(Request request) {}
 
   /**
    * Update node information gathered about each RHS node, such as metadata and weights.
@@ -123,7 +125,7 @@ public abstract class TopSecondDegreeByCount<Request extends TopSecondDegreeByCo
 
     collectRightNodeInfo(request);
     updateAlgorithmStats(request.getQueryNode());
-    filterAuthoredByUsers(request.getAuthoredByUsers());
+    filterAuthoredByUsers(request);
     filterNodeInfo(request);
     return generateRecommendationFromNodeInfo(request);
   }
@@ -168,33 +170,6 @@ public abstract class TopSecondDegreeByCount<Request extends TopSecondDegreeByCo
           }
         }
       }
-    }
-  }
-
-  private void filterAuthoredByUsers(LongSet authoredByUsers) {
-    if (!authoredByUsers.isEmpty()) {
-      Long2ObjectMap<NodeInfo> authoredByUsersVisitedRightNodes =
-        new Long2ObjectOpenHashMap<>(visitedRightNodes.size());
-
-      for (long leftNode: authoredByUsers) {
-        EdgeIterator edgeIterator = leftIndexedBipartiteGraph.getLeftNodeEdges(leftNode);
-        if (edgeIterator == null) {
-          continue;
-        }
-
-        // Sequentially iterating through the latest MAX_EDGES_PER_NODE edges per node
-        int numEdgesPerNode = 0;
-        while (edgeIterator.hasNext() && numEdgesPerNode++ < MAX_EDGES_PER_NODE) {
-          long rightNode = edgeIterator.nextLong();
-          byte edgeType = edgeIterator.currentEdgeType();
-          if (edgeType == RecommendationRequest.AUTHOR_SOCIAL_PROOF_TYPE &&
-              visitedRightNodes.containsKey(rightNode)) {
-            authoredByUsersVisitedRightNodes.put(rightNode, visitedRightNodes.get(rightNode));
-          }
-        }
-      }
-
-      visitedRightNodes = authoredByUsersVisitedRightNodes;
     }
   }
 

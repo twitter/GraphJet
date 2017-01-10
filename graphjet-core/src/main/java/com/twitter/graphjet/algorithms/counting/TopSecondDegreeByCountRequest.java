@@ -30,7 +30,7 @@ public abstract class TopSecondDegreeByCountRequest extends RecommendationReques
   private final Long2DoubleMap leftSeedNodesWithWeight;
   private final int maxSocialProofTypeSize;
   private final ResultFilterChain resultFilterChain;
-  private final LongSet authoredByUsers;
+
   /**
    * @param queryNode                 is the query node for running TopSecondDegreeByCount
    * @param leftSeedNodesWithWeight   is the set of seed nodes and their weights to use for
@@ -46,13 +46,11 @@ public abstract class TopSecondDegreeByCountRequest extends RecommendationReques
     LongSet toBeFiltered,
     int maxSocialProofTypeSize,
     byte[] socialProofTypes,
-    LongSet authoredByUsers,
     ResultFilterChain resultFilterChain) {
     super(queryNode, toBeFiltered, socialProofTypes);
     this.leftSeedNodesWithWeight = leftSeedNodesWithWeight;
     this.maxSocialProofTypeSize = maxSocialProofTypeSize;
     this.resultFilterChain = resultFilterChain;
-    this.authoredByUsers = authoredByUsers;
   }
 
   public Long2DoubleMap getLeftSeedNodesWithWeight() {
@@ -61,10 +59,6 @@ public abstract class TopSecondDegreeByCountRequest extends RecommendationReques
 
   public int getMaxSocialProofTypeSize() {
     return maxSocialProofTypeSize;
-  }
-
-  public LongSet getAuthoredByUsers() {
-    return authoredByUsers;
   }
 
   public void resetFilters() {
