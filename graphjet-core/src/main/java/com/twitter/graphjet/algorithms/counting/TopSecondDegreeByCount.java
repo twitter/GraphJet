@@ -43,9 +43,9 @@ public abstract class TopSecondDegreeByCount<Request extends TopSecondDegreeByCo
   protected static final int MAX_EDGES_PER_NODE = 500;
 
   // Static variables for better memory reuse. Avoids re-allocation on every request
-  private final LeftIndexedMultiSegmentBipartiteGraph leftIndexedBipartiteGraph;
   private final Long2ByteMap seenEdgesPerNode;
-  protected final Long2ObjectMap<NodeInfo> visitedRightNodes;
+  protected Long2ObjectMap<NodeInfo> visitedRightNodes;
+  protected final LeftIndexedMultiSegmentBipartiteGraph leftIndexedBipartiteGraph;
   protected final List<NodeInfo> nodeInfosAfterFiltering;
   protected final RecommendationStats topSecondDegreeByCountStats;
   protected final StatsReceiver statsReceiver;
@@ -82,6 +82,8 @@ public abstract class TopSecondDegreeByCount<Request extends TopSecondDegreeByCo
    * @return true if this edge is within the max age limit, false otherwise.
    */
   protected abstract boolean isEdgeEngagementWithinAgeLimit(Request request, EdgeIterator edgeIterator);
+
+  protected void filterAuthoredByUsers(Request request) {}
 
   /**
    * Update node information gathered about each RHS node, such as metadata and weights.
@@ -122,6 +124,7 @@ public abstract class TopSecondDegreeByCount<Request extends TopSecondDegreeByCo
 
     collectRightNodeInfo(request);
     updateAlgorithmStats(request.getQueryNode());
+    filterAuthoredByUsers(request);
     filterNodeInfo(request);
     return generateRecommendationFromNodeInfo(request);
   }
@@ -137,14 +140,14 @@ public abstract class TopSecondDegreeByCount<Request extends TopSecondDegreeByCo
   private void collectRightNodeInfo(Request request) {
     for (Long2DoubleMap.Entry entry: request.getLeftSeedNodesWithWeight().long2DoubleEntrySet()) {
       long leftNode = entry.getLongKey();
-      double weight = entry.getDoubleValue();
-      int numEdgesPerNode = 0;
       EdgeIterator edgeIterator = leftIndexedBipartiteGraph.getLeftNodeEdges(leftNode);
-      seenEdgesPerNode.clear();
-
       if (edgeIterator == null) {
         continue;
       }
+
+      int numEdgesPerNode = 0;
+      double weight = entry.getDoubleValue();
+      seenEdgesPerNode.clear();
       // Sequentially iterating through the latest MAX_EDGES_PER_NODE edges per node
       while (edgeIterator.hasNext() && numEdgesPerNode++ < MAX_EDGES_PER_NODE) {
         long rightNode = edgeIterator.nextLong();
@@ -195,7 +198,7 @@ public abstract class TopSecondDegreeByCount<Request extends TopSecondDegreeByCo
 
   private void filterNodeInfo(Request request) {
     int numFilteredNodes = 0;
-    for (NodeInfo nodeInfo : visitedRightNodes.values()) {
+    for (NodeInfo nodeInfo: visitedRightNodes.values()) {
       if (request.filterResult(nodeInfo.getValue(), nodeInfo.getSocialProofs())) {
         numFilteredNodes++;
         continue;

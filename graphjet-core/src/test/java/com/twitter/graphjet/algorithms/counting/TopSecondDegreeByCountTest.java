@@ -92,6 +92,7 @@ public class TopSecondDegreeByCountTest {
       new RequestedSetFilter(new NullStatsReceiver())
     ));
     Set<byte[]> socialProofTypeUnions = new HashSet<>();
+    LongSet authoredByUsers = new LongOpenHashSet();
 
     TopSecondDegreeByCountRequestForTweet request = new TopSecondDegreeByCountRequestForTweet(
       queryNode,
@@ -105,7 +106,8 @@ public class TopSecondDegreeByCountTest {
       minUserSocialProofSizes,
       validSocialProofs,
       resultFilterChain,
-      socialProofTypeUnions
+      socialProofTypeUnions,
+      authoredByUsers
     );
 
     TopSecondDegreeByCountResponse response = new TopSecondDegreeByCountForTweet(
@@ -166,6 +168,7 @@ public class TopSecondDegreeByCountTest {
     ResultFilterChain resultFilterChain = new ResultFilterChain(Lists.<ResultFilter>newArrayList(
       new RequestedSetFilter(new NullStatsReceiver())
     ));
+    LongSet authoredByUsers = new LongOpenHashSet();
 
     TopSecondDegreeByCountRequestForTweet request = new TopSecondDegreeByCountRequestForTweet(
       queryNode,
@@ -179,7 +182,8 @@ public class TopSecondDegreeByCountTest {
       minUserSocialProofSizes,
       validSocialProofs,
       resultFilterChain,
-      socialProofTypeUnions
+      socialProofTypeUnions,
+      authoredByUsers
     );
 
     TopSecondDegreeByCountResponse response = new TopSecondDegreeByCountForTweet(
@@ -261,6 +265,7 @@ public class TopSecondDegreeByCountTest {
     ));
 
     Set<byte[]> socialProofTypeUnions = new HashSet<>();
+    LongSet authoredByUsers = new LongOpenHashSet();
 
     TopSecondDegreeByCountRequestForTweet request = new TopSecondDegreeByCountRequestForTweet(
       queryNode,
@@ -274,7 +279,8 @@ public class TopSecondDegreeByCountTest {
       minUserSocialProofSizes,
       validSocialProofs,
       resultFilterChain,
-      socialProofTypeUnions
+      socialProofTypeUnions,
+      authoredByUsers
     );
 
     TopSecondDegreeByCountResponse response = new TopSecondDegreeByCountForTweet(

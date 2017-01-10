@@ -34,6 +34,7 @@ public class TopSecondDegreeByCountRequestForTweet extends TopSecondDegreeByCoun
   private final int maxTweetSocialProofSize;
   private final Map<RecommendationType, Integer> minUserSocialProofSizes;
   private final Set<byte[]> socialProofTypeUnions;
+  private final LongSet authoredByUsers;
 
   /**
    * Construct a TopSecondDegreeByCount algorithm runner for tweet related recommendations.
@@ -65,7 +66,8 @@ public class TopSecondDegreeByCountRequestForTweet extends TopSecondDegreeByCoun
     Map<RecommendationType, Integer> minUserSocialProofSizes,
     byte[] socialProofTypes,
     ResultFilterChain resultFilterChain,
-    Set<byte[]> socialProofTypeUnions
+    Set<byte[]> socialProofTypeUnions,
+    LongSet authoredByUsers
   ) {
     super(
       queryNode,
@@ -80,19 +82,34 @@ public class TopSecondDegreeByCountRequestForTweet extends TopSecondDegreeByCoun
     this.maxTweetSocialProofSize = maxTweetSocialProofSize;
     this.minUserSocialProofSizes = minUserSocialProofSizes;
     this.socialProofTypeUnions = socialProofTypeUnions;
+    this.authoredByUsers = authoredByUsers;
   }
 
   public Set<RecommendationType> getRecommendationTypes() {
     return recommendationTypes;
   }
 
-  public Map<RecommendationType, Integer> getMaxNumResultsByType() { return maxNumResultsByType; }
+  public Map<RecommendationType, Integer> getMaxNumResultsByType() {
+    return maxNumResultsByType;
+  }
 
-  public int getMaxUserSocialProofSize() { return maxUserSocialProofSize; }
+  public int getMaxUserSocialProofSize() {
+    return maxUserSocialProofSize;
+  }
 
-  public int getMaxTweetSocialProofSize() { return maxTweetSocialProofSize; }
+  public int getMaxTweetSocialProofSize() {
+    return maxTweetSocialProofSize;
+  }
 
-  public Map<RecommendationType, Integer> getMinUserSocialProofSizes() { return minUserSocialProofSizes; }
+  public Map<RecommendationType, Integer> getMinUserSocialProofSizes() {
+    return minUserSocialProofSizes;
+  }
 
-  public Set<byte[]> getSocialProofTypeUnions() { return socialProofTypeUnions; }
+  public Set<byte[]> getSocialProofTypeUnions() {
+    return socialProofTypeUnions;
+  }
+
+  public LongSet getAuthoredByUsers() {
+    return authoredByUsers;
+  }
 }
