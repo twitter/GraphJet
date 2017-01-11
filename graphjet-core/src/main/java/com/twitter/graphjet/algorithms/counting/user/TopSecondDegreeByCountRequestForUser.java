@@ -32,7 +32,6 @@ public class TopSecondDegreeByCountRequestForUser extends TopSecondDegreeByCount
   private final int maxNumResults;
   private final int maxNumSocialProofs;
   private final RecommendationType recommendationType = RecommendationType.USER;
-  private final boolean onlyUseSpecifiedProofTypes;
   private final long maxEdgeEngagementAgeInMillis;
 
   /**
@@ -56,14 +55,12 @@ public class TopSecondDegreeByCountRequestForUser extends TopSecondDegreeByCount
     int maxSocialProofTypeSize,
     Map<Byte, Integer> minUserPerSocialProof,
     byte[] socialProofTypes,
-    boolean onlyUseSpecifiedProofTypes,
     long maxEdgeEngagementAgeInMillis,
     ResultFilterChain resultFilterChain) {
     super(queryNode, leftSeedNodesWithWeight, toBeFiltered, maxSocialProofTypeSize,
         socialProofTypes, resultFilterChain);
     this.maxNumResults = maxNumResults;
     this.maxNumSocialProofs = maxNumSocialProofs;
-    this.onlyUseSpecifiedProofTypes = onlyUseSpecifiedProofTypes;
     this.maxEdgeEngagementAgeInMillis = maxEdgeEngagementAgeInMillis;
     this.minUserPerSocialProof = minUserPerSocialProof;
   }
@@ -75,8 +72,6 @@ public class TopSecondDegreeByCountRequestForUser extends TopSecondDegreeByCount
   public int getMaxNumSocialProofs() { return maxNumSocialProofs; }
 
   public long getMaxEdgeEngagementAgeInMillis() { return maxEdgeEngagementAgeInMillis; }
-
-  public boolean getOnlyUseSpecifiedProofTypes() { return onlyUseSpecifiedProofTypes; }
 
   public RecommendationType getRecommendationType() { return recommendationType; }
 }

@@ -58,7 +58,7 @@ public class TopSecondDegreeByCountForUser extends
 
   @Override
   protected boolean isOnlyUseSpecifiedProofTypes(TopSecondDegreeByCountRequestForUser request) {
-    return request.getOnlyUseSpecifiedProofTypes();
+    return true;
   }
 
   @Override

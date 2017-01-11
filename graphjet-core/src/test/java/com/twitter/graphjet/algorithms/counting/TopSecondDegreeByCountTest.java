@@ -428,7 +428,6 @@ public class TopSecondDegreeByCountTest {
       maxSocialProofSize,
       minUserPerSocialProof,
       socialProofTypes,
-      isOnlyUseSpecifiedProofTypes,
       dummyKeepEdgeWithinTime,
       resultFilterChain);
 
