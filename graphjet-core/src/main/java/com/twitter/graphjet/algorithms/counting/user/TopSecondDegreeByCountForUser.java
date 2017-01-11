@@ -57,6 +57,11 @@ public class TopSecondDegreeByCountForUser extends
   }
 
   @Override
+  protected boolean isOnlyUseSpecifiedProofTypes(TopSecondDegreeByCountRequestForUser request) {
+    return request.getOnlyUseSpecifiedProofTypes();
+  }
+
+  @Override
   protected void updateNodeInfo(
     long leftNode,
     long rightNode,

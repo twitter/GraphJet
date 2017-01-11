@@ -56,10 +56,16 @@ public class TopSecondDegreeByCountForTweet extends
     super(leftIndexedBipartiteGraph, expectedNodesToHit, statsReceiver);
   }
 
+  @Override
   protected boolean isEdgeEngagementWithinAgeLimit(
     TopSecondDegreeByCountRequestForTweet request,
     EdgeIterator edgeIterator) {
     return true;
+  }
+
+  @Override
+  protected boolean isOnlyUseSpecifiedProofTypes(TopSecondDegreeByCountRequestForTweet request) {
+    return false;
   }
 
   @Override
