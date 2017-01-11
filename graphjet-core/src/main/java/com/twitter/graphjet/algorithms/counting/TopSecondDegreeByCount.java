@@ -84,7 +84,9 @@ public abstract class TopSecondDegreeByCount<Request extends TopSecondDegreeByCo
   protected abstract boolean isEdgeEngagementWithinAgeLimit(Request request, EdgeIterator edgeIterator);
 
   /**
-   * TODO (gtang):
+   * Return whether only edge types specified in the request are valid
+   * Ex: A request's social proof types only contain "Follow", and a node has "Follow" and "Mention" edges.
+   * If true, only the "Follow" edge will be counted. If false, both "Follow" and "Mention" will be counted.
    * @param request
    * @return
    */
