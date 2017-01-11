@@ -330,40 +330,87 @@ public class TopSecondDegreeByCountTest {
     Map<Byte, Integer> minUserPerSocialProof = new HashMap<>();
     List<UserRecommendationInfo> expectedTopResults = new ArrayList<>();
 
+    byte[] socialProofTypes = new byte[] {0, 1, 2, 3};
+    boolean isOnlyUseSpecifiedProofTypes = false;
+    RecommendationStats expectedTopSecondDegreeByCountStats = new RecommendationStats(5, 6, 17, 2, 4, 0);
+
     // Test 1: Test regular test case without max result limitations
     int maxNumResults = 3;
     expectedTopResults.add(new UserRecommendationInfo(3, 3.0, socialProofFor3));
     expectedTopResults.add(new UserRecommendationInfo(5, 2.5, socialProofFor5));
     expectedTopResults.add(new UserRecommendationInfo(7, 2.5, socialProofFor7));
-    testTopSecondDegreeByCountHelper(maxNumResults, minUserPerSocialProof, expectedTopResults);
+    testTopSecondDegreeByCountHelper(
+      maxNumResults,
+      minUserPerSocialProof,
+      socialProofTypes,
+      isOnlyUseSpecifiedProofTypes,
+      expectedTopResults,
+      expectedTopSecondDegreeByCountStats);
 
     // Test 2: Test with small maxNumResults
     maxNumResults = 1;
     expectedTopResults.clear();
     expectedTopResults.add(new UserRecommendationInfo(3, 3.0, socialProofFor3));
-    testTopSecondDegreeByCountHelper(maxNumResults, minUserPerSocialProof, expectedTopResults);
+    testTopSecondDegreeByCountHelper(
+      maxNumResults,
+      minUserPerSocialProof,
+      socialProofTypes,
+      isOnlyUseSpecifiedProofTypes,
+      expectedTopResults,
+      expectedTopSecondDegreeByCountStats);
 
     // Test 3: Test limiting minimum number of users per social proof
     maxNumResults = 3;
     minUserPerSocialProof.put((byte) 1, 3); // 3 users per proof
     expectedTopResults.clear();
     expectedTopResults.add(new UserRecommendationInfo(3, 3.0, socialProofFor3));
-    testTopSecondDegreeByCountHelper(maxNumResults, minUserPerSocialProof, expectedTopResults);
+    testTopSecondDegreeByCountHelper(
+      maxNumResults,
+      minUserPerSocialProof,
+      socialProofTypes,
+      isOnlyUseSpecifiedProofTypes,
+      expectedTopResults,
+      expectedTopSecondDegreeByCountStats);
+
+    // Test 4: Test only allowing social proof type 3
+    maxNumResults = 3;
+    minUserPerSocialProof = new HashMap<>();
+    socialProofTypes = new byte[] {3};
+    isOnlyUseSpecifiedProofTypes = true;
+
+    HashMap<Byte, LongList> socialProofFor5filtered = new HashMap<> ();
+    socialProofFor5filtered.put((byte) 3, new LongArrayList(new long[]{1}));
+
+    expectedTopSecondDegreeByCountStats = new RecommendationStats(5, 1, 2, 2, 2, 0);
+
+    expectedTopResults.clear();
+    expectedTopResults.add(new UserRecommendationInfo(5, 1.5, socialProofFor5filtered));
+    testTopSecondDegreeByCountHelper(
+      maxNumResults,
+      minUserPerSocialProof,
+      socialProofTypes,
+      isOnlyUseSpecifiedProofTypes,
+      expectedTopResults,
+      expectedTopSecondDegreeByCountStats);
   }
 
   private void testTopSecondDegreeByCountHelper(
-      int maxNumResults,
-      Map<Byte, Integer> minUserPerSocialProof,
-      List<UserRecommendationInfo> expectedTopResults) throws Exception {
+    int maxNumResults,
+    Map<Byte, Integer> minUserPerSocialProof,
+    byte[] socialProofTypes,
+    boolean isOnlyUseSpecifiedProofTypes,
+    List<UserRecommendationInfo> expectedTopResults,
+    RecommendationStats expectedTopSecondDegreeByCountStats
+  ) throws Exception {
     LeftIndexedPowerLawMultiSegmentBipartiteGraph bipartiteGraph =
         BipartiteGraphTestHelper.buildSmallTestLeftIndexedPowerLawMultiSegmentBipartiteGraphWithEdgeTypes();
+
 
     long queryNode = 1;
     int maxSocialProofSize = 4;
     int maxNumSocialProofs = 100;
     Long2DoubleMap seedsMap = new Long2DoubleArrayMap(new long[]{1, 2, 3}, new double[]{1.5, 1.0, 0.5});
     LongSet toBeFiltered = new LongOpenHashSet(new long[]{});
-    byte[] socialProofTypes = new byte[]{0, 1, 2, 3};
     ResultFilterChain resultFilterChain = new ResultFilterChain(Lists.<ResultFilter>newArrayList(
         new RequestedSetFilter(new NullStatsReceiver())));
 
@@ -381,6 +428,7 @@ public class TopSecondDegreeByCountTest {
       maxSocialProofSize,
       minUserPerSocialProof,
       socialProofTypes,
+      isOnlyUseSpecifiedProofTypes,
       dummyKeepEdgeWithinTime,
       resultFilterChain);
 
@@ -394,7 +442,6 @@ public class TopSecondDegreeByCountTest {
       List<RecommendationInfo> topSecondDegreeByCountResults =
           Lists.newArrayList(response.getRankedRecommendations());
 
-      final RecommendationStats expectedTopSecondDegreeByCountStats = new RecommendationStats(5, 6, 17, 2, 4, 0);
       RecommendationStats topSecondDegreeByCountStats = response.getTopSecondDegreeByCountStats();
 
       assertEquals(expectedTopSecondDegreeByCountStats, topSecondDegreeByCountStats);

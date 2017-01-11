@@ -84,6 +84,13 @@ public abstract class TopSecondDegreeByCount<Request extends TopSecondDegreeByCo
   protected abstract boolean isEdgeEngagementWithinAgeLimit(Request request, EdgeIterator edgeIterator);
 
   /**
+   * TODO (gtang):
+   * @param request
+   * @return
+   */
+  protected abstract boolean isOnlyUseSpecifiedProofTypes(Request request);
+
+  /**
    * Update node information gathered about each RHS node, such as metadata and weights.
    * This method update nodes in {@link TopSecondDegreeByCount#visitedRightNodes}.
    * @param leftNode                is the LHS node from which traversal initialized
@@ -150,6 +157,10 @@ public abstract class TopSecondDegreeByCount<Request extends TopSecondDegreeByCo
         long rightNode = edgeIterator.nextLong();
         byte edgeType = edgeIterator.currentEdgeType();
 
+        if (!isEdgeTypeValid(request, edgeType)) {
+          continue;
+        }
+
         boolean hasSeenRightNodeFromEdge =
           seenEdgesPerNode.containsKey(rightNode) && seenEdgesPerNode.get(rightNode) == edgeType;
 
@@ -167,6 +178,18 @@ public abstract class TopSecondDegreeByCount<Request extends TopSecondDegreeByCo
         }
       }
     }
+  }
+
+  private boolean isEdgeTypeValid(Request request, byte edgeType) {
+    if (!isOnlyUseSpecifiedProofTypes(request)) {
+      return true;
+    }
+    for (byte validType : request.getSocialProofTypes()) {
+      if (edgeType == validType) {
+        return true;
+      }
+    }
+    return false;
   }
 
   private void updateAlgorithmStats(long queryNode) {
