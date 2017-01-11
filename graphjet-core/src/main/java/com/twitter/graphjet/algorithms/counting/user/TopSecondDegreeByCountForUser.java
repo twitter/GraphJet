@@ -62,7 +62,11 @@ public class TopSecondDegreeByCountForUser extends
     long edgeEngagementTime = ((TimestampEdgeIterator)edgeIterator).getCurrentEdgeEngagementTimeInMillis();
     return (edgeEngagementTime >= System.currentTimeMillis() - keepEdgeWithinTime);
   }
-
+  /**
+   * Only social proof types specified in the user request are counted
+   * For example, a request's social proof types only contain "Follow", and a node has "Follow" and "Mention" edges.
+   * Only the "Follow" edge will be counted, and the "Mention" edge is considered invalid
+   */
   private boolean isEdgeTypeValid(byte[] validEdgeTypes, byte edgeType) {
     for (byte validType : validEdgeTypes) {
       if (edgeType == validType) {
