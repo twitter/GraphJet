@@ -74,25 +74,6 @@ public abstract class TopSecondDegreeByCount<Request extends TopSecondDegreeByCo
   }
 
   /**
-   * Return whether the edge is within the age limit which is specified in the request.
-   * It is used to filter information of unwanted edges from being aggregated.
-   * @param request       is the request given by the requester
-   * @param edgeIterator  is the iterator being used to iterate node's edges.
-   *                      It carries information such as the engagement time of the current edge
-   * @return true if this edge is within the max age limit, false otherwise.
-   */
-  protected abstract boolean isEdgeEngagementWithinAgeLimit(Request request, EdgeIterator edgeIterator);
-
-  /**
-   * Return whether only edge types specified in the request are valid
-   * Ex: A request's social proof types only contain "Follow", and a node has "Follow" and "Mention" edges.
-   * If true, only the "Follow" edge will be counted. If false, both "Follow" and "Mention" will be counted.
-   * @param request
-   * @return
-   */
-  protected abstract boolean isOnlyUseSpecifiedProofTypes(Request request);
-
-  /**
    * Update node information gathered about each RHS node, such as metadata and weights.
    * This method update nodes in {@link TopSecondDegreeByCount#visitedRightNodes}.
    * @param leftNode                is the LHS node from which traversal initialized
@@ -102,12 +83,12 @@ public abstract class TopSecondDegreeByCount<Request extends TopSecondDegreeByCo
    * @param edgeIterator            is the iterator for traversing edges from LHS node
    */
   protected abstract void updateNodeInfo(
+    Request request,
     long leftNode,
     long rightNode,
     byte edgeType,
     double weight,
-    EdgeIterator edgeIterator,
-    int maxSocialProofTypeSize);
+    EdgeIterator edgeIterator);
 
   /**
    * Generate and return recommendation response. As the last step in the calculation,
@@ -159,39 +140,21 @@ public abstract class TopSecondDegreeByCount<Request extends TopSecondDegreeByCo
         long rightNode = edgeIterator.nextLong();
         byte edgeType = edgeIterator.currentEdgeType();
 
-        if (!isEdgeTypeValid(request, edgeType)) {
-          continue;
-        }
-
         boolean hasSeenRightNodeFromEdge =
           seenEdgesPerNode.containsKey(rightNode) && seenEdgesPerNode.get(rightNode) == edgeType;
 
         if (!hasSeenRightNodeFromEdge) {
           seenEdgesPerNode.put(rightNode, edgeType);
-          if (isEdgeEngagementWithinAgeLimit(request, edgeIterator)) {
-            updateNodeInfo(
-              leftNode,
-              rightNode,
-              edgeType,
-              weight,
-              edgeIterator,
-              request.getMaxSocialProofTypeSize());
-          }
+          updateNodeInfo(
+            request,
+            leftNode,
+            rightNode,
+            edgeType,
+            weight,
+            edgeIterator);
         }
       }
     }
-  }
-
-  private boolean isEdgeTypeValid(Request request, byte edgeType) {
-    if (!isOnlyUseSpecifiedProofTypes(request)) {
-      return true;
-    }
-    for (byte validType : request.getSocialProofTypes()) {
-      if (edgeType == validType) {
-        return true;
-      }
-    }
-    return false;
   }
 
   private void updateAlgorithmStats(long queryNode) {

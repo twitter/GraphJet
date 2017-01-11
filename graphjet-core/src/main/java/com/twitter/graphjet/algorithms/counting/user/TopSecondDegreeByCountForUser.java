@@ -47,8 +47,15 @@ public class TopSecondDegreeByCountForUser extends
     super(leftIndexedBipartiteGraph, expectedNodesToHit, statsReceiver);
   }
 
-  @Override
-  protected boolean isEdgeEngagementWithinAgeLimit(
+  /**
+   * Return whether the edge is within the age limit which is specified in the request.
+   * It is used to filter information of unwanted edges from being aggregated.
+   * @param request       is the request given by the requester
+   * @param edgeIterator  is the iterator being used to iterate node's edges.
+   *                      It carries information such as the engagement time of the current edge
+   * @return true if this edge is within the max age limit, false otherwise.
+   */
+  private boolean isEdgeEngagementWithinAgeLimit(
       TopSecondDegreeByCountRequestForUser request,
       EdgeIterator edgeIterator) {
     long keepEdgeWithinTime = request.getMaxEdgeEngagementAgeInMillis();
@@ -56,24 +63,33 @@ public class TopSecondDegreeByCountForUser extends
     return (edgeEngagementTime >= System.currentTimeMillis() - keepEdgeWithinTime);
   }
 
-  @Override
-  protected boolean isOnlyUseSpecifiedProofTypes(TopSecondDegreeByCountRequestForUser request) {
-    return true;
+  private boolean isEdgeTypeValid(byte[] validEdgeTypes, byte edgeType) {
+    for (byte validType : validEdgeTypes) {
+      if (edgeType == validType) {
+        return true;
+      }
+    }
+    return false;
   }
 
   @Override
   protected void updateNodeInfo(
+    TopSecondDegreeByCountRequestForUser request,
     long leftNode,
     long rightNode,
     byte edgeType,
     double weight,
-    EdgeIterator edgeIterator,
-    int maxSocialProofTypeSize) {
+    EdgeIterator edgeIterator) {
+
+    if (!isEdgeEngagementWithinAgeLimit(request, edgeIterator) ||
+        !isEdgeTypeValid(request.getSocialProofTypes(), edgeType)) {
+      // Do not update on expired edges or invalid edge types
+      return;
+    }
 
     NodeInfo nodeInfo;
-
     if (!super.visitedRightNodes.containsKey(rightNode)) {
-      nodeInfo = new NodeInfo(rightNode, 0.0, maxSocialProofTypeSize);
+      nodeInfo = new NodeInfo(rightNode, 0.0, request.getMaxSocialProofTypeSize());
       super.visitedRightNodes.put(rightNode, nodeInfo);
     } else {
       nodeInfo = super.visitedRightNodes.get(rightNode);

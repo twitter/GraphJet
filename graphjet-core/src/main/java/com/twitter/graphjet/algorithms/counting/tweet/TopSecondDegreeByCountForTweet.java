@@ -57,25 +57,13 @@ public class TopSecondDegreeByCountForTweet extends
   }
 
   @Override
-  protected boolean isEdgeEngagementWithinAgeLimit(
-    TopSecondDegreeByCountRequestForTweet request,
-    EdgeIterator edgeIterator) {
-    return true;
-  }
-
-  @Override
-  protected boolean isOnlyUseSpecifiedProofTypes(TopSecondDegreeByCountRequestForTweet request) {
-    return false;
-  }
-
-  @Override
   protected void updateNodeInfo(
+    TopSecondDegreeByCountRequestForTweet request,
     long leftNode,
     long rightNode,
     byte edgeType,
     double weight,
-    EdgeIterator edgeIterator,
-    int maxSocialProofTypeSize) {
+    EdgeIterator edgeIterator) {
 
     NodeInfo nodeInfo;
     if (!super.visitedRightNodes.containsKey(rightNode)) {
@@ -97,7 +85,7 @@ public class TopSecondDegreeByCountForTweet extends
         }
       }
 
-      nodeInfo = new NodeInfo(rightNode, nodeMetadata, 0.0, maxSocialProofTypeSize);
+      nodeInfo = new NodeInfo(rightNode, nodeMetadata, 0.0, request.getMaxSocialProofTypeSize());
       super.visitedRightNodes.put(rightNode, nodeInfo);
     } else {
       nodeInfo = super.visitedRightNodes.get(rightNode);
