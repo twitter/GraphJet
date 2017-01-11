@@ -21,23 +21,24 @@ import com.twitter.graphjet.bipartite.api.EdgeIterator;
 import com.twitter.graphjet.bipartite.LeftIndexedMultiSegmentBipartiteGraph;
 import com.twitter.graphjet.hashing.SmallArrayBasedLongToDoubleMap;
 import com.twitter.graphjet.stats.StatsReceiver;
+import it.unimi.dsi.fastutil.longs.LongArraySet;
 import it.unimi.dsi.fastutil.longs.LongSet;
 
-public class AuthoredByUsersFilter extends ResultFilter {
-  private LongSet authoredByUsersNodes;
+public class TweetAuthorFilter extends ResultFilter {
+  private LongSet authoredTweets = new LongArraySet();
 
-  public AuthoredByUsersFilter(
+  public TweetAuthorFilter(
       LeftIndexedMultiSegmentBipartiteGraph leftIndexedBipartiteGraph,
-      LongSet authoredByUsers,
+      LongSet tweetAuthors,
       StatsReceiver statsReceiver) {
     super(statsReceiver);
-    generateAuthoredByUsersNodes(leftIndexedBipartiteGraph, authoredByUsers);
+    generateAuthoredByUsersNodes(leftIndexedBipartiteGraph, tweetAuthors);
   }
 
   private void generateAuthoredByUsersNodes(
       LeftIndexedMultiSegmentBipartiteGraph leftIndexedBipartiteGraph,
-      LongSet authoredByUsers) {
-    for (long leftNode: authoredByUsers) {
+      LongSet tweetAuthors) {
+    for (long leftNode: tweetAuthors) {
       EdgeIterator edgeIterator = leftIndexedBipartiteGraph.getLeftNodeEdges(leftNode);
       if (edgeIterator == null) {
         continue;
@@ -49,7 +50,7 @@ public class AuthoredByUsersFilter extends ResultFilter {
         long rightNode = edgeIterator.nextLong();
         byte edgeType = edgeIterator.currentEdgeType();
         if (edgeType == RecommendationRequest.AUTHOR_SOCIAL_PROOF_TYPE) {
-          authoredByUsersNodes.add(rightNode);
+          authoredTweets.add(rightNode);
         }
       }
     }
@@ -64,6 +65,6 @@ public class AuthoredByUsersFilter extends ResultFilter {
    */
   @Override
   public boolean filterResult(long resultNode, SmallArrayBasedLongToDoubleMap[] socialProofs) {
-    return !authoredByUsersNodes.contains(resultNode);
+    return !authoredTweets.contains(resultNode);
   }
 }
