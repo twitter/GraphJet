@@ -68,7 +68,7 @@ public class TopSecondDegreeByCountForUser extends
    * Only the "Follow" edge will be counted, and the "Mention" edge is considered invalid
    */
   private boolean isEdgeTypeValid(byte[] validEdgeTypes, byte edgeType) {
-    for (byte validType : validEdgeTypes) {
+    for (byte validType: validEdgeTypes) {
       if (edgeType == validType) {
         return true;
       }
