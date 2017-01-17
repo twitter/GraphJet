@@ -22,7 +22,10 @@ import com.twitter.graphjet.algorithms.counting.TopSecondDegreeByCountRequest;
 import it.unimi.dsi.fastutil.longs.Long2DoubleMap;
 import it.unimi.dsi.fastutil.longs.LongSet;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Request data structure for calculating user recommendations.
@@ -33,6 +36,7 @@ public class TopSecondDegreeByCountRequestForUser extends TopSecondDegreeByCount
   private final int maxNumSocialProofs;
   private final RecommendationType recommendationType = RecommendationType.USER;
   private final long maxEdgeEngagementAgeInMillis;
+  private final Set<Byte> socialProofTypeSet;
 
   /**
    * @param queryNode                 is the query node for running TopSecondDegreeByCountForUser
@@ -63,6 +67,7 @@ public class TopSecondDegreeByCountRequestForUser extends TopSecondDegreeByCount
     this.maxNumSocialProofs = maxNumSocialProofs;
     this.maxEdgeEngagementAgeInMillis = maxEdgeEngagementAgeInMillis;
     this.minUserPerSocialProof = minUserPerSocialProof;
+    this.socialProofTypeSet = socialProofTypesToSet(socialProofTypes);
   }
 
   public Map<Byte, Integer> getMinUserPerSocialProof() { return minUserPerSocialProof; }
@@ -74,4 +79,14 @@ public class TopSecondDegreeByCountRequestForUser extends TopSecondDegreeByCount
   public long getMaxEdgeEngagementAgeInMillis() { return maxEdgeEngagementAgeInMillis; }
 
   public RecommendationType getRecommendationType() { return recommendationType; }
+
+  public Set<Byte> getSocialProofTypeSet() { return socialProofTypeSet; }
+
+  private HashSet<Byte> socialProofTypesToSet(byte[] socialProofTypes) {
+    HashSet<Byte> socialProofSet = new HashSet<>();
+    for (byte type : socialProofTypes) {
+      socialProofSet.add(type);
+    }
+    return socialProofSet;
+  }
 }

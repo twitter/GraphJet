@@ -26,6 +26,7 @@ import com.twitter.graphjet.bipartite.api.TimestampEdgeIterator;
 import com.twitter.graphjet.stats.StatsReceiver;
 
 import java.util.List;
+import java.util.Set;
 
 public class TopSecondDegreeByCountForUser extends
   TopSecondDegreeByCount<TopSecondDegreeByCountRequestForUser, TopSecondDegreeByCountResponse> {
@@ -67,13 +68,8 @@ public class TopSecondDegreeByCountForUser extends
    * For example, a request's social proof types only contain "Follow", and a node has "Follow" and "Mention" edges.
    * Only the "Follow" edge will be counted, and the "Mention" edge is considered invalid
    */
-  private boolean isEdgeTypeValid(byte[] validEdgeTypes, byte edgeType) {
-    for (byte validType: validEdgeTypes) {
-      if (edgeType == validType) {
-        return true;
-      }
-    }
-    return false;
+  private boolean isEdgeTypeValid(Set<Byte> validEdgeTypes, byte edgeType) {
+    return validEdgeTypes.contains(edgeType);
   }
 
   @Override
@@ -86,7 +82,7 @@ public class TopSecondDegreeByCountForUser extends
     EdgeIterator edgeIterator) {
 
     if (!isEdgeEngagementWithinAgeLimit(request, edgeIterator) ||
-        !isEdgeTypeValid(request.getSocialProofTypes(), edgeType)) {
+        !isEdgeTypeValid(request.getSocialProofTypeSet(), edgeType)) {
       // Do not update on expired edges or invalid edge types
       return;
     }
