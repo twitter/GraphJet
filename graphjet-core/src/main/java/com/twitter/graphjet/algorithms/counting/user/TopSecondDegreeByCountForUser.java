@@ -19,6 +19,7 @@ package com.twitter.graphjet.algorithms.counting.user;
 import com.twitter.graphjet.algorithms.NodeInfo;
 import com.twitter.graphjet.algorithms.RecommendationInfo;
 import com.twitter.graphjet.algorithms.counting.TopSecondDegreeByCount;
+import com.twitter.graphjet.algorithms.counting.TopSecondDegreeByCountRequest;
 import com.twitter.graphjet.algorithms.counting.TopSecondDegreeByCountResponse;
 import com.twitter.graphjet.bipartite.LeftIndexedPowerLawMultiSegmentBipartiteGraph;
 import com.twitter.graphjet.bipartite.api.EdgeIterator;
@@ -51,18 +52,16 @@ public class TopSecondDegreeByCountForUser extends
   /**
    * Return whether the edge is within the age limit which is specified in the request.
    * It is used to filter information of unwanted edges from being aggregated.
-   * @param request       is the request given by the requester
-   * @param edgeIterator  is the iterator being used to iterate node's edges.
-   *                      It carries information such as the engagement time of the current edge
+   * @param keepEdgeWithinTime      is the longest time to live for the edge
+   * @param edgeIterator            is the iterator being used to iterate node's edges.
+   *                                It carries information such as the engagement time of the current edge
    * @return true if this edge is within the max age limit, false otherwise.
    */
-  private boolean isEdgeEngagementWithinAgeLimit(
-      TopSecondDegreeByCountRequestForUser request,
-      EdgeIterator edgeIterator) {
-    long keepEdgeWithinTime = request.getMaxEdgeEngagementAgeInMillis();
+  private boolean isEdgeEngagementWithinAgeLimit(long keepEdgeWithinTime, EdgeIterator edgeIterator) {
     long edgeEngagementTime = ((TimestampEdgeIterator)edgeIterator).getCurrentEdgeEngagementTimeInMillis();
     return (edgeEngagementTime >= System.currentTimeMillis() - keepEdgeWithinTime);
   }
+
   /**
    * Only social proof types specified in the user request are counted
    * For example, a request's social proof types only contain "Follow", and a node has "Follow" and "Mention" edges.
@@ -73,23 +72,24 @@ public class TopSecondDegreeByCountForUser extends
   }
 
   @Override
+  protected boolean isUpdateNodeInfoValid(TopSecondDegreeByCountRequestForUser request, EdgeIterator edgeIterator) {
+    // Do not update on expired edges or invalid edge types
+    return (isEdgeEngagementWithinAgeLimit(request.getMaxEdgeEngagementAgeInMillis(), edgeIterator) &&
+      isEdgeTypeValid(request.getSocialProofTypeSet(), edgeIterator.currentEdgeType()));
+  }
+
+  @Override
   protected void updateNodeInfo(
-    TopSecondDegreeByCountRequestForUser request,
     long leftNode,
     long rightNode,
     byte edgeType,
     double weight,
-    EdgeIterator edgeIterator) {
-
-    if (!isEdgeEngagementWithinAgeLimit(request, edgeIterator) ||
-        !isEdgeTypeValid(request.getSocialProofTypeSet(), edgeType)) {
-      // Do not update on expired edges or invalid edge types
-      return;
-    }
+    EdgeIterator edgeIterator,
+    int maxSocialProofTypeSize) {
 
     NodeInfo nodeInfo;
     if (!super.visitedRightNodes.containsKey(rightNode)) {
-      nodeInfo = new NodeInfo(rightNode, 0.0, request.getMaxSocialProofTypeSize());
+      nodeInfo = new NodeInfo(rightNode, 0.0, maxSocialProofTypeSize);
       super.visitedRightNodes.put(rightNode, nodeInfo);
     } else {
       nodeInfo = super.visitedRightNodes.get(rightNode);

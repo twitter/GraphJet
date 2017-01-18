@@ -74,6 +74,14 @@ public abstract class TopSecondDegreeByCount<Request extends TopSecondDegreeByCo
   }
 
   /**
+   * Return whether we should proceed with updating an edge's info based on the criteria specified in the request
+   * @param request the request object containing the criteria
+   * @param edgeIterator contains current edge's info, such as max time-to-live and edge type
+   * @return true if the edge's information should be collected, false if it should be skipped
+   */
+  protected abstract boolean isUpdateNodeInfoValid(Request request, EdgeIterator edgeIterator);
+
+  /**
    * Update node information gathered about each RHS node, such as metadata and weights.
    * This method update nodes in {@link TopSecondDegreeByCount#visitedRightNodes}.
    * @param leftNode                is the LHS node from which traversal initialized
@@ -83,12 +91,12 @@ public abstract class TopSecondDegreeByCount<Request extends TopSecondDegreeByCo
    * @param edgeIterator            is the iterator for traversing edges from LHS node
    */
   protected abstract void updateNodeInfo(
-    Request request,
     long leftNode,
     long rightNode,
     byte edgeType,
     double weight,
-    EdgeIterator edgeIterator);
+    EdgeIterator edgeIterator,
+    int maxSocialProofTypeSize);
 
   /**
    * Generate and return recommendation response. As the last step in the calculation,
@@ -143,15 +151,15 @@ public abstract class TopSecondDegreeByCount<Request extends TopSecondDegreeByCo
         boolean hasSeenRightNodeFromEdge =
           seenEdgesPerNode.containsKey(rightNode) && seenEdgesPerNode.get(rightNode) == edgeType;
 
-        if (!hasSeenRightNodeFromEdge) {
+        if (!hasSeenRightNodeFromEdge && isUpdateNodeInfoValid(request, edgeIterator)) {
           seenEdgesPerNode.put(rightNode, edgeType);
           updateNodeInfo(
-            request,
             leftNode,
             rightNode,
             edgeType,
             weight,
-            edgeIterator);
+            edgeIterator,
+            request.getMaxSocialProofTypeSize());
         }
       }
     }

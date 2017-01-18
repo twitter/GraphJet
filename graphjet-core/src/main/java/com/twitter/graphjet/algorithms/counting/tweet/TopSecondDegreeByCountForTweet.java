@@ -57,13 +57,18 @@ public class TopSecondDegreeByCountForTweet extends
   }
 
   @Override
+  protected boolean isUpdateNodeInfoValid(TopSecondDegreeByCountRequestForTweet request, EdgeIterator edgeIterator) {
+    return true; // Currently there is no edge filtering in tweet recommendations
+  }
+
+  @Override
   protected void updateNodeInfo(
-    TopSecondDegreeByCountRequestForTweet request,
     long leftNode,
     long rightNode,
     byte edgeType,
     double weight,
-    EdgeIterator edgeIterator) {
+    EdgeIterator edgeIterator,
+    int maxSocialProofTypeSize) {
 
     NodeInfo nodeInfo;
     if (!super.visitedRightNodes.containsKey(rightNode)) {
@@ -85,7 +90,7 @@ public class TopSecondDegreeByCountForTweet extends
         }
       }
 
-      nodeInfo = new NodeInfo(rightNode, nodeMetadata, 0.0, request.getMaxSocialProofTypeSize());
+      nodeInfo = new NodeInfo(rightNode, nodeMetadata, 0.0, maxSocialProofTypeSize);
       super.visitedRightNodes.put(rightNode, nodeInfo);
     } else {
       nodeInfo = super.visitedRightNodes.get(rightNode);
