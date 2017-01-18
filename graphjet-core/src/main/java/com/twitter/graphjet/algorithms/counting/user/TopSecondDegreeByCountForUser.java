@@ -19,7 +19,6 @@ package com.twitter.graphjet.algorithms.counting.user;
 import com.twitter.graphjet.algorithms.NodeInfo;
 import com.twitter.graphjet.algorithms.RecommendationInfo;
 import com.twitter.graphjet.algorithms.counting.TopSecondDegreeByCount;
-import com.twitter.graphjet.algorithms.counting.TopSecondDegreeByCountRequest;
 import com.twitter.graphjet.algorithms.counting.TopSecondDegreeByCountResponse;
 import com.twitter.graphjet.bipartite.LeftIndexedPowerLawMultiSegmentBipartiteGraph;
 import com.twitter.graphjet.bipartite.api.EdgeIterator;
@@ -27,7 +26,6 @@ import com.twitter.graphjet.bipartite.api.TimestampEdgeIterator;
 import com.twitter.graphjet.stats.StatsReceiver;
 
 import java.util.List;
-import java.util.Set;
 
 public class TopSecondDegreeByCountForUser extends
   TopSecondDegreeByCount<TopSecondDegreeByCountRequestForUser, TopSecondDegreeByCountResponse> {
@@ -66,6 +64,9 @@ public class TopSecondDegreeByCountForUser extends
    * Only social proof types specified in the user request are counted
    * For example, a request's social proof types only contain "Follow", and a node has "Follow" and "Mention" edges.
    * Only the "Follow" edge will be counted, and the "Mention" edge is considered invalid
+   * @param validEdgeTypes an array of valid types. In User recs there are very few possible types (less than 4),
+   *                       so it is okay to iterate
+   * @param edgeType       the edge type being validated
    */
   private boolean isEdgeTypeValid(byte[] validEdgeTypes, byte edgeType) {
     for (byte validType: validEdgeTypes) {
