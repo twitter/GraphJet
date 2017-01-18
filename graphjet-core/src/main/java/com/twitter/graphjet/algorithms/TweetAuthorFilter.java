@@ -21,11 +21,11 @@ import com.twitter.graphjet.bipartite.api.EdgeIterator;
 import com.twitter.graphjet.bipartite.LeftIndexedMultiSegmentBipartiteGraph;
 import com.twitter.graphjet.hashing.SmallArrayBasedLongToDoubleMap;
 import com.twitter.graphjet.stats.StatsReceiver;
-import it.unimi.dsi.fastutil.longs.LongArraySet;
+import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import it.unimi.dsi.fastutil.longs.LongSet;
 
 public class TweetAuthorFilter extends ResultFilter {
-  private LongSet authoredTweets = new LongArraySet();
+  private LongSet authoredTweets = new LongOpenHashSet();
 
   public TweetAuthorFilter(
       LeftIndexedMultiSegmentBipartiteGraph leftIndexedBipartiteGraph,
