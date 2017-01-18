@@ -177,7 +177,9 @@ public class SmallArrayBasedLongToDoubleMap {
    * Note: Use this function with caution since it is linear to ADD_KEYS_TO_SET_THRESHOLD.
    */
   public boolean contains(long key) {
-    if (size < ADD_KEYS_TO_SET_THRESHOLD) {
+    // The size might have reached the ADD_KEYS_TO_SET_THRESHOLD, but we may have not inserted
+    // a new key yet. Therefore, we need to also check if the size is equal to that threshold.
+    if (size <= ADD_KEYS_TO_SET_THRESHOLD) {
       for (int i = 0; i < size; i++) {
         if (key == keys[i]) {
           return true;
