@@ -57,7 +57,7 @@ public class TopSecondDegreeByCountForTweet extends
   }
 
   @Override
-  protected boolean isUpdateNodeInfoValid(TopSecondDegreeByCountRequestForTweet request, EdgeIterator edgeIterator) {
+  protected boolean isEdgeUpdateValid(TopSecondDegreeByCountRequestForTweet request, EdgeIterator edgeIterator) {
     return true; // Currently there is no edge filtering in tweet recommendations
   }
 

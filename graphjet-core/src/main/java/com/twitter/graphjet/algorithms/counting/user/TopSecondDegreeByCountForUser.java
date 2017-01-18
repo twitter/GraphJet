@@ -67,15 +67,20 @@ public class TopSecondDegreeByCountForUser extends
    * For example, a request's social proof types only contain "Follow", and a node has "Follow" and "Mention" edges.
    * Only the "Follow" edge will be counted, and the "Mention" edge is considered invalid
    */
-  private boolean isEdgeTypeValid(Set<Byte> validEdgeTypes, byte edgeType) {
-    return validEdgeTypes.contains(edgeType);
+  private boolean isEdgeTypeValid(byte[] validEdgeTypes, byte edgeType) {
+    for (byte validType: validEdgeTypes) {
+      if (edgeType == validType) {
+        return true;
+      }
+    }
+    return false;
   }
 
   @Override
-  protected boolean isUpdateNodeInfoValid(TopSecondDegreeByCountRequestForUser request, EdgeIterator edgeIterator) {
+  protected boolean isEdgeUpdateValid(TopSecondDegreeByCountRequestForUser request, EdgeIterator edgeIterator) {
     // Do not update on expired edges or invalid edge types
-    return (isEdgeEngagementWithinAgeLimit(request.getMaxEdgeEngagementAgeInMillis(), edgeIterator) &&
-      isEdgeTypeValid(request.getSocialProofTypeSet(), edgeIterator.currentEdgeType()));
+    return (isEdgeTypeValid(request.getSocialProofTypes(), edgeIterator.currentEdgeType()) &&
+      isEdgeEngagementWithinAgeLimit(request.getMaxEdgeEngagementAgeInMillis(), edgeIterator));
   }
 
   @Override

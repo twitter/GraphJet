@@ -79,7 +79,7 @@ public abstract class TopSecondDegreeByCount<Request extends TopSecondDegreeByCo
    * @param edgeIterator contains current edge's info, such as max time-to-live and edge type
    * @return true if the edge's information should be collected, false if it should be skipped
    */
-  protected abstract boolean isUpdateNodeInfoValid(Request request, EdgeIterator edgeIterator);
+  protected abstract boolean isEdgeUpdateValid(Request request, EdgeIterator edgeIterator);
 
   /**
    * Update node information gathered about each RHS node, such as metadata and weights.
@@ -151,7 +151,7 @@ public abstract class TopSecondDegreeByCount<Request extends TopSecondDegreeByCo
         boolean hasSeenRightNodeFromEdge =
           seenEdgesPerNode.containsKey(rightNode) && seenEdgesPerNode.get(rightNode) == edgeType;
 
-        if (!hasSeenRightNodeFromEdge && isUpdateNodeInfoValid(request, edgeIterator)) {
+        if (!hasSeenRightNodeFromEdge && isEdgeUpdateValid(request, edgeIterator)) {
           seenEdgesPerNode.put(rightNode, edgeType);
           updateNodeInfo(
             leftNode,

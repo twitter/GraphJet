@@ -36,7 +36,6 @@ public class TopSecondDegreeByCountRequestForUser extends TopSecondDegreeByCount
   private final int maxNumSocialProofs;
   private final RecommendationType recommendationType = RecommendationType.USER;
   private final long maxEdgeEngagementAgeInMillis;
-  private final Set<Byte> socialProofTypeSet;
 
   /**
    * @param queryNode                 is the query node for running TopSecondDegreeByCountForUser
@@ -67,7 +66,6 @@ public class TopSecondDegreeByCountRequestForUser extends TopSecondDegreeByCount
     this.maxNumSocialProofs = maxNumSocialProofs;
     this.maxEdgeEngagementAgeInMillis = maxEdgeEngagementAgeInMillis;
     this.minUserPerSocialProof = minUserPerSocialProof;
-    this.socialProofTypeSet = socialProofTypesToSet(socialProofTypes);
   }
 
   public Map<Byte, Integer> getMinUserPerSocialProof() { return minUserPerSocialProof; }
@@ -80,13 +78,4 @@ public class TopSecondDegreeByCountRequestForUser extends TopSecondDegreeByCount
 
   public RecommendationType getRecommendationType() { return recommendationType; }
 
-  public Set<Byte> getSocialProofTypeSet() { return socialProofTypeSet; }
-
-  private HashSet<Byte> socialProofTypesToSet(byte[] socialProofTypes) {
-    HashSet<Byte> socialProofSet = new HashSet<>();
-    for (byte type : socialProofTypes) {
-      socialProofSet.add(type);
-    }
-    return socialProofSet;
-  }
 }
