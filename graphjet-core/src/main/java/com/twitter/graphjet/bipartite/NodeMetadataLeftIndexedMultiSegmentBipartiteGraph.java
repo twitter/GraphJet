@@ -72,7 +72,11 @@ public abstract class NodeMetadataLeftIndexedMultiSegmentBipartiteGraph
   ) {
     // usually very cheap check is it's only false very rarely
     if (numEdgesInLiveSegment == maxNumEdgesPerSegment) {
+      NodeMetadataLeftIndexedBipartiteGraphSegment oldLiveSegment = getLiveSegment();
+
       addNewSegment();
+
+      Optimizer.submitGraphOptimizerJob(this, oldLiveSegment);
     }
     getLiveSegment().addEdge(leftNode, rightNode, edgeType, leftNodeMetadata, rightNodeMetadata);
     numEdgesInLiveSegment++;
