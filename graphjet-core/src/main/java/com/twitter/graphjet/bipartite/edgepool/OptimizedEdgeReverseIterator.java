@@ -17,9 +17,6 @@
 
 package com.twitter.graphjet.bipartite.edgepool;
 
-import com.twitter.graphjet.bipartite.api.ReusableNodeRandomIntIterator;
-import java.util.Random;
-
 /**
  * Returns an iterator over the edges stored in an {@link OptimizedEdgePool} in reverse chronological order.
  */
@@ -31,8 +28,8 @@ public class OptimizedEdgeReverseIterator extends OptimizedEdgeIterator {
    * @param optimizedDegreeEdgePool is the underlying {@link OptimizedEdgePool}
    */
   public OptimizedEdgeReverseIterator(OptimizedEdgePool optimizedDegreeEdgePool) {
-        super(optimizedDegreeEdgePool);
-    }
+    super(optimizedDegreeEdgePool);
+  }
 
   /**
    * Resets the iterator to return edges of a node with this information. Note that calling this
@@ -50,14 +47,11 @@ public class OptimizedEdgeReverseIterator extends OptimizedEdgeIterator {
 
   @Override
   public int nextInt() {
-        return optimizedDegreeEdgePool.getNodeEdge(position, currentEdge--);
-    }
+    return optimizedDegreeEdgePool.getNodeEdge(position, currentEdge--);
+  }
 
   @Override
   public boolean hasNext() {
-        return currentEdge > 0;
-    }
+    return currentEdge > 0;
+  }
 }
-
-
-

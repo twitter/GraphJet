@@ -18,7 +18,6 @@ package com.twitter.graphjet.bipartite;
 
 import com.twitter.graphjet.bipartite.api.EdgeIterator;
 import com.twitter.graphjet.bipartite.segment.LeftIndexedBipartiteGraphSegment;
-import java.util.Random;
 
 /**
  * This iterator provides reverse access over edges where the edges can be spread across segments.
@@ -27,8 +26,7 @@ public class MultiSegmentReverseIterator<T extends LeftIndexedBipartiteGraphSegm
   /**
    * This constructor mirror the one in it's super-class to reuse common code.
    *
-   * @param multiSegmentBipartiteGraph  is the underlying {@link
-   *                                    LeftIndexedMultiSegmentBipartiteGraph}
+   * @param multiSegmentBipartiteGraph  is the underlying {@link LeftIndexedMultiSegmentBipartiteGraph}
    * @param segmentEdgeAccessor   is the accessor for the segments
    */
   public MultiSegmentReverseIterator(
