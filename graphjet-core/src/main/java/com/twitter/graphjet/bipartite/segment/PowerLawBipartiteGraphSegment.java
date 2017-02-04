@@ -20,13 +20,7 @@ package com.twitter.graphjet.bipartite.segment;
 import com.twitter.graphjet.bipartite.api.EdgeTypeMask;
 import com.twitter.graphjet.bipartite.api.ReusableNodeIntIterator;
 import com.twitter.graphjet.bipartite.api.ReusableNodeRandomIntIterator;
-import com.twitter.graphjet.bipartite.edgepool.EdgePool;
-import com.twitter.graphjet.bipartite.edgepool.OptimizedEdgeIterator;
-import com.twitter.graphjet.bipartite.edgepool.OptimizedEdgePool;
-import com.twitter.graphjet.bipartite.edgepool.OptimizedEdgeRandomIterator;
-import com.twitter.graphjet.bipartite.edgepool.PowerLawDegreeEdgeIterator;
-import com.twitter.graphjet.bipartite.edgepool.PowerLawDegreeEdgePool;
-import com.twitter.graphjet.bipartite.edgepool.PowerLawDegreeEdgeRandomIterator;
+import com.twitter.graphjet.bipartite.edgepool.*;
 import com.twitter.graphjet.stats.StatsReceiver;
 
 /**
@@ -92,7 +86,7 @@ public class PowerLawBipartiteGraphSegment extends BipartiteGraphSegment {
   public static final class EdgeIteratorFactory {
     protected static ReusableNodeIntIterator createEdgeIterator(EdgePool edgePool) {
       if (edgePool.isOptimized()) {
-        return new OptimizedEdgeIterator((OptimizedEdgePool) edgePool);
+        return new OptimizedEdgeReverseIterator((OptimizedEdgePool) edgePool);
       } else {
         return new PowerLawDegreeEdgeIterator((PowerLawDegreeEdgePool) edgePool);
       }
