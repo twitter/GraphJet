@@ -101,7 +101,7 @@ public class MultiSegmentIterator<T extends LeftIndexedBipartiteGraphSegment>
 
   // This finds segments in chronological order: returns false if it cannot find a non-empty
   // next segment for the node
-  private boolean findNextSegmentForNode() {
+  protected boolean findNextSegmentForNode() {
     while ((currentSegmentIterator == null || !currentSegmentIterator.hasNext())
         && (currentSegmentId < liveSegmentId)) {
       currentSegmentIterator = segmentEdgeAccessor.getNodeEdges(++currentSegmentId, node);

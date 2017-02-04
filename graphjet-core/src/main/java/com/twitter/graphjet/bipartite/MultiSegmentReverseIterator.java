@@ -20,7 +20,7 @@ import com.twitter.graphjet.bipartite.api.EdgeIterator;
 import com.twitter.graphjet.bipartite.segment.LeftIndexedBipartiteGraphSegment;
 
 /**
- * This iterator provides reverse access over edges where the edges can be spread across segments.
+ * This iterator provides reverse chronological access over edges where the edges can be spread across segments.
  */
 public class MultiSegmentReverseIterator<T extends LeftIndexedBipartiteGraphSegment> extends MultiSegmentIterator<T> {
   /**
