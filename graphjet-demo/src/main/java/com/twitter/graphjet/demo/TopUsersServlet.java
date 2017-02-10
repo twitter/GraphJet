@@ -89,7 +89,7 @@ public class TopUsersServlet extends HttpServlet {
     while ((e = queue.poll()) != null) {
       // Note that we explicitly use id_str and treat the tweet id as a String. See:
       // https://dev.twitter.com/overview/api/twitter-ids-json-and-snowflake
-      entries.add(String.format("{\"id_str\": \"%d\", \"cnt\": %d}", e.getNode(), e.getValue()));
+      entries.add(String.format("{\"id_str\": \"%d\", \"cnt\": %d}", e.getNode(), (int) e.getValue()));
     }
 
     response.setStatus(HttpStatus.OK_200);
