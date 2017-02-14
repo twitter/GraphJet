@@ -83,7 +83,7 @@ public class MultiSegmentPowerLawBipartiteGraph extends MultiSegmentBipartiteGra
 
   @Override
   ReusableNodeLongIterator initializeLeftNodeEdgesLongIterator() {
-    return new MultiSegmentIterator<BipartiteGraphSegment>(
+    return new ChronologicalMultiSegmentIterator<BipartiteGraphSegment>(
         this,
         new LeftSegmentEdgeAccessor<BipartiteGraphSegment>(
             getReaderAccessibleInfo(),
@@ -111,7 +111,7 @@ public class MultiSegmentPowerLawBipartiteGraph extends MultiSegmentBipartiteGra
 
   @Override
   ReusableNodeLongIterator initializeRightNodeEdgesLongIterator() {
-    return new MultiSegmentIterator<BipartiteGraphSegment>(
+    return new ChronologicalMultiSegmentIterator<BipartiteGraphSegment>(
         this,
         new RightSegmentEdgeAccessor(
             getReaderAccessibleInfo(),
