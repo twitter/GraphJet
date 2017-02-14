@@ -1,5 +1,5 @@
 /**
- * Copyright 2016 Twitter. All rights reserved.
+ * Copyright 2017 Twitter. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,8 +24,6 @@ import com.twitter.graphjet.bipartite.segment.LeftIndexedBipartiteGraphSegment;
  */
 public class MultiSegmentReverseIterator<T extends LeftIndexedBipartiteGraphSegment> extends MultiSegmentIterator<T> {
   /**
-   * This constructor mirror the one in it's super-class to reuse common code.
-   *
    * @param multiSegmentBipartiteGraph  is the underlying {@link LeftIndexedMultiSegmentBipartiteGraph}
    * @param segmentEdgeAccessor   is the accessor for the segments
    */
