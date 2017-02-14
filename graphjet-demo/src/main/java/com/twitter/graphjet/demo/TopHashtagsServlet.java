@@ -89,7 +89,7 @@ public class TopHashtagsServlet extends HttpServlet {
       // Note that we explicitly use id_str and treat the tweet id as a String. See:
       // https://dev.twitter.com/overview/api/twitter-ids-json-and-snowflake
       entries.add(String.format("{\"hashtag_str\": \"%s\", \"id\": %d, \"cnt\": %d}",
-              hashtags.get(e.getNode()), e.getNode(), e.getValue()));
+              hashtags.get(e.getNode()), e.getNode(), (int) e.getValue()));
     }
 
     response.setStatus(HttpStatus.OK_200);
