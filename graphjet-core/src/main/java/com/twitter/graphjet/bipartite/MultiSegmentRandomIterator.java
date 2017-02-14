@@ -89,15 +89,6 @@ public class MultiSegmentRandomIterator<T extends LeftIndexedBipartiteGraphSegme
     return true;
   }
 
-  @Override
-  protected void initializeCurrentSegmentIterator() {
-    currentSegmentIterator = null; // this should be unused in this iterator
-  }
-
-  protected boolean findNextSegmentForNode() {
-    return false; // this should be unused in this iterator
-  }
-
   private void sampleFromAliasTable() {
     // rest the number of samples
     numSamplesInSegment.clear();
@@ -155,5 +146,9 @@ public class MultiSegmentRandomIterator<T extends LeftIndexedBipartiteGraphSegme
   @Override
   public boolean hasNext() {
     return numSamplesReturned < numSamplesNeeded;
+  }
+
+  protected boolean findNextSegmentForNode() {
+    throw new UnsupportedOperationException("findNextSegmentForNode is not used in MultiSegmentRandomIterator.");
   }
 }
