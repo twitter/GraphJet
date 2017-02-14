@@ -22,35 +22,35 @@ import com.twitter.graphjet.bipartite.segment.LeftIndexedBipartiteGraphSegment;
 /**
  * This iterator provides reverse chronological access over edges where the edges can be spread across segments.
  */
-public class MultiSegmentReverseIterator<T extends LeftIndexedBipartiteGraphSegment> extends MultiSegmentIterator<T> {
+public class ChronologicalMultiSegmentIterator<T extends LeftIndexedBipartiteGraphSegment>
+    extends MultiSegmentIterator<T> implements ReusableNodeLongIterator {
   /**
    * @param multiSegmentBipartiteGraph  is the underlying {@link LeftIndexedMultiSegmentBipartiteGraph}
    * @param segmentEdgeAccessor   is the accessor for the segments
    */
-  public MultiSegmentReverseIterator(
+  public ChronologicalMultiSegmentIterator(
       LeftIndexedMultiSegmentBipartiteGraph<T> multiSegmentBipartiteGraph,
       SegmentEdgeAccessor<T> segmentEdgeAccessor) {
     super(multiSegmentBipartiteGraph, segmentEdgeAccessor);
   }
 
-  @Override
   public EdgeIterator resetForNode(long inputNode) {
-    super.resetForNode(inputNode);
-    super.currentSegmentId = liveSegmentId;
+    rebuildSegmentIteratorsForNode(inputNode);
+    super.currentSegmentId = oldestSegmentId;
     initializeCurrentSegmentIterator();
     return this;
   }
 
   /**
-   * This finds segments in reverse chronological order.
+   * This finds segments in chronological order.
    * Returns false if it cannot find a non-empty next segment for the node
    */
-  @Override
   protected boolean findNextSegmentForNode() {
     while ((currentSegmentIterator == null || !currentSegmentIterator.hasNext()) &&
-        currentSegmentId > oldestSegmentId) {
-      currentSegmentIterator = segmentEdgeAccessor.getNodeEdges(--currentSegmentId, node);
+        (currentSegmentId < liveSegmentId)) {
+      currentSegmentIterator = segmentEdgeAccessor.getNodeEdges(++currentSegmentId, node);
     }
     return currentSegmentIterator != null && currentSegmentIterator.hasNext();
   }
 }
+

@@ -23,7 +23,7 @@ import com.twitter.graphjet.bipartite.segment.NodeMetadataLeftIndexedBipartiteGr
 import it.unimi.dsi.fastutil.ints.IntIterator;
 
 public class NodeMetadataMultiSegmentIterator
-  extends MultiSegmentReverseIterator<NodeMetadataLeftIndexedBipartiteGraphSegment>
+  extends ReverseChronologicalMultiSegmentIterator<NodeMetadataLeftIndexedBipartiteGraphSegment>
   implements NodeMetadataEdgeIterator, ReusableNodeLongIterator {
 
   /**

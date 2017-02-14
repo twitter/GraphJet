@@ -94,6 +94,10 @@ public class MultiSegmentRandomIterator<T extends LeftIndexedBipartiteGraphSegme
     currentSegmentIterator = null; // this should be unused in this iterator
   }
 
+  protected boolean findNextSegmentForNode() {
+    return false; // this should be unused in this iterator
+  }
+
   private void sampleFromAliasTable() {
     // rest the number of samples
     numSamplesInSegment.clear();
@@ -121,9 +125,8 @@ public class MultiSegmentRandomIterator<T extends LeftIndexedBipartiteGraphSegme
     }
   }
 
-  @Override
   public EdgeIterator resetForNode(long node, int numSamplesToGet, Random randomGen) {
-    super.resetForNode(node); // rebuilds the segmentEdgeRandomAccessor if needed
+    rebuildSegmentIteratorsForNode(node); // rebuilds the segmentEdgeRandomAccessor if needed
     this.numSamplesNeeded = numSamplesToGet;
     this.numSamplesReturned = 0;
     this.random = randomGen;

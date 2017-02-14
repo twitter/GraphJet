@@ -26,8 +26,8 @@ import com.twitter.graphjet.bipartite.segment.LeftIndexedBipartiteGraphSegment;
  * segment, but usually that is chronological so this likely has the nice side-effect of providing
  * chronological ordering over all the edges.
  */
-public class MultiSegmentIterator<T extends LeftIndexedBipartiteGraphSegment>
-    implements EdgeIterator, TimestampEdgeIterator, ReusableNodeLongIterator {
+public abstract class MultiSegmentIterator<T extends LeftIndexedBipartiteGraphSegment>
+    implements EdgeIterator, TimestampEdgeIterator {
   protected final LeftIndexedMultiSegmentBipartiteGraph<T> multiSegmentBipartiteGraph;
   protected final SegmentEdgeAccessor<T> segmentEdgeAccessor;
   protected MultiSegmentReaderAccessibleInfo<T> readerAccessibleInfo;
@@ -65,67 +65,48 @@ public class MultiSegmentIterator<T extends LeftIndexedBipartiteGraphSegment>
     segmentEdgeAccessor.rebuildIterators(oldestSegmentId, liveSegmentId);
   }
 
-  @Override
-  public EdgeIterator resetForNode(long inputNode) {
+  public void rebuildSegmentIteratorsForNode(long inputNode) {
     this.node = inputNode;
-    MultiSegmentReaderAccessibleInfo<T> newReaderAccessibleInfo =
-        multiSegmentBipartiteGraph.getReaderAccessibleInfo();
+    MultiSegmentReaderAccessibleInfo<T> newReaderAccessibleInfo = multiSegmentBipartiteGraph.getReaderAccessibleInfo();
     // this is violated rarely: only when we drop or add segments
     if ((oldestSegmentId != newReaderAccessibleInfo.oldestSegmentId)
         || (liveSegmentId != newReaderAccessibleInfo.liveSegmentId)) {
       rebuildSegmentIterators();
     }
-    currentSegmentId = oldestSegmentId;
-    initializeCurrentSegmentIterator();
-    return this;
   }
 
   protected void initializeCurrentSegmentIterator() {
     currentSegmentIterator = segmentEdgeAccessor.getNodeEdges(currentSegmentId, node);
   }
 
-  @Override
-  public long nextLong() {
-    return currentSegmentIterator.nextLong();
-  }
+  abstract boolean findNextSegmentForNode();
 
-  @Override
-  public byte currentEdgeType() {
-    return currentSegmentIterator.currentEdgeType();
-  }
-
-  @Override
-  public int skip(int i) {
-    return currentSegmentIterator.skip(i);
-  }
-
-  // This finds segments in chronological order: returns false if it cannot find a non-empty
-  // next segment for the node
-  protected boolean findNextSegmentForNode() {
-    while ((currentSegmentIterator == null || !currentSegmentIterator.hasNext())
-        && (currentSegmentId < liveSegmentId)) {
-      currentSegmentIterator = segmentEdgeAccessor.getNodeEdges(++currentSegmentId, node);
-    }
-    return currentSegmentIterator != null && currentSegmentIterator.hasNext();
-  }
-
-  @Override
   public boolean hasNext() {
-    return (currentSegmentIterator != null && currentSegmentIterator.hasNext())
-        || findNextSegmentForNode();
+    return (currentSegmentIterator != null && currentSegmentIterator.hasNext()) || findNextSegmentForNode();
   }
 
-  @Override
   public Long next() {
     return nextLong();
   }
 
-  @Override
   public void remove() {
     currentSegmentIterator.remove();
   }
 
-  @Override
+  // EdgeIterator interface
+  public long nextLong() {
+    return currentSegmentIterator.nextLong();
+  }
+
+  public byte currentEdgeType() {
+    return currentSegmentIterator.currentEdgeType();
+  }
+
+  public int skip(int i) {
+    return currentSegmentIterator.skip(i);
+  }
+
+  // TimestampEdgeIterator interface
   public long getCurrentEdgeEngagementTimeInMillis() {
     return readerAccessibleInfo.segments.get(currentSegmentId).getCreationTimeInMillis();
   }
