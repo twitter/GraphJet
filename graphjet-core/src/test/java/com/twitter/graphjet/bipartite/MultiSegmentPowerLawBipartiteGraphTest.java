@@ -230,14 +230,14 @@ public class MultiSegmentPowerLawBipartiteGraphTest {
       new LongArrayList(nodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraph.getLeftNodeEdges(4)));
   }
 
-  /*@Test
+  @Test
   public void testMultiSegmentReverseIteration2() throws Exception {
     NodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraph nodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraph =
       new NodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraph(
-        4, 4, 5, 2, 2.0, 5, 2, new IdentityEdgeTypeMask(), new NullStatsReceiver());
+        4, 4, 2, 10, 2.0, 20, 2, new IdentityEdgeTypeMask(), new NullStatsReceiver());
 
-    for (int leftNode = 1; leftNode <= 2; leftNode++) {
-      for (int i = 0; i < 10; i++) {
+    for (long leftNode = 1; leftNode <= 2; leftNode++) {
+      for (long i = 0; i < 10; i++) {
         nodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraph.addEdge(leftNode, leftNode*10 + i, (byte) 0);
       }
     }
@@ -258,10 +258,7 @@ public class MultiSegmentPowerLawBipartiteGraphTest {
     // Similarly, for left node 2.
     assertEquals(new LongArrayList(new long[]{26, 27, 28, 29, 22, 23, 24, 25, 20, 21}),
       new LongArrayList(nodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraph.getLeftNodeEdges(2)));
-
-    assertEquals(new LongArrayList(),
-      new LongArrayList(nodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraph.getLiveSegment().getLeftNodeEdges(1)));
-  }*/
+  }
 
   @Test
   public void testRandomSegmentConstruction() throws Exception {
