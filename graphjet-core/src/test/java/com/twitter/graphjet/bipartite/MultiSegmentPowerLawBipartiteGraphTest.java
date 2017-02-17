@@ -214,7 +214,7 @@ public class MultiSegmentPowerLawBipartiteGraphTest {
   }
 
   @Test
-  public void testMultiSegmentReverseIteration() throws Exception {
+  public void testMultiSegmentReverseIteration1() throws Exception {
     NodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraph nodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraph =
       new NodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraph(
         3, 3, 5, 2, 2.0, 5, 2, new IdentityEdgeTypeMask(), new NullStatsReceiver());
@@ -231,7 +231,7 @@ public class MultiSegmentPowerLawBipartiteGraphTest {
   }
 
   @Test
-  public void testMultiSegmentReverseIterator() throws Exception {
+  public void testMultiSegmentReverseIteration2() throws Exception {
     NodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraph nodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraph =
       new NodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraph(
         4, 4, 5, 2, 2.0, 5, 2, new IdentityEdgeTypeMask(), new NullStatsReceiver());
