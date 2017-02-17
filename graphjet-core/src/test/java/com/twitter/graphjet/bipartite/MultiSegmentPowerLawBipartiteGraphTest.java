@@ -243,31 +243,31 @@ public class MultiSegmentPowerLawBipartiteGraphTest {
     }
 
     /** One segment is dropped so the segments should have the following edges:
-     *  Segment 0: (1, 14), (1, 15), (1, 16), (1, 17)
-     *  Segment 1: (1, 18), (1, 19), (2, 20), (2, 21)
-     *  Segment 2: (2, 22), (2, 23), (2, 24), (2, 25)
-     *  Segment 3: (2, 26), (2, 27), (2, 28), (2, 29)
+     *  Segment 1: (1, 14), (1, 15), (1, 16), (1, 17)
+     *  Segment 2: (1, 18), (1, 19), (2, 20), (2, 21)
+     *  Segment 3: (2, 22), (2, 23), (2, 24), (2, 25)
+     *  Segment 4: (2, 26), (2, 27), (2, 28), (2, 29)
      */
     Int2ObjectMap<NodeMetadataLeftIndexedBipartiteGraphSegment> segments =
       nodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraph.getSegments();
 
-    NodeMetadataLeftIndexedBipartiteGraphSegment segment0 = segments.get(0);
-    assertEquals(new LongArrayList(new long[]{14, 15, 16, 17}),
-      new LongArrayList(segment0.getLeftNodeEdges(1)));
-
     NodeMetadataLeftIndexedBipartiteGraphSegment segment1 = segments.get(1);
-    assertEquals(new LongArrayList(new long[]{18, 19}),
+    assertEquals(new LongArrayList(new long[]{14, 15, 16, 17}),
       new LongArrayList(segment1.getLeftNodeEdges(1)));
-    assertEquals(new LongArrayList(new long[]{20, 21}),
-      new LongArrayList(segment1.getLeftNodeEdges(2)));
 
     NodeMetadataLeftIndexedBipartiteGraphSegment segment2 = segments.get(2);
-    assertEquals(new LongArrayList(new long[]{22, 23, 24, 25}),
+    assertEquals(new LongArrayList(new long[]{18, 19}),
+      new LongArrayList(segment2.getLeftNodeEdges(1)));
+    assertEquals(new LongArrayList(new long[]{20, 21}),
       new LongArrayList(segment2.getLeftNodeEdges(2)));
 
     NodeMetadataLeftIndexedBipartiteGraphSegment segment3 = segments.get(3);
-    assertEquals(new LongArrayList(new long[]{26, 27, 28, 29}),
+    assertEquals(new LongArrayList(new long[]{22, 23, 24, 25}),
       new LongArrayList(segment3.getLeftNodeEdges(2)));
+
+    NodeMetadataLeftIndexedBipartiteGraphSegment segment4 = segments.get(4);
+    assertEquals(new LongArrayList(new long[]{26, 27, 28, 29}),
+      new LongArrayList(segment4.getLeftNodeEdges(2)));
 
     assertEquals(new LongArrayList(new long[]{26, 27, 28, 29, 22, 23, 24, 25, 20, 21}),
       new LongArrayList(nodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraph.getLeftNodeEdges(2)));
