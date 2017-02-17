@@ -259,7 +259,7 @@ public class MultiSegmentPowerLawBipartiteGraphTest {
     assertEquals(new LongArrayList(new long[]{26, 27, 28, 29, 22, 23, 24, 25, 20, 21}),
       new LongArrayList(nodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraph.getLeftNodeEdges(2)));
 
-    assertEquals(new LongArrayList(new long[]{}),
+    assertEquals(new LongArrayList(),
       new LongArrayList(nodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraph.getLiveSegment().getLeftNodeEdges(1)));
   }
 
