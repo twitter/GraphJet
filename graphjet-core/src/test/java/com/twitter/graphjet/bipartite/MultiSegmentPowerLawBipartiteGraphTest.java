@@ -214,12 +214,41 @@ public class MultiSegmentPowerLawBipartiteGraphTest {
   }
 
   @Test
-  public void testMultiSegmentReverseIteration1() throws Exception {
+  public void testMultiSegmentReverseIterationIncompleteLiveSegment() throws Exception {
     NodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraph nodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraph =
       new NodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraph(
         3, 3, 5, 2, 2.0, 5, 2, new IdentityEdgeTypeMask(), new NullStatsReceiver());
 
     addEdges(nodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraph);
+
+    /** One segment is dropped so the segments should have the following edges:
+     * Segment 0: Dropped
+     * Segment 1: (2, 21), (4, 42), (3, 31)
+     * Segment 2: (2, 22), (1, 13), (4, 43)
+     * Segment 3: (5, 11)
+     */
+    Int2ObjectMap<NodeMetadataLeftIndexedBipartiteGraphSegment> segments =
+      nodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraph.getSegments();
+
+    NodeMetadataLeftIndexedBipartiteGraphSegment segment1 = segments.get(1);
+    assertEquals(new LongArrayList(new long[]{21}),
+      new LongArrayList(segment1.getLeftNodeEdges(2)));
+    assertEquals(new LongArrayList(new long[]{31}),
+      new LongArrayList(segment1.getLeftNodeEdges(3)));
+    assertEquals(new LongArrayList(new long[]{42}),
+      new LongArrayList(segment1.getLeftNodeEdges(4)));
+
+    NodeMetadataLeftIndexedBipartiteGraphSegment segment2 = segments.get(2);
+    assertEquals(new LongArrayList(new long[]{13}),
+      new LongArrayList(segment2.getLeftNodeEdges(1)));
+    assertEquals(new LongArrayList(new long[]{22}),
+      new LongArrayList(segment2.getLeftNodeEdges(2)));
+    assertEquals(new LongArrayList(new long[]{43}),
+      new LongArrayList(segment1.getLeftNodeEdges(4)));
+
+    NodeMetadataLeftIndexedBipartiteGraphSegment segment3 = segments.get(3);
+    assertEquals(new LongArrayList(new long[]{11}),
+      new LongArrayList(segment3.getLeftNodeEdges(5)));
 
     // Test that the iterator returns the correct edges after the first segment is dropped.
     assertEquals(new LongArrayList(new long[]{13}),
@@ -231,7 +260,7 @@ public class MultiSegmentPowerLawBipartiteGraphTest {
   }
 
   @Test
-  public void testMultiSegmentReverseIteration2() throws Exception {
+  public void testMultiSegmentReverseIterationCompleteLiveSegment() throws Exception {
     NodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraph nodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraph =
       new NodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraph(
         4, 4, 2, 10, 2.0, 20, 2, new IdentityEdgeTypeMask(), new NullStatsReceiver());
@@ -243,10 +272,11 @@ public class MultiSegmentPowerLawBipartiteGraphTest {
     }
 
     /** One segment is dropped so the segments should have the following edges:
-     *  Segment 1: (1, 14), (1, 15), (1, 16), (1, 17)
-     *  Segment 2: (1, 18), (1, 19), (2, 20), (2, 21)
-     *  Segment 3: (2, 22), (2, 23), (2, 24), (2, 25)
-     *  Segment 4: (2, 26), (2, 27), (2, 28), (2, 29)
+     * Segment 0: Dropped
+     * Segment 1: (1, 14), (1, 15), (1, 16), (1, 17)
+     * Segment 2: (1, 18), (1, 19), (2, 20), (2, 21)
+     * Segment 3: (2, 22), (2, 23), (2, 24), (2, 25)
+     * Segment 4: (2, 26), (2, 27), (2, 28), (2, 29)
      */
     Int2ObjectMap<NodeMetadataLeftIndexedBipartiteGraphSegment> segments =
       nodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraph.getSegments();
@@ -269,6 +299,7 @@ public class MultiSegmentPowerLawBipartiteGraphTest {
     assertEquals(new LongArrayList(new long[]{26, 27, 28, 29}),
       new LongArrayList(segment4.getLeftNodeEdges(2)));
 
+    // Test that the iterator returns the correct edges and in reverse order when the edges are in different segments.
     assertEquals(new LongArrayList(new long[]{26, 27, 28, 29, 22, 23, 24, 25, 20, 21}),
       new LongArrayList(nodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraph.getLeftNodeEdges(2)));
   }
