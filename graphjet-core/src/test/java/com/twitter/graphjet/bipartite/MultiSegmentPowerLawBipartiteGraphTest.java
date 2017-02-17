@@ -40,17 +40,17 @@ import static com.twitter.graphjet.bipartite.GraphConcurrentTestHelper.testRando
 
 
 public class MultiSegmentPowerLawBipartiteGraphTest {
-  private void addEdges(MultiSegmentPowerLawBipartiteGraph multiSegmentPowerLawBipartiteGraph) {
-    multiSegmentPowerLawBipartiteGraph.addEdge(1, 11, (byte) 0);
-    multiSegmentPowerLawBipartiteGraph.addEdge(1, 12, (byte) 0);
-    multiSegmentPowerLawBipartiteGraph.addEdge(4, 41, (byte) 0);
-    multiSegmentPowerLawBipartiteGraph.addEdge(2, 21, (byte) 0);
-    multiSegmentPowerLawBipartiteGraph.addEdge(4, 42, (byte) 0);
-    multiSegmentPowerLawBipartiteGraph.addEdge(3, 31, (byte) 0);
-    multiSegmentPowerLawBipartiteGraph.addEdge(2, 22, (byte) 0);
-    multiSegmentPowerLawBipartiteGraph.addEdge(1, 13, (byte) 0);
-    multiSegmentPowerLawBipartiteGraph.addEdge(4, 43, (byte) 0);
-    multiSegmentPowerLawBipartiteGraph.addEdge(5, 11, (byte) 0);
+  private void addEdges(LeftIndexedMultiSegmentBipartiteGraph leftIndexedMultiSegmentBipartiteGraph) {
+    leftIndexedMultiSegmentBipartiteGraph.addEdge(1, 11, (byte) 0);
+    leftIndexedMultiSegmentBipartiteGraph.addEdge(1, 12, (byte) 0);
+    leftIndexedMultiSegmentBipartiteGraph.addEdge(4, 41, (byte) 0);
+    leftIndexedMultiSegmentBipartiteGraph.addEdge(2, 21, (byte) 0);
+    leftIndexedMultiSegmentBipartiteGraph.addEdge(4, 42, (byte) 0);
+    leftIndexedMultiSegmentBipartiteGraph.addEdge(3, 31, (byte) 0);
+    leftIndexedMultiSegmentBipartiteGraph.addEdge(2, 22, (byte) 0);
+    leftIndexedMultiSegmentBipartiteGraph.addEdge(1, 13, (byte) 0);
+    leftIndexedMultiSegmentBipartiteGraph.addEdge(4, 43, (byte) 0);
+    leftIndexedMultiSegmentBipartiteGraph.addEdge(5, 11, (byte) 0);
     // violates the max num nodes assumption
   }
 
@@ -210,6 +210,21 @@ public class MultiSegmentPowerLawBipartiteGraphTest {
     // we should come back to the original 10 edges (we could test this each time but the internal
     // hashmaps affect the random number generator so the effect is unpredictable each time)
     testGraphAfterSegmentDrop(smallMultiSegmentPowerLawBipartiteGraph);
+  }
+
+  @Test
+  public void testMultiSegmentReverseIteration() throws Exception {
+    NodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraph nodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraph =
+      new NodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraph(
+        3, 3, 5, 2, 2.0, 5, 2, new IdentityEdgeTypeMask(), new NullStatsReceiver());
+
+    addEdges(nodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraph);
+
+    assertEquals(new LongArrayList(new long[]{13}),
+      new LongArrayList(nodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraph.getLeftNodeEdges(1)));
+
+    assertEquals(new LongArrayList(new long[]{43, 42}),
+      new LongArrayList(nodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraph.getLeftNodeEdges(4)));
   }
 
   @Test
