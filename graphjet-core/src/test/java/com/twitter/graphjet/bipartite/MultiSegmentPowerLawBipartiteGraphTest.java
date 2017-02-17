@@ -242,7 +242,7 @@ public class MultiSegmentPowerLawBipartiteGraphTest {
       }
     }
 
-    /** One segment is dropped so the segments should have the following edge:
+    /** One segment is dropped so the segments should have the following edges:
      *  Segment 0: (1, 14), (1, 15), (1, 16), (1, 17)
      *  Segment 1: (1, 18), (1, 19), (2, 20), (2, 21)
      *  Segment 2: (2, 22), (2, 23), (2, 24), (2, 25)
