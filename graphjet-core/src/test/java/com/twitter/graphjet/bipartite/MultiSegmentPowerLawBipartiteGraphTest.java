@@ -246,13 +246,13 @@ public class MultiSegmentPowerLawBipartiteGraphTest {
     // chronological order.
     EdgeIterator edgeIterator = nodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraph.getLeftNodeEdges(1);
     // Segment 3
-    assertEquals(edgeIterator.nextLong(), 18L);
-    assertEquals(edgeIterator.nextLong(), 19L);
+    assertEquals(edgeIterator.nextLong(), 18);
+    assertEquals(edgeIterator.nextLong(), 19);
     // Segment 2
-    assertEquals(edgeIterator.nextLong(), 14L);
-    assertEquals(edgeIterator.nextLong(), 15L);
-    assertEquals(edgeIterator.nextLong(), 16L);
-    assertEquals(edgeIterator.nextLong(), 17L);
+    assertEquals(edgeIterator.nextLong(), 14);
+    assertEquals(edgeIterator.nextLong(), 15);
+    assertEquals(edgeIterator.nextLong(), 16);
+    assertEquals(edgeIterator.nextLong(), 17);
     // Segment 1 is dropped
 
     // Similarly, for left node 2.
