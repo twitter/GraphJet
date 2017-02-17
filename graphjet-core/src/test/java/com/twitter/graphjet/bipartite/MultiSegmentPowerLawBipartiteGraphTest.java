@@ -244,7 +244,7 @@ public class MultiSegmentPowerLawBipartiteGraphTest {
     assertEquals(new LongArrayList(new long[]{22}),
       new LongArrayList(segment2.getLeftNodeEdges(2)));
     assertEquals(new LongArrayList(new long[]{43}),
-      new LongArrayList(segment1.getLeftNodeEdges(4)));
+      new LongArrayList(segment2.getLeftNodeEdges(4)));
 
     NodeMetadataLeftIndexedBipartiteGraphSegment segment3 = segments.get(3);
     assertEquals(new LongArrayList(new long[]{11}),
