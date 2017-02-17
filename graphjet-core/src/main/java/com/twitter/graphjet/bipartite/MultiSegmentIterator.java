@@ -65,7 +65,7 @@ public abstract class MultiSegmentIterator<T extends LeftIndexedBipartiteGraphSe
     segmentEdgeAccessor.rebuildIterators(oldestSegmentId, liveSegmentId);
   }
 
-  public void rebuildSegmentIteratorsForNode(long inputNode) {
+  protected void rebuildSegmentIteratorsForNode(long inputNode) {
     this.node = inputNode;
     MultiSegmentReaderAccessibleInfo<T> newReaderAccessibleInfo = multiSegmentBipartiteGraph.getReaderAccessibleInfo();
     // this is violated rarely: only when we drop or add segments

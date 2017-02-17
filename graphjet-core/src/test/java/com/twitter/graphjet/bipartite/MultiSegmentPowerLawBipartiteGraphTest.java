@@ -24,6 +24,7 @@ import java.util.Set;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
+import com.twitter.graphjet.bipartite.api.EdgeIterator;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.Test;
 
@@ -220,11 +221,46 @@ public class MultiSegmentPowerLawBipartiteGraphTest {
 
     addEdges(nodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraph);
 
+    // Test that the iterator returns the correct edges after the first segment is dropped.
     assertEquals(new LongArrayList(new long[]{13}),
       new LongArrayList(nodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraph.getLeftNodeEdges(1)));
 
+    // Test that the iterator returns the correct edges and in reverse order when the edges are in different segments.
     assertEquals(new LongArrayList(new long[]{43, 42}),
       new LongArrayList(nodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraph.getLeftNodeEdges(4)));
+  }
+
+  @Test
+  public void testMultiSegmentReverseIterator() throws Exception {
+    NodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraph nodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraph =
+      new NodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraph(
+        4, 4, 5, 2, 2.0, 5, 2, new IdentityEdgeTypeMask(), new NullStatsReceiver());
+
+    for (int leftNode = 1; leftNode <= 2; leftNode++) {
+      for (int i = 0; i < 10; i++) {
+        nodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraph.addEdge(leftNode, leftNode*10 + i, (byte) 0);
+      }
+    }
+
+    // Test that the edges are in chronological order within a segment, but the segments are processed in reverse
+    // chronological order.
+    EdgeIterator edgeIterator = nodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraph.getLeftNodeEdges(1);
+    // Segment 3
+    assertEquals(edgeIterator.nextLong(), 18L);
+    assertEquals(edgeIterator.nextLong(), 19L);
+    // Segment 2
+    assertEquals(edgeIterator.nextLong(), 14L);
+    assertEquals(edgeIterator.nextLong(), 15L);
+    assertEquals(edgeIterator.nextLong(), 16L);
+    assertEquals(edgeIterator.nextLong(), 17L);
+    // Segment 1 is dropped
+
+    // Similarly, for left node 2.
+    assertEquals(new LongArrayList(new long[]{26, 27, 28, 29, 22, 23, 24, 25, 20, 21}),
+      new LongArrayList(nodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraph.getLeftNodeEdges(2)));
+
+    assertEquals(new LongArrayList(new long[]{}),
+      new LongArrayList(nodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraph.getLiveSegment().getLeftNodeEdges(1)));
   }
 
   @Test
