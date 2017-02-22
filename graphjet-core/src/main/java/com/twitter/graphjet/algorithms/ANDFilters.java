@@ -28,10 +28,13 @@ public class ANDFilters extends ResultFilter {
     if (resultFilterSet.size() == 0) {
       return false;
     }
-    boolean shouldFilter = true;
+
     for (ResultFilter filter: resultFilterSet) {
-      shouldFilter &= filter.filterResult(resultNode, socialProofs);
+      if (!filter.filterResult(resultNode, socialProofs)) {
+        // only filter if all filters agree to filter
+        return false;
+      }
     }
-    return shouldFilter;
+    return true;
   }
 }
