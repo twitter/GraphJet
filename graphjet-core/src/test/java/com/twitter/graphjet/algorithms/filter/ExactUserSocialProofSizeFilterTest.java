@@ -13,8 +13,8 @@ public class ExactUserSocialProofSizeFilterTest {
   @Test
   public void testNoSocialProof() throws Exception {
     long resultNode = 0L;
-    byte[] socialProofTypes = {(byte) 1, (byte) 2};
-    SmallArrayBasedLongToDoubleMap[] socialProofs = {};
+    byte[] socialProofTypes = {(byte) 0, (byte) 1};
+    SmallArrayBasedLongToDoubleMap[] socialProofs = {null, null};
 
     // Expect no social proof, Should not be filtered
     int expectedProofCount = 0;

@@ -10,7 +10,7 @@ import com.twitter.graphjet.stats.StatsReceiver;
  */
 public class ExactUserSocialProofSizeFilter extends ResultFilter {
   private int exactNumUserSocialProof;
-  byte[] validSocialProofType;
+  private byte[] validSocialProofType;
 
   public ExactUserSocialProofSizeFilter(
       int exactNumUserSocialProof,
@@ -32,6 +32,6 @@ public class ExactUserSocialProofSizeFilter extends ResultFilter {
         totalNumProofs += socialProofs[validType].size();
       }
     }
-    return totalNumProofs > exactNumUserSocialProof;
+    return totalNumProofs != exactNumUserSocialProof;
   }
 }
