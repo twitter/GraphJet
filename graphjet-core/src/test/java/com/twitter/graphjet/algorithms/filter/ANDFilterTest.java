@@ -29,8 +29,8 @@ import com.twitter.graphjet.stats.NullStatsReceiver;
 import static org.junit.Assert.assertEquals;
 
 public class ANDFilterTest {
+  // Dummy filter that always return true
   private class TrueFilter extends ResultFilter {
-    // Dummy filter that always return true
     private TrueFilter() {
       super(new NullStatsReceiver());
     }
