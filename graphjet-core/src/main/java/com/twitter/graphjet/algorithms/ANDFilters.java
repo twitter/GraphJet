@@ -22,7 +22,9 @@ import com.twitter.graphjet.hashing.SmallArrayBasedLongToDoubleMap;
 import com.twitter.graphjet.stats.StatsReceiver;
 
 /**
- * Applies AND operations to all the filters in this class
+ * This filter applies logical AND operation to all the filters in this class.
+ * It will return true if only if all filters return true.
+ * For example, given 3 filters, List[A, B, C], ANDFilters will return the result of (A && B && C).
  */
 public class ANDFilters extends ResultFilter {
   private final List<ResultFilter> resultFilterSet;

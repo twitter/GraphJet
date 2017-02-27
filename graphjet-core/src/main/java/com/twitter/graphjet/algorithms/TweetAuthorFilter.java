@@ -27,6 +27,9 @@ public class TweetAuthorFilter extends ResultFilter {
   private LongSet authoredTweets = new LongOpenHashSet();
   private boolean hasAuthors = false;
 
+  /**
+   * @param tweetAuthors the list of authors whose tweets will not be filtered. If left empty, no tweet will be filtered.
+   */
   public TweetAuthorFilter(
       LeftIndexedMultiSegmentBipartiteGraph leftIndexedBipartiteGraph,
       LongSet tweetAuthors,

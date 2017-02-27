@@ -21,13 +21,12 @@ import org.junit.Test;
 import it.unimi.dsi.fastutil.longs.LongArraySet;
 import it.unimi.dsi.fastutil.longs.LongSet;
 
-import com.twitter.graphjet.algorithms.MockEdgeTypeMask;
+import com.twitter.graphjet.bipartite.segment.MockEdgeTypeMask;
 import com.twitter.graphjet.algorithms.RecommendationRequest;
 import com.twitter.graphjet.algorithms.TweetAuthorFilter;
 import com.twitter.graphjet.bipartite.LeftIndexedMultiSegmentBipartiteGraph;
 import com.twitter.graphjet.bipartite.NodeMetadataLeftIndexedMultiSegmentBipartiteGraph;
 import com.twitter.graphjet.bipartite.NodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraph;
-import com.twitter.graphjet.bipartite.segment.IdentityEdgeTypeMask;
 import com.twitter.graphjet.hashing.SmallArrayBasedLongToDoubleMap;
 import com.twitter.graphjet.stats.NullStatsReceiver;
 

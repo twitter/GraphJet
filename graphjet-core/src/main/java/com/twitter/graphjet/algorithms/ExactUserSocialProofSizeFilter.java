@@ -20,8 +20,8 @@ import com.twitter.graphjet.hashing.SmallArrayBasedLongToDoubleMap;
 import com.twitter.graphjet.stats.StatsReceiver;
 
 /**
- * Only allow nodes whose total number of user social proofs is exactly equal to
- * what is specified, no more, no less
+ * This filter keeps the nodes with the exact number of user social proofs equal to the parameter of the query,
+ * no more, no less.
  */
 public class ExactUserSocialProofSizeFilter extends ResultFilter {
   private int exactNumUserSocialProof;
