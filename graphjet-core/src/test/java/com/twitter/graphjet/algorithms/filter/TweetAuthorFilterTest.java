@@ -63,13 +63,14 @@ public class TweetAuthorFilterTest {
 
     SmallArrayBasedLongToDoubleMap[] socialProofs = {};
     LongSet tweetAuthors = new LongArraySet();
-    tweetAuthors.add(1L);
 
+    // Only look for tweets from author 1
+    tweetAuthors.add(1L);
     TweetAuthorFilter authorFilter = new TweetAuthorFilter(leftIndexedBipartiteGraph, tweetAuthors, new NullStatsReceiver());
 
-    // Node 20 is authored by 1
+    // Tweets authored by tweetAuthors should not be filtered. Node 10 is authored by 1.
     assertEquals(false, authorFilter.filterResult(10, socialProofs));
-    // Node 10 is not authored by 1
+    // Tweets not authored by tweetAuthors should be filtered. Node 20 is not authored by 1
     assertEquals(true, authorFilter.filterResult(20, socialProofs));
   }
 }

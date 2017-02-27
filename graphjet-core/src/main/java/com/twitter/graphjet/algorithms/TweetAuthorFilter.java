@@ -25,7 +25,7 @@ import it.unimi.dsi.fastutil.longs.LongSet;
 
 public class TweetAuthorFilter extends ResultFilter {
   private LongSet authoredTweets = new LongOpenHashSet();
-  private boolean hasAuthors = false;
+  private boolean isTweetAuthorsEmpty = false;
 
   /**
    * @param tweetAuthors the list of authors whose tweets will not be filtered. If left empty, no tweet will be filtered.
@@ -35,10 +35,8 @@ public class TweetAuthorFilter extends ResultFilter {
       LongSet tweetAuthors,
       StatsReceiver statsReceiver) {
     super(statsReceiver);
-    if (!tweetAuthors.isEmpty()) {
-      hasAuthors = true;
-      generateAuthoredByUsersNodes(leftIndexedBipartiteGraph, tweetAuthors);
-    }
+    isTweetAuthorsEmpty = tweetAuthors.isEmpty();
+    generateAuthoredByUsersNodes(leftIndexedBipartiteGraph, tweetAuthors);
   }
 
   private void generateAuthoredByUsersNodes(
@@ -71,6 +69,6 @@ public class TweetAuthorFilter extends ResultFilter {
    */
   @Override
   public boolean filterResult(long resultNode, SmallArrayBasedLongToDoubleMap[] socialProofs) {
-    return hasAuthors && !authoredTweets.contains(resultNode);
+    return !isTweetAuthorsEmpty && !authoredTweets.contains(resultNode);
   }
 }
