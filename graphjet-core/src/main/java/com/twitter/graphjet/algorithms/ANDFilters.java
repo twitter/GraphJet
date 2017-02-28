@@ -27,27 +27,27 @@ import com.twitter.graphjet.stats.StatsReceiver;
  * For example, given 3 filters, List[A, B, C], ANDFilters will return the result of (A && B && C).
  */
 public class ANDFilters extends ResultFilter {
-  private final List<ResultFilter> resultFilterSet;
+  private final List<ResultFilter> resultFilterList;
 
-  public ANDFilters(List<ResultFilter> resultFilterSet, StatsReceiver statsReceiver) {
+  public ANDFilters(List<ResultFilter> resultFilterList, StatsReceiver statsReceiver) {
     super(statsReceiver);
-    this.resultFilterSet = resultFilterSet;
+    this.resultFilterList = resultFilterList;
   }
 
   @Override
   public void resetFilter(RecommendationRequest request) {
-    for (ResultFilter filter: resultFilterSet) {
+    for (ResultFilter filter: resultFilterList) {
       filter.resetFilter(request);
     }
   }
 
   @Override
   public boolean filterResult(long resultNode, SmallArrayBasedLongToDoubleMap[] socialProofs) {
-    if (resultFilterSet.size() == 0) {
+    if (resultFilterList.size() == 0) {
       return false;
     }
 
-    for (ResultFilter filter: resultFilterSet) {
+    for (ResultFilter filter: resultFilterList) {
       if (!filter.filterResult(resultNode, socialProofs)) {
         // only filter if all filters agree to filter
         return false;
