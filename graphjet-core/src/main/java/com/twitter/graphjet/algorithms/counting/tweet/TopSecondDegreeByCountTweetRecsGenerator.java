@@ -54,10 +54,6 @@ public final class TopSecondDegreeByCountTweetRecsGenerator {
 
     // handling specific rules of tweet recommendations
     for (NodeInfo nodeInfo : nodeInfoList) {
-      // do not return tweet recommendations with only Tweet social proofs.
-      if (isTweetSocialProofOnly(nodeInfo.getSocialProofs())) {
-        continue;
-      }
       // do not return if size of each social proof is less than minUserSocialProofSize.
       if (isLessThanMinUserSocialProofSize(nodeInfo.getSocialProofs(), validSocialProofs, minUserSocialProofSize) &&
         // do not return if size of each social proof union is less than minUserSocialProofSize.
