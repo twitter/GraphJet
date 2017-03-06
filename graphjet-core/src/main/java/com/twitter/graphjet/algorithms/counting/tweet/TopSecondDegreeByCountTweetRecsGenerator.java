@@ -65,7 +65,6 @@ public final class TopSecondDegreeByCountTweetRecsGenerator {
           nodeInfo.getSocialProofs(), minUserSocialProofSize, request.getSocialProofTypeUnions())) {
         continue;
       }
-
       GeneratorHelper.addResultToPriorityQueue(topResults, nodeInfo, maxNumResults);
     }
 
