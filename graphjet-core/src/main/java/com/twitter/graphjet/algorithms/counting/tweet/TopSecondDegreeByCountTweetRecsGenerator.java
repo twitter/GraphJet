@@ -138,10 +138,9 @@ public final class TopSecondDegreeByCountTweetRecsGenerator {
     int minUserSocialProofSize) {
     int length = validSocialProofs.length;
     long authorId = getAuthorId(socialProofs);
-    boolean isLessThan = false;
 
     for (int i = 0; i < length; i++) {
-      // Skip tweet social proof because its size can be only one
+      // Skip tweet author social proof because its size can be only one
       if (validSocialProofs[i] == RecommendationRequest.AUTHOR_SOCIAL_PROOF_TYPE) {
         continue;
       }
@@ -151,12 +150,11 @@ public final class TopSecondDegreeByCountTweetRecsGenerator {
           minUserSocialProofThreshold += 1;
         }
         if (socialProofs[validSocialProofs[i]].size() < minUserSocialProofThreshold) {
-          isLessThan = true;
-          break;
+          return true;
         }
       }
     }
-    return isLessThan;
+    return false;
   }
 
   // Return the authorId of the Tweet, if the author is in the leftSeedNodesWithWeight; otherwise, return -1.
