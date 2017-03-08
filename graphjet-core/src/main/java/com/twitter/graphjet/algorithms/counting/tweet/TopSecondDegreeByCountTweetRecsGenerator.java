@@ -140,13 +140,12 @@ public final class TopSecondDegreeByCountTweetRecsGenerator {
     long authorId = getAuthorId(socialProofs);
 
     for (int i = 0; i < length; i++) {
-      // Skip tweet author social proof because its size can be only one
-      if (validSocialProofs[i] == RecommendationRequest.AUTHOR_SOCIAL_PROOF_TYPE) {
-        continue;
-      }
       if (socialProofs[validSocialProofs[i]] != null) {
         int minUserSocialProofThreshold = minUserSocialProofSize;
-        if (authorId != -1 && socialProofs[validSocialProofs[i]].contains(authorId)) {
+        if (authorId != -1 &&
+          // Skip tweet author social proof because its size can be only one
+          validSocialProofs[i] != RecommendationRequest.AUTHOR_SOCIAL_PROOF_TYPE &&
+          socialProofs[validSocialProofs[i]].contains(authorId)) {
           minUserSocialProofThreshold += 1;
         }
         if (socialProofs[validSocialProofs[i]].size() < minUserSocialProofThreshold) {
