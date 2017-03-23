@@ -26,7 +26,6 @@ import com.twitter.graphjet.algorithms.*;
 import com.twitter.graphjet.algorithms.RecommendationInfo;
 import com.twitter.graphjet.algorithms.counting.GeneratorHelper;
 import com.twitter.graphjet.algorithms.counting.TopSecondDegreeByCountRecommendationInfo;
-import com.twitter.graphjet.hashing.SmallArrayBasedLongToDoubleMap;
 import it.unimi.dsi.fastutil.longs.LongList;
 
 public final class TopSecondDegreeByCountUserRecsGenerator {
@@ -47,44 +46,9 @@ public final class TopSecondDegreeByCountUserRecsGenerator {
     int maxNumResults = Math.min(request.getMaxNumResults(), RecommendationRequest.MAX_RECOMMENDATION_RESULTS);
 
     PriorityQueue<NodeInfo> validNodes =
-      getValidNodes(candidateNodes, request.getMinUserPerSocialProof(), maxNumResults);
+        GeneratorHelper.getValidNodes(candidateNodes, request.getMinUserPerSocialProof(), maxNumResults);
 
     return getRecommendationsFromNodes(request, validNodes);
-  }
-
-  private static PriorityQueue<NodeInfo> getValidNodes(
-    List<NodeInfo> nodeInfoList,
-    Map<Byte, Integer> minSocialProofSizes,
-    int maxNumResults) {
-    PriorityQueue<NodeInfo> topResults = new PriorityQueue<>(maxNumResults);
-
-    for (NodeInfo nodeInfo : nodeInfoList) {
-      if (isValidSocialProof(minSocialProofSizes, nodeInfo.getSocialProofs())) {
-        GeneratorHelper.addResultToPriorityQueue(topResults, nodeInfo, maxNumResults);
-      }
-    }
-    return topResults;
-  }
-
-  private static boolean isValidSocialProof(
-    Map<Byte, Integer> minSocialProofSizes,
-    SmallArrayBasedLongToDoubleMap[] socialProofs) {
-    for (int i = 0; i < socialProofs.length; i++) {
-      byte proofType = (byte)i;
-      if (!minSocialProofSizes.containsKey(proofType)) {
-        // if there is no limit on social proof size, valid
-        continue;
-      }
-      if (socialProofs[proofType] == null) {
-        // if node does not have this type of social proof, not valid
-        return false;
-      }
-      if (socialProofs[proofType].size() < minSocialProofSizes.get(proofType)) {
-        // if number of social proofs below threshold, not valid
-        return false;
-      }
-    }
-    return true;
   }
 
   private static  List<RecommendationInfo> getRecommendationsFromNodes(
