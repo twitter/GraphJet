@@ -30,6 +30,7 @@ import com.twitter.graphjet.algorithms.RecommendationRequest;
 import com.twitter.graphjet.algorithms.RecommendationType;
 import com.twitter.graphjet.algorithms.TweetIDMask;
 import com.twitter.graphjet.algorithms.counting.GeneratorHelper;
+import com.twitter.graphjet.algorithms.counting.TopSecondDegreeByCountRecommendationInfo;
 import com.twitter.graphjet.hashing.SmallArrayBasedLongToDoubleMap;
 
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
@@ -72,8 +73,9 @@ public final class TopSecondDegreeByCountTweetRecsGenerator {
     while (!topResults.isEmpty()) {
       NodeInfo nodeInfo = topResults.poll();
       outputResults.add(
-        new TweetRecommendationInfo(
+        new TopSecondDegreeByCountRecommendationInfo(
           TweetIDMask.restore(nodeInfo.getValue()),
+          RecommendationType.TWEET,
           nodeInfo.getWeight(),
           GeneratorHelper.pickTopSocialProofs(nodeInfo.getSocialProofs(), request.getMaxUserSocialProofSize())));
     }

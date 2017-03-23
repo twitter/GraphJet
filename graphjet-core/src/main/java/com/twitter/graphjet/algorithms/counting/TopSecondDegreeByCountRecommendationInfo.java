@@ -1,5 +1,5 @@
 /**
- * Copyright 2016 Twitter. All rights reserved.
+ * Copyright 2017 Twitter. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,26 +14,35 @@
  * limitations under the License.
  */
 
-package com.twitter.graphjet.algorithms.counting.user;
+
+package com.twitter.graphjet.algorithms.counting;
 
 import java.util.Map;
 
 import com.google.common.base.Objects;
+
 import com.twitter.graphjet.algorithms.RecommendationInfo;
 import com.twitter.graphjet.algorithms.RecommendationType;
+
 import it.unimi.dsi.fastutil.longs.LongList;
 
 /**
- * User recommendation based on user-user interactions, including follow, mention, and mediatag.
+ * Recommendation based on user-entity interactions, such as creation and like.
  */
-public class UserRecommendationInfo implements RecommendationInfo {
+public class TopSecondDegreeByCountRecommendationInfo implements RecommendationInfo {
   private final long recommendation;
-  private final RecommendationType recommendationType = RecommendationType.USER;
+  private final RecommendationType recommendationType;
   private final double weight;
   private final Map<Byte, LongList> socialProof;
 
-  public UserRecommendationInfo(long recommendation, double weight, Map<Byte, LongList> socialProof) {
+  public TopSecondDegreeByCountRecommendationInfo(
+    long recommendation,
+    RecommendationType recommendationType,
+    double weight,
+    Map<Byte, LongList> socialProof
+  ) {
     this.recommendation = recommendation;
+    this.recommendationType = recommendationType;
     this.weight = weight;
     this.socialProof = socialProof;
   }
@@ -71,12 +80,13 @@ public class UserRecommendationInfo implements RecommendationInfo {
       return false;
     }
 
-    UserRecommendationInfo other = (UserRecommendationInfo) obj;
+    TopSecondDegreeByCountRecommendationInfo other = (TopSecondDegreeByCountRecommendationInfo) obj;
 
-    return Objects.equal(getRecommendation(), other.getRecommendation())
-      && Objects.equal(getRecommendationType(), other.getRecommendationType())
-      && Objects.equal(getWeight(), other.getWeight())
-      && Objects.equal(getSocialProof(), other.getSocialProof());
+    return
+      Objects.equal(getRecommendation(), other.getRecommendation())
+        && Objects.equal(getRecommendationType(), other.getRecommendationType())
+        && Objects.equal(getWeight(), other.getWeight())
+        && Objects.equal(getSocialProof(), other.getSocialProof());
   }
 
   @Override

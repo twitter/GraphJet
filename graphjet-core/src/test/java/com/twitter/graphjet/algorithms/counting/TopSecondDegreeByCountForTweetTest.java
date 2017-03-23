@@ -27,13 +27,8 @@ import java.util.Set;
 
 import com.google.common.collect.Lists;
 
-import com.twitter.graphjet.algorithms.counting.user.UserRecommendationInfo;
 import com.twitter.graphjet.algorithms.counting.tweet.TopSecondDegreeByCountRequestForTweet;
-import com.twitter.graphjet.algorithms.counting.user.TopSecondDegreeByCountRequestForUser;
 import com.twitter.graphjet.algorithms.counting.tweet.TopSecondDegreeByCountForTweet;
-import com.twitter.graphjet.algorithms.counting.user.TopSecondDegreeByCountForUser;
-import com.twitter.graphjet.bipartite.LeftIndexedMultiSegmentBipartiteGraph;
-import com.twitter.graphjet.bipartite.LeftIndexedPowerLawMultiSegmentBipartiteGraph;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -45,7 +40,6 @@ import com.twitter.graphjet.algorithms.RecommendationType;
 import com.twitter.graphjet.algorithms.RequestedSetFilter;
 import com.twitter.graphjet.algorithms.ResultFilter;
 import com.twitter.graphjet.algorithms.ResultFilterChain;
-import com.twitter.graphjet.algorithms.counting.tweet.TweetRecommendationInfo;
 import com.twitter.graphjet.bipartite.NodeMetadataLeftIndexedMultiSegmentBipartiteGraph;
 import com.twitter.graphjet.stats.NullStatsReceiver;
 
@@ -123,9 +117,9 @@ public class TopSecondDegreeByCountForTweetTest {
     socialProof.get(2).put((byte) 0, new LongArrayList(new long[]{3}));
 
     final List<RecommendationInfo> expectedTopResults = new ArrayList<RecommendationInfo>();
-    expectedTopResults.add(new TweetRecommendationInfo(10, 1.5, socialProof.get(0)));
-    expectedTopResults.add(new TweetRecommendationInfo(6, 1.0, socialProof.get(1)));
-    expectedTopResults.add(new TweetRecommendationInfo(8, 0.5, socialProof.get(2)));
+    expectedTopResults.add(new TopSecondDegreeByCountRecommendationInfo(10, RecommendationType.TWEET, 1.5, socialProof.get(0)));
+    expectedTopResults.add(new TopSecondDegreeByCountRecommendationInfo(6, RecommendationType.TWEET, 1.0, socialProof.get(1)));
+    expectedTopResults.add(new TopSecondDegreeByCountRecommendationInfo(8, RecommendationType.TWEET, 0.5, socialProof.get(2)));
 
     List<RecommendationInfo> topSecondDegreeByCountResults =
       Lists.newArrayList(response.getRankedRecommendations());
@@ -197,8 +191,8 @@ public class TopSecondDegreeByCountForTweetTest {
     socialProof.get(1).put((byte) 3, new LongArrayList(new long[]{1}));
 
     final List<RecommendationInfo> expectedTopResults = new ArrayList<RecommendationInfo>();
-    expectedTopResults.add(new TweetRecommendationInfo(3, 3.0, socialProof.get(0)));
-    expectedTopResults.add(new TweetRecommendationInfo(5, 2.5, socialProof.get(1)));
+    expectedTopResults.add(new TopSecondDegreeByCountRecommendationInfo(3, RecommendationType.TWEET, 3.0, socialProof.get(0)));
+    expectedTopResults.add(new TopSecondDegreeByCountRecommendationInfo(5, RecommendationType.TWEET,2.5, socialProof.get(1)));
 
     List<RecommendationInfo> topSecondDegreeByCountResults =
       Lists.newArrayList(response.getRankedRecommendations());
@@ -293,13 +287,13 @@ public class TopSecondDegreeByCountForTweetTest {
 
     final List<RecommendationInfo> expectedTopResults = new ArrayList<RecommendationInfo>();
     expectedTopResults.add(
-      new TweetRecommendationInfo(16428, 1.0, socialProof.get(0))
+      new TopSecondDegreeByCountRecommendationInfo(16428, RecommendationType.TWEET,1.0, socialProof.get(0))
     );
     expectedTopResults.add(
-      new TweetRecommendationInfo(3891, 1.0, socialProof.get(1))
+      new TopSecondDegreeByCountRecommendationInfo(3891, RecommendationType.TWEET,1.0, socialProof.get(1))
     );
     expectedTopResults.add(
-      new TweetRecommendationInfo(19301, 0.6, socialProof.get(2))
+      new TopSecondDegreeByCountRecommendationInfo(19301, RecommendationType.TWEET,0.6, socialProof.get(2))
     );
 
     List<RecommendationInfo> topSecondDegreeByCountResults =
