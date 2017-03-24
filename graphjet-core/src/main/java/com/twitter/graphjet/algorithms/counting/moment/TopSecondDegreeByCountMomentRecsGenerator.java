@@ -55,7 +55,7 @@ public final class TopSecondDegreeByCountMomentRecsGenerator {
     return getRecommendationsFromNodes(request, validNodes);
   }
 
-  private static  List<RecommendationInfo> getRecommendationsFromNodes(
+  private static List<RecommendationInfo> getRecommendationsFromNodes(
     TopSecondDegreeByCountRequestForMoment request,
     PriorityQueue<NodeInfo> topNodes) {
     List<RecommendationInfo> outputResults = Lists.newArrayListWithCapacity(topNodes.size());
@@ -68,9 +68,8 @@ public final class TopSecondDegreeByCountMomentRecsGenerator {
         nodeInfo.getSocialProofs(),
         maxNumSocialProofs);
 
-      TopSecondDegreeByCountRecommendationInfo momentRecs = new TopSecondDegreeByCountRecommendationInfo(
+      MomentRecommendationInfo momentRecs = new MomentRecommendationInfo(
         nodeInfo.getValue(),
-        RecommendationType.MOMENT,
         nodeInfo.getWeight(),
         topSocialProofs);
       outputResults.add(momentRecs);
