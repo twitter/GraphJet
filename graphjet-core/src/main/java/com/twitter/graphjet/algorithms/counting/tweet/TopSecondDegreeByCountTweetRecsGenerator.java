@@ -148,12 +148,12 @@ public final class TopSecondDegreeByCountTweetRecsGenerator {
           socialProofs[validSocialProofs[i]].contains(authorId)) {
           minUserSocialProofThreshold += 1;
         }
-        if (socialProofs[validSocialProofs[i]].size() < minUserSocialProofThreshold) {
-          return true;
+        if (socialProofs[validSocialProofs[i]].size() >= minUserSocialProofThreshold) {
+          return false;
         }
       }
     }
-    return false;
+    return true;
   }
 
   // Return the authorId of the Tweet, if the author is in the leftSeedNodesWithWeight; otherwise, return -1.
