@@ -29,10 +29,10 @@ import org.junit.Test;
 import com.twitter.graphjet.algorithms.BipartiteGraphTestHelper;
 import com.twitter.graphjet.algorithms.RecommendationInfo;
 import com.twitter.graphjet.algorithms.RecommendationStats;
-import com.twitter.graphjet.algorithms.RecommendationType;
 import com.twitter.graphjet.algorithms.RequestedSetFilter;
 import com.twitter.graphjet.algorithms.ResultFilter;
 import com.twitter.graphjet.algorithms.ResultFilterChain;
+import com.twitter.graphjet.algorithms.counting.moment.MomentRecommendationInfo;
 import com.twitter.graphjet.algorithms.counting.moment.TopSecondDegreeByCountForMoment;
 import com.twitter.graphjet.algorithms.counting.moment.TopSecondDegreeByCountRequestForMoment;
 import com.twitter.graphjet.bipartite.LeftIndexedPowerLawMultiSegmentBipartiteGraph;
@@ -70,9 +70,9 @@ public class TopSecondDegreeByCountForMomentTest {
     RecommendationStats expectedTopSecondDegreeByCountStats = new RecommendationStats(5, 6, 17, 2, 4, 0);
 
     int maxNumResults = 3;
-    expectedTopResults.add(new TopSecondDegreeByCountRecommendationInfo(3, RecommendationType.MOMENT,3.0, socialProofFor3));
-    expectedTopResults.add(new TopSecondDegreeByCountRecommendationInfo(5, RecommendationType.MOMENT, 2.5, socialProofFor5));
-    expectedTopResults.add(new TopSecondDegreeByCountRecommendationInfo(7, RecommendationType.MOMENT,2.5, socialProofFor7));
+    expectedTopResults.add(new MomentRecommendationInfo(3,3.0, socialProofFor3));
+    expectedTopResults.add(new MomentRecommendationInfo(5,2.5, socialProofFor5));
+    expectedTopResults.add(new MomentRecommendationInfo(7,2.5, socialProofFor7));
     testTopSecondDegreeByCountHelper(
       maxNumResults,
       minUserPerSocialProof,
@@ -95,7 +95,7 @@ public class TopSecondDegreeByCountForMomentTest {
 
     int maxNumResults = 1;
     expectedTopResults.clear();
-    expectedTopResults.add(new TopSecondDegreeByCountRecommendationInfo(3, RecommendationType.MOMENT,3.0, socialProofFor3));
+    expectedTopResults.add(new MomentRecommendationInfo(3,3.0, socialProofFor3));
     testTopSecondDegreeByCountHelper(
       maxNumResults,
       minUserPerSocialProof,
@@ -119,7 +119,7 @@ public class TopSecondDegreeByCountForMomentTest {
     int maxNumResults = 3;
     minUserPerSocialProof.put((byte) 1, 3); // 3 moments per proof
     expectedTopResults.clear();
-    expectedTopResults.add(new TopSecondDegreeByCountRecommendationInfo(3, RecommendationType.MOMENT, 3.0, socialProofFor3));
+    expectedTopResults.add(new MomentRecommendationInfo(3,3.0, socialProofFor3));
     testTopSecondDegreeByCountHelper(
       maxNumResults,
       minUserPerSocialProof,

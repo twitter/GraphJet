@@ -20,6 +20,7 @@ import com.google.common.collect.Lists;
 import com.twitter.graphjet.algorithms.*;
 import com.twitter.graphjet.algorithms.counting.user.TopSecondDegreeByCountForUser;
 import com.twitter.graphjet.algorithms.counting.user.TopSecondDegreeByCountRequestForUser;
+import com.twitter.graphjet.algorithms.counting.user.UserRecommendationInfo;
 import com.twitter.graphjet.bipartite.LeftIndexedPowerLawMultiSegmentBipartiteGraph;
 import com.twitter.graphjet.stats.NullStatsReceiver;
 import it.unimi.dsi.fastutil.longs.*;
@@ -46,15 +47,15 @@ public class TopSecondDegreeByCountForUserTest {
     socialProofFor7.put((byte) 1, new LongArrayList(new long[]{2}));
 
     Map<Byte, Integer> minUserPerSocialProof = new HashMap<>();
-    List<TopSecondDegreeByCountRecommendationInfo> expectedTopResults = new ArrayList<>();
+    List<UserRecommendationInfo> expectedTopResults = new ArrayList<>();
 
     byte[] socialProofTypes = new byte[] {0, 1, 2, 3};
     RecommendationStats expectedTopSecondDegreeByCountStats = new RecommendationStats(5, 6, 17, 2, 4, 0);
 
     int maxNumResults = 3;
-    expectedTopResults.add(new TopSecondDegreeByCountRecommendationInfo(3, RecommendationType.USER,3.0, socialProofFor3));
-    expectedTopResults.add(new TopSecondDegreeByCountRecommendationInfo(5, RecommendationType.USER, 2.5, socialProofFor5));
-    expectedTopResults.add(new TopSecondDegreeByCountRecommendationInfo(7, RecommendationType.USER,2.5, socialProofFor7));
+    expectedTopResults.add(new UserRecommendationInfo(3, 3.0, socialProofFor3));
+    expectedTopResults.add(new UserRecommendationInfo(5, 2.5, socialProofFor5));
+    expectedTopResults.add(new UserRecommendationInfo(7, 2.5, socialProofFor7));
     testTopSecondDegreeByCountHelper(
       maxNumResults,
       minUserPerSocialProof,
@@ -70,14 +71,14 @@ public class TopSecondDegreeByCountForUserTest {
     socialProofFor3.put((byte) 1, new LongArrayList(new long[]{1, 2, 3}));
 
     Map<Byte, Integer> minUserPerSocialProof = new HashMap<>();
-    List<TopSecondDegreeByCountRecommendationInfo> expectedTopResults = new ArrayList<>();
+    List<UserRecommendationInfo> expectedTopResults = new ArrayList<>();
 
     byte[] socialProofTypes = new byte[] {0, 1, 2, 3};
     RecommendationStats expectedTopSecondDegreeByCountStats = new RecommendationStats(5, 6, 17, 2, 4, 0);
 
     int maxNumResults = 1;
     expectedTopResults.clear();
-    expectedTopResults.add(new TopSecondDegreeByCountRecommendationInfo(3, RecommendationType.USER,3.0, socialProofFor3));
+    expectedTopResults.add(new UserRecommendationInfo(3, 3.0, socialProofFor3));
     testTopSecondDegreeByCountHelper(
       maxNumResults,
       minUserPerSocialProof,
@@ -93,7 +94,7 @@ public class TopSecondDegreeByCountForUserTest {
     socialProofFor3.put((byte) 1, new LongArrayList(new long[]{1, 2, 3}));
 
     Map<Byte, Integer> minUserPerSocialProof = new HashMap<>();
-    List<TopSecondDegreeByCountRecommendationInfo> expectedTopResults = new ArrayList<>();
+    List<UserRecommendationInfo> expectedTopResults = new ArrayList<>();
 
     byte[] socialProofTypes = new byte[] {0, 1, 2, 3};
     RecommendationStats expectedTopSecondDegreeByCountStats = new RecommendationStats(5, 6, 17, 2, 4, 0);
@@ -101,7 +102,7 @@ public class TopSecondDegreeByCountForUserTest {
     int maxNumResults = 3;
     minUserPerSocialProof.put((byte) 1, 3); // 3 users per proof
     expectedTopResults.clear();
-    expectedTopResults.add(new TopSecondDegreeByCountRecommendationInfo(3, RecommendationType.USER, 3.0, socialProofFor3));
+    expectedTopResults.add(new UserRecommendationInfo(3, 3.0, socialProofFor3));
     testTopSecondDegreeByCountHelper(
       maxNumResults,
       minUserPerSocialProof,
@@ -117,7 +118,7 @@ public class TopSecondDegreeByCountForUserTest {
     socialProofFor5.put((byte) 3, new LongArrayList(new long[]{1}));
 
     Map<Byte, Integer> minUserPerSocialProof = new HashMap<>();
-    List<TopSecondDegreeByCountRecommendationInfo> expectedTopResults = new ArrayList<>();
+    List<UserRecommendationInfo> expectedTopResults = new ArrayList<>();
 
     byte[] socialProofTypes = new byte[] {0, 1, 2, 3};
     RecommendationStats expectedTopSecondDegreeByCountStats = new RecommendationStats(5, 6, 17, 2, 4, 0);
@@ -129,7 +130,7 @@ public class TopSecondDegreeByCountForUserTest {
     expectedTopSecondDegreeByCountStats = new RecommendationStats(5, 1, 2, 2, 2, 0);
 
     expectedTopResults.clear();
-    expectedTopResults.add(new TopSecondDegreeByCountRecommendationInfo(5, RecommendationType.USER,1.5, socialProofFor5));
+    expectedTopResults.add(new UserRecommendationInfo(5, 1.5, socialProofFor5));
     testTopSecondDegreeByCountHelper(
       maxNumResults,
       minUserPerSocialProof,
@@ -142,7 +143,7 @@ public class TopSecondDegreeByCountForUserTest {
     int maxNumResults,
     Map<Byte, Integer> minUserPerSocialProof,
     byte[] socialProofTypes,
-    List<TopSecondDegreeByCountRecommendationInfo> expectedTopResults,
+    List<UserRecommendationInfo> expectedTopResults,
     RecommendationStats expectedTopSecondDegreeByCountStats
   ) throws Exception {
     LeftIndexedPowerLawMultiSegmentBipartiteGraph bipartiteGraph =

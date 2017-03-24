@@ -33,11 +33,10 @@ import static org.junit.Assert.assertEquals;
 import com.twitter.graphjet.algorithms.BipartiteGraphTestHelper;
 import com.twitter.graphjet.algorithms.DirectInteractionsFilter;
 import com.twitter.graphjet.algorithms.RecommendationInfo;
-import com.twitter.graphjet.algorithms.RecommendationType;
 import com.twitter.graphjet.algorithms.RequestedSetFilter;
 import com.twitter.graphjet.algorithms.ResultFilter;
 import com.twitter.graphjet.algorithms.ResultFilterChain;
-import com.twitter.graphjet.algorithms.counting.TopSecondDegreeByCountRecommendationInfo;
+import com.twitter.graphjet.algorithms.counting.tweet.TweetRecommendationInfo;
 import com.twitter.graphjet.algorithms.salsa.fullgraph.Salsa;
 import com.twitter.graphjet.algorithms.salsa.subgraph.SubgraphSalsa;
 import com.twitter.graphjet.bipartite.SmallLeftRegularBipartiteGraph;
@@ -93,9 +92,9 @@ public class SalsaTest {
     socialProof.get(1).put((byte) 0, new LongArrayList(new long[]{3}));
 
     final List<RecommendationInfo> expectedTopResults = new ArrayList<RecommendationInfo>();
-    expectedTopResults.add(new TopSecondDegreeByCountRecommendationInfo(5, RecommendationType.TWEET, 0.2346316283435007, socialProof.get(0)));
-    expectedTopResults.add(new TopSecondDegreeByCountRecommendationInfo(2, RecommendationType.TWEET,0.22430783669638668, socialProof.get(1)));
-    expectedTopResults.add(new TopSecondDegreeByCountRecommendationInfo(4, RecommendationType.TWEET,.20835288596902862, socialProof.get(2)));
+    expectedTopResults.add(new TweetRecommendationInfo(5, 0.2346316283435007, socialProof.get(0)));
+    expectedTopResults.add(new TweetRecommendationInfo(2, 0.22430783669638668, socialProof.get(1)));
+    expectedTopResults.add(new TweetRecommendationInfo(4, 0.20835288596902862, socialProof.get(2)));
     final SalsaStats expectedSalsaStats = new SalsaStats(1, 4, 11, 2131, 1, 500, 1);
 
     // Should be in sorted order of weight
@@ -146,11 +145,11 @@ public class SalsaTest {
 
     final List<RecommendationInfo> expectedTopResultsSubgraph = new ArrayList<RecommendationInfo>();
     expectedTopResultsSubgraph.add(
-      new TopSecondDegreeByCountRecommendationInfo(5, RecommendationType.TWEET,0.3561333333333357, subSocialProof.get(0)));
+      new TweetRecommendationInfo(5, 0.3561333333333357, subSocialProof.get(0)));
     expectedTopResultsSubgraph.add(
-      new TopSecondDegreeByCountRecommendationInfo(2, RecommendationType.TWEET,0.29866666666666786, subSocialProof.get(1)));
+      new TweetRecommendationInfo(2, 0.29866666666666786, subSocialProof.get(1)));
     expectedTopResultsSubgraph.add(
-      new TopSecondDegreeByCountRecommendationInfo(4, RecommendationType.TWEET,0.2906666666666677, subSocialProof.get(2)));
+      new TweetRecommendationInfo(4, 0.2906666666666677, subSocialProof.get(2)));
 
     final SalsaStats expectedSalsaStatsSubgraph = new SalsaStats(2, 4, 6, 5000, 1, 810, 1);
 
@@ -222,11 +221,11 @@ public class SalsaTest {
     socialProof.get(2).put((byte) 0, new LongArrayList(new long[]{623, 880}));
 
     final List<RecommendationInfo> expectedTopResults = new ArrayList<RecommendationInfo>();
-    expectedTopResults.add(new TopSecondDegreeByCountRecommendationInfo(735, RecommendationType.TWEET, 0.0010926365795724466,
+    expectedTopResults.add(new TweetRecommendationInfo(735, 0.0010926365795724466,
       socialProof.get(0)));
-    expectedTopResults.add(new TopSecondDegreeByCountRecommendationInfo(119, RecommendationType.TWEET,0.0010451306413301663,
+    expectedTopResults.add(new TweetRecommendationInfo(119, 0.0010451306413301663,
       socialProof.get(1)));
-    expectedTopResults.add(new TopSecondDegreeByCountRecommendationInfo(70, RecommendationType.TWEET,0.0010451306413301663,
+    expectedTopResults.add(new TweetRecommendationInfo(70, 0.0010451306413301663,
       socialProof.get(2)));
 
     Set<Long> sourceIdList = Sets.newHashSetWithExpectedSize(maxNumLeftNodes);
@@ -318,11 +317,11 @@ public class SalsaTest {
 
     final List<RecommendationInfo> expectedTopResults = new ArrayList<RecommendationInfo>();
     expectedTopResults.add(
-      new TopSecondDegreeByCountRecommendationInfo(704, RecommendationType.TWEET,0.0037072243346007606, socialProof.get(0)));
+      new TweetRecommendationInfo(704, 0.0037072243346007606, socialProof.get(0)));
     expectedTopResults.add(
-      new TopSecondDegreeByCountRecommendationInfo(509, RecommendationType.TWEET,0.003326996197718631, socialProof.get(1)));
+      new TweetRecommendationInfo(509, 0.003326996197718631, socialProof.get(1)));
     expectedTopResults.add(
-      new TopSecondDegreeByCountRecommendationInfo(190, RecommendationType.TWEET,0.003279467680608365, socialProof.get(2)));
+      new TweetRecommendationInfo(190, 0.003279467680608365, socialProof.get(2)));
 
     final SalsaStats expectedSalsaStats = new SalsaStats(1, 266, 999, 21040, 1, 78, 1);
 

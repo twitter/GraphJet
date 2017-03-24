@@ -29,20 +29,18 @@ import it.unimi.dsi.fastutil.longs.LongList;
 /**
  * Recommendation based on user-entity interactions, such as creation and like.
  */
-public class TopSecondDegreeByCountRecommendationInfo implements RecommendationInfo {
+public abstract class TopSecondDegreeByCountRecommendationInfo implements RecommendationInfo {
   private final long recommendation;
-  private final RecommendationType recommendationType;
   private final double weight;
   private final Map<Byte, LongList> socialProof;
+  protected RecommendationType recommendationType;
 
   public TopSecondDegreeByCountRecommendationInfo(
     long recommendation,
-    RecommendationType recommendationType,
     double weight,
     Map<Byte, LongList> socialProof
   ) {
     this.recommendation = recommendation;
-    this.recommendationType = recommendationType;
     this.weight = weight;
     this.socialProof = socialProof;
   }

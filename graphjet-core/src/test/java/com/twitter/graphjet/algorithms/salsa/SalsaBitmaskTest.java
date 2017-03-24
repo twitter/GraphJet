@@ -34,7 +34,7 @@ import com.twitter.graphjet.algorithms.ResultFilterChain;
 import com.twitter.graphjet.algorithms.StaticBipartiteGraph;
 import com.twitter.graphjet.algorithms.TweetCardFilter;
 import com.twitter.graphjet.algorithms.TweetIDMask;
-import com.twitter.graphjet.algorithms.counting.TopSecondDegreeByCountRecommendationInfo;
+import com.twitter.graphjet.algorithms.counting.tweet.TweetRecommendationInfo;
 import com.twitter.graphjet.algorithms.salsa.fullgraph.Salsa;
 import com.twitter.graphjet.bipartite.api.BipartiteGraph;
 import com.twitter.graphjet.stats.NullStatsReceiver;
@@ -116,7 +116,7 @@ public class SalsaBitmaskTest {
     Iterator<RecommendationInfo> recs = salsaResponse.getRankedRecommendations().iterator();
     ArrayList<Long> rets = new ArrayList<Long>();
     while (recs.hasNext()) {
-      rets.add(((TopSecondDegreeByCountRecommendationInfo) recs.next()).getRecommendation());
+      rets.add(((TweetRecommendationInfo) recs.next()).getRecommendation());
     }
     assertArrayEquals(expected, rets.toArray(new Long[]{}));
   }
