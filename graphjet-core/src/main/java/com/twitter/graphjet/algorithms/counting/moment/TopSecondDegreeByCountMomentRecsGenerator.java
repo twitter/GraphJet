@@ -26,9 +26,7 @@ import com.google.common.collect.Lists;
 import com.twitter.graphjet.algorithms.NodeInfo;
 import com.twitter.graphjet.algorithms.RecommendationInfo;
 import com.twitter.graphjet.algorithms.RecommendationRequest;
-import com.twitter.graphjet.algorithms.RecommendationType;
 import com.twitter.graphjet.algorithms.counting.GeneratorHelper;
-import com.twitter.graphjet.algorithms.counting.TopSecondDegreeByCountRecommendationInfo;
 
 import it.unimi.dsi.fastutil.longs.LongList;
 
@@ -41,7 +39,7 @@ public final class TopSecondDegreeByCountMomentRecsGenerator {
    * Generate a list of recommendations based on given list of candidate nodes and the original request.
    * @param request         original request message, contains filtering criteria
    * @param candidateNodes  list of candidate nodes
-   * @return                list of {@link TopSecondDegreeByCountRecommendationInfo}
+   * @return                list of {@link MomentRecommendationInfo}
    */
   public static List<RecommendationInfo> generateMomentRecs(
     TopSecondDegreeByCountRequestForMoment request,
