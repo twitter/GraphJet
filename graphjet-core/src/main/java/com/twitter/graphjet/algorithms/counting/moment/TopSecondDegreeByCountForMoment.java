@@ -33,9 +33,9 @@ public class TopSecondDegreeByCountForMoment extends
    * Construct a TopSecondDegreeByCount algorithm runner for moment recommendations.
    * @param leftIndexedBipartiteGraph is the
    *                                  {@link LeftIndexedPowerLawMultiSegmentBipartiteGraph}
-   *                                  to run TopSecondDegreeByCountForUser on
+   *                                  to run TopSecondDegreeByCountForMoment on
    * @param expectedNodesToHit        is an estimate of how many nodes can be hit in
-   *                                  TopSecondDegreeByCountForUser. This is purely for allocating needed
+   *                                  TopSecondDegreeByCountForMoment. This is purely for allocating needed
    *                                  memory right up front to make requests fast.
    * @param statsReceiver             tracks the internal stats
    */
