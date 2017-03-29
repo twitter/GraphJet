@@ -46,12 +46,13 @@ public final class TopSecondDegreeByCountTweetMetadataRecsGenerator {
     int maxTweetSocialProofSize
   ) {
     SmallArrayBasedLongToDoubleMap[] socialProofsByType = nodeInfo.getSocialProofs();
+    TweetIDMask tweetIDMask = new TweetIDMask();
     for (int k = 0; k < socialProofsByType.length; k++) {
       if (socialProofsByType[k] != null) {
         recommendationInfo.addToTweetSocialProofs(
           (byte) k,
           socialProofsByType[k],
-          TweetIDMask.restore(nodeInfo.getValue()),
+          tweetIDMask.restore(nodeInfo.getValue()),
           maxUserSocialProofSize,
           maxTweetSocialProofSize
         );

@@ -47,6 +47,7 @@ public class SalsaSelectResults<T extends LeftIndexedBipartiteGraph> {
 
   private final CommonInternalState<T> salsaInternalState;
   private final SalsaStats salsaStats;
+  private final TweetIDMask tweetIDMask = new TweetIDMask();
 
   /**
    * Default constructor that requires a {@link CommonInternalState} populated with visited
@@ -91,7 +92,7 @@ public class SalsaSelectResults<T extends LeftIndexedBipartiteGraph> {
       NodeInfo nodeInfo = topResults.poll();
       outputResults.add(
         new TweetRecommendationInfo(
-          TweetIDMask.restore(nodeInfo.getValue()),
+          tweetIDMask.restore(nodeInfo.getValue()),
           nodeInfo.getWeight(),
           pickTopSocialProofs(nodeInfo.getSocialProofs(), validSocialProofs, maxSocialProofSize)));
     }
