@@ -1,5 +1,5 @@
 /**
- * Copyright 2016 Twitter. All rights reserved.
+ * Copyright 2017 Twitter. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,22 +15,11 @@
  */
 
 
-package com.twitter.graphjet.algorithms.socialproof;
+package com.twitter.graphjet.algorithms;
 
-import java.util.List;
-
-import com.twitter.graphjet.algorithms.RecommendationInfo;
-import com.twitter.graphjet.algorithms.RecommendationResponse;
-
-/**
- * The response of {@link SocialProofGenerator}
- *
- * @see SocialProofResult
- */
-public class SocialProofResponse extends RecommendationResponse {
-
-  public SocialProofResponse(List<RecommendationInfo> rightNodesWithSocialProof) {
-    super(rightNodesWithSocialProof);
-  }
-
+public interface IDMask {
+  /*
+   * Return the original value of the node, before additional information was masked into it.
+   */
+  long restore(long node);
 }

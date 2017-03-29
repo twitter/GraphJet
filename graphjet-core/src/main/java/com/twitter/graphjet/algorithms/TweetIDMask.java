@@ -20,11 +20,7 @@ package com.twitter.graphjet.algorithms;
 /**
  * The bit mask used to manipulate tweet ids to encode further information.
  */
-public final class TweetIDMask {
-
-  // Utility class
-  private TweetIDMask() {
-  }
+public final class TweetIDMask implements IDMask {
 
   /**
    * Before 2024, the top 3 bits of tweet id will remain 0.
@@ -66,7 +62,7 @@ public final class TweetIDMask {
    * @param node the tweet id with bitmask
    * @return tweet id without the bitmask
    */
-  public static long restore(long node) {
+  public long restore(long node) {
     return node & MASK;
   }
 }

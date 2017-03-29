@@ -1,5 +1,5 @@
 /**
- * Copyright 2016 Twitter. All rights reserved.
+ * Copyright 2017 Twitter. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,20 +17,17 @@
 
 package com.twitter.graphjet.algorithms.socialproof;
 
-import java.util.List;
+import com.twitter.graphjet.algorithms.RecommendationType;
+import com.twitter.graphjet.algorithms.TweetIDMask;
+import com.twitter.graphjet.bipartite.LeftIndexedMultiSegmentBipartiteGraph;
 
-import com.twitter.graphjet.algorithms.RecommendationInfo;
-import com.twitter.graphjet.algorithms.RecommendationResponse;
+public class TweetSocialProofGenerator extends SocialProofGenerator {
 
-/**
- * The response of {@link SocialProofGenerator}
- *
- * @see SocialProofResult
- */
-public class SocialProofResponse extends RecommendationResponse {
-
-  public SocialProofResponse(List<RecommendationInfo> rightNodesWithSocialProof) {
-    super(rightNodesWithSocialProof);
+  public TweetSocialProofGenerator(
+    LeftIndexedMultiSegmentBipartiteGraph leftIndexedBipartiteGraph
+  ) {
+    super(leftIndexedBipartiteGraph);
+    super.idMask = new TweetIDMask();
+    super.recommendationType = RecommendationType.TWEET;
   }
-
 }
