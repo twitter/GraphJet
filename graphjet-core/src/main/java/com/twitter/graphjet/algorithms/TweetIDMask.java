@@ -62,6 +62,7 @@ public final class TweetIDMask implements IDMask {
    * @param node the tweet id with bitmask
    * @return tweet id without the bitmask
    */
+  @Override
   public long restore(long node) {
     return node & MASK;
   }

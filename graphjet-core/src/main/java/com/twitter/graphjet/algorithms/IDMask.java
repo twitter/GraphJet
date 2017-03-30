@@ -17,9 +17,12 @@
 
 package com.twitter.graphjet.algorithms;
 
+/**
+ * Bit mask used to encode further information in entity ids.
+ */
 public interface IDMask {
   /*
-   * Return the original value of the node, before additional information was masked into it.
+   * Return the original value of the node/id, before additional information was masked into it.
    */
   long restore(long node);
 }

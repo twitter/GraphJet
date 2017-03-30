@@ -36,6 +36,7 @@ import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import it.unimi.dsi.fastutil.longs.LongSet;
 
 public final class TopSecondDegreeByCountTweetRecsGenerator {
+  private static TweetIDMask tweetIDMask = new TweetIDMask();
 
   private TopSecondDegreeByCountTweetRecsGenerator() {
   }
@@ -69,7 +70,6 @@ public final class TopSecondDegreeByCountTweetRecsGenerator {
     }
 
     List<RecommendationInfo> outputResults = Lists.newArrayListWithCapacity(topResults.size());
-    TweetIDMask tweetIDMask = new TweetIDMask();
     while (!topResults.isEmpty()) {
       NodeInfo nodeInfo = topResults.poll();
       outputResults.add(
