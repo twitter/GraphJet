@@ -74,7 +74,7 @@ public abstract class SocialProofGenerator implements
   private void collectRecommendations(SocialProofRequest request) {
     socialProofs.clear();
     socialProofWeights.clear();
-    LongSet inputIds = request.getRightNodeIds();
+    LongSet inputRightNodeIds = request.getRightNodeIds();
     ByteSet socialProofTypes = new ByteArraySet(request.getSocialProofTypes());
 
     // Iterate through the set of seed users with weights. For each seed user, we go through his edges.
@@ -90,14 +90,14 @@ public abstract class SocialProofGenerator implements
           byte edgeType = edgeIterator.currentEdgeType();
 
           // If the current id is in the set of inputIds, we find and store its social proof.
-          if (inputIds.contains(rightNode) && socialProofTypes.contains(edgeType)) {
+          if (inputRightNodeIds.contains(rightNode) && socialProofTypes.contains(edgeType)) {
             if (!socialProofs.containsKey(rightNode)) {
               socialProofs.put(rightNode, new Byte2ObjectArrayMap<>());
               socialProofWeights.put(rightNode, 0);
             }
             Byte2ObjectMap<LongSet> socialProofMap = socialProofs.get(rightNode);
 
-            // We sum the weights of incoming leftNodes as the weight of a rightNode.
+            // We sum the weights of incoming leftNodes as the weight of the rightNode.
             socialProofWeights.put(
               rightNode,
               weight + socialProofWeights.get(rightNode)
@@ -107,11 +107,11 @@ public abstract class SocialProofGenerator implements
             if (!socialProofMap.containsKey(edgeType)) {
               socialProofMap.put(edgeType, new LongArraySet());
             }
-            LongSet incomingLeftNodes = socialProofMap.get(edgeType);
+            LongSet connectingUsers = socialProofMap.get(edgeType);
 
             // Add the connecting user to the user set.
-            if (!incomingLeftNodes.contains(leftNode)) {
-              incomingLeftNodes.add(leftNode);
+            if (!connectingUsers.contains(leftNode)) {
+              connectingUsers.add(leftNode);
             }
           }
         }

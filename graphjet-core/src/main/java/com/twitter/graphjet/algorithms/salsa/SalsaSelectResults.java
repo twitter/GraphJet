@@ -44,10 +44,10 @@ import it.unimi.dsi.fastutil.longs.LongList;
  */
 public class SalsaSelectResults<T extends LeftIndexedBipartiteGraph> {
   private static final Logger LOG = LoggerFactory.getLogger("graph");
+  private static final TweetIDMask TweetIDMask = new TweetIDMask();
 
   private final CommonInternalState<T> salsaInternalState;
   private final SalsaStats salsaStats;
-  private final TweetIDMask tweetIDMask = new TweetIDMask();
 
   /**
    * Default constructor that requires a {@link CommonInternalState} populated with visited
@@ -92,7 +92,7 @@ public class SalsaSelectResults<T extends LeftIndexedBipartiteGraph> {
       NodeInfo nodeInfo = topResults.poll();
       outputResults.add(
         new TweetRecommendationInfo(
-          tweetIDMask.restore(nodeInfo.getValue()),
+          TweetIDMask.restore(nodeInfo.getValue()),
           nodeInfo.getWeight(),
           pickTopSocialProofs(nodeInfo.getSocialProofs(), validSocialProofs, maxSocialProofSize)));
     }

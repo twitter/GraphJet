@@ -19,7 +19,7 @@ package com.twitter.graphjet.algorithms;
 /**
  * The bit mask used to encode no further information in entity ids.
  */
-public class IdentityIDMask implements IDMask {
+public final class IdentityIDMask implements IDMask {
   /*
    * Return the node/id, since no additional information was masked into it.
    */

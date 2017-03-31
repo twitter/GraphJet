@@ -72,8 +72,8 @@ public class SocialProofResult implements RecommendationInfo {
    */
   public int getSocialProofSize() {
     int socialProofSize = 0;
-    for (LongSet incomingLeftNodes: socialProof.values()) {
-      socialProofSize += incomingLeftNodes.size();
+    for (LongSet connectingUsers: socialProof.values()) {
+      socialProofSize += connectingUsers.size();
     }
     return socialProofSize;
   }
