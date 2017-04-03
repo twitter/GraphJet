@@ -35,7 +35,7 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.longs.LongList;
 
 public final class TopSecondDegreeByCountTweetMetadataRecsGenerator {
-  private static final TweetIDMask TweetIDMask = new TweetIDMask();
+  private static final TweetIDMask TWEET_ID_MASK = new TweetIDMask();
 
   private TopSecondDegreeByCountTweetMetadataRecsGenerator() {
   }
@@ -52,7 +52,7 @@ public final class TopSecondDegreeByCountTweetMetadataRecsGenerator {
         recommendationInfo.addToTweetSocialProofs(
           (byte) k,
           socialProofsByType[k],
-          TweetIDMask.restore(nodeInfo.getValue()),
+          TWEET_ID_MASK.restore(nodeInfo.getValue()),
           maxUserSocialProofSize,
           maxTweetSocialProofSize
         );
