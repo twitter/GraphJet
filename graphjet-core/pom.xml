@@ -5,12 +5,20 @@
   <parent>
     <groupId>com.twitter</groupId>
     <artifactId>graphjet</artifactId>
+<<<<<<< HEAD
     <version>1.0.22-SNAPSHOT</version>
+=======
+    <version>1.0.23-SNAPSHOT</version>
+>>>>>>> 54447b4159dfe5eca4861ae68e030a45fe94d5a6
   </parent>
 
   <groupId>com.twitter</groupId>
   <artifactId>graphjet-core</artifactId>
+<<<<<<< HEAD
   <version>1.0.22-SNAPSHOT</version>
+=======
+  <version>1.0.23-SNAPSHOT</version>
+>>>>>>> 54447b4159dfe5eca4861ae68e030a45fe94d5a6
   <packaging>jar</packaging>
   <name>GraphJet Core</name>
   <description>GraphJet is a real-time graph processing library: core graph library and recommendation algorithms</description>

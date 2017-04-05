@@ -44,6 +44,7 @@ import it.unimi.dsi.fastutil.longs.LongList;
  */
 public class SalsaSelectResults<T extends LeftIndexedBipartiteGraph> {
   private static final Logger LOG = LoggerFactory.getLogger("graph");
+  private static final TweetIDMask TWEET_ID_MASK = new TweetIDMask();
 
   private final CommonInternalState<T> salsaInternalState;
   private final SalsaStats salsaStats;
@@ -91,7 +92,7 @@ public class SalsaSelectResults<T extends LeftIndexedBipartiteGraph> {
       NodeInfo nodeInfo = topResults.poll();
       outputResults.add(
         new TweetRecommendationInfo(
-          TweetIDMask.restore(nodeInfo.getValue()),
+          TWEET_ID_MASK.restore(nodeInfo.getValue()),
           nodeInfo.getWeight(),
           pickTopSocialProofs(nodeInfo.getSocialProofs(), validSocialProofs, maxSocialProofSize)));
     }

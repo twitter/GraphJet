@@ -24,28 +24,31 @@ import it.unimi.dsi.fastutil.bytes.Byte2ObjectMap;
 import it.unimi.dsi.fastutil.longs.LongSet;
 
 /**
- * This class wraps a social proof recommendation result for one tweet.
- * The {@link SocialProofResponse} wraps a list of SocialProofResult object.
+ * This class wraps a social proof recommendation result for one entity (right node).
+ * The {@link SocialProofResponse} wraps a list of SocialProofResult objects.
  */
 public class SocialProofResult implements RecommendationInfo {
 
   private final long node;
   private final Byte2ObjectMap<LongSet> socialProof;
   private final double weight;
+  private final RecommendationType recommendationType;
 
   public SocialProofResult(
     Long node,
     Byte2ObjectMap<LongSet> socialProof,
-    double weight
+    double weight,
+    RecommendationType recommendationType
   ) {
     this.node = node;
     this.socialProof = socialProof;
     this.weight = weight;
+    this.recommendationType = recommendationType;
   }
 
   @Override
   public RecommendationType getRecommendationType() {
-    return RecommendationType.TWEET;
+    return this.recommendationType;
   }
 
   @Override
@@ -62,7 +65,8 @@ public class SocialProofResult implements RecommendationInfo {
   }
 
   /**
-   * Calculate the total number of interactions for current tweet on given set of users.
+   * Calculate the total number of interactions for current entity (right node)
+   * on given set of users (left nodes).
    *
    * @return the number of interactions.
    */

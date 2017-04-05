@@ -1,5 +1,5 @@
 /**
- * Copyright 2016 Twitter. All rights reserved.
+ * Copyright 2017 Twitter. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,39 +14,38 @@
  * limitations under the License.
  */
 
-package com.twitter.graphjet.algorithms.counting.user;
+package com.twitter.graphjet.algorithms.counting.moment;
+
+import java.util.Map;
 
 import com.twitter.graphjet.algorithms.RecommendationType;
 import com.twitter.graphjet.algorithms.ResultFilterChain;
 import com.twitter.graphjet.algorithms.counting.TopSecondDegreeByCountRequest;
+
 import it.unimi.dsi.fastutil.longs.Long2DoubleMap;
 import it.unimi.dsi.fastutil.longs.LongSet;
 
-import java.util.Map;
-
 /**
- * Request data structure for calculating user recommendations.
+ * Request data structure for calculating moment recommendations.
  */
-public class TopSecondDegreeByCountRequestForUser extends TopSecondDegreeByCountRequest {
+public class TopSecondDegreeByCountRequestForMoment extends TopSecondDegreeByCountRequest {
   private final Map<Byte, Integer> minUserPerSocialProof;
   private final int maxNumResults;
   private final int maxNumSocialProofs;
-  private final RecommendationType recommendationType = RecommendationType.USER;
-  private final long maxEdgeEngagementAgeInMillis;
+  private final RecommendationType recommendationType = RecommendationType.MOMENT;
 
   /**
-   * @param queryNode                 is the query node for running TopSecondDegreeByCountForUser
+   * @param queryNode                 is the query node for running TopSecondDegreeByCountRequestForMoment
    * @param leftSeedNodesWithWeight   is the set of seed nodes and their weights to use for calculation
-   * @param toBeFiltered              is the list of users to be excluded from recommendations
+   * @param toBeFiltered              is the set of RHS nodes to be filtered from the output
    * @param maxNumResults             is the maximum number of recommendations returned in the response
    * @param maxNumSocialProofs        is the maximum number of social proofs per recommendation
    * @param maxSocialProofTypeSize    is the number of social proof types in the graph
    * @param minUserPerSocialProof     for each social proof, require a minimum number of users to be valid
-   * @param socialProofTypes          is the list of valid social proofs, (i.e, Follow, Mention, Mediatag)
-   * @param maxEdgeEngagementAgeInMillis  only social proofs engaged within this time are valid
+   * @param socialProofTypes          is the list of valid social proofs, (i.e. Create, Like etc)
    * @param resultFilterChain         is the chain of filters to be applied
    */
-  public TopSecondDegreeByCountRequestForUser(
+  public TopSecondDegreeByCountRequestForMoment(
     long queryNode,
     Long2DoubleMap leftSeedNodesWithWeight,
     LongSet toBeFiltered,
@@ -55,13 +54,11 @@ public class TopSecondDegreeByCountRequestForUser extends TopSecondDegreeByCount
     int maxSocialProofTypeSize,
     Map<Byte, Integer> minUserPerSocialProof,
     byte[] socialProofTypes,
-    long maxEdgeEngagementAgeInMillis,
     ResultFilterChain resultFilterChain) {
     super(queryNode, leftSeedNodesWithWeight, toBeFiltered, maxSocialProofTypeSize,
         socialProofTypes, resultFilterChain);
     this.maxNumResults = maxNumResults;
     this.maxNumSocialProofs = maxNumSocialProofs;
-    this.maxEdgeEngagementAgeInMillis = maxEdgeEngagementAgeInMillis;
     this.minUserPerSocialProof = minUserPerSocialProof;
   }
 
@@ -70,8 +67,6 @@ public class TopSecondDegreeByCountRequestForUser extends TopSecondDegreeByCount
   public int getMaxNumResults() { return maxNumResults; }
 
   public int getMaxNumSocialProofs() { return maxNumSocialProofs; }
-
-  public long getMaxEdgeEngagementAgeInMillis() { return maxEdgeEngagementAgeInMillis; }
 
   public RecommendationType getRecommendationType() { return recommendationType; }
 

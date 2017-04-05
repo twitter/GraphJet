@@ -36,6 +36,7 @@ import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import it.unimi.dsi.fastutil.longs.LongSet;
 
 public final class TopSecondDegreeByCountTweetRecsGenerator {
+  private static final TweetIDMask TWEET_ID_MASK = new TweetIDMask();
 
   private TopSecondDegreeByCountTweetRecsGenerator() {
   }
@@ -73,7 +74,7 @@ public final class TopSecondDegreeByCountTweetRecsGenerator {
       NodeInfo nodeInfo = topResults.poll();
       outputResults.add(
         new TweetRecommendationInfo(
-          TweetIDMask.restore(nodeInfo.getValue()),
+          TWEET_ID_MASK.restore(nodeInfo.getValue()),
           nodeInfo.getWeight(),
           GeneratorHelper.pickTopSocialProofs(nodeInfo.getSocialProofs(), request.getMaxUserSocialProofSize())));
     }

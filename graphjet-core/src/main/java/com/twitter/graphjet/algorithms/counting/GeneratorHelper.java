@@ -25,6 +25,7 @@ import it.unimi.dsi.fastutil.longs.LongArrayList;
 import it.unimi.dsi.fastutil.longs.LongList;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
 
@@ -88,5 +89,40 @@ public final class GeneratorHelper {
       topResults.poll();
       topResults.add(nodeInfo);
     }
+  }
+
+  public static PriorityQueue<NodeInfo> getValidNodes(
+      List<NodeInfo> nodeInfoList,
+      Map<Byte, Integer> minSocialProofSizes,
+      int maxNumResults) {
+    PriorityQueue<NodeInfo> topResults = new PriorityQueue<>(maxNumResults);
+
+    for (NodeInfo nodeInfo: nodeInfoList) {
+      if (isValidSocialProof(minSocialProofSizes, nodeInfo.getSocialProofs())) {
+        addResultToPriorityQueue(topResults, nodeInfo, maxNumResults);
+      }
+    }
+    return topResults;
+  }
+
+  public static boolean isValidSocialProof(
+      Map<Byte, Integer> minSocialProofSizes,
+      SmallArrayBasedLongToDoubleMap[] socialProofs) {
+    for (int i = 0; i < socialProofs.length; i++) {
+      byte proofType = (byte)i;
+      if (!minSocialProofSizes.containsKey(proofType)) {
+        // valid, if there is no limit on the size of this social proof
+        continue;
+      }
+      if (socialProofs[proofType] == null) {
+        // not valid, if node does not have this type of social proof
+        return false;
+      }
+      if (socialProofs[proofType].size() < minSocialProofSizes.get(proofType)) {
+        // not valid, if number of social proofs below threshold
+        return false;
+      }
+    }
+    return true;
   }
 }

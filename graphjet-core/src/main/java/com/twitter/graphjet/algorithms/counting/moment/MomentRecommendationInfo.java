@@ -1,5 +1,5 @@
 /**
- * Copyright 2016 Twitter. All rights reserved.
+ * Copyright 2017 Twitter. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.twitter.graphjet.algorithms.counting.tweet;
+package com.twitter.graphjet.algorithms.counting.moment;
 
 import java.util.Map;
 
@@ -23,13 +23,13 @@ import com.twitter.graphjet.algorithms.counting.TopSecondDegreeByCountRecommenda
 
 import it.unimi.dsi.fastutil.longs.LongList;
 
-public class TweetRecommendationInfo extends TopSecondDegreeByCountRecommendationInfo {
-  public TweetRecommendationInfo(
+public class MomentRecommendationInfo extends TopSecondDegreeByCountRecommendationInfo {
+  public MomentRecommendationInfo(
       long recommendation,
       double weight,
       Map<Byte, LongList> socialProof
   ) {
     super(recommendation, weight, socialProof);
-    super.recommendationType = RecommendationType.TWEET;
+    super.recommendationType = RecommendationType.MOMENT;
   }
 }

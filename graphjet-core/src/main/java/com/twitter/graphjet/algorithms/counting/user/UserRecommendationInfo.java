@@ -18,74 +18,18 @@ package com.twitter.graphjet.algorithms.counting.user;
 
 import java.util.Map;
 
-import com.google.common.base.Objects;
-import com.twitter.graphjet.algorithms.RecommendationInfo;
 import com.twitter.graphjet.algorithms.RecommendationType;
+import com.twitter.graphjet.algorithms.counting.TopSecondDegreeByCountRecommendationInfo;
+
 import it.unimi.dsi.fastutil.longs.LongList;
 
-/**
- * User recommendation based on user-user interactions, including follow, mention, and mediatag.
- */
-public class UserRecommendationInfo implements RecommendationInfo {
-  private final long recommendation;
-  private final RecommendationType recommendationType = RecommendationType.USER;
-  private final double weight;
-  private final Map<Byte, LongList> socialProof;
-
-  public UserRecommendationInfo(long recommendation, double weight, Map<Byte, LongList> socialProof) {
-    this.recommendation = recommendation;
-    this.weight = weight;
-    this.socialProof = socialProof;
-  }
-
-  public long getRecommendation() {
-    return recommendation;
-  }
-
-  public RecommendationType getRecommendationType() {
-    return recommendationType;
-  }
-
-  public double getWeight() {
-    return weight;
-  }
-
-  public Map<Byte, LongList> getSocialProof() {
-    return socialProof;
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hashCode(recommendation, recommendationType, weight, socialProof);
-  }
-
-  @Override
-  public boolean equals(Object obj) {
-    if (obj == null) {
-      return false;
-    }
-    if (obj == this) {
-      return true;
-    }
-    if (obj.getClass() != getClass()) {
-      return false;
-    }
-
-    UserRecommendationInfo other = (UserRecommendationInfo) obj;
-
-    return Objects.equal(getRecommendation(), other.getRecommendation())
-      && Objects.equal(getRecommendationType(), other.getRecommendationType())
-      && Objects.equal(getWeight(), other.getWeight())
-      && Objects.equal(getSocialProof(), other.getSocialProof());
-  }
-
-  @Override
-  public String toString() {
-    return Objects.toStringHelper(this)
-      .add("recommendation", recommendation)
-      .add("recommendationType", recommendationType)
-      .add("weight", weight)
-      .add("socialProof", socialProof)
-      .toString();
+public class UserRecommendationInfo extends TopSecondDegreeByCountRecommendationInfo {
+  public UserRecommendationInfo(
+      long recommendation,
+      double weight,
+      Map<Byte, LongList> socialProof
+  ) {
+    super(recommendation, weight, socialProof);
+    super.recommendationType = RecommendationType.USER;
   }
 }

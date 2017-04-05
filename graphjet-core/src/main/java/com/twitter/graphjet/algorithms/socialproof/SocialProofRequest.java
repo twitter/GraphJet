@@ -27,31 +27,31 @@ public class SocialProofRequest extends RecommendationRequest {
   private static final LongSet EMPTY_SET = new LongArraySet();
 
   private final Long2DoubleMap leftSeedNodesWithWeight;
-  private final LongSet inputTweets;
+  private final LongSet rightNodeIds;
 
   /**
    * Create a social proof request.
    *
-   * @param tweets              is the set of input tweets to query social proof.
-   * @param weightedSeedNodes   is the set of seed users.
+   * @param rightNodeIds        is the set of right nodes to query for social proof.
+   * @param weightedSeedNodes   is the set of left nodes to be used as social proofs.
    * @param socialProofTypes    is the social proof types to return.
    */
   public SocialProofRequest(
-    LongSet tweets,
+    LongSet rightNodeIds,
     Long2DoubleMap weightedSeedNodes,
     byte[] socialProofTypes
   ) {
     super(0, EMPTY_SET, socialProofTypes);
     this.leftSeedNodesWithWeight = weightedSeedNodes;
-    this.inputTweets = tweets;
+    this.rightNodeIds = rightNodeIds;
   }
 
   public Long2DoubleMap getLeftSeedNodesWithWeight() {
     return leftSeedNodesWithWeight;
   }
 
-  public LongSet getInputTweets() {
-    return this.inputTweets;
+  public LongSet getRightNodeIds() {
+    return this.rightNodeIds;
   }
 
 }

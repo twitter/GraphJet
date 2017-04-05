@@ -22,7 +22,8 @@ public enum RecommendationType {
   URL(1),           // url metadata type
   METADATASIZE(2),  // the size of supported metadata types
   TWEET(3),         // tweet, not a metadata type
-  USER(4);          // users, in follows, mentions & mediatags
+  USER(4),          // users, in follows, mentions & mediatags
+  MOMENT(5);        // moment
   private final int value;
 
   private RecommendationType(int value) {
@@ -33,7 +34,7 @@ public enum RecommendationType {
     return value;
   }
 
-  private static final RecommendationType[] VALUES = {HASHTAG, URL, METADATASIZE, TWEET, USER};
+  private static final RecommendationType[] VALUES = {HASHTAG, URL, METADATASIZE, TWEET, USER, MOMENT};
 
   public static RecommendationType at(int index) {
     return VALUES[index];

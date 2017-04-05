@@ -1,5 +1,5 @@
 /**
- * Copyright 2016 Twitter. All rights reserved.
+ * Copyright 2017 Twitter. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,22 +14,20 @@
  * limitations under the License.
  */
 
-package com.twitter.graphjet.algorithms.counting.tweet;
 
-import java.util.Map;
+package com.twitter.graphjet.algorithms.socialproof;
 
+import com.twitter.graphjet.algorithms.IdentityIDMask;
 import com.twitter.graphjet.algorithms.RecommendationType;
-import com.twitter.graphjet.algorithms.counting.TopSecondDegreeByCountRecommendationInfo;
+import com.twitter.graphjet.bipartite.LeftIndexedMultiSegmentBipartiteGraph;
 
-import it.unimi.dsi.fastutil.longs.LongList;
+public class MomentSocialProofGenerator extends SocialProofGenerator {
 
-public class TweetRecommendationInfo extends TopSecondDegreeByCountRecommendationInfo {
-  public TweetRecommendationInfo(
-      long recommendation,
-      double weight,
-      Map<Byte, LongList> socialProof
+  public MomentSocialProofGenerator(
+    LeftIndexedMultiSegmentBipartiteGraph leftIndexedBipartiteGraph
   ) {
-    super(recommendation, weight, socialProof);
-    super.recommendationType = RecommendationType.TWEET;
+    super(leftIndexedBipartiteGraph);
+    super.idMask = new IdentityIDMask();
+    super.recommendationType = RecommendationType.MOMENT;
   }
 }

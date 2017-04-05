@@ -48,6 +48,7 @@ import it.unimi.dsi.fastutil.longs.LongSet;
 
 public class SalsaBitmaskTest {
 
+  private static final TweetIDMask TWEET_ID_MASK = new TweetIDMask();
   private static long tweetNode = 11 | TweetIDMask.TWEET;
   private static long summaryNode = 12 | TweetIDMask.SUMMARY;
   private static long photoNode = 13 | TweetIDMask.PHOTO;
@@ -124,7 +125,7 @@ public class SalsaBitmaskTest {
 
   @Test
   public void testTweetsOnly() {
-    Long[] tweets = new Long[]{TweetIDMask.restore(tweetNode)};
+    Long[] tweets = new Long[]{TWEET_ID_MASK.restore(tweetNode)};
 
     testFilter(new TweetCardFilter(true, false, false, false, false, new NullStatsReceiver()),
         tweets);
@@ -132,7 +133,7 @@ public class SalsaBitmaskTest {
 
   @Test
   public void testSummaryOnly() {
-    Long[] summary = new Long[]{TweetIDMask.restore(summaryNode)};
+    Long[] summary = new Long[]{TWEET_ID_MASK.restore(summaryNode)};
 
     testFilter(new TweetCardFilter(false, true, false, false, false, new NullStatsReceiver()),
         summary);
@@ -140,7 +141,7 @@ public class SalsaBitmaskTest {
 
   @Test
   public void testPhotoOnly() {
-    Long[] photo = new Long[]{TweetIDMask.restore(photoNode)};
+    Long[] photo = new Long[]{TWEET_ID_MASK.restore(photoNode)};
 
     testFilter(new TweetCardFilter(false, false, true, false, false, new NullStatsReceiver()),
         photo);
@@ -148,7 +149,7 @@ public class SalsaBitmaskTest {
 
   @Test
   public void testPlayerOnly() {
-    Long[] player = new Long[]{TweetIDMask.restore(playerNode)};
+    Long[] player = new Long[]{TWEET_ID_MASK.restore(playerNode)};
 
     testFilter(new TweetCardFilter(false, false, false, true, false, new NullStatsReceiver()),
         player);
@@ -156,7 +157,7 @@ public class SalsaBitmaskTest {
 
   @Test
   public void testPromotionOnly() {
-    Long[] promotion = new Long[]{TweetIDMask.restore(promotionNode)};
+    Long[] promotion = new Long[]{TWEET_ID_MASK.restore(promotionNode)};
 
     testFilter(new TweetCardFilter(false, false, false, false, true, new NullStatsReceiver()),
         promotion);

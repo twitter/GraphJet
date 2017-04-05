@@ -28,6 +28,7 @@ import it.unimi.dsi.fastutil.longs.LongSet;
  */
 public class RequestedSetFilter extends ResultFilter {
   private LongSet filterSet;
+  private static final TweetIDMask TWEET_ID_MASK = new TweetIDMask();
 
   public RequestedSetFilter(StatsReceiver statsReceiver) {
     super(statsReceiver);
@@ -45,6 +46,6 @@ public class RequestedSetFilter extends ResultFilter {
 
   @Override
   public boolean filterResult(long resultNode, SmallArrayBasedLongToDoubleMap[] socialProofs) {
-    return filterSet != null && filterSet.contains(TweetIDMask.restore(resultNode));
+    return filterSet != null && filterSet.contains(TWEET_ID_MASK.restore(resultNode));
   }
 }

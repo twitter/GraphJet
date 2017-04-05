@@ -4,7 +4,11 @@
 
   <groupId>com.twitter</groupId>
   <artifactId>graphjet</artifactId>
+<<<<<<< HEAD
   <version>1.0.22-SNAPSHOT</version>
+=======
+  <version>1.0.23-SNAPSHOT</version>
+>>>>>>> 54447b4159dfe5eca4861ae68e030a45fe94d5a6
   <packaging>pom</packaging>
 
   <name>graphjet</name>

@@ -1,5 +1,5 @@
 /**
- * Copyright 2016 Twitter. All rights reserved.
+ * Copyright 2017 Twitter. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.twitter.graphjet.algorithms.counting.user;
+package com.twitter.graphjet.algorithms.counting.moment;
 
 import java.util.Collections;
 import java.util.List;
@@ -22,36 +22,39 @@ import java.util.Map;
 import java.util.PriorityQueue;
 
 import com.google.common.collect.Lists;
-import com.twitter.graphjet.algorithms.*;
+
+import com.twitter.graphjet.algorithms.NodeInfo;
 import com.twitter.graphjet.algorithms.RecommendationInfo;
+import com.twitter.graphjet.algorithms.RecommendationRequest;
 import com.twitter.graphjet.algorithms.counting.GeneratorHelper;
+
 import it.unimi.dsi.fastutil.longs.LongList;
 
-public final class TopSecondDegreeByCountUserRecsGenerator {
+public final class TopSecondDegreeByCountMomentRecsGenerator {
 
-  private TopSecondDegreeByCountUserRecsGenerator() {
+  private TopSecondDegreeByCountMomentRecsGenerator() {
   }
 
   /**
    * Generate a list of recommendations based on given list of candidate nodes and the original request.
    * @param request         original request message, contains filtering criteria
    * @param candidateNodes  list of candidate nodes
-   * @return                list of {@link UserRecommendationInfo}
+   * @return                list of {@link MomentRecommendationInfo}
    */
-  public static List<RecommendationInfo> generateUserRecs(
-    TopSecondDegreeByCountRequestForUser request,
+  public static List<RecommendationInfo> generateMomentRecs(
+    TopSecondDegreeByCountRequestForMoment request,
     List<NodeInfo> candidateNodes) {
 
     int maxNumResults = Math.min(request.getMaxNumResults(), RecommendationRequest.MAX_RECOMMENDATION_RESULTS);
 
     PriorityQueue<NodeInfo> validNodes =
-        GeneratorHelper.getValidNodes(candidateNodes, request.getMinUserPerSocialProof(), maxNumResults);
+      GeneratorHelper.getValidNodes(candidateNodes, request.getMinUserPerSocialProof(), maxNumResults);
 
     return getRecommendationsFromNodes(request, validNodes);
   }
 
-  private static  List<RecommendationInfo> getRecommendationsFromNodes(
-    TopSecondDegreeByCountRequestForUser request,
+  private static List<RecommendationInfo> getRecommendationsFromNodes(
+    TopSecondDegreeByCountRequestForMoment request,
     PriorityQueue<NodeInfo> topNodes) {
     List<RecommendationInfo> outputResults = Lists.newArrayListWithCapacity(topNodes.size());
     int maxNumSocialProofs = request.getMaxNumSocialProofs();
@@ -63,11 +66,11 @@ public final class TopSecondDegreeByCountUserRecsGenerator {
         nodeInfo.getSocialProofs(),
         maxNumSocialProofs);
 
-      UserRecommendationInfo userRecs = new UserRecommendationInfo(
+      MomentRecommendationInfo momentRecs = new MomentRecommendationInfo(
         nodeInfo.getValue(),
         nodeInfo.getWeight(),
         topSocialProofs);
-      outputResults.add(userRecs);
+      outputResults.add(momentRecs);
     }
     Collections.reverse(outputResults);
     return outputResults;
