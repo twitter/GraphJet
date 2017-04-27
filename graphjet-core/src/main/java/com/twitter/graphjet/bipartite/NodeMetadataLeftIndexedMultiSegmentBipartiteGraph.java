@@ -67,6 +67,7 @@ public abstract class NodeMetadataLeftIndexedMultiSegmentBipartiteGraph
     long leftNode,
     long rightNode,
     byte edgeType,
+    long edgeMetadata,
     int[][] leftNodeMetadata,
     int[][] rightNodeMetadata
   ) {
@@ -78,7 +79,7 @@ public abstract class NodeMetadataLeftIndexedMultiSegmentBipartiteGraph
 
       Optimizer.submitGraphOptimizerJob(this, oldLiveSegment);
     }
-    getLiveSegment().addEdge(leftNode, rightNode, edgeType, leftNodeMetadata, rightNodeMetadata);
+    getLiveSegment().addEdge(leftNode, rightNode, edgeType, edgeMetadata, leftNodeMetadata, rightNodeMetadata);
     numEdgesInLiveSegment++;
 
     numEdgesSeenInAllHistoryCounter.incr();

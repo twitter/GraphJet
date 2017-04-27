@@ -91,6 +91,8 @@ public interface EdgePool {
       Random random,
       ReusableNodeRandomIntIterator reusableNodeRandomIntIterator);
 
+  void addEdge(int nodeA, int nodeB);
+
   /**
    * Adding a single edge is expected to be O(1) and ideally it should entail minimal memory
    * allocation to make as little garbage as possible. If the client tries to add more edges than
@@ -101,7 +103,7 @@ public interface EdgePool {
    * @param nodeA  is the node whose edges are indexed
    * @param nodeB  is the other side node
    */
-  void addEdge(int nodeA, int nodeB);
+  void addEdge(int nodeA, int nodeB, long metadata);
 
   /**
    * Edge removal is also expected to be O(1). For now, we assume that this operation is

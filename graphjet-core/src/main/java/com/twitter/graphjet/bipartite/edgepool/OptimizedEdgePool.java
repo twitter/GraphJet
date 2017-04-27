@@ -25,9 +25,11 @@ import org.slf4j.LoggerFactory;
 import com.twitter.graphjet.bipartite.api.ReusableNodeIntIterator;
 import com.twitter.graphjet.bipartite.api.ReusableNodeRandomIntIterator;
 import com.twitter.graphjet.hashing.BigIntArray;
+import com.twitter.graphjet.hashing.BigLongArray;
 import com.twitter.graphjet.hashing.IntToIntPairArrayIndexBasedMap;
 import com.twitter.graphjet.hashing.IntToIntPairHashMap;
 import com.twitter.graphjet.hashing.ShardedBigIntArray;
+import com.twitter.graphjet.hashing.ShardedBigLongArray;
 import com.twitter.graphjet.stats.StatsReceiver;
 
 import it.unimi.dsi.fastutil.ints.IntIterator;
@@ -47,6 +49,7 @@ import it.unimi.dsi.fastutil.ints.IntIterator;
 public class OptimizedEdgePool implements EdgePool {
   public static final class ReaderAccessibleInfo {
     protected final BigIntArray edges;
+    protected final BigLongArray metadata;
     // Each entry contains 2 ints for a node: position, degree
     protected final IntToIntPairHashMap nodeInfo;
 
@@ -58,8 +61,10 @@ public class OptimizedEdgePool implements EdgePool {
      */
     public ReaderAccessibleInfo(
       BigIntArray edges,
+      BigLongArray metadata,
       IntToIntPairHashMap nodeInfo) {
       this.edges = edges;
+      this.metadata = metadata;
       this.nodeInfo = nodeInfo;
     }
   }
@@ -117,9 +122,11 @@ public class OptimizedEdgePool implements EdgePool {
     }
 
     BigIntArray edges = new ShardedBigIntArray(maxNumEdges, maxDegree, 0, scopedStatsReceiver);
+    BigLongArray metadata = new ShardedBigLongArray(maxNumEdges, maxDegree, 0, scopedStatsReceiver);
 
     readerAccessibleInfo = new ReaderAccessibleInfo(
       edges,
+      metadata,
       intToIntPairHashMap
     );
 
@@ -186,6 +193,12 @@ public class OptimizedEdgePool implements EdgePool {
       + "OptimizedEdgePool");
   }
 
+  @Override
+  public void addEdge(int nodeA, int nodeB, long metadata) {
+    throw new UnsupportedOperationException("add a single edge one by one is not supported in "
+      + "OptimizedEdgePool");
+  }
+
   /**
    * Batch add edges in optimized segment.
    *
@@ -199,6 +212,27 @@ public class OptimizedEdgePool implements EdgePool {
     int position = getNodePosition(node);
 
     readerAccessibleInfo.edges.arrayCopy(
+      src,
+      srcPos,
+      position + POW_TABLE_30[pool],
+      length,
+      true /*updateStats*/
+    );
+  }
+
+  /**
+   * Batch add edge metadata in optimized segment.
+   *
+   * @param node the node id which the edge metadata are associated to
+   * @param pool the pool id which the edge metadata are associated to
+   * @param src  the source array
+   * @param srcPos the starting position in the source array
+   * @param length the number of edges to be copied
+   */
+  public void addEdgeMetadata(int node, int pool, long[] src, int srcPos, int length) {
+    int position = getNodePosition(node);
+
+    readerAccessibleInfo.metadata.arrayCopy(
       src,
       srcPos,
       position + POW_TABLE_30[pool],

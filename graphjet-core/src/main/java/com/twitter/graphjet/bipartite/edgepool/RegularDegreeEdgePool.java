@@ -24,10 +24,12 @@ import com.google.common.base.Preconditions;
 import com.twitter.graphjet.bipartite.api.ReusableNodeIntIterator;
 import com.twitter.graphjet.bipartite.api.ReusableNodeRandomIntIterator;
 import com.twitter.graphjet.hashing.BigIntArray;
+import com.twitter.graphjet.hashing.BigLongArray;
 import com.twitter.graphjet.hashing.IntToIntPairArrayIndexBasedMap;
 import com.twitter.graphjet.hashing.IntToIntPairConcurrentHashMap;
 import com.twitter.graphjet.hashing.IntToIntPairHashMap;
 import com.twitter.graphjet.hashing.ShardedBigIntArray;
+import com.twitter.graphjet.hashing.ShardedBigLongArray;
 import com.twitter.graphjet.stats.Counter;
 import com.twitter.graphjet.stats.StatsReceiver;
 
@@ -103,6 +105,7 @@ public class RegularDegreeEdgePool implements EdgePool {
    */
   public static final class ReaderAccessibleInfo {
     public final BigIntArray edges;
+    public final BigLongArray edgeMetadata;
     // Each entry contains 2 ints for a node: position, degree
     protected final IntToIntPairHashMap nodeInfo;
 
@@ -114,8 +117,10 @@ public class RegularDegreeEdgePool implements EdgePool {
      */
     public ReaderAccessibleInfo(
         BigIntArray edges,
+        BigLongArray edgeMetadata,
         IntToIntPairHashMap nodeInfo) {
       this.edges = edges;
+      this.edgeMetadata = edgeMetadata;
       this.nodeInfo = nodeInfo;
     }
   }
@@ -165,6 +170,8 @@ public class RegularDegreeEdgePool implements EdgePool {
     readerAccessibleInfo = new ReaderAccessibleInfo(
         // We force each node's edges to fit within a shard
         new ShardedBigIntArray(expectedNumNodes, maxDegree, 0, scopedStatsReceiver),
+        // Similarly, we force each node's edge data to fit within a shard
+        new ShardedBigLongArray(expectedNumNodes, maxDegree, 0, scopedStatsReceiver),
         intToIntPairHashMap
     );
     currentPositionOffset = 0;
@@ -271,6 +278,11 @@ public class RegularDegreeEdgePool implements EdgePool {
 
   @Override
   public void addEdge(int nodeA, int nodeB) {
+    addEdge(nodeA, nodeB, 0L);
+  }
+
+  @Override
+  public void addEdge(int nodeA, int nodeB, long metadata) {
     long nodeAInfo;
     // Add the node if it doesn't exist
     if (readerAccessibleInfo.nodeInfo.getBothValues(nodeA) == -1L) {
@@ -283,7 +295,9 @@ public class RegularDegreeEdgePool implements EdgePool {
     Preconditions.checkArgument(nodeADegree < maxDegree,
         "Exceeded the maximum degree (" + maxDegree + ") for node " + nodeA);
     int nodeAPosition = getNodePositionFromNodeInfo(nodeAInfo);
-    readerAccessibleInfo.edges.addEntry(nodeB, nodeAPosition + nodeADegree);
+    int position = nodeAPosition + nodeADegree;
+    readerAccessibleInfo.edges.addEntry(nodeB, position);
+    readerAccessibleInfo.edgeMetadata.addEntry(metadata, position);
     // This is to guarantee that if a reader sees the updated degree later, they can find the edge
     currentNumEdgesStored++;
     // The order is important -- the updated degree is the ONLY way for a reader for going to the
@@ -311,6 +325,11 @@ public class RegularDegreeEdgePool implements EdgePool {
 
   public int[] getShard(int node) {
     return ((ShardedBigIntArray) readerAccessibleInfo.edges).
+      getShard(readerAccessibleInfo.nodeInfo.getFirstValue(node));
+  }
+
+  public long[] getMetadataShard(int node) {
+    return ((ShardedBigLongArray) readerAccessibleInfo.edgeMetadata).
       getShard(readerAccessibleInfo.nodeInfo.getFirstValue(node));
   }
 

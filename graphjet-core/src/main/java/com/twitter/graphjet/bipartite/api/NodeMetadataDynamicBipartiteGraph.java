@@ -58,6 +58,7 @@ public interface NodeMetadataDynamicBipartiteGraph {
     long leftNode,
     long rightNode,
     byte edgeType,
+    long edgeMetadata,
     int[][] leftNodeMetadata,
     int[][] rightNodeMetadata
   );

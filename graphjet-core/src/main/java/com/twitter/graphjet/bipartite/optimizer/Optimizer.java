@@ -113,11 +113,15 @@ public final class Optimizer {
 
       for (int j = 0; j <= edgePoolNumber; j++) {
         int[] shard = regularDegreeEdgePools[j].getShard(i);
+        long[] metadataShard = regularDegreeEdgePools[j].getMetadataShard(i);
         int shardOffset = regularDegreeEdgePools[j].getShardOffset(i);
         int nodeDegreeInPool = regularDegreeEdgePools[j].getNodeDegree(i);
 
         optimizedEdgePool.addEdges(
           i, j, shard, shardOffset, nodeDegreeInPool
+        );
+        optimizedEdgePool.addEdgeMetadata(
+          i, j, metadataShard, shardOffset, nodeDegreeInPool
         );
       }
     }
