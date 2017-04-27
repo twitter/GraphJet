@@ -17,6 +17,7 @@
 
 package com.twitter.graphjet.bipartite.edgepool;
 
+import com.twitter.graphjet.bipartite.api.EdgeMetadataIntIterator;
 import com.twitter.graphjet.bipartite.api.ReadOnlyIntIterator;
 import com.twitter.graphjet.bipartite.api.ReusableNodeIntIterator;
 
@@ -25,7 +26,7 @@ import com.twitter.graphjet.bipartite.api.ReusableNodeIntIterator;
  * meant to be reusable via the resetForNode method.
  */
 public class PowerLawDegreeEdgeIterator extends ReadOnlyIntIterator
-                                        implements ReusableNodeIntIterator {
+                                        implements EdgeMetadataIntIterator, ReusableNodeIntIterator {
   protected final PowerLawDegreeEdgePool powerLawDegreeEdgePool;
   protected RegularDegreeEdgeIterator[] regularDegreeEdgeIterators;
   protected int node;
@@ -92,6 +93,10 @@ public class PowerLawDegreeEdgeIterator extends ReadOnlyIntIterator
     currentEdge++;
     edgeInCurrentPool++;
     return currentRegularDegreeEdgeIterator.nextInt();
+  }
+
+  public long currentMetadata() {
+    return currentRegularDegreeEdgeIterator.currentMetadata();
   }
 
   @Override

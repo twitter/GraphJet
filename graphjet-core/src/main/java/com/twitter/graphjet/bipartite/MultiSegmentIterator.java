@@ -89,6 +89,8 @@ public abstract class MultiSegmentIterator<T extends LeftIndexedBipartiteGraphSe
     return nextLong();
   }
 
+  public long currentMetadata() { return currentSegmentIterator.currentMetadata(); }
+
   public void remove() {
     currentSegmentIterator.remove();
   }

@@ -34,6 +34,11 @@ public class MockEdgeIterator implements EdgeIterator {
   }
 
   @Override
+  public long currentMetadata() {
+    return 0L;
+  }
+
+  @Override
   public long nextLong() {
     return edgeIterator.nextLong();
   }

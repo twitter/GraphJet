@@ -144,6 +144,9 @@ public class MultiSegmentRandomIterator<T extends LeftIndexedBipartiteGraphSegme
   }
 
   @Override
+  public long currentMetadata() { throw new UnsupportedOperationException("Jerry: Not Implemented yet."); }
+
+  @Override
   public boolean hasNext() {
     return numSamplesReturned < numSamplesNeeded;
   }
