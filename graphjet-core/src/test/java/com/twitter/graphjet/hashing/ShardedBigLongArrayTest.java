@@ -17,7 +17,7 @@ public class ShardedBigLongArrayTest {
     int maxNumNodes = 1 << 16;
     int shardSize = 1 << 10;
     long nullEntry = -1L;
-    ShardedBigLongArray shardedBigLongArray = new ShardedBigLongArray(
+    BigLongArray shardedBigLongArray = new ShardedBigLongArray(
       maxNumNodes / 16, shardSize, nullEntry, new NullStatsReceiver());
 
     for (int i = 0; i < maxNumNodes; i++) {
@@ -39,7 +39,7 @@ public class ShardedBigLongArrayTest {
     int shardSize = 1 << 10;
     long nullEntry = -1L;
     List<Integer> indexList = Lists.newArrayListWithCapacity(maxNumNodes);
-    ShardedBigLongArray shardedBigLongArray = new ShardedBigLongArray(
+    BigLongArray shardedBigLongArray = new ShardedBigLongArray(
       maxNumNodes / 16, shardSize, nullEntry, new NullStatsReceiver());
 
     for (int i = 0; i < maxNumNodes; i++) {
@@ -69,7 +69,7 @@ public class ShardedBigLongArrayTest {
     int shardSize = 1 << 10;
     long nullEntry = -1L;
     List<Integer> indexList = Lists.newArrayListWithCapacity(maxNumNodes);
-    ShardedBigLongArray shardedBigLongArray = new ShardedBigLongArray(
+    BigLongArray shardedBigLongArray = new ShardedBigLongArray(
       maxNumNodes / 16, shardSize, nullEntry, new NullStatsReceiver());
 
     for (int i = 0; i < maxNumNodes; i++) {
