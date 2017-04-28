@@ -16,6 +16,13 @@
 
 package com.twitter.graphjet.algorithms.counting;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.twitter.graphjet.algorithms.NodeInfo;
 import com.twitter.graphjet.algorithms.RecommendationAlgorithm;
 import com.twitter.graphjet.algorithms.RecommendationRequest;
@@ -24,13 +31,12 @@ import com.twitter.graphjet.bipartite.LeftIndexedMultiSegmentBipartiteGraph;
 import com.twitter.graphjet.bipartite.api.EdgeIterator;
 import com.twitter.graphjet.stats.Counter;
 import com.twitter.graphjet.stats.StatsReceiver;
-import it.unimi.dsi.fastutil.longs.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import it.unimi.dsi.fastutil.longs.Long2ByteArrayMap;
+import it.unimi.dsi.fastutil.longs.Long2ByteMap;
+import it.unimi.dsi.fastutil.longs.Long2DoubleMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 
 /**
  * Generate recommended RHS nodes by calculating aggregated weights.
@@ -86,7 +92,8 @@ public abstract class TopSecondDegreeByCount<Request extends TopSecondDegreeByCo
    * This method update nodes in {@link TopSecondDegreeByCount#visitedRightNodes}.
    * @param leftNode                is the LHS node from which traversal initialized
    * @param rightNode               is the RHS node at which traversal arrived
-   * @param edgeType                is the edge from which LHS and RHS nodes are connected
+   * @param edgeType                is the edge type from which LHS and RHS nodes are connected
+   * @param edgeMetadata            is the edge metadata from which LHS and RHS nodes are connected
    * @param weight                  is the weight contributed to a RHS node in this traversal
    * @param edgeIterator            is the iterator for traversing edges from LHS node
    */
@@ -94,6 +101,7 @@ public abstract class TopSecondDegreeByCount<Request extends TopSecondDegreeByCo
     long leftNode,
     long rightNode,
     byte edgeType,
+    long edgeMetadata,
     double weight,
     EdgeIterator edgeIterator,
     int maxSocialProofTypeSize);
@@ -147,6 +155,9 @@ public abstract class TopSecondDegreeByCount<Request extends TopSecondDegreeByCo
       while (edgeIterator.hasNext() && numEdgesPerNode++ < RecommendationRequest.MAX_EDGES_PER_NODE) {
         long rightNode = edgeIterator.nextLong();
         byte edgeType = edgeIterator.currentEdgeType();
+        long edgeMetadata = edgeIterator.currentMetadata();
+
+        LOG.info("rightNode" + rightNode + " metadata " + edgeMetadata);
 
         boolean hasSeenRightNodeFromEdge =
           seenEdgesPerNode.containsKey(rightNode) && seenEdgesPerNode.get(rightNode) == edgeType;
@@ -157,6 +168,7 @@ public abstract class TopSecondDegreeByCount<Request extends TopSecondDegreeByCo
             leftNode,
             rightNode,
             edgeType,
+            edgeMetadata,
             weight,
             edgeIterator,
             request.getMaxSocialProofTypeSize());

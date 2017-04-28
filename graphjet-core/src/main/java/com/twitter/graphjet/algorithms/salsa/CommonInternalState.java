@@ -130,8 +130,9 @@ public abstract class CommonInternalState<T extends LeftIndexedBipartiteGraph> {
       long leftNode,
       long rightNode,
       byte edgeType,
+      long edgeMetadata,
       double weight) {
-    return nodeVisitor.visitRightNode(leftNode, rightNode, edgeType, weight);
+    return nodeVisitor.visitRightNode(leftNode, rightNode, edgeType, edgeMetadata, weight);
   }
 
   /**

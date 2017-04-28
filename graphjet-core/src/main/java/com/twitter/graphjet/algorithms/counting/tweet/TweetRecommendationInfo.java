@@ -18,6 +18,7 @@ package com.twitter.graphjet.algorithms.counting.tweet;
 
 import java.util.Map;
 
+import com.twitter.graphjet.algorithms.Pair;
 import com.twitter.graphjet.algorithms.RecommendationType;
 import com.twitter.graphjet.algorithms.counting.TopSecondDegreeByCountRecommendationInfo;
 
@@ -27,7 +28,7 @@ public class TweetRecommendationInfo extends TopSecondDegreeByCountRecommendatio
   public TweetRecommendationInfo(
       long recommendation,
       double weight,
-      Map<Byte, LongList> socialProof
+      Map<Byte, Pair<LongList, LongList>> socialProof
   ) {
     super(recommendation, weight, socialProof);
     super.recommendationType = RecommendationType.TWEET;

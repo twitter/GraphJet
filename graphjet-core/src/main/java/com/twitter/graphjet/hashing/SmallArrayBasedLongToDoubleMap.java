@@ -24,18 +24,19 @@ import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import it.unimi.dsi.fastutil.longs.LongSet;
 
 /**
- * This class provides a map from long to double. It uses two primitive arrays to store long keys
- * and double values separately. It only offers apis to get all keys or values at once, and it does
- * not support getting a specific key/value pair. The main purpose of this implementation is to
- * store a very small number of pairs. When a key/value pair is inserted into the map, it scans
- * through the keys array linearly and makes a decision whether to append the pair or not. When the
- * size of the map is equal to ADD_KEYS_TO_SET_THRESHOLD, it adds all keys to a set and starts to
- * use the set for dedupping.
+ * This class provides a map from long to double. It uses three primitive arrays to store long keys,
+ * double values and long metadata. It only offers apis to get all keys or values or metadata at
+ * once, and it does not support getting a specific key/value pair. The main purpose of this
+ * implementation is to store a very small number of pairs. When a key/value pair is inserted into
+ * the map, it scans through the keys array linearly and makes a decision whether to append the pair
+ * or not. When the size of the map is equal to ADD_KEYS_TO_SET_THRESHOLD, it adds all keys to a set
+ * and starts to use the set for dedupping.
  */
 public class SmallArrayBasedLongToDoubleMap {
   private static final int ADD_KEYS_TO_SET_THRESHOLD = 8;
   private long[] keys;
   private double[] values;
+  private long[] metadataArray;
   private int capacity;
   private int size;
   private LongSet keySet;
@@ -48,6 +49,7 @@ public class SmallArrayBasedLongToDoubleMap {
     this.size = 0;
     this.keys = new long[capacity];
     this.values = new double[capacity];
+    this.metadataArray = new long[capacity];
     this.keySet = null;
   }
 
@@ -70,6 +72,15 @@ public class SmallArrayBasedLongToDoubleMap {
   }
 
   /**
+   * Return the underlying primitive array of metadata.
+   *
+   * @return the underlying primitive array of metadata.
+   */
+  public long[] metadata() {
+    return this.metadataArray;
+  }
+
+  /**
    * Return the size of the map.
    *
    * @return the size of the map.
@@ -83,9 +94,10 @@ public class SmallArrayBasedLongToDoubleMap {
    *
    * @param key the key.
    * @param value the value.
+   * @param metadata the metadata.
    * @return true if no value present for the giving key, and false otherwise.
    */
-  public boolean put(long key, double value) {
+  public boolean put(long key, double value, long metadata) {
     if (size < ADD_KEYS_TO_SET_THRESHOLD) {
       for (int i = 0; i < size; i++) {
         if (key == keys[i]) {
@@ -110,6 +122,7 @@ public class SmallArrayBasedLongToDoubleMap {
 
     keys[size] = key;
     values[size] = value;
+    metadataArray[size] = metadata;
     size++;
 
     return true;
@@ -142,10 +155,13 @@ public class SmallArrayBasedLongToDoubleMap {
       public void swap(int i1, int i2) {
         long key1 = keys[i1];
         double value1 = values[i1];
+        long metadata1 = metadataArray[i1];
         keys[i1] = keys[i2];
         values[i1] = values[i2];
+        metadataArray[i1] = metadataArray[i2];
         keys[i2] = key1;
         values[i2] = value1;
+        metadataArray[i2] = metadata1;
       }
     });
   }
@@ -193,7 +209,7 @@ public class SmallArrayBasedLongToDoubleMap {
   }
 
   /**
-   * Copy keys and values to new arrays.
+   * Copy keys, values and metadataArray to new arrays.
    *
    * @param newLength the length of new arrays.
    * @param length the number of entries to be copied to new arrays.
@@ -201,9 +217,12 @@ public class SmallArrayBasedLongToDoubleMap {
   private void copy(int newLength, int length) {
     long[] newKeys = new long[newLength];
     double[] newValues = new double[newLength];
+    long[] newMetadataArray = new long[newLength];
     System.arraycopy(keys, 0, newKeys, 0, length);
     System.arraycopy(values, 0, newValues, 0, length);
+    System.arraycopy(metadataArray, 0, newMetadataArray, 0, length);
     keys = newKeys;
     values = newValues;
+    metadataArray = newMetadataArray;
   }
 }

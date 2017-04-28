@@ -59,7 +59,7 @@ public final class TopSecondDegreeByCountUserRecsGenerator {
     while (!topNodes.isEmpty()) {
       NodeInfo nodeInfo = topNodes.poll();
 
-      Map<Byte, LongList> topSocialProofs = GeneratorHelper.pickTopSocialProofs(
+      Map<Byte, Pair<LongList, LongList>> topSocialProofs = GeneratorHelper.pickTopSocialProofs(
         nodeInfo.getSocialProofs(),
         maxNumSocialProofs);
 

@@ -82,7 +82,8 @@ public class LeftSalsaIteration extends SingleSalsaIteration {
             salsaInternalState.addNodeToCurrentRightNodes(rightNode);
             int numVisits =
                 salsaInternalState.visitRightNode(nodeVisitor, leftNode,
-                    rightNode, sampledRightNodes.currentEdgeType(), leftNodeDegree);
+                  rightNode, sampledRightNodes.currentEdgeType(),
+                  sampledRightNodes.currentMetadata(), leftNodeDegree);
             salsaInternalState.getSalsaStats().updateVisitStatsPerRightNode(numVisits);
             numEdgesTraversed++;
           }

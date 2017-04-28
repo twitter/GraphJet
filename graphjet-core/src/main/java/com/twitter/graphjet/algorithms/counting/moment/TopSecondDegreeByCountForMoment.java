@@ -56,6 +56,7 @@ public class TopSecondDegreeByCountForMoment extends
     long leftNode,
     long rightNode,
     byte edgeType,
+    long edgeMetadata,
     double weight,
     EdgeIterator edgeIterator,
     int maxSocialProofTypeSize) {
@@ -68,7 +69,7 @@ public class TopSecondDegreeByCountForMoment extends
       nodeInfo = super.visitedRightNodes.get(rightNode);
     }
     nodeInfo.addToWeight(weight);
-    nodeInfo.addToSocialProof(leftNode, edgeType, weight);
+    nodeInfo.addToSocialProof(leftNode, edgeType, edgeMetadata, weight);
   }
 
   @Override

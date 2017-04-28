@@ -45,10 +45,17 @@ public class SalsaNodeVisitor {
      * @param rightNode  is the right node being visited
      * @param edgeType   is the edge type between leftNode and rightNode, e.g. click, favorite,
      *                   retweet, reply
+     * @param metadata   is the edge metadata between leftNode and rightNode
      * @param weight     is the weight of the edge
      * @return the number of visits to this node so far, including the current one
      */
-    public abstract int visitRightNode(long leftNode, long rightNode, byte edgeType, double weight);
+    public abstract int visitRightNode(
+      long leftNode,
+      long rightNode,
+      byte edgeType,
+      long metadata,
+      double weight
+    );
 
     protected int simpleRightNodeVisitor(long rightNode) {
       int numVisits = 1;
@@ -82,7 +89,13 @@ public class SalsaNodeVisitor {
     }
 
     @Override
-    public int visitRightNode(long leftNode, long rightNode, byte edgeType, double weight) {
+    public int visitRightNode(
+      long leftNode,
+      long rightNode,
+      byte edgeType,
+      long metadata,
+      double weight
+    ) {
       return simpleRightNodeVisitor(rightNode);
     }
   }
@@ -96,7 +109,13 @@ public class SalsaNodeVisitor {
     }
 
     @Override
-    public int visitRightNode(long leftNode, long rightNode, byte edgeType, double weight) {
+    public int visitRightNode(
+      long leftNode,
+      long rightNode,
+      byte edgeType,
+      long metadata,
+      double weight
+    ) {
       int numVisits = 1;
       if (visitedRightNodes.containsKey(rightNode)) {
         visitedRightNodes.get(rightNode).addToWeight(weight);
@@ -124,10 +143,16 @@ public class SalsaNodeVisitor {
     }
 
     @Override
-    public int visitRightNode(long leftNode, long rightNode, byte edgeType, double weight) {
+    public int visitRightNode(
+      long leftNode,
+      long rightNode,
+      byte edgeType,
+      long metadata,
+      double weight
+    ) {
       int numVisits = simpleRightNodeVisitor(rightNode);
       if (leftNode != salsaRequest.getQueryNode()) {
-        visitedRightNodes.get(rightNode).addToSocialProof(leftNode, edgeType, weight);
+        visitedRightNodes.get(rightNode).addToSocialProof(leftNode, edgeType, metadata, weight);
       }
       return numVisits;
     }
@@ -144,10 +169,16 @@ public class SalsaNodeVisitor {
     }
 
     @Override
-    public int visitRightNode(long leftNode, long rightNode, byte edgeType, double weight) {
-      int numVisits = super.visitRightNode(leftNode, rightNode, edgeType, weight);
+    public int visitRightNode(
+      long leftNode,
+      long rightNode,
+      byte edgeType,
+      long metadata,
+      double weight
+    ) {
+      int numVisits = super.visitRightNode(leftNode, rightNode, edgeType, metadata, weight);
       if (leftNode != salsaRequest.getQueryNode()) {
-        visitedRightNodes.get(rightNode).addToSocialProof(leftNode, edgeType, weight);
+        visitedRightNodes.get(rightNode).addToSocialProof(leftNode, edgeType, metadata, weight);
       }
       return numVisits;
     }

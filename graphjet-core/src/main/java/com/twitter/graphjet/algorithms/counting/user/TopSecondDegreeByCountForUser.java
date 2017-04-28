@@ -16,6 +16,8 @@
 
 package com.twitter.graphjet.algorithms.counting.user;
 
+import java.util.List;
+
 import com.twitter.graphjet.algorithms.NodeInfo;
 import com.twitter.graphjet.algorithms.RecommendationInfo;
 import com.twitter.graphjet.algorithms.counting.TopSecondDegreeByCount;
@@ -24,8 +26,6 @@ import com.twitter.graphjet.bipartite.LeftIndexedPowerLawMultiSegmentBipartiteGr
 import com.twitter.graphjet.bipartite.api.EdgeIterator;
 import com.twitter.graphjet.bipartite.api.TimestampEdgeIterator;
 import com.twitter.graphjet.stats.StatsReceiver;
-
-import java.util.List;
 
 public class TopSecondDegreeByCountForUser extends
   TopSecondDegreeByCount<TopSecondDegreeByCountRequestForUser, TopSecondDegreeByCountResponse> {
@@ -89,6 +89,7 @@ public class TopSecondDegreeByCountForUser extends
     long leftNode,
     long rightNode,
     byte edgeType,
+    long edgeMetadata,
     double weight,
     EdgeIterator edgeIterator,
     int maxSocialProofTypeSize) {
@@ -101,7 +102,7 @@ public class TopSecondDegreeByCountForUser extends
       nodeInfo = super.visitedRightNodes.get(rightNode);
     }
     nodeInfo.addToWeight(weight);
-    nodeInfo.addToSocialProof(leftNode, edgeType, weight);
+    nodeInfo.addToSocialProof(leftNode, edgeType, edgeMetadata, weight);
   }
 
   @Override

@@ -45,6 +45,7 @@ public class SalsaSubgraphInternalState extends CommonInternalState<LeftIndexedB
   private int[] subgraphLeftNodeDegree;
   private final Long2DoubleMap subgraphRightNodeDegreeReciprocal;
   private long[] subgraphEdgesArray;
+  private long[] subgraphEdgeMetadataArray;
   private byte[] subgraphEdgeTypesArray;
   private int numLeftNodesAdded;
   private int numEdgesAdded;
@@ -68,6 +69,7 @@ public class SalsaSubgraphInternalState extends CommonInternalState<LeftIndexedB
     this.subgraphLeftNodes = new long[expectedNumLeftNodes];
     this.subgraphLeftNodeDegree = new int[expectedNumLeftNodes];
     this.subgraphEdgesArray = new long[expectedNodesToHit];
+    this.subgraphEdgeMetadataArray = new long[expectedNodesToHit];
     this.subgraphEdgeTypesArray = new byte[expectedNodesToHit];
     this.subgraphRightNodeDegreeReciprocal = new Long2DoubleOpenHashMap(expectedNodesToHit);
   }
@@ -83,6 +85,7 @@ public class SalsaSubgraphInternalState extends CommonInternalState<LeftIndexedB
     // Need to clear only if the array is NOT resized
     if (!resizeSubgraphEdgesArray(incomingSalsaRequest.getNumRandomWalks() + seedSetSize)) {
       Arrays.fill(subgraphEdgesArray, 0);
+      Arrays.fill(subgraphEdgeMetadataArray, 0);
       Arrays.fill(subgraphEdgeTypesArray, (byte) 0);
     }
     LOG.info("SALSA: subgraph edges array size = " + subgraphEdgesArray.length);
@@ -99,6 +102,7 @@ public class SalsaSubgraphInternalState extends CommonInternalState<LeftIndexedB
   private boolean resizeSubgraphEdgesArray(int numRandomWalksToRun) {
     if (numRandomWalksToRun > subgraphEdgesArray.length) {
       subgraphEdgesArray = new long[numRandomWalksToRun];
+      subgraphEdgeMetadataArray = new long[numRandomWalksToRun];
       subgraphEdgeTypesArray = new byte[numRandomWalksToRun];
       return true;
     }
@@ -135,12 +139,19 @@ public class SalsaSubgraphInternalState extends CommonInternalState<LeftIndexedB
         while (sampledRightNodes.hasNext()) {
           long rightNode = sampledRightNodes.nextLong();
           subgraphEdgesArray[numEdgesAdded] = rightNode;
+          subgraphEdgeMetadataArray[numEdgesAdded] = sampledRightNodes.currentMetadata();
           subgraphEdgeTypesArray[numEdgesAdded] = sampledRightNodes.currentEdgeType();
           numEdgesAdded++;
           subgraphRightNodeDegreeReciprocal.put(
               rightNode, subgraphRightNodeDegreeReciprocal.get(rightNode) + 1);
-          int numVisits = visitRightNode(nodeVisitor, leftNode,
-              rightNode, sampledRightNodes.currentEdgeType(), 1.0);
+          int numVisits = visitRightNode(
+            nodeVisitor,
+            leftNode,
+            rightNode,
+            sampledRightNodes.currentEdgeType(),
+            sampledRightNodes.currentMetadata(),
+            1.0
+          );
           salsaStats.updateVisitStatsPerRightNode(numVisits);
           degree++;
         }
@@ -178,9 +189,17 @@ public class SalsaSubgraphInternalState extends CommonInternalState<LeftIndexedB
       weightResetToQueryNode += currentLeftNodes.get(leftNode) * salsaRequest.getResetProbability();
       for (int j = 0; j < degree; j++) {
         long rightNode = subgraphEdgesArray[currentEdgeArrayIndex];
+        long edgeMetadata = subgraphEdgeMetadataArray[currentEdgeArrayIndex];
         byte edgeType = subgraphEdgeTypesArray[currentEdgeArrayIndex];
         currentEdgeArrayIndex++;
-        int numVisits = visitRightNode(nodeVisitor, leftNode, rightNode, edgeType, weightPerEdge);
+        int numVisits = visitRightNode(
+          nodeVisitor,
+          leftNode,
+          rightNode,
+          edgeType,
+          edgeMetadata,
+          weightPerEdge
+        );
         salsaStats.updateVisitStatsPerRightNode(numVisits);
       }
     }

@@ -16,18 +16,20 @@
 
 package com.twitter.graphjet.algorithms.counting;
 
-import com.twitter.graphjet.algorithms.NodeInfo;
-import com.twitter.graphjet.algorithms.RecommendationRequest;
-import com.twitter.graphjet.algorithms.RecommendationType;
-import com.twitter.graphjet.algorithms.counting.tweet.TopSecondDegreeByCountRequestForTweet;
-import com.twitter.graphjet.hashing.SmallArrayBasedLongToDoubleMap;
-import it.unimi.dsi.fastutil.longs.LongArrayList;
-import it.unimi.dsi.fastutil.longs.LongList;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
+
+import com.twitter.graphjet.algorithms.NodeInfo;
+import com.twitter.graphjet.algorithms.Pair;
+import com.twitter.graphjet.algorithms.RecommendationRequest;
+import com.twitter.graphjet.algorithms.RecommendationType;
+import com.twitter.graphjet.algorithms.counting.tweet.TopSecondDegreeByCountRequestForTweet;
+import com.twitter.graphjet.hashing.SmallArrayBasedLongToDoubleMap;
+
+import it.unimi.dsi.fastutil.longs.LongArrayList;
+import it.unimi.dsi.fastutil.longs.LongList;
 
 /**
  * Shared utility functions among RecsGenerators.
@@ -40,11 +42,11 @@ public final class GeneratorHelper {
   /**
    * Pick the top social proofs for each RHS node
    */
-  public static Map<Byte, LongList> pickTopSocialProofs(
+  public static Map<Byte, Pair<LongList, LongList>> pickTopSocialProofs(
     SmallArrayBasedLongToDoubleMap[] socialProofs,
     int maxSocialProofSize) {
 
-    Map<Byte, LongList> results = new HashMap<>();
+    Map<Byte, Pair<LongList, LongList>> results = new HashMap<>();
 
     for (int i = 0; i < socialProofs.length; i++) {
       SmallArrayBasedLongToDoubleMap socialProof = socialProofs[i];
@@ -53,7 +55,10 @@ public final class GeneratorHelper {
           socialProof.sort();
         }
         socialProof.trim(maxSocialProofSize);
-        results.put((byte)i, new LongArrayList(socialProof.keys()));
+        results.put((byte)i, new Pair<LongList, LongList>(
+          new LongArrayList(socialProof.keys()),
+          new LongArrayList(socialProof.metadata())
+        ));
       }
     }
 

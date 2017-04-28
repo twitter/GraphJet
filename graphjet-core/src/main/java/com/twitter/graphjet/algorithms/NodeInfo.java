@@ -100,15 +100,16 @@ public class NodeInfo implements Comparable<NodeInfo> {
    *
    * @param node        is the node to attempt to add
    * @param edgeType    is the edge type between the social proof and the recommendation
+   * @param edgeMetadata is the edge metadata between the social proof and the recommendation
    * @param nodeWeight  is the nodeWeight of the node
    * @return true of the node was added, false if not
    */
-  public boolean addToSocialProof(long node, byte edgeType, double nodeWeight) {
+  public boolean addToSocialProof(long node, byte edgeType, long edgeMetadata, double nodeWeight) {
     if (socialProofs[edgeType] == null) {
       socialProofs[edgeType] = new SmallArrayBasedLongToDoubleMap();
     }
 
-    socialProofs[edgeType].put(node, nodeWeight);
+    socialProofs[edgeType].put(node, nodeWeight, edgeMetadata);
     return true;
   }
 
