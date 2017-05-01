@@ -157,7 +157,7 @@ public abstract class TopSecondDegreeByCount<Request extends TopSecondDegreeByCo
         byte edgeType = edgeIterator.currentEdgeType();
         long edgeMetadata = edgeIterator.currentMetadata();
 
-        LOG.info("rightNode" + rightNode + " metadata " + edgeMetadata);
+        //LOG.info("rightNode" + rightNode + " metadata " + edgeMetadata);
 
         boolean hasSeenRightNodeFromEdge =
           seenEdgesPerNode.containsKey(rightNode) && seenEdgesPerNode.get(rightNode) == edgeType;
