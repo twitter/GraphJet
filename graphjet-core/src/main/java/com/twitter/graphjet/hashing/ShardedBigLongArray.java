@@ -79,7 +79,7 @@ public class ShardedBigLongArray implements BigLongArray {
     }
   }
 
-  // Making the int array preferred size be 256KB ~ size of L2 cache
+  // Making the long array preferred size be 512KB ~ 2 * size of L2 cache
   public static final int PREFERRED_EDGES_PER_SHARD = 1 << 16;
   private static final double SHARD_GROWTH_FACTOR = 1.1;
 
