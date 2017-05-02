@@ -21,8 +21,6 @@ import java.util.Arrays;
 
 import com.google.common.base.Preconditions;
 
-import org.slf4j.LoggerFactory;
-
 import com.twitter.graphjet.bipartite.api.ReusableEdgeIntIterator;
 import com.twitter.graphjet.stats.Counter;
 import com.twitter.graphjet.stats.StatsReceiver;
@@ -116,8 +114,6 @@ public class ShardedBigIntArray implements BigIntArray {
   // Making the int array preferred size be 256KB ~ size of L2 cache
   public static final int PREFERRED_EDGES_PER_SHARD = 1 << 16;
   private static final double SHARD_GROWTH_FACTOR = 1.1;
-
-  protected static final org.slf4j.Logger LOG = LoggerFactory.getLogger("graph");
 
   // This is is the only reader-accessible data
   protected ReaderAccessibleInfo readerAccessibleInfo;
@@ -349,7 +345,7 @@ public class ShardedBigIntArray implements BigIntArray {
 
   @Override
   public IntIterator getMetadata(int position, ReusableEdgeIntIterator intIterator) {
-    return intIterator.resetForNode(position);
+    return intIterator.resetForEdge(position);
   }
 
   // this function is used only in optimizer
