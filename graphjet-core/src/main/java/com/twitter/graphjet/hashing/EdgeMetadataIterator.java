@@ -31,14 +31,14 @@ public class EdgeMetadataIterator extends ReadOnlyIntIterator
   }
 
   /**
-   * Resets the iterator to return edges of a node with this information. Note that calling this
-   * method resets the position of the iterator to the first edge of the node.
+   * Resets the iterator to return ints edge metadata of the input edge. Note that calling this
+   * method resets the position of the iterator to the first edge metadata of the edge.
    *
    * @param position is the position that this iterator resets to
    * @return the iterator itself for ease of use
    */
   @Override
-  public EdgeMetadataIterator resetForNode(int position) {
+  public EdgeMetadataIterator resetForEdge(int position) {
     startIndex = position * (degree + 1) + 1;
     currentEdge = 0;
     return this;
