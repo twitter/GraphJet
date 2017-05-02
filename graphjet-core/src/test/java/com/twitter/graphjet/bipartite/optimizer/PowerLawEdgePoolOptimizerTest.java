@@ -36,7 +36,7 @@ public class PowerLawEdgePoolOptimizerTest {
     PowerLawDegreeEdgePool powerLawDegreeEdgePool =
       new PowerLawDegreeEdgePool(maxNumNodes, maxDegree, 2.0, new NullStatsReceiver());
 
-    PowerLawDegreeEdgePoolTest.addEdgesWithMetadataToPool(powerLawDegreeEdgePool);
+    PowerLawDegreeEdgePoolTest.addEdgesToPool(powerLawDegreeEdgePool);
 
     EdgePool optimizedPool = Optimizer.optimizePowerLawDegreeEdgePool(powerLawDegreeEdgePool);
     assertEquals(new IntArrayList(new int[]{11, 12, 13, 14, 15, 16, 17}),

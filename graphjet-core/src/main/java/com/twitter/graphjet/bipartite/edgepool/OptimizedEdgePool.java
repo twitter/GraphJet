@@ -192,12 +192,6 @@ public class OptimizedEdgePool implements EdgePool {
       + "OptimizedEdgePool");
   }
 
-  @Override
-  public void addEdge(int nodeA, int nodeB, int[] metadata) {
-    throw new UnsupportedOperationException("add a single edge one by one is not supported in "
-      + "OptimizedEdgePool");
-  }
-
   /**
    * Batch add edges in optimized segment.
    *

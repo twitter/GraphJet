@@ -277,11 +277,6 @@ public class RegularDegreeEdgePool implements EdgePool {
 
   @Override
   public void addEdge(int nodeA, int nodeB) {
-    addEdge(nodeA, nodeB, null);
-  }
-
-  @Override
-  public void addEdge(int nodeA, int nodeB, int[] metadata) {
     long nodeAInfo;
     // Add the node if it doesn't exist
     if (readerAccessibleInfo.nodeInfo.getBothValues(nodeA) == -1L) {
@@ -294,7 +289,7 @@ public class RegularDegreeEdgePool implements EdgePool {
     Preconditions.checkArgument(nodeADegree < maxDegree,
         "Exceeded the maximum degree (" + maxDegree + ") for node " + nodeA);
     int nodeAPosition = getNodePositionFromNodeInfo(nodeAInfo);
-    readerAccessibleInfo.edges.addEntry(nodeB, nodeAPosition + nodeADegree, metadata);
+    readerAccessibleInfo.edges.addEntry(nodeB, nodeAPosition + nodeADegree);
     // This is to guarantee that if a reader sees the updated degree later, they can find the edge
     currentNumEdgesStored++;
     // The order is important -- the updated degree is the ONLY way for a reader for going to the

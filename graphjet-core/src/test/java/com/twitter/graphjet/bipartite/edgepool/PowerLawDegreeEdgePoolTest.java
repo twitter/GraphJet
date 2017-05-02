@@ -61,24 +61,6 @@ public class PowerLawDegreeEdgePoolTest {
     edgePool.addEdge(1, 17); // violates the max degree param
   }
 
-  public static void addEdgesWithMetadataToPool(EdgePool edgePool) {
-    edgePool.addEdge(1, 11, new int[]{1, 11});
-    edgePool.addEdge(1, 12, new int[]{1, 12});
-    edgePool.addEdge(4, 41, new int[]{4, 41});
-    edgePool.addEdge(2, 21, new int[]{2, 21});
-    edgePool.addEdge(4, 42, new int[]{4, 42});
-    edgePool.addEdge(3, 31, new int[]{3, 31});
-    edgePool.addEdge(2, 22, new int[]{2, 22});
-    edgePool.addEdge(1, 13, new int[]{1, 13});
-    edgePool.addEdge(1, 14, new int[]{1, 14});
-    edgePool.addEdge(4, 43, new int[]{4, 43});
-    edgePool.addEdge(1, 15, new int[]{1, 15});
-    edgePool.addEdge(1, 16, new int[]{1, 16});
-    edgePool.addEdge(5, 51, new int[]{5, 51}); // violates the maxNumNodes param
-    edgePool.addEdge(2, 23, new int[]{2, 23}); // violates the power law assumption
-    edgePool.addEdge(1, 17, new int[]{1, 17}); // violates the max degree param
-  }
-
   /**
    * Test helper that adds edges for a specific graph to the given edge pool. Might be reusable
    * across {@link EdgePool}s
