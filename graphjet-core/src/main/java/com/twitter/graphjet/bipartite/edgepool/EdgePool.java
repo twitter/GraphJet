@@ -101,12 +101,16 @@ public interface EdgePool {
    * @param nodeA  is the node whose edges are indexed
    * @param nodeB  is the other side node
    */
-  void addEdge(int nodeA, int nodeB);
+  void addEdge(int nodeA, int nodeB, int[] metadata);
 
+
+  void addEdge(int nodeA, int nodeB);
   /**
    * Edge removal is also expected to be O(1). For now, we assume that this operation is
    * unsupported and hence the implementation can (and likely will) return an
    * {@link UnsupportedOperationException}.
+   *
+   *
    *
    * @param nodeA  is the node whose edges are indexed
    * @param nodeB  is the other side node

@@ -31,6 +31,7 @@ import com.twitter.graphjet.bipartite.edgepool.PowerLawDegreeEdgePool;
 import com.twitter.graphjet.bipartite.edgepool.RegularDegreeEdgePool;
 import com.twitter.graphjet.bipartite.segment.BipartiteGraphSegment;
 import com.twitter.graphjet.bipartite.segment.LeftIndexedBipartiteGraphSegment;
+import com.twitter.graphjet.hashing.ShardedBigIntArray;
 
 /**
  * Converting an active index edge pool into an optimized read-only index edge pool. Index
@@ -115,9 +116,11 @@ public final class Optimizer {
         int[] shard = regularDegreeEdgePools[j].getShard(i);
         int shardOffset = regularDegreeEdgePools[j].getShardOffset(i);
         int nodeDegreeInPool = regularDegreeEdgePools[j].getNodeDegree(i);
+        ShardedBigIntArray.ShardInfo shardInfo =
+          regularDegreeEdgePools[j].getShardInfo(i, nodeDegreeInPool);
 
         optimizedEdgePool.addEdges(
-          i, j, shard, shardOffset, nodeDegreeInPool
+          i, j, shardInfo.shard, shardInfo.offset, shardInfo.length
         );
       }
     }

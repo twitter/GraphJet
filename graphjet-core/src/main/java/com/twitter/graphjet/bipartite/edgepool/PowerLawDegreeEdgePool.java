@@ -296,8 +296,12 @@ public class PowerLawDegreeEdgePool implements EdgePool {
     return powerLawDegreeEdgeRandomIterator.resetForNode(node, numSamples, random);
   }
 
-  @Override
   public void addEdge(int nodeA, int nodeB) {
+    addEdge(nodeA, nodeB, null);
+  }
+
+  @Override
+  public void addEdge(int nodeA, int nodeB, int[] metadata) {
     // First add the node if it doesn't exist
     int nextPoolForNodeA;
     if (nodeA >= readerAccessibleInfo.nodeDegrees.length) {
@@ -311,7 +315,7 @@ public class PowerLawDegreeEdgePool implements EdgePool {
       }
     }
     // Now add the edge
-    readerAccessibleInfo.edgePools[nextPoolForNodeA].addEdge(nodeA, nodeB);
+    readerAccessibleInfo.edgePools[nextPoolForNodeA].addEdge(nodeA, nodeB, metadata);
     // This is to guarantee that if a reader sees the updated degree later, they can find the edge
     currentNumEdgesStored += 2;
     // The order is important -- the updated degree is the ONLY way for a reader for going to the

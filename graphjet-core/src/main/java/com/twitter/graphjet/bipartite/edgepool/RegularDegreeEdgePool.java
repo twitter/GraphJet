@@ -277,6 +277,11 @@ public class RegularDegreeEdgePool implements EdgePool {
 
   @Override
   public void addEdge(int nodeA, int nodeB) {
+    addEdge(nodeA, nodeB, null);
+  }
+
+  @Override
+  public void addEdge(int nodeA, int nodeB, int[] metadata) {
     long nodeAInfo;
     // Add the node if it doesn't exist
     if (readerAccessibleInfo.nodeInfo.getBothValues(nodeA) == -1L) {
@@ -289,7 +294,7 @@ public class RegularDegreeEdgePool implements EdgePool {
     Preconditions.checkArgument(nodeADegree < maxDegree,
         "Exceeded the maximum degree (" + maxDegree + ") for node " + nodeA);
     int nodeAPosition = getNodePositionFromNodeInfo(nodeAInfo);
-    readerAccessibleInfo.edges.addEntry(nodeB, nodeAPosition + nodeADegree);
+    readerAccessibleInfo.edges.addEntry(nodeB, nodeAPosition + nodeADegree, metadata);
     // This is to guarantee that if a reader sees the updated degree later, they can find the edge
     currentNumEdgesStored++;
     // The order is important -- the updated degree is the ONLY way for a reader for going to the
@@ -323,6 +328,11 @@ public class RegularDegreeEdgePool implements EdgePool {
   public int getShardOffset(int node) {
     return ((ShardedBigIntArray) readerAccessibleInfo.edges).
       getShardOffset(readerAccessibleInfo.nodeInfo.getFirstValue(node));
+  }
+
+  public ShardedBigIntArray.ShardInfo getShardInfo(int node, int length) {
+    return ((ShardedBigIntArray) readerAccessibleInfo.edges).
+      getShardInfo(readerAccessibleInfo.nodeInfo.getFirstValue(node), length);
   }
 
   @Override

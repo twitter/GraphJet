@@ -101,6 +101,18 @@ public class ShardedBigIntArray implements BigIntArray {
     }
   }
 
+  public static final class ShardInfo {
+    public final int[] shard;
+    public final int offset;
+    public final int length;
+
+    public ShardInfo(int[] shard, int offset, int length) {
+      this.shard = shard;
+      this.offset = offset;
+      this.length = length;
+    }
+  }
+
   // Making the int array preferred size be 256KB ~ size of L2 cache
   public static final int PREFERRED_EDGES_PER_SHARD = 1 << 16;
   private static final double SHARD_GROWTH_FACTOR = 1.1;
@@ -338,6 +350,39 @@ public class ShardedBigIntArray implements BigIntArray {
   @Override
   public IntIterator getMetadata(int position, ReusableEdgeIntIterator intIterator) {
     return intIterator.resetForNode(position);
+  }
+
+  // this function is used only in optimizer
+  public ShardInfo getShardInfo(int position, int length) {
+    // shardA and shardB differ at most by 1
+    int shardA = getShardId(position * entrySize);
+    int shardB = getShardId((position + length) * entrySize + metadataSize);
+    int offsetA = getShardOffset(position * entrySize);
+
+    // if edge entries of the same node locate at the same shard
+    if (shardA == shardB) {
+      return new ShardInfo(readerAccessibleInfo.array[shardA], offsetA, length * entrySize);
+    } else {
+      // if edge entries of the same node locate at different shard
+      int[] array = new int[length * entrySize];
+      System.arraycopy(
+        readerAccessibleInfo.array[shardA],
+        offsetA,
+        array,
+        0,
+        shardLength - 1 - offsetA
+      );
+
+      System.arraycopy(
+        readerAccessibleInfo.array[shardB],
+        0,
+        array,
+        shardLength - 1 - offsetA,
+        length * entrySize - (shardLength - 1 - offsetA)
+      );
+
+      return new ShardInfo(array, 0, length * entrySize);
+    }
   }
 
   public int[] getShard(int position) {
