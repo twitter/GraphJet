@@ -164,7 +164,13 @@ public class RegularDegreeEdgePool implements EdgePool {
     // This doesn't allocate memory for all the edges, which is done lazily
     readerAccessibleInfo = new ReaderAccessibleInfo(
         // We force each node's edges to fit within a shard
-        new ShardedBigIntArray(expectedNumNodes, maxDegree, 0, scopedStatsReceiver),
+        new ShardedBigIntArray(
+          expectedNumNodes,
+          maxDegree,
+          2, /* metadataSize */
+          0, /* nullEntry */
+          scopedStatsReceiver
+        ),
         intToIntPairHashMap
     );
     currentPositionOffset = 0;

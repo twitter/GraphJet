@@ -112,7 +112,13 @@ public class ArrayBasedIntToIntArrayMap implements IntToIntArrayMap {
 
     // This doesn't allocate memory for all the edges, which is done lazily
     readerAccessibleInfo = new ReaderAccessibleInfo(
-      new ShardedBigIntArray(expectedNumNodes, expectedArraySize, 0, scopedStatsReceiver),
+      new ShardedBigIntArray(
+        expectedNumNodes,
+        expectedArraySize,
+        0 /*metadataSize*/,
+        0 /*nullEntry*/,
+        scopedStatsReceiver
+      ),
       intToIntPairHashMap
     );
     currentPositionOffset = 0;
