@@ -229,7 +229,7 @@ public class OptimizedEdgePool implements EdgePool {
    * @param srcPos the starting position in the source array
    * @param length the number of edges to be copied
    */
-  public void addEdgeMetadata(int node, int pool, long[] src, int srcPos, int length) {
+  public void addMetadata(int node, int pool, long[] src, int srcPos, int length) {
     int position = getNodePosition(node);
 
     readerAccessibleInfo.metadata.arrayCopy(

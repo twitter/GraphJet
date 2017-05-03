@@ -120,7 +120,7 @@ public final class Optimizer {
         optimizedEdgePool.addEdges(
           i, j, shard, shardOffset, nodeDegreeInPool
         );
-        optimizedEdgePool.addEdgeMetadata(
+        optimizedEdgePool.addMetadata(
           i, j, metadataShard, shardOffset, nodeDegreeInPool
         );
       }
