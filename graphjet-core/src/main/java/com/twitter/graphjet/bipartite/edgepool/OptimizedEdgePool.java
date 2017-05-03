@@ -143,7 +143,7 @@ public class OptimizedEdgePool implements EdgePool {
    * @return the requested edge node number
    */
   protected int getNodeEdge(int position, int edgeNumber) {
-    /*
+
     IntIterator intIterator = readerAccessibleInfo.edges.getMetadata(position + edgeNumber);
 
     System.out.println("node " + (position + edgeNumber)
@@ -155,7 +155,12 @@ public class OptimizedEdgePool implements EdgePool {
       System.out.print(((ShardedBigIntArray)readerAccessibleInfo.edges).readerAccessibleInfo.array[0][i] + " ");
     }
     System.out.println();
-    */
+
+    for (int i = 0; i < ((ShardedBigIntArray)readerAccessibleInfo.edges).readerAccessibleInfo.array[1].length; i++) {
+      System.out.print(((ShardedBigIntArray)readerAccessibleInfo.edges).readerAccessibleInfo.array[1][i] + " ");
+    }
+    System.out.println();
+
 
     return readerAccessibleInfo.edges.getEntry(position + edgeNumber);
   }
