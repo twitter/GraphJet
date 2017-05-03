@@ -112,11 +112,11 @@ public class ShardedBigIntArray implements BigIntArray {
   }
 
   // Making the int array preferred size be 256KB ~ size of L2 cache
-  public static final int PREFERRED_EDGES_PER_SHARD = 1 << 16;
+  public static final int PREFERRED_EDGES_PER_SHARD = 1 << 4;
   private static final double SHARD_GROWTH_FACTOR = 1.1;
 
   // This is is the only reader-accessible data
-  protected ReaderAccessibleInfo readerAccessibleInfo;
+  public ReaderAccessibleInfo readerAccessibleInfo;
 
   private final int metadataSize;
   private final int entrySize;
@@ -352,13 +352,28 @@ public class ShardedBigIntArray implements BigIntArray {
   public ShardInfo getShardInfo(int position, int length) {
     // shardA and shardB differ at most by 1
     int shardA = getShardId(position * entrySize);
-    int shardB = getShardId((position + length) * entrySize + metadataSize);
+    int shardB = getShardId((position + length - 1) * entrySize + metadataSize);
     int offsetA = getShardOffset(position * entrySize);
-
+/*
+    System.out.println(
+      "position " + position + " length " + length
+      + " A " + shardA + " B " + shardB + " shardLength " + shardLength + " bits " + shardLengthNumBits
+    );
+*/
     // if edge entries of the same node locate at the same shard
     if (shardA == shardB) {
+//      System.out.println("branch 1");
       return new ShardInfo(readerAccessibleInfo.array[shardA], offsetA, length * entrySize);
     } else {
+
+/*
+      System.out.println("branch 2");
+      for (int i = 0; i < shardLength - offsetA; i++) {
+        System.out.print(readerAccessibleInfo.array[shardA][i + offsetA] + " f ");
+      }
+
+      System.out.println();
+*/
       // if edge entries of the same node locate at different shard
       int[] array = new int[length * entrySize];
       System.arraycopy(
@@ -366,15 +381,22 @@ public class ShardedBigIntArray implements BigIntArray {
         offsetA,
         array,
         0,
-        shardLength - 1 - offsetA
+        shardLength - offsetA
       );
+/*
+      for (int i = 0; i < length * entrySize - (shardLength - offsetA); i++) {
+        System.out.print(readerAccessibleInfo.array[shardB][i] + " s ");
+      }
+
+      System.out.println();
+*/
 
       System.arraycopy(
         readerAccessibleInfo.array[shardB],
         0,
         array,
-        shardLength - 1 - offsetA,
-        length * entrySize - (shardLength - 1 - offsetA)
+        shardLength - offsetA,
+        length * entrySize - (shardLength - offsetA)
       );
 
       return new ShardInfo(array, 0, length * entrySize);

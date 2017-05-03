@@ -118,7 +118,12 @@ public final class Optimizer {
         int nodeDegreeInPool = regularDegreeEdgePools[j].getNodeDegree(i);
         ShardedBigIntArray.ShardInfo shardInfo =
           regularDegreeEdgePools[j].getShardInfo(i, nodeDegreeInPool);
-
+/*
+        for (int tt = 0; tt < shardInfo.length; tt ++) {
+          System.out.print(shardInfo.shard[tt + shardInfo.offset] + " m ");
+        }
+        System.out.println();
+*/
         optimizedEdgePool.addEdges(
           i, j, shardInfo.shard, shardInfo.offset, shardInfo.length
         );
