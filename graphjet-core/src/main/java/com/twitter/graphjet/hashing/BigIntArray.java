@@ -17,12 +17,17 @@
 
 package com.twitter.graphjet.hashing;
 
+import com.twitter.graphjet.bipartite.api.ReusableEdgeIntIterator;
+
+import it.unimi.dsi.fastutil.ints.IntIterator;
+
 /**
  * Allows manipulating a data structure as an integer array. A client can store entries in an
  * arbitrary position in this array, and increment positions as they normally would for a regular
  * one-dimensional array. All operations here are expected to be constant time lookups.
  */
 public interface BigIntArray {
+
   /**
    * Adds an entry to the array at a specific desired position. Note that this would over-write any
    * existing value.
@@ -33,12 +38,37 @@ public interface BigIntArray {
   void addEntry(int entry, int position);
 
   /**
+   * Adds an entry to the array at a specific desired position. Note that this would over-write any
+   * existing value.
+   *
+   * @param entry     is the entry to add
+   * @param position  is the position where to put the entry
+   */
+  void addEntry(int entry, int position, int[] metadata);
+
+  /**
    * Fetches the stored entry at a position.
    *
    * @param position  is the position to look at
    * @return the stored entry.
    */
   int getEntry(int position);
+
+  /**
+   * Fetches the stored metadata at a position.
+   *
+   * @param position  is the position to look at
+   * @return the stored metadata.
+   */
+  IntIterator getMetadata(int position, ReusableEdgeIntIterator intIterator);
+
+  /**
+   * Fetches the stored metadata at a position.
+   *
+   * @param position  is the position to look at
+   * @return the stored metadata.
+   */
+  IntIterator getMetadata(int position);
 
   /**
    * Increments the stored entry at a position by delta.

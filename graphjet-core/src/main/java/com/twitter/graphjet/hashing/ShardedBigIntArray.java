@@ -21,8 +21,11 @@ import java.util.Arrays;
 
 import com.google.common.base.Preconditions;
 
+import com.twitter.graphjet.bipartite.api.ReusableEdgeIntIterator;
 import com.twitter.graphjet.stats.Counter;
 import com.twitter.graphjet.stats.StatsReceiver;
+
+import it.unimi.dsi.fastutil.ints.IntIterator;
 
 /**
  * <p>This class implements a large array as an array of arrays that are sharded. There are two
@@ -96,6 +99,18 @@ public class ShardedBigIntArray implements BigIntArray {
     }
   }
 
+  public static final class ShardInfo {
+    public final int[] shard;
+    public final int offset;
+    public final int length;
+
+    public ShardInfo(int[] shard, int offset, int length) {
+      this.shard = shard;
+      this.offset = offset;
+      this.length = length;
+    }
+  }
+
   // Making the int array preferred size be 256KB ~ size of L2 cache
   public static final int PREFERRED_EDGES_PER_SHARD = 1 << 16;
   private static final double SHARD_GROWTH_FACTOR = 1.1;
@@ -103,6 +118,8 @@ public class ShardedBigIntArray implements BigIntArray {
   // This is is the only reader-accessible data
   protected ReaderAccessibleInfo readerAccessibleInfo;
 
+  private final int metadataSize;
+  private final int entrySize;
   private final int nullEntry;
   private final int shardLength;
   private final int shardLengthNumBits;
@@ -130,18 +147,24 @@ public class ShardedBigIntArray implements BigIntArray {
   public ShardedBigIntArray(
       int numExpectedEntries,
       int minShardSize,
+      int metadataSize,
       int nullEntry,
       StatsReceiver statsReceiver) {
-    int shardSize = Math.max(PREFERRED_EDGES_PER_SHARD, minShardSize);
+    this.metadataSize = metadataSize;
+    this.entrySize = 1 + metadataSize;
+    int shardSize = Math.max(PREFERRED_EDGES_PER_SHARD, minShardSize * entrySize);
     // We round shards up to be a power of two
     this.shardLengthNumBits =
-        Math.max(Integer.numberOfTrailingZeros(Integer.highestOneBit(shardSize - 1) << 1), 4);
+        Math.max(
+          Integer.numberOfTrailingZeros(Integer.highestOneBit(shardSize - 1) << 1),
+          4
+        );
     this.shardLength = 1 << shardLengthNumBits;
     this.offsetMask = shardLength - 1;
     this.nullEntry = nullEntry;
     StatsReceiver scopedStatsReceiver = statsReceiver.scope("ShardedBigIntArray");
     this.numArrayEntries = scopedStatsReceiver.counter("numArrayEntries");
-    numShards = Math.max(numExpectedEntries >> shardLengthNumBits, 1);
+    numShards = Math.max(numExpectedEntries * entrySize >> shardLengthNumBits, 1);
     Preconditions.checkArgument(numShards * shardLength < Integer.MAX_VALUE,
         "Exceeded the max storage capacity for ShardedBigIntArray");
     readerAccessibleInfo = new ReaderAccessibleInfo(new int[numShards][]);
@@ -178,10 +201,16 @@ public class ShardedBigIntArray implements BigIntArray {
 
   @Override
   public void addEntry(int entry, int position) {
-    int shard = position >> shardLengthNumBits;
-    int offset = position & offsetMask;
+    addEntry(entry, position, null);
+  }
+
+  @Override
+  public void addEntry(int entry, int position, int[] metadata) {
+    int index = position * entrySize;
+    int shard = getShardId(index);
+    int offset = getShardOffset(index);
     // we may need more shards
-    if (shard >= numShards) {
+    if ((shard >= numShards) || ((shard == numShards - 1) && (offset + entrySize > shardLength))) {
       expandArray(shard);
     }
     // the shard's memory may not have been allocated yet
@@ -189,14 +218,48 @@ public class ShardedBigIntArray implements BigIntArray {
       allocateMemoryForShard(shard);
     }
     readerAccessibleInfo.array[shard][offset] = entry; // int writes are atomic
+
+    if (metadataSize > 0) {
+      // the current shard has enough space to hold the entire entry.
+      // most of the cases it will go to the if branch.
+      if (offset + entrySize <= shardLength) {
+        System.arraycopy(metadata, 0, readerAccessibleInfo.array[shard], offset + 1, metadataSize);
+      } else {
+        // the current shard does not have enough space the hold the entire entry.
+        // the next shard's memory may not have been allocated yet.
+        if (readerAccessibleInfo.array[shard + 1] == null) {
+          allocateMemoryForShard(shard + 1);
+        }
+
+        if (shardLength - 1 - offset > 0) {
+          System.arraycopy(
+            metadata,
+            0,
+            readerAccessibleInfo.array[shard],
+            offset + 1,
+            shardLength - 1 - offset
+          );
+        }
+
+        System.arraycopy(
+          metadata,
+          shardLength - 1 - offset,
+          readerAccessibleInfo.array[shard + 1],
+          0,
+          offset + entrySize - shardLength
+        );
+      }
+    }
+
     numStoredEntries++;
     numArrayEntries.incr();
   }
 
   @Override
   public void arrayCopy(int[] src, int srcPos, int desPos, int length, boolean updateStats) {
-    int shard = desPos >> shardLengthNumBits;
-    int offset = desPos & offsetMask;
+    int index = desPos * entrySize;
+    int shard = getShardId(index);
+    int offset = getShardOffset(index);
     // we may need more shards
     if (shard >= numShards) {
       expandArray(shard);
@@ -245,8 +308,9 @@ public class ShardedBigIntArray implements BigIntArray {
 
   @Override
   public int getEntry(int position) {
-    int shard = position >> shardLengthNumBits;
-    int offset = position & offsetMask;
+    int index = position * entrySize;
+    int shard = getShardId(index);
+    int offset = getShardOffset(index);
     // we may need more shards
     if ((shard >= numShards) || (readerAccessibleInfo.array[shard] == null)) {
       return nullEntry;
@@ -254,10 +318,17 @@ public class ShardedBigIntArray implements BigIntArray {
     return readerAccessibleInfo.array[shard][offset];
   }
 
+  // caller needs to make sure getMetadata is called after getting a valid entry from getEntry.
+  // no validity checking is enforced in getMetadata
+  int getMetadata(int shard, int offset) {
+    return readerAccessibleInfo.array[shard][offset];
+  }
+
   @Override
   public int incrementEntry(int position, int delta) {
-    int shard = position >> shardLengthNumBits;
-    int offset = position & offsetMask;
+    int index = position * entrySize;
+    int shard = getShardId(index);
+    int offset = getShardOffset(index);
     // we may need more shards
     if ((shard >= numShards) || (readerAccessibleInfo.array[shard] == null)) {
       return nullEntry;
@@ -267,19 +338,66 @@ public class ShardedBigIntArray implements BigIntArray {
     return readerAccessibleInfo.array[shard][offset];
   }
 
+  @Override
+  public IntIterator getMetadata(int position) {
+    return getMetadata(position, new EdgeMetadataIterator(this, metadataSize));
+  }
+
+  @Override
+  public IntIterator getMetadata(int position, ReusableEdgeIntIterator intIterator) {
+    return intIterator.resetForEdge(position);
+  }
+
+  // this function is used only in optimizer
+  public ShardInfo getShardInfo(int position, int length) {
+    // shardA and shardB differ at most by 1
+    int shardA = getShardId(position * entrySize);
+    int shardB = getShardId((position + length) * entrySize + metadataSize);
+    int offsetA = getShardOffset(position * entrySize);
+
+    // if edge entries of the same node locate at the same shard
+    if (shardA == shardB) {
+      return new ShardInfo(readerAccessibleInfo.array[shardA], offsetA, length * entrySize);
+    } else {
+      // if edge entries of the same node locate at different shard
+      int[] array = new int[length * entrySize];
+      System.arraycopy(
+        readerAccessibleInfo.array[shardA],
+        offsetA,
+        array,
+        0,
+        shardLength - 1 - offsetA
+      );
+
+      System.arraycopy(
+        readerAccessibleInfo.array[shardB],
+        0,
+        array,
+        shardLength - 1 - offsetA,
+        length * entrySize - (shardLength - 1 - offsetA)
+      );
+
+      return new ShardInfo(array, 0, length * entrySize);
+    }
+  }
+
   public int[] getShard(int position) {
-    int shard = position >> shardLengthNumBits;
+    int shard = getShardId(position * entrySize);
 
     return readerAccessibleInfo.array[shard];
   }
 
-  public int getShardOffset(int position) {
-    return position & offsetMask;
+  public int getShardId(int index) {
+    return index >> shardLengthNumBits;
+  }
+
+  public int getShardOffset(int index) {
+    return index & offsetMask;
   }
 
   @Override
   public double getFillPercentage() {
-    return 100.0 * numStoredEntries / (double) numAllocatedSlotsForEntries;
+    return 100.0 * (numStoredEntries * entrySize) / (double) numAllocatedSlotsForEntries;
   }
 
   @Override

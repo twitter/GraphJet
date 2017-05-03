@@ -115,6 +115,7 @@ public class IntToIntPairConcurrentHashMap implements IntToIntPairHashMap {
     BigIntArray array = new ShardedBigIntArray(
         numKeySlotsAllocated * NUM_INTS_PER_KEY,
         ShardedBigIntArray.PREFERRED_EDGES_PER_SHARD,
+        0, /* metadataSize */
         defaultReturnValue,
         scopedStatsReceiver);
     int bitMask = numKeySlotsAllocated - 1;
@@ -299,6 +300,7 @@ public class IntToIntPairConcurrentHashMap implements IntToIntPairHashMap {
     BigIntArray newArray = new ShardedBigIntArray(
         newNumKeySlotsAllocated * NUM_INTS_PER_KEY,
         ShardedBigIntArray.PREFERRED_EDGES_PER_SHARD,
+        0, /* metadataSize */
         defaultReturnValue,
         scopedStatsReceiver);
     int bitMask = newNumKeySlotsAllocated - 1;

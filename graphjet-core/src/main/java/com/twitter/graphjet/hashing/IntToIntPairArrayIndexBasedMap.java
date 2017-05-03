@@ -57,6 +57,7 @@ public class IntToIntPairArrayIndexBasedMap implements IntToIntPairHashMap {
     this.array = new ShardedBigIntArray(
         arraySize,
         ShardedBigIntArray.PREFERRED_EDGES_PER_SHARD,
+        0, /* metadataSize */
         defaultReturnValue,
         scopedStatsReceiver);
     this.defaultReturnValue = defaultReturnValue;

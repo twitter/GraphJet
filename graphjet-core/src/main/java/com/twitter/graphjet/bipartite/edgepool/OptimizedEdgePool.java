@@ -116,7 +116,13 @@ public class OptimizedEdgePool implements EdgePool {
       position += nodeDegree;
     }
 
-    BigIntArray edges = new ShardedBigIntArray(maxNumEdges, maxDegree, 0, scopedStatsReceiver);
+    BigIntArray edges = new ShardedBigIntArray(
+      maxNumEdges,
+      maxDegree,
+      2, /* metadataSize */
+      0, /* nullEntry */
+      scopedStatsReceiver
+    );
 
     readerAccessibleInfo = new ReaderAccessibleInfo(
       edges,
