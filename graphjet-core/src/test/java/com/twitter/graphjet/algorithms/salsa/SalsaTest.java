@@ -258,7 +258,7 @@ public class SalsaTest {
         destinationIds.add((long) random.nextInt(maxUserId));
       }
       for (long destinationId : destinationIds) {
-        smallLeftRegularBipartiteGraph.addEdge(sourceId, destinationId, (byte) 0);
+        smallLeftRegularBipartiteGraph.addEdge(sourceId, destinationId, (byte) 0, 0L);
       }
     }
 

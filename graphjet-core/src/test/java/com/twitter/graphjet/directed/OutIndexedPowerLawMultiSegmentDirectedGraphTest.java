@@ -16,14 +16,16 @@
 
 package com.twitter.graphjet.directed;
 
-import com.twitter.graphjet.bipartite.segment.IdentityEdgeTypeMask;
-import com.twitter.graphjet.stats.NullStatsReceiver;
-import it.unimi.dsi.fastutil.longs.LongArrayList;
-import org.junit.Test;
-
 import java.util.Random;
 
+import org.junit.Test;
+
 import static org.junit.Assert.assertEquals;
+
+import com.twitter.graphjet.bipartite.segment.IdentityEdgeTypeMask;
+import com.twitter.graphjet.stats.NullStatsReceiver;
+
+import it.unimi.dsi.fastutil.longs.LongArrayList;
 
 // Note that OutIndexedPowerLawMultiSegmentDirectedGraphTest is simply a lightweight wrapper around
 // LeftIndexedPowerLawMultiSegmentBipartiteGraph, so the test cases don't need to be elaborate. We basically
@@ -36,16 +38,16 @@ public class OutIndexedPowerLawMultiSegmentDirectedGraphTest {
         OutIndexedPowerLawMultiSegmentDirectedGraph(1, 10,
         5, 2, 2.0, new IdentityEdgeTypeMask(), new NullStatsReceiver());
 
-    graph.addEdge(1, 11, (byte) 0);
-    graph.addEdge(1, 12, (byte) 0);
-    graph.addEdge(4, 41, (byte) 0);
-    graph.addEdge(2, 21, (byte) 0);
-    graph.addEdge(4, 42, (byte) 0);
-    graph.addEdge(3, 31, (byte) 0);
-    graph.addEdge(2, 22, (byte) 0);
-    graph.addEdge(1, 13, (byte) 0);
-    graph.addEdge(4, 43, (byte) 0);
-    graph.addEdge(5, 11, (byte) 0);
+    graph.addEdge(1, 11, (byte) 0, 0L);
+    graph.addEdge(1, 12, (byte) 0, 0L);
+    graph.addEdge(4, 41, (byte) 0, 0L);
+    graph.addEdge(2, 21, (byte) 0, 0L);
+    graph.addEdge(4, 42, (byte) 0, 0L);
+    graph.addEdge(3, 31, (byte) 0, 0L);
+    graph.addEdge(2, 22, (byte) 0, 0L);
+    graph.addEdge(1, 13, (byte) 0, 0L);
+    graph.addEdge(4, 43, (byte) 0, 0L);
+    graph.addEdge(5, 11, (byte) 0, 0L);
 
     assertEquals(3, graph.getOutDegree(1));
     assertEquals(2, graph.getOutDegree(2));

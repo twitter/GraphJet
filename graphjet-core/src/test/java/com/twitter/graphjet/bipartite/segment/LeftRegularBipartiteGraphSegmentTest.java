@@ -43,16 +43,16 @@ public class LeftRegularBipartiteGraphSegmentTest {
   private static final double EPSILON = 0.00001;
 
   private void addEdges(LeftRegularBipartiteGraphSegment leftRegularBipartiteGraphSegment) {
-    leftRegularBipartiteGraphSegment.addEdge(1, 11, (byte) 0);
-    leftRegularBipartiteGraphSegment.addEdge(1, 12, (byte) 0);
-    leftRegularBipartiteGraphSegment.addEdge(4, 41, (byte) 0);
-    leftRegularBipartiteGraphSegment.addEdge(2, 21, (byte) 0);
-    leftRegularBipartiteGraphSegment.addEdge(4, 42, (byte) 0);
-    leftRegularBipartiteGraphSegment.addEdge(3, 31, (byte) 0);
-    leftRegularBipartiteGraphSegment.addEdge(2, 22, (byte) 0);
-    leftRegularBipartiteGraphSegment.addEdge(1, 13, (byte) 0);
-    leftRegularBipartiteGraphSegment.addEdge(4, 43, (byte) 0);
-    leftRegularBipartiteGraphSegment.addEdge(5, 11, (byte) 0);
+    leftRegularBipartiteGraphSegment.addEdge(1, 11, (byte) 0, 0L);
+    leftRegularBipartiteGraphSegment.addEdge(1, 12, (byte) 0, 0L);
+    leftRegularBipartiteGraphSegment.addEdge(4, 41, (byte) 0, 0L);
+    leftRegularBipartiteGraphSegment.addEdge(2, 21, (byte) 0, 0L);
+    leftRegularBipartiteGraphSegment.addEdge(4, 42, (byte) 0, 0L);
+    leftRegularBipartiteGraphSegment.addEdge(3, 31, (byte) 0, 0L);
+    leftRegularBipartiteGraphSegment.addEdge(2, 22, (byte) 0, 0L);
+    leftRegularBipartiteGraphSegment.addEdge(1, 13, (byte) 0, 0L);
+    leftRegularBipartiteGraphSegment.addEdge(4, 43, (byte) 0, 0L);
+    leftRegularBipartiteGraphSegment.addEdge(5, 11, (byte) 0, 0L);
     // violates the max num nodes assumption
   }
 
@@ -138,7 +138,7 @@ public class LeftRegularBipartiteGraphSegmentTest {
           idToAdd = random.nextInt(rightSize);
         } while (addedIds.contains(idToAdd));
         addedIds.add(idToAdd);
-        leftRegularBipartiteGraphSegment.addEdge(i, idToAdd, (byte) 0);
+        leftRegularBipartiteGraphSegment.addEdge(i, idToAdd, (byte) 0, 0L);
       }
     }
 

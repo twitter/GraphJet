@@ -16,14 +16,14 @@
 
 package com.twitter.graphjet.directed;
 
+import java.util.Random;
+
 import com.twitter.graphjet.bipartite.LeftIndexedPowerLawMultiSegmentBipartiteGraph;
 import com.twitter.graphjet.bipartite.api.EdgeIterator;
 import com.twitter.graphjet.bipartite.api.EdgeTypeMask;
 import com.twitter.graphjet.directed.api.DynamicDirectedGraph;
 import com.twitter.graphjet.directed.api.OutIndexedDirectedGraph;
 import com.twitter.graphjet.stats.StatsReceiver;
-
-import java.util.Random;
 
 /**
  * Implementation of a dynamic, out-indexed directed graph. This class is implemented as a wrapper around a
@@ -75,8 +75,8 @@ public class OutIndexedPowerLawMultiSegmentDirectedGraph implements OutIndexedDi
   }
 
   @Override
-  public void addEdge(long srcNode, long destNode, byte edgeType) {
-    graph.addEdge(srcNode, destNode, edgeType);
+  public void addEdge(long srcNode, long destNode, byte edgeType, long edgeMetadata) {
+    graph.addEdge(srcNode, destNode, edgeType, edgeMetadata);
   }
 
   @Override

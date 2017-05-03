@@ -141,7 +141,7 @@ public abstract class
   }
 
   @Override
-  public void addEdge(long leftNode, long rightNode, byte edgeType) {
+  public void addEdge(long leftNode, long rightNode, byte edgeType, long edgeMetadata) {
     // usually very cheap check is it's only false very rarely
     if (numEdgesInLiveSegment == maxNumEdgesPerSegment) {
       T oldLiveSegment = liveSegment;
@@ -151,7 +151,7 @@ public abstract class
       Optimizer.submitGraphOptimizerJob(this, oldLiveSegment);
     }
 
-    liveSegment.addEdge(leftNode, rightNode, edgeType);
+    liveSegment.addEdge(leftNode, rightNode, edgeType, edgeMetadata);
     numEdgesInLiveSegment++;
 
     numEdgesSeenInAllHistoryCounter.incr();

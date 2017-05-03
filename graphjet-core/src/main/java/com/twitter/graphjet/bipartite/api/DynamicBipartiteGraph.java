@@ -38,8 +38,9 @@ public interface DynamicBipartiteGraph {
    * @param leftNode   the left node in the bipartite graph
    * @param rightNode  the right node in the bipartite graph
    * @param edgeType   the edge type
+   * @param edgeMetadata the edge metadata
    */
-  void addEdge(long leftNode, long rightNode, byte edgeType);
+  void addEdge(long leftNode, long rightNode, byte edgeType, long edgeMetadata);
 
   /**
    * Removes an edge in this graph. Assumed to be an O(1) operation.

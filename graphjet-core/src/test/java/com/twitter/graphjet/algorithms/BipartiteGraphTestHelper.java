@@ -120,21 +120,21 @@ public final class BipartiteGraphTestHelper {
         new LeftRegularBipartiteGraphSegment(3, 10, 10, 3, 2.0, Integer.MAX_VALUE,
             new IdentityEdgeTypeMask(),
             new NullStatsReceiver());
-    leftRegularBipartiteGraphSegment.addEdge(1, 2, (byte) 0);
-    leftRegularBipartiteGraphSegment.addEdge(1, 3, (byte) 0);
-    leftRegularBipartiteGraphSegment.addEdge(1, 4, (byte) 0);
-    leftRegularBipartiteGraphSegment.addEdge(1, 5, (byte) 0);
-    leftRegularBipartiteGraphSegment.addEdge(2, 5, (byte) 0);
-    leftRegularBipartiteGraphSegment.addEdge(2, 6, (byte) 0);
-    leftRegularBipartiteGraphSegment.addEdge(2, 10, (byte) 0);
-    leftRegularBipartiteGraphSegment.addEdge(3, 7, (byte) 0);
-    leftRegularBipartiteGraphSegment.addEdge(3, 8, (byte) 0);
-    leftRegularBipartiteGraphSegment.addEdge(3, 5, (byte) 0);
-    leftRegularBipartiteGraphSegment.addEdge(3, 9, (byte) 0);
-    leftRegularBipartiteGraphSegment.addEdge(3, 2, (byte) 0);
-    leftRegularBipartiteGraphSegment.addEdge(3, 10, (byte) 0);
-    leftRegularBipartiteGraphSegment.addEdge(3, 11, (byte) 0);
-    leftRegularBipartiteGraphSegment.addEdge(3, 1, (byte) 0);
+    leftRegularBipartiteGraphSegment.addEdge(1, 2, (byte) 0, 0L);
+    leftRegularBipartiteGraphSegment.addEdge(1, 3, (byte) 0, 0L);
+    leftRegularBipartiteGraphSegment.addEdge(1, 4, (byte) 0, 0L);
+    leftRegularBipartiteGraphSegment.addEdge(1, 5, (byte) 0, 0L);
+    leftRegularBipartiteGraphSegment.addEdge(2, 5, (byte) 0, 0L);
+    leftRegularBipartiteGraphSegment.addEdge(2, 6, (byte) 0, 0L);
+    leftRegularBipartiteGraphSegment.addEdge(2, 10, (byte) 0, 0L);
+    leftRegularBipartiteGraphSegment.addEdge(3, 7, (byte) 0, 0L);
+    leftRegularBipartiteGraphSegment.addEdge(3, 8, (byte) 0, 0L);
+    leftRegularBipartiteGraphSegment.addEdge(3, 5, (byte) 0, 0L);
+    leftRegularBipartiteGraphSegment.addEdge(3, 9, (byte) 0, 0L);
+    leftRegularBipartiteGraphSegment.addEdge(3, 2, (byte) 0, 0L);
+    leftRegularBipartiteGraphSegment.addEdge(3, 10, (byte) 0, 0L);
+    leftRegularBipartiteGraphSegment.addEdge(3, 11, (byte) 0, 0L);
+    leftRegularBipartiteGraphSegment.addEdge(3, 1, (byte) 0, 0L);
 
     return leftRegularBipartiteGraphSegment;
   }
@@ -159,47 +159,47 @@ public final class BipartiteGraphTestHelper {
         new NullStatsReceiver()
       );
     int[][] leftNodeMetadata = new int[][]{};
-    nodeMetadataGraph.addEdge(1, 2, (byte) 0, leftNodeMetadata,
+    nodeMetadataGraph.addEdge(1, 2, (byte) 0, 0L, leftNodeMetadata,
       new int[][]{new int[]{67}, new int[]{302}}
     );
-    nodeMetadataGraph.addEdge(1, 3, (byte) 0, leftNodeMetadata,
+    nodeMetadataGraph.addEdge(1, 3, (byte) 0, 0L, leftNodeMetadata,
       new int[][]{new int[]{37, 67}, new int[]{100}}
     );
-    nodeMetadataGraph.addEdge(1, 4, (byte) 0, leftNodeMetadata,
+    nodeMetadataGraph.addEdge(1, 4, (byte) 0, 0L, leftNodeMetadata,
       new int[][]{null, new int[]{700}}
     );
-    nodeMetadataGraph.addEdge(1, 5, (byte) 0, leftNodeMetadata,
+    nodeMetadataGraph.addEdge(1, 5, (byte) 0, 0L, leftNodeMetadata,
       new int[][]{new int[]{11}, new int[]{900, 901, 902, 903, 904}}
     );
-    nodeMetadataGraph.addEdge(2, 5, (byte) 0, leftNodeMetadata,
+    nodeMetadataGraph.addEdge(2, 5, (byte) 0, 0L, leftNodeMetadata,
       new int[][]{new int[]{11}, new int[]{900, 901, 902, 903, 904}}
     );
-    nodeMetadataGraph.addEdge(2, 6, (byte) 0, leftNodeMetadata,
+    nodeMetadataGraph.addEdge(2, 6, (byte) 0, 0L, leftNodeMetadata,
       new int[][]{new int[]{10, 11, 12, 33, 24, 19}, new int[]{400, 401, 402, 403, 404}}
     );
-    nodeMetadataGraph.addEdge(2, 10, (byte) 0, leftNodeMetadata,
+    nodeMetadataGraph.addEdge(2, 10, (byte) 0, 0L, leftNodeMetadata,
       null
     );
-    nodeMetadataGraph.addEdge(3, 7, (byte) 0, leftNodeMetadata,
+    nodeMetadataGraph.addEdge(3, 7, (byte) 0, 0L, leftNodeMetadata,
       new int[][]{new int[]{23, 24}, null}
     );
-    nodeMetadataGraph.addEdge(3, 8, (byte) 0, leftNodeMetadata,
+    nodeMetadataGraph.addEdge(3, 8, (byte) 0, 0L, leftNodeMetadata,
       new int[][]{null, new int[]{700}}
     );
-    nodeMetadataGraph.addEdge(3, 5, (byte) 0, leftNodeMetadata,
+    nodeMetadataGraph.addEdge(3, 5, (byte) 0, 0L, leftNodeMetadata,
       new int[][]{new int[]{11}, new int[]{900, 901, 902, 903, 904}}
     );
-    nodeMetadataGraph.addEdge(3, 9, (byte) 0, leftNodeMetadata,
+    nodeMetadataGraph.addEdge(3, 9, (byte) 0, 0L, leftNodeMetadata,
       new int[][]{null, new int[]{102, 103, 101}}
     );
-    nodeMetadataGraph.addEdge(3, 2, (byte) 0, leftNodeMetadata,
+    nodeMetadataGraph.addEdge(3, 2, (byte) 0, 0L, leftNodeMetadata,
       new int[][]{new int[]{67}, new int[]{302}}
     );
-    nodeMetadataGraph.addEdge(3, 10, (byte) 0, leftNodeMetadata,
+    nodeMetadataGraph.addEdge(3, 10, (byte) 0, 0L, leftNodeMetadata,
       new int[][]{new int[]{43}, null}
     );
-    nodeMetadataGraph.addEdge(3, 11, (byte) 0, leftNodeMetadata, new int[][]{null, null});
-    nodeMetadataGraph.addEdge(3, 1, (byte) 0, leftNodeMetadata, new int[][]{null, null});
+    nodeMetadataGraph.addEdge(3, 11, (byte) 0, 0L, leftNodeMetadata, new int[][]{null, null});
+    nodeMetadataGraph.addEdge(3, 1, (byte) 0, 0L, leftNodeMetadata, new int[][]{null, null});
 
     return nodeMetadataGraph;
   }
@@ -225,22 +225,22 @@ public final class BipartiteGraphTestHelper {
       );
     int[][] leftNodeMetadata = new int[][]{};
     int[][] rightNodeMetadata = new int[][]{};
-    nodeMetadataGraph.addEdge(1, 2, (byte) 0, leftNodeMetadata, rightNodeMetadata);
+    nodeMetadataGraph.addEdge(1, 2, (byte) 0, 0L, leftNodeMetadata, rightNodeMetadata);
 
-    nodeMetadataGraph.addEdge(1, 3, (byte) 1, leftNodeMetadata, rightNodeMetadata);
-    nodeMetadataGraph.addEdge(2, 3, (byte) 1, leftNodeMetadata, rightNodeMetadata);
-    nodeMetadataGraph.addEdge(3, 3, (byte) 1, leftNodeMetadata, rightNodeMetadata);
+    nodeMetadataGraph.addEdge(1, 3, (byte) 1, 0L, leftNodeMetadata, rightNodeMetadata);
+    nodeMetadataGraph.addEdge(2, 3, (byte) 1, 0L, leftNodeMetadata, rightNodeMetadata);
+    nodeMetadataGraph.addEdge(3, 3, (byte) 1, 0L, leftNodeMetadata, rightNodeMetadata);
 
-    nodeMetadataGraph.addEdge(1, 4, (byte) 2, leftNodeMetadata, rightNodeMetadata);
+    nodeMetadataGraph.addEdge(1, 4, (byte) 2, 0L, leftNodeMetadata, rightNodeMetadata);
 
-    nodeMetadataGraph.addEdge(1, 5, (byte) 3, leftNodeMetadata, rightNodeMetadata);
-    nodeMetadataGraph.addEdge(2, 5, (byte) 0, leftNodeMetadata, rightNodeMetadata);
+    nodeMetadataGraph.addEdge(1, 5, (byte) 3, 0L, leftNodeMetadata, rightNodeMetadata);
+    nodeMetadataGraph.addEdge(2, 5, (byte) 0, 0L, leftNodeMetadata, rightNodeMetadata);
 
-    nodeMetadataGraph.addEdge(2, 6, (byte) 0, leftNodeMetadata, rightNodeMetadata);
-    nodeMetadataGraph.addEdge(2, 6, (byte) 1, leftNodeMetadata, rightNodeMetadata);
+    nodeMetadataGraph.addEdge(2, 6, (byte) 0, 0L, leftNodeMetadata, rightNodeMetadata);
+    nodeMetadataGraph.addEdge(2, 6, (byte) 1, 0L, leftNodeMetadata, rightNodeMetadata);
 
-    nodeMetadataGraph.addEdge(1, 7, (byte) 0, leftNodeMetadata, rightNodeMetadata);
-    nodeMetadataGraph.addEdge(2, 7, (byte) 1, leftNodeMetadata, rightNodeMetadata);
+    nodeMetadataGraph.addEdge(1, 7, (byte) 0, 0L, leftNodeMetadata, rightNodeMetadata);
+    nodeMetadataGraph.addEdge(2, 7, (byte) 1, 0L, leftNodeMetadata, rightNodeMetadata);
 
     return nodeMetadataGraph;
   }
@@ -263,22 +263,22 @@ public final class BipartiteGraphTestHelper {
         new HigherBitsEdgeTypeMask(),
         new NullStatsReceiver()
       );
-    nodeMetadataGraph.addEdge(1, 2, (byte) 0);
+    nodeMetadataGraph.addEdge(1, 2, (byte) 0, 0L);
 
-    nodeMetadataGraph.addEdge(1, 3, (byte) 1);
-    nodeMetadataGraph.addEdge(2, 3, (byte) 1);
-    nodeMetadataGraph.addEdge(3, 3, (byte) 1);
+    nodeMetadataGraph.addEdge(1, 3, (byte) 1, 0L);
+    nodeMetadataGraph.addEdge(2, 3, (byte) 1, 0L);
+    nodeMetadataGraph.addEdge(3, 3, (byte) 1, 0L);
 
-    nodeMetadataGraph.addEdge(1, 4, (byte) 2);
+    nodeMetadataGraph.addEdge(1, 4, (byte) 2, 0L);
 
-    nodeMetadataGraph.addEdge(1, 5, (byte) 3);
-    nodeMetadataGraph.addEdge(2, 5, (byte) 0);
+    nodeMetadataGraph.addEdge(1, 5, (byte) 3, 0L);
+    nodeMetadataGraph.addEdge(2, 5, (byte) 0, 0L);
 
-    nodeMetadataGraph.addEdge(2, 6, (byte) 0);
-    nodeMetadataGraph.addEdge(2, 6, (byte) 1);
+    nodeMetadataGraph.addEdge(2, 6, (byte) 0, 0L);
+    nodeMetadataGraph.addEdge(2, 6, (byte) 1, 0L);
 
-    nodeMetadataGraph.addEdge(1, 7, (byte) 0);
-    nodeMetadataGraph.addEdge(2, 7, (byte) 1);
+    nodeMetadataGraph.addEdge(1, 7, (byte) 0, 0L);
+    nodeMetadataGraph.addEdge(2, 7, (byte) 1, 0L);
 
     return nodeMetadataGraph;
   }
@@ -315,7 +315,7 @@ public final class BipartiteGraphTestHelper {
     for (int i = 0; i < leftSize; i++) {
       for (int j = 0; j < rightSize; j++) {
         if (random.nextDouble() < edgeProbability) {
-          nodeMetadataGraph.addEdge(i, j, (byte) 0, leftNodeMetadata, rightNodeMetadata);
+          nodeMetadataGraph.addEdge(i, j, (byte) 0, 0L, leftNodeMetadata, rightNodeMetadata);
         }
       }
     }
