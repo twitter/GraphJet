@@ -209,19 +209,6 @@ public abstract class LeftIndexedBipartiteGraphSegment implements
       leftNodeInternalId, edgeTypeMask.encode(rightNodeInternalId, edgeType));
   }
 
-
-  /*
-  protected void updateEdgePool(
-    int leftNodeInternalId,
-    int rightNodeInternalId,
-    byte edgeType
-  ) {
-    // First we add the edges to the left pool so that it is ready to be accessed
-    leftIndexedReaderAccessibleInfoProvider
-        .getLeftIndexedReaderAccessibleInfo().getLeftNodeEdgePool().addEdge(
-        leftNodeInternalId, edgeTypeMask.encode(rightNodeInternalId, edgeType));
-  }*/
-
   @Override
   public void removeEdge(long leftNode, long rightNode) {
     throw new UnsupportedOperationException("The remove operation is currently not supported");
