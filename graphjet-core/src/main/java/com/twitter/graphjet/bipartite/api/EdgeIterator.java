@@ -31,6 +31,13 @@ public interface EdgeIterator extends LongIterator {
   byte currentEdgeType();
 
   /**
+   * Returns the current edge metadata.
+   *
+   * @return the current edge metadata.
+   */
+  long currentMetadata();
+
+  /**
    * Returns the next element as a primitive type.
    *
    * @return the next element in the iteration.

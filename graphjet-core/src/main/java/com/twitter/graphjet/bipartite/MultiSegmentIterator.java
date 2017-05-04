@@ -102,6 +102,9 @@ public abstract class MultiSegmentIterator<T extends LeftIndexedBipartiteGraphSe
     return currentSegmentIterator.currentEdgeType();
   }
 
+  @Override
+  public long currentMetadata() { return currentSegmentIterator.currentMetadata(); }
+
   public int skip(int i) {
     return currentSegmentIterator.skip(i);
   }
