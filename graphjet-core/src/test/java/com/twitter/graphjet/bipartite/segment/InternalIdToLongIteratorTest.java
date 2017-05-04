@@ -21,6 +21,8 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
+import com.twitter.graphjet.bipartite.api.EdgeMetadataIntIterator;
+import com.twitter.graphjet.bipartite.api.ReadOnlyIntIterator;
 import com.twitter.graphjet.hashing.ArrayBasedLongToInternalIntBiMap;
 import com.twitter.graphjet.hashing.LongToInternalIntBiMap;
 import com.twitter.graphjet.stats.NullStatsReceiver;
@@ -32,6 +34,41 @@ import it.unimi.dsi.fastutil.longs.LongArrayList;
 
 public class InternalIdToLongIteratorTest {
   private final StatsReceiver nullStatsReceiver = new NullStatsReceiver();
+
+  // create a helper class wrapping IntIterator which implements EdgeMetadataIntIterator, so that
+  // testcase could use HelperIterator in the resetWithIntIterator function.
+  public class HelperIterator extends ReadOnlyIntIterator implements EdgeMetadataIntIterator {
+    private IntIterator intIterator;
+
+    public HelperIterator(IntIterator intIterator) {
+      this.intIterator = intIterator;
+    }
+
+    @Override
+    public long currentMetadata() {
+      return 0L;
+    }
+
+    @Override
+    public int nextInt() {
+      return intIterator.nextInt();
+    }
+
+    @Override
+    public int skip(int var1) {
+      return intIterator.skip(var1);
+    }
+
+    @Override
+    public Integer next() {
+      return nextInt();
+    }
+
+    @Override
+    public boolean hasNext() {
+      return intIterator.hasNext();
+    }
+  }
 
   @Test
   public void testInternalIdToLongIterator() {
@@ -49,7 +86,7 @@ public class InternalIdToLongIteratorTest {
     InternalIdToLongIterator internalIdToLongIterator =
         new InternalIdToLongIterator(nodesToIndexBiMap, new IdentityEdgeTypeMask());
 
-    internalIdToLongIterator.resetWithIntIterator(intIterator);
+    internalIdToLongIterator.resetWithIntIterator(new HelperIterator(intIterator));
     assertEquals(new LongArrayList(expectedEntries), new LongArrayList(internalIdToLongIterator));
   }
 }
