@@ -67,6 +67,7 @@ public class RegularDegreeEdgeIterator extends ReadOnlyIntIterator
     return regularDegreeEdgePool.getNumberedEdge(position, currentEdge++);
   }
 
+  @Override
   public long currentMetadata() {
     return regularDegreeEdgePool.getEdgeMetadata(position, currentEdge - 1);
   }

@@ -95,6 +95,7 @@ public class PowerLawDegreeEdgeIterator extends ReadOnlyIntIterator
     return currentRegularDegreeEdgeIterator.nextInt();
   }
 
+  @Override
   public long currentMetadata() {
     return currentRegularDegreeEdgeIterator.currentMetadata();
   }
