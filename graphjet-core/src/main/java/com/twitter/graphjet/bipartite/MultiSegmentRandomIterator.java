@@ -41,8 +41,8 @@ public class MultiSegmentRandomIterator<T extends LeftIndexedBipartiteGraphSegme
   private int numSamplesNeeded;
   private Random random;
   private long[] samples;
-  private byte[] sampleEdgeTypes;
   private long[] sampleEdgeMetadata;
+  private byte[] sampleEdgeTypes;
 
   /**
    * This constructor mirror the one in it's super-class to reuse common code.
