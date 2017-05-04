@@ -147,19 +147,6 @@ public class OptimizedEdgePool implements EdgePool {
     return readerAccessibleInfo.edges.getEntry(position + edgeNumber);
   }
 
-  /**
-   * Get the metadata of a specified edge for the node: note that it is the caller's responsibility
-   * to check that the edge number is within the degree bounds.
-   *
-   * @param position is the position index for the node
-   * @param edgeNumber is the required edge number
-   * @return the requested edge metdata
-   */
-  protected long getEdgeMetadata(int position, int edgeNumber) {
-    return readerAccessibleInfo.metadata.getEntry(position + edgeNumber);
-  }
-
-
   protected int getNodePosition(int node) {
     return readerAccessibleInfo.nodeInfo.getFirstValue(node);
   }
@@ -242,7 +229,7 @@ public class OptimizedEdgePool implements EdgePool {
    * @param srcPos the starting position in the source array
    * @param length the number of edges to be copied
    */
-  public void addEdgeMetadata(int node, int pool, long[] src, int srcPos, int length) {
+  public void addMetadata(int node, int pool, long[] src, int srcPos, int length) {
     int position = getNodePosition(node);
 
     readerAccessibleInfo.metadata.arrayCopy(

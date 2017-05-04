@@ -132,14 +132,26 @@ public abstract class BipartiteGraphSegment extends LeftIndexedBipartiteGraphSeg
   }
 
   @Override
-  protected void updateEdgePool(int leftNodeInternalId, int rightNodeInternalId, byte edgeType) {
+  protected void updateEdgePool(
+    int leftNodeInternalId,
+    int rightNodeInternalId,
+    byte edgeType,
+    long edgeMetadata
+  ) {
     // First we add the edges to the left pool so that it is ready to be accessed
     readerAccessibleInfoProvider.getReaderAccessibleInfo()
-        .getLeftNodeEdgePool().addEdge(leftNodeInternalId,
-        edgeTypeMask.encode(rightNodeInternalId, edgeType));
+      .getLeftNodeEdgePool().addEdge(
+        leftNodeInternalId,
+        edgeTypeMask.encode(rightNodeInternalId, edgeType),
+        edgeMetadata
+      );
+
     readerAccessibleInfoProvider.getReaderAccessibleInfo()
-        .getRightNodeEdgePool().addEdge(rightNodeInternalId,
-                                edgeTypeMask.encode(leftNodeInternalId, edgeType));
+      .getRightNodeEdgePool().addEdge(
+        rightNodeInternalId,
+        edgeTypeMask.encode(leftNodeInternalId, edgeType),
+        edgeMetadata
+      );
   }
 
   @Override

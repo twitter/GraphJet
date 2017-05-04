@@ -140,7 +140,7 @@ public final class GraphConcurrentTestHelper {
         } catch (InterruptedException e) {
           throw new RuntimeException("Interrupted while waiting: ", e);
         }
-        bipartiteGraph.addEdge(writerInfo.leftNode, writerInfo.rightNode, (byte) 0);
+        bipartiteGraph.addEdge(writerInfo.leftNode, writerInfo.rightNode, (byte) 0, 0L);
         writerInfo.doneSignal.countDown();
       }
     }

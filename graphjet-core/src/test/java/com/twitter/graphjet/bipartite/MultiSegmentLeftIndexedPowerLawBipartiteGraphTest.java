@@ -37,17 +37,17 @@ import it.unimi.dsi.fastutil.longs.LongArrayList;
 public class MultiSegmentLeftIndexedPowerLawBipartiteGraphTest {
   private void addEdges(
       LeftIndexedPowerLawMultiSegmentBipartiteGraph multiSegmentLeftIndexedPowerLawBipartiteGraph) {
-    multiSegmentLeftIndexedPowerLawBipartiteGraph.addEdge(1, 11, (byte) 0);
-    multiSegmentLeftIndexedPowerLawBipartiteGraph.addEdge(1, 12, (byte) 0);
-    multiSegmentLeftIndexedPowerLawBipartiteGraph.addEdge(4, 41, (byte) 0);
-    multiSegmentLeftIndexedPowerLawBipartiteGraph.addEdge(2, 21, (byte) 0);
-    multiSegmentLeftIndexedPowerLawBipartiteGraph.addEdge(4, 42, (byte) 0);
-    multiSegmentLeftIndexedPowerLawBipartiteGraph.addEdge(3, 31, (byte) 0);
-    multiSegmentLeftIndexedPowerLawBipartiteGraph.addEdge(2, 22, (byte) 0);
-    multiSegmentLeftIndexedPowerLawBipartiteGraph.addEdge(1, 13, (byte) 0);
-    multiSegmentLeftIndexedPowerLawBipartiteGraph.addEdge(4, 43, (byte) 0);
+    multiSegmentLeftIndexedPowerLawBipartiteGraph.addEdge(1, 11, (byte) 0, 0L);
+    multiSegmentLeftIndexedPowerLawBipartiteGraph.addEdge(1, 12, (byte) 0, 0L);
+    multiSegmentLeftIndexedPowerLawBipartiteGraph.addEdge(4, 41, (byte) 0, 0L);
+    multiSegmentLeftIndexedPowerLawBipartiteGraph.addEdge(2, 21, (byte) 0, 0L);
+    multiSegmentLeftIndexedPowerLawBipartiteGraph.addEdge(4, 42, (byte) 0, 0L);
+    multiSegmentLeftIndexedPowerLawBipartiteGraph.addEdge(3, 31, (byte) 0, 0L);
+    multiSegmentLeftIndexedPowerLawBipartiteGraph.addEdge(2, 22, (byte) 0, 0L);
+    multiSegmentLeftIndexedPowerLawBipartiteGraph.addEdge(1, 13, (byte) 0, 0L);
+    multiSegmentLeftIndexedPowerLawBipartiteGraph.addEdge(4, 43, (byte) 0, 0L);
     // violates the max num nodes assumption
-    multiSegmentLeftIndexedPowerLawBipartiteGraph.addEdge(5, 11, (byte) 0);
+    multiSegmentLeftIndexedPowerLawBipartiteGraph.addEdge(5, 11, (byte) 0, 0L);
   }
 
   private void testGraph(
@@ -154,7 +154,7 @@ public class MultiSegmentLeftIndexedPowerLawBipartiteGraphTest {
     for (int i = 0; i < leftSize; i++) {
       for (int j = 0; j < rightSize; j++) {
         if (random.nextDouble() < edgeProbability) {
-          multiSegmentLeftIndexedPowerLawBipartiteGraph.addEdge(i, j, (byte) 0);
+          multiSegmentLeftIndexedPowerLawBipartiteGraph.addEdge(i, j, (byte) 0, 0L);
         }
       }
     }
@@ -249,7 +249,7 @@ public class MultiSegmentLeftIndexedPowerLawBipartiteGraphTest {
       for (int i = 0; i < leftSize; i++) {
         for (int j = 0; j < rightSize; j++) {
           if (random.nextDouble() < edgeProbability) {
-            multiSegmentLeftIndexedPowerLawBipartiteGraph.addEdge(i, j, (byte) 0);
+            multiSegmentLeftIndexedPowerLawBipartiteGraph.addEdge(i, j, (byte) 0, 0L);
           }
         }
       }

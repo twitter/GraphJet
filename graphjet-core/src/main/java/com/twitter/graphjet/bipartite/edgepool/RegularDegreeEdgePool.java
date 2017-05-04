@@ -105,7 +105,7 @@ public class RegularDegreeEdgePool implements EdgePool {
    */
   public static final class ReaderAccessibleInfo {
     public final BigIntArray edges;
-    public final BigLongArray edgeMetadata;
+    public final BigLongArray metadata;
     // Each entry contains 2 ints for a node: position, degree
     protected final IntToIntPairHashMap nodeInfo;
 
@@ -117,10 +117,10 @@ public class RegularDegreeEdgePool implements EdgePool {
      */
     public ReaderAccessibleInfo(
         BigIntArray edges,
-        BigLongArray edgeMetadata,
+        BigLongArray metadata,
         IntToIntPairHashMap nodeInfo) {
       this.edges = edges;
-      this.edgeMetadata = edgeMetadata;
+      this.metadata = metadata;
       this.nodeInfo = nodeInfo;
     }
   }
@@ -236,18 +236,6 @@ public class RegularDegreeEdgePool implements EdgePool {
     return readerAccessibleInfo.edges.getEntry(position + edgeNumber);
   }
 
-  /**
-   * Get the metadata of a specified edge for the node: note that it is the caller's responsibility
-   * to check that the edge number is within the degree bounds.
-   *
-   * @param position is the position index for the node
-   * @param edgeNumber is the required edge number
-   * @return the requested edge metdata
-   */
-  protected long getEdgeMetadata(int position, int edgeNumber) {
-    return readerAccessibleInfo.edgeMetadata.getEntry(position + edgeNumber);
-  }
-
   @Override
   public int getNodeDegree(int node) {
     long nodeInfo = getNodeInfo(node);
@@ -309,7 +297,7 @@ public class RegularDegreeEdgePool implements EdgePool {
     int nodeAPosition = getNodePositionFromNodeInfo(nodeAInfo);
     int position = nodeAPosition + nodeADegree;
     readerAccessibleInfo.edges.addEntry(nodeB, position);
-    readerAccessibleInfo.edgeMetadata.addEntry(metadata, position);
+    readerAccessibleInfo.metadata.addEntry(metadata, position);
     // This is to guarantee that if a reader sees the updated degree later, they can find the edge
     currentNumEdgesStored++;
     // The order is important -- the updated degree is the ONLY way for a reader for going to the
@@ -341,7 +329,7 @@ public class RegularDegreeEdgePool implements EdgePool {
   }
 
   public long[] getMetadataShard(int node) {
-    return ((ShardedBigLongArray) readerAccessibleInfo.edgeMetadata).
+    return ((ShardedBigLongArray) readerAccessibleInfo.metadata).
       getShard(readerAccessibleInfo.nodeInfo.getFirstValue(node));
   }
 

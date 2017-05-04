@@ -16,12 +16,8 @@
 
 package com.twitter.graphjet.demo;
 
-import com.twitter.graphjet.bipartite.MultiSegmentPowerLawBipartiteGraph;
-import com.twitter.graphjet.bipartite.segment.IdentityEdgeTypeMask;
-import com.twitter.graphjet.stats.NullStatsReceiver;
-import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.longs.LongIterator;
-import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
+import java.util.Date;
+
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
@@ -29,6 +25,14 @@ import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
 import org.kohsuke.args4j.ParserProperties;
+
+import com.twitter.graphjet.bipartite.MultiSegmentPowerLawBipartiteGraph;
+import com.twitter.graphjet.bipartite.segment.IdentityEdgeTypeMask;
+import com.twitter.graphjet.stats.NullStatsReceiver;
+
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.longs.LongIterator;
+import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import twitter4j.HashtagEntity;
 import twitter4j.StallWarning;
 import twitter4j.Status;
@@ -36,8 +40,6 @@ import twitter4j.StatusDeletionNotice;
 import twitter4j.StatusListener;
 import twitter4j.TwitterStream;
 import twitter4j.TwitterStreamFactory;
-
-import java.util.Date;
 
 /**
  * Demo of GraphJet. This program uses Twitter4j to read from the streaming API, where it observes status messages to
@@ -137,7 +139,7 @@ public class TwitterStreamReader {
         long resolvedTweetId = status.isRetweet() ? status.getRetweetedStatus().getId() : status.getId();
         HashtagEntity[] hashtagEntities = status.getHashtagEntities();
 
-        userTweetBigraph.addEdge(userId, resolvedTweetId, (byte) 0);
+        userTweetBigraph.addEdge(userId, resolvedTweetId, (byte) 0, 0L);
 
         if (!users.containsKey(userId)) {
           users.put(userId, screenname);
@@ -152,7 +154,7 @@ public class TwitterStreamReader {
 
         for (HashtagEntity entity: hashtagEntities) {
           long hashtagHash = (long)entity.getText().toLowerCase().hashCode();
-          tweetHashtagBigraph.addEdge(tweetId, hashtagHash, (byte) 0);
+          tweetHashtagBigraph.addEdge(tweetId, hashtagHash, (byte) 0, 0L);
           if (!hashtags.containsKey(hashtagHash)) {
             hashtags.put(hashtagHash, entity.getText().toLowerCase());
           }

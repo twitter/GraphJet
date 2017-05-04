@@ -33,7 +33,7 @@ import com.twitter.graphjet.stats.StatsReceiver;
  * are accessed.
  * <p>There is a little bit of extra computational cost associated with sharding, namely that we need
  * to convert positions to shards and offsets. To make this cost negligible, we enforce that shard
- * lengths are powers of 2, which implies that conversations are bit operations. This does make the
+ * lengths are powers of 2, which implies that conversions are bit operations. This does make the
  * array size a bit larger than desired, but the memory overhead is generally small.</p>
  *
  * <p>This class is thread-safe even though it does not do any locking: it achieves this by leveraging

@@ -18,19 +18,19 @@ package com.twitter.graphjet.algorithms.filter;
 
 import org.junit.Test;
 
-import it.unimi.dsi.fastutil.longs.LongArraySet;
-import it.unimi.dsi.fastutil.longs.LongSet;
+import static org.junit.Assert.assertEquals;
 
-import com.twitter.graphjet.bipartite.segment.MockEdgeTypeMask;
 import com.twitter.graphjet.algorithms.RecommendationRequest;
 import com.twitter.graphjet.algorithms.TweetAuthorFilter;
 import com.twitter.graphjet.bipartite.LeftIndexedMultiSegmentBipartiteGraph;
 import com.twitter.graphjet.bipartite.NodeMetadataLeftIndexedMultiSegmentBipartiteGraph;
 import com.twitter.graphjet.bipartite.NodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraph;
+import com.twitter.graphjet.bipartite.segment.MockEdgeTypeMask;
 import com.twitter.graphjet.hashing.SmallArrayBasedLongToDoubleMap;
 import com.twitter.graphjet.stats.NullStatsReceiver;
 
-import static org.junit.Assert.assertEquals;
+import it.unimi.dsi.fastutil.longs.LongArraySet;
+import it.unimi.dsi.fastutil.longs.LongSet;
 
 public class TweetAuthorFilterTest {
   @Test
@@ -57,9 +57,9 @@ public class TweetAuthorFilterTest {
     int[][] dummyNodeMetadata = new int[][]{};
 
     leftIndexedBipartiteGraph.addEdge(1, 10, (byte)RecommendationRequest.AUTHOR_SOCIAL_PROOF_TYPE,
-      dummyNodeMetadata, dummyNodeMetadata);
+      0L, dummyNodeMetadata, dummyNodeMetadata);
     leftIndexedBipartiteGraph.addEdge(2, 20, (byte)RecommendationRequest.AUTHOR_SOCIAL_PROOF_TYPE,
-        dummyNodeMetadata, dummyNodeMetadata);
+      0L, dummyNodeMetadata, dummyNodeMetadata);
 
     SmallArrayBasedLongToDoubleMap[] socialProofs = {};
     LongSet tweetAuthors = new LongArraySet();
