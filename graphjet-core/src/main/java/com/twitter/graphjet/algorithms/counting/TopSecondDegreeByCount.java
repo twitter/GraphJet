@@ -20,6 +20,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.twitter.graphjet.algorithms.NodeInfo;
 import com.twitter.graphjet.algorithms.RecommendationAlgorithm;
 import com.twitter.graphjet.algorithms.RecommendationRequest;
@@ -42,6 +45,8 @@ import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 public abstract class TopSecondDegreeByCount<Request extends TopSecondDegreeByCountRequest,
   Response extends TopSecondDegreeByCountResponse>
   implements RecommendationAlgorithm<Request, Response> {
+
+  protected static final Logger LOG = LoggerFactory.getLogger("graph");
 
   // Static variables for better memory reuse. Avoids re-allocation on every request
   private final LeftIndexedMultiSegmentBipartiteGraph leftIndexedBipartiteGraph;
