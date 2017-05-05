@@ -20,9 +20,9 @@ package com.twitter.graphjet.bipartite.api;
 import it.unimi.dsi.fastutil.ints.IntIterator;
 
 /**
- * An interface accessing the edge metadata {@link IntIterator}.
+ * An interface accessing the int edges and their long metadata {@link IntIterator}.
  */
-public interface EdgeMetadataIntIterator extends IntIterator {
+public interface WithEdgeMetadataIntIterator extends IntIterator {
   /**
    * Returns the current edge metadata.
    *
