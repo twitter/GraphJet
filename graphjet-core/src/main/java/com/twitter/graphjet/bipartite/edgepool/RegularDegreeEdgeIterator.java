@@ -17,16 +17,16 @@
 
 package com.twitter.graphjet.bipartite.edgepool;
 
-import com.twitter.graphjet.bipartite.api.EdgeMetadataIntIterator;
 import com.twitter.graphjet.bipartite.api.ReadOnlyIntIterator;
 import com.twitter.graphjet.bipartite.api.ReusableNodeIntIterator;
+import com.twitter.graphjet.bipartite.api.WithEdgeMetadataIntIterator;
 
 /**
  * Returns an iterator over the edges stored in a {@link RegularDegreeEdgePool}. The iterator is
  * meant to be reusable via the resetForIndex method.
  */
 public class RegularDegreeEdgeIterator extends ReadOnlyIntIterator
-                                       implements EdgeMetadataIntIterator, ReusableNodeIntIterator {
+                                       implements WithEdgeMetadataIntIterator, ReusableNodeIntIterator {
   protected final RegularDegreeEdgePool regularDegreeEdgePool;
   protected int position;
   protected int degree;
@@ -69,7 +69,7 @@ public class RegularDegreeEdgeIterator extends ReadOnlyIntIterator
 
   @Override
   public long currentMetadata() {
-    return regularDegreeEdgePool.getEdgeMetadata(position, currentEdge - 1);
+    return regularDegreeEdgePool.getNumberedEdgeMetadata(position, currentEdge - 1);
   }
 
   @Override

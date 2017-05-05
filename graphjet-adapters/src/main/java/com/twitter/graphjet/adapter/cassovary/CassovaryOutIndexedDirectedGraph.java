@@ -97,6 +97,12 @@ public class CassovaryOutIndexedDirectedGraph implements OutIndexedDirectedGraph
     }
 
     @Override
+    public long currentMetadata() {
+      // Always return 0 since Cassovary edges do not have metadata.
+      return 0L;
+    }
+
+    @Override
     public boolean hasNext() {
       return index < seq.length();
     }
@@ -143,6 +149,12 @@ public class CassovaryOutIndexedDirectedGraph implements OutIndexedDirectedGraph
     }
 
     @Override
+    public long currentMetadata() {
+      // Always return 0 since Cassovary edges do not have edge metadata.
+      return 0L;
+    }
+
+    @Override
     public boolean hasNext() {
       return index < seq.length();
     }
@@ -177,6 +189,11 @@ public class CassovaryOutIndexedDirectedGraph implements OutIndexedDirectedGraph
     @Override
     public byte currentEdgeType() {
       return 0;
+    }
+
+    @Override
+    public long currentMetadata() {
+      return 0L;
     }
 
     @Override

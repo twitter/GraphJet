@@ -18,7 +18,7 @@
 package com.twitter.graphjet.bipartite.segment;
 
 import com.twitter.graphjet.bipartite.api.EdgeIterator;
-import com.twitter.graphjet.bipartite.api.EdgeMetadataIntIterator;
+import com.twitter.graphjet.bipartite.api.WithEdgeMetadataIntIterator;
 import com.twitter.graphjet.bipartite.api.EdgeTypeMask;
 import com.twitter.graphjet.hashing.LongToInternalIntBiMap;
 
@@ -31,7 +31,7 @@ import it.unimi.dsi.fastutil.ints.IntIterator;
 public class InternalIdToLongIterator implements EdgeIterator, ReusableInternalIdToLongIterator {
   private final LongToInternalIntBiMap nodesIndexMap;
   private EdgeTypeMask edgeTypeMask;
-  private EdgeMetadataIntIterator intIterator;
+  private WithEdgeMetadataIntIterator intIterator;
   private int currentNodeId;
 
   public InternalIdToLongIterator(LongToInternalIntBiMap nodesIndexMap, EdgeTypeMask edgeTypeMask) {
@@ -42,7 +42,7 @@ public class InternalIdToLongIterator implements EdgeIterator, ReusableInternalI
 
   @Override
   public EdgeIterator resetWithIntIterator(IntIterator inputIntIterator) {
-    this.intIterator = (EdgeMetadataIntIterator) inputIntIterator;
+    this.intIterator = (WithEdgeMetadataIntIterator) inputIntIterator;
     this.currentNodeId = 0;
     return this;
   }
@@ -59,7 +59,9 @@ public class InternalIdToLongIterator implements EdgeIterator, ReusableInternalI
   }
 
   @Override
-  public long currentMetadata() { return intIterator.currentMetadata(); }
+  public long currentMetadata() {
+    return intIterator.currentMetadata();
+  }
 
   @Override
   public int skip(int i) {

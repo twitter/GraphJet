@@ -263,6 +263,12 @@ public class PowerLawDegreeEdgePool implements EdgePool {
     return r;
   }
 
+  public static int getEdgeNumberInPool(int poolNumber, int edgeNumber) {
+    // For pool i, this is: \sum_i 2^i - 1  = 2^{i+1} - 2
+    int numEdgesBeforeThisPool = (1 << (poolNumber + 1)) - 2;
+    return edgeNumber - numEdgesBeforeThisPool;
+  }
+
   // Read the volatile int, which forces a happens-before ordering on the read-write operations
   private int crossMemoryBarrier() {
     return currentNumEdgesStored;
@@ -418,10 +424,16 @@ public class PowerLawDegreeEdgePool implements EdgePool {
    */
   public int getNumberedEdge(int node, int edgeNumber) {
     int poolNumber = getPoolForEdgeNumber(edgeNumber);
-    // For pool i, this is: \sum_i 2^i - 1  = 2^{i+1} - 2
-    int numEdgesBeforeThisPool = (1 << (poolNumber + 1)) - 2;
-    int edgeNumberInPool = edgeNumber - numEdgesBeforeThisPool;
+    int edgeNumberInPool = getEdgeNumberInPool(poolNumber, edgeNumber);
     return readerAccessibleInfo.edgePools[poolNumber].getNodeEdge(node, edgeNumberInPool);
+  }
+
+  public int getNumberedEdgeInRegularPool(int node, int poolNumber, int edgeNumberInPool) {
+    return readerAccessibleInfo.edgePools[poolNumber].getNodeEdge(node, edgeNumberInPool);
+  }
+
+  public long getNumberedEdgeMetadataInRegularPool(int node, int poolNumber, int edgeNumberInPool) {
+    return readerAccessibleInfo.edgePools[poolNumber].getNodeEdgeMetadata(node, edgeNumberInPool);
   }
 
   public int getCurrentNumEdgesStored() {

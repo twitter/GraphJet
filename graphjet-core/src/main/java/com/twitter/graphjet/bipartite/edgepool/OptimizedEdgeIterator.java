@@ -17,7 +17,7 @@
 
 package com.twitter.graphjet.bipartite.edgepool;
 
-import com.twitter.graphjet.bipartite.api.EdgeMetadataIntIterator;
+import com.twitter.graphjet.bipartite.api.WithEdgeMetadataIntIterator;
 import com.twitter.graphjet.bipartite.api.ReadOnlyIntIterator;
 import com.twitter.graphjet.bipartite.api.ReusableNodeIntIterator;
 
@@ -26,7 +26,7 @@ import com.twitter.graphjet.bipartite.api.ReusableNodeIntIterator;
  * meant to be reusable via the resetForIndex method.
  */
 public class OptimizedEdgeIterator extends ReadOnlyIntIterator
-  implements EdgeMetadataIntIterator, ReusableNodeIntIterator {
+  implements WithEdgeMetadataIntIterator, ReusableNodeIntIterator {
   protected final OptimizedEdgePool optimizedDegreeEdgePool;
   protected int position;
   protected int degree;

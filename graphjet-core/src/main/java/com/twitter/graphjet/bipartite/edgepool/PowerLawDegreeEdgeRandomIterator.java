@@ -33,6 +33,8 @@ public class PowerLawDegreeEdgeRandomIterator extends PowerLawDegreeEdgeIterator
                                               implements ReusableNodeRandomIntIterator {
   private int numSamples;
   private Random random;
+  private int currentPoolNumber;
+  private int currentPoolIndex;
 
   /**
    * Creates an iterator that can be reused. Note that the client needs to call the resetForNode
@@ -64,8 +66,22 @@ public class PowerLawDegreeEdgeRandomIterator extends PowerLawDegreeEdgeIterator
   @Override
   public int nextInt() {
     int randomEdgeNumber = random.nextInt(nodeDegree);
+    currentPoolNumber = PowerLawDegreeEdgePool.getPoolForEdgeNumber(randomEdgeNumber);
+    currentPoolIndex = PowerLawDegreeEdgePool.getEdgeNumberInPool(
+      currentPoolNumber, randomEdgeNumber
+    );
+
     currentEdge++;
-    return powerLawDegreeEdgePool.getNumberedEdge(node, randomEdgeNumber);
+    return powerLawDegreeEdgePool.getNumberedEdgeInRegularPool(
+      node, currentPoolNumber, currentPoolIndex
+    );
+  }
+
+  @Override
+  public long currentMetadata() {
+    return powerLawDegreeEdgePool.getNumberedEdgeMetadataInRegularPool(
+      node, currentPoolNumber, currentPoolIndex
+    );
   }
 
   @Override
