@@ -22,10 +22,12 @@ import java.util.Map;
 import java.util.PriorityQueue;
 
 import com.google.common.collect.Lists;
-import com.twitter.graphjet.algorithms.*;
+
+import com.twitter.graphjet.algorithms.NodeInfo;
+import com.twitter.graphjet.algorithms.Pair;
 import com.twitter.graphjet.algorithms.RecommendationInfo;
+import com.twitter.graphjet.algorithms.RecommendationRequest;
 import com.twitter.graphjet.algorithms.counting.GeneratorHelper;
-import com.twitter.graphjet.bipartite.api.Pair;
 
 import it.unimi.dsi.fastutil.longs.LongList;
 

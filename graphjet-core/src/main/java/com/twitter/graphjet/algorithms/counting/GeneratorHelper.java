@@ -22,7 +22,7 @@ import java.util.Map;
 import java.util.PriorityQueue;
 
 import com.twitter.graphjet.algorithms.NodeInfo;
-import com.twitter.graphjet.bipartite.api.Pair;
+import com.twitter.graphjet.algorithms.Pair;
 import com.twitter.graphjet.algorithms.RecommendationRequest;
 import com.twitter.graphjet.algorithms.RecommendationType;
 import com.twitter.graphjet.algorithms.counting.tweet.TopSecondDegreeByCountRequestForTweet;

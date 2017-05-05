@@ -16,13 +16,14 @@
 
 package com.twitter.graphjet.algorithms.counting.user;
 
+import java.util.Map;
+
 import com.twitter.graphjet.algorithms.RecommendationType;
 import com.twitter.graphjet.algorithms.ResultFilterChain;
 import com.twitter.graphjet.algorithms.counting.TopSecondDegreeByCountRequest;
+
 import it.unimi.dsi.fastutil.longs.Long2DoubleMap;
 import it.unimi.dsi.fastutil.longs.LongSet;
-
-import java.util.Map;
 
 /**
  * Request data structure for calculating user recommendations.

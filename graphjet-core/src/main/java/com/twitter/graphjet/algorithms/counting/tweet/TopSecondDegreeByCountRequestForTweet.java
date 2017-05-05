@@ -22,8 +22,8 @@ import java.util.Set;
 
 import com.twitter.graphjet.algorithms.RecommendationType;
 import com.twitter.graphjet.algorithms.ResultFilterChain;
-
 import com.twitter.graphjet.algorithms.counting.TopSecondDegreeByCountRequest;
+
 import it.unimi.dsi.fastutil.longs.Long2DoubleMap;
 import it.unimi.dsi.fastutil.longs.LongSet;
 
