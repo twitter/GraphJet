@@ -1,4 +1,4 @@
-package com.twitter.graphjet.algorithms;
+package com.twitter.graphjet.bipartite.api;
 
 public class Pair<L, R> {
   private L l;

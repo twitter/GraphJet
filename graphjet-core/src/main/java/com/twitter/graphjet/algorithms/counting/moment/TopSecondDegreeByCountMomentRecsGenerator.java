@@ -24,7 +24,7 @@ import java.util.PriorityQueue;
 import com.google.common.collect.Lists;
 
 import com.twitter.graphjet.algorithms.NodeInfo;
-import com.twitter.graphjet.algorithms.Pair;
+import com.twitter.graphjet.bipartite.api.Pair;
 import com.twitter.graphjet.algorithms.RecommendationInfo;
 import com.twitter.graphjet.algorithms.RecommendationRequest;
 import com.twitter.graphjet.algorithms.counting.GeneratorHelper;

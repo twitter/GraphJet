@@ -18,7 +18,7 @@ package com.twitter.graphjet.algorithms.counting.user;
 
 import java.util.Map;
 
-import com.twitter.graphjet.algorithms.Pair;
+import com.twitter.graphjet.bipartite.api.Pair;
 import com.twitter.graphjet.algorithms.RecommendationType;
 import com.twitter.graphjet.algorithms.counting.TopSecondDegreeByCountRecommendationInfo;
 
