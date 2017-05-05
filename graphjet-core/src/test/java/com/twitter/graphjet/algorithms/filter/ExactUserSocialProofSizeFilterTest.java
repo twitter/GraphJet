@@ -18,11 +18,11 @@ package com.twitter.graphjet.algorithms.filter;
 
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
+
 import com.twitter.graphjet.algorithms.ExactUserSocialProofSizeFilter;
 import com.twitter.graphjet.hashing.SmallArrayBasedLongToDoubleMap;
 import com.twitter.graphjet.stats.NullStatsReceiver;
-
-import static org.junit.Assert.assertEquals;
 
 public class ExactUserSocialProofSizeFilterTest {
 
@@ -54,11 +54,11 @@ public class ExactUserSocialProofSizeFilterTest {
     long resultNode = 0L;
 
     SmallArrayBasedLongToDoubleMap socialProofForType1 = new SmallArrayBasedLongToDoubleMap();
-    socialProofForType1.put(1, 1.0);
-    socialProofForType1.put(2, 1.0);
+    socialProofForType1.put(1, 1.0, 0L);
+    socialProofForType1.put(2, 1.0, 0L);
 
     SmallArrayBasedLongToDoubleMap socialProofForType2 = new SmallArrayBasedLongToDoubleMap();
-    socialProofForType2.put(1, 1.0);
+    socialProofForType2.put(1, 1.0, 0L);
 
     SmallArrayBasedLongToDoubleMap[] socialProofs = {socialProofForType1, socialProofForType2};
 

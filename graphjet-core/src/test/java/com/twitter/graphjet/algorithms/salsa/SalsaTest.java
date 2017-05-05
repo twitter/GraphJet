@@ -32,6 +32,7 @@ import static org.junit.Assert.assertEquals;
 
 import com.twitter.graphjet.algorithms.BipartiteGraphTestHelper;
 import com.twitter.graphjet.algorithms.DirectInteractionsFilter;
+import com.twitter.graphjet.algorithms.Pair;
 import com.twitter.graphjet.algorithms.RecommendationInfo;
 import com.twitter.graphjet.algorithms.RequestedSetFilter;
 import com.twitter.graphjet.algorithms.ResultFilter;
@@ -84,12 +85,14 @@ public class SalsaTest {
             .withResultFilterChain(resultFilterChain)
             .build();
 
-    ArrayList<HashMap<Byte, LongList>> socialProof = new ArrayList<HashMap<Byte, LongList>>();
+    LongList metadata1 = new LongArrayList(new long[]{0});
+    LongList metadata2 = new LongArrayList(new long[]{0, 0});
+    ArrayList<HashMap<Byte, Pair<LongList, LongList>>> socialProof = new ArrayList<>();
     for (int i = 0; i < 3; i++) {
-      socialProof.add(new HashMap<Byte, LongList>());
+      socialProof.add(new HashMap<>());
     }
-    socialProof.get(0).put((byte) 0, new LongArrayList(new long[]{3, 2}));
-    socialProof.get(1).put((byte) 0, new LongArrayList(new long[]{3}));
+    socialProof.get(0).put((byte) 0, new Pair<>(new LongArrayList(new long[]{3, 2}), metadata2));
+    socialProof.get(1).put((byte) 0, new Pair<>(new LongArrayList(new long[]{3}), metadata1));
 
     final List<RecommendationInfo> expectedTopResults = new ArrayList<RecommendationInfo>();
     expectedTopResults.add(new TweetRecommendationInfo(5, 0.2346316283435007, socialProof.get(0)));
@@ -137,11 +140,11 @@ public class SalsaTest {
             .withResultFilterChain(resultFilterChain)
             .build();
 
-    ArrayList<HashMap<Byte, LongList>> subSocialProof = new ArrayList<HashMap<Byte, LongList>>();
+    ArrayList<HashMap<Byte, Pair<LongList, LongList>>> subSocialProof = new ArrayList<>();
     for (int i = 0; i < 3; i++) {
-      subSocialProof.add(new HashMap<Byte, LongList>());
+      subSocialProof.add(new HashMap<>());
     }
-    subSocialProof.get(0).put((byte) 0, new LongArrayList(new long[]{2}));
+    subSocialProof.get(0).put((byte) 0, new Pair<>(new LongArrayList(new long[]{2}), metadata1));
 
     final List<RecommendationInfo> expectedTopResultsSubgraph = new ArrayList<RecommendationInfo>();
     expectedTopResultsSubgraph.add(
@@ -212,13 +215,20 @@ public class SalsaTest {
 
     final SalsaStats expectedSalsaStats = new SalsaStats(1, 64, 998, 21050, 1, 227, 64);
 
-    ArrayList<HashMap<Byte, LongList>> socialProof = new ArrayList<HashMap<Byte, LongList>>();
+    LongList metadata2 = new LongArrayList(new long[]{0, 0});
+    ArrayList<HashMap<Byte, Pair<LongList, LongList>>> socialProof = new ArrayList<>();
     for (int i = 0; i < 3; i++) {
-      socialProof.add(new HashMap<Byte, LongList>());
+      socialProof.add(new HashMap<>());
     }
-    socialProof.get(0).put((byte) 0, new LongArrayList(new long[]{718, 889}));
-    socialProof.get(1).put((byte) 0, new LongArrayList(new long[]{47, 96}));
-    socialProof.get(2).put((byte) 0, new LongArrayList(new long[]{623, 880}));
+    socialProof.get(0).put(
+      (byte) 0, new Pair<>(new LongArrayList(new long[]{718, 889}), metadata2)
+    );
+    socialProof.get(1).put(
+      (byte) 0, new Pair<>(new LongArrayList(new long[]{47, 96}), metadata2)
+    );
+    socialProof.get(2).put(
+      (byte) 0, new Pair<>(new LongArrayList(new long[]{623, 880}), metadata2)
+    );
 
     final List<RecommendationInfo> expectedTopResults = new ArrayList<RecommendationInfo>();
     expectedTopResults.add(new TweetRecommendationInfo(735, 0.0010926365795724466,
@@ -307,13 +317,20 @@ public class SalsaTest {
             .withResultFilterChain(resultFilterChain)
             .build();
 
-    ArrayList<HashMap<Byte, LongList>> socialProof = new ArrayList<HashMap<Byte, LongList>>();
+    LongList metadata3 = new LongArrayList(new long[]{0, 0, 0});
+    ArrayList<HashMap<Byte, Pair<LongList, LongList>>> socialProof = new ArrayList<>();
     for (int i = 0; i < 3; i++) {
-      socialProof.add(new HashMap<Byte, LongList>());
+      socialProof.add(new HashMap<>());
     }
-    socialProof.get(0).put((byte) 0, new LongArrayList(new long[]{79, 51, 19}));
-    socialProof.get(1).put((byte) 0, new LongArrayList(new long[]{44, 77, 13}));
-    socialProof.get(2).put((byte) 0, new LongArrayList(new long[]{21, 65, 3}));
+    socialProof.get(0).put(
+      (byte) 0, new Pair<>(new LongArrayList(new long[]{79, 51, 19}), metadata3)
+    );
+    socialProof.get(1).put(
+      (byte) 0, new Pair<>(new LongArrayList(new long[]{44, 77, 13}), metadata3)
+    );
+    socialProof.get(2).put(
+      (byte) 0, new Pair<>(new LongArrayList(new long[]{21, 65, 3}), metadata3)
+    );
 
     final List<RecommendationInfo> expectedTopResults = new ArrayList<RecommendationInfo>();
     expectedTopResults.add(

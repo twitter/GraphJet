@@ -43,11 +43,11 @@ public class SocialProofTypesFilterTest {
     socialProofTypeFilter.resetFilter(salsaRequest);
 
     SmallArrayBasedLongToDoubleMap clickSocialProof = new SmallArrayBasedLongToDoubleMap();
-    clickSocialProof.put(123L, 1.0);
+    clickSocialProof.put(123L, 1.0, 0L);
     SmallArrayBasedLongToDoubleMap favoriteSocialProof = new SmallArrayBasedLongToDoubleMap();
-    favoriteSocialProof.put(234L, 1.0);
+    favoriteSocialProof.put(234L, 1.0, 0L);
     SmallArrayBasedLongToDoubleMap retweetSocialProof = new SmallArrayBasedLongToDoubleMap();
-    retweetSocialProof.put(345L, 1.0);
+    retweetSocialProof.put(345L, 1.0, 0L);
 
     SmallArrayBasedLongToDoubleMap[] socialProofs =
       new SmallArrayBasedLongToDoubleMap[]{
@@ -67,11 +67,11 @@ public class SocialProofTypesFilterTest {
     socialProofTypeFilter.resetFilter(salsaRequest);
 
     SmallArrayBasedLongToDoubleMap clickSocialProof = new SmallArrayBasedLongToDoubleMap();
-    clickSocialProof.put(123L, 1.0);
+    clickSocialProof.put(123L, 1.0, 0L);
     SmallArrayBasedLongToDoubleMap favoriteSocialProof = new SmallArrayBasedLongToDoubleMap();
-    favoriteSocialProof.put(234L, 1.0);
+    favoriteSocialProof.put(234L, 1.0, 0L);
     SmallArrayBasedLongToDoubleMap retweetSocialProof = new SmallArrayBasedLongToDoubleMap();
-    retweetSocialProof.put(345L, 1.0);
+    retweetSocialProof.put(345L, 1.0, 0L);
 
     SmallArrayBasedLongToDoubleMap[] socialProofs =
       new SmallArrayBasedLongToDoubleMap[]{

@@ -41,7 +41,7 @@ public class SmallArrayBasedLongToDoubleMapTest {
       long key = random.nextInt(maxKey);
       double value = (double) random.nextInt(maxValue);
 
-      map.put(key, value);
+      map.put(key, value, 0L);
       map.sort();
       map.trim(trimSize);
     }

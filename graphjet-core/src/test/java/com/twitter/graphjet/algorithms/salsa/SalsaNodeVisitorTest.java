@@ -86,9 +86,9 @@ public class SalsaNodeVisitorTest {
             salsaInternalState.getVisitedRightNodes());
     simpleNodeVisitor.resetWithRequest(salsaRequest);
 
-    simpleNodeVisitor.visitRightNode(1, 2, (byte) 0, 1);
-    simpleNodeVisitor.visitRightNode(2, 3, (byte) 0, 1);
-    simpleNodeVisitor.visitRightNode(1, 3, (byte) 0, 1);
+    simpleNodeVisitor.visitRightNode(1, 2, (byte) 0, 0L, 1);
+    simpleNodeVisitor.visitRightNode(2, 3, (byte) 0, 0L, 1);
+    simpleNodeVisitor.visitRightNode(1, 3, (byte) 0, 0L, 1);
 
     Long2ObjectMap<NodeInfo> expectedVisitedRightNodesMap =
         new Long2ObjectOpenHashMap<NodeInfo>(2);
@@ -105,13 +105,13 @@ public class SalsaNodeVisitorTest {
             salsaInternalState.getVisitedRightNodes());
     nodeVisitorWithSocialProof.resetWithRequest(salsaRequest);
 
-    nodeVisitorWithSocialProof.visitRightNode(1, 2, (byte) 0, 1);
-    nodeVisitorWithSocialProof.visitRightNode(2, 3, (byte) 0, 1);
-    nodeVisitorWithSocialProof.visitRightNode(1, 3, (byte) 0, 1);
+    nodeVisitorWithSocialProof.visitRightNode(1, 2, (byte) 0, 0L, 1);
+    nodeVisitorWithSocialProof.visitRightNode(2, 3, (byte) 0, 0L, 1);
+    nodeVisitorWithSocialProof.visitRightNode(1, 3, (byte) 0, 0L, 1);
 
     NodeInfo node2 = new NodeInfo(2, 1, 1);
     NodeInfo node3 = new NodeInfo(3, 2, 1);
-    assertTrue(node3.addToSocialProof(2, (byte) 0, 1));
+    assertTrue(node3.addToSocialProof(2, (byte) 0, 0L, 1));
 
     Long2ObjectMap<NodeInfo> expectedVisitedRightNodesMap =
         new Long2ObjectOpenHashMap<NodeInfo>(2);

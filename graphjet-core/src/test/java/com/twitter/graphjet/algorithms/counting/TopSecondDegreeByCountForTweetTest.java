@@ -27,24 +27,20 @@ import java.util.Set;
 
 import com.google.common.collect.Lists;
 
-import com.twitter.graphjet.algorithms.counting.user.UserRecommendationInfo;
-import com.twitter.graphjet.algorithms.counting.tweet.TopSecondDegreeByCountRequestForTweet;
-import com.twitter.graphjet.algorithms.counting.user.TopSecondDegreeByCountRequestForUser;
-import com.twitter.graphjet.algorithms.counting.tweet.TopSecondDegreeByCountForTweet;
-import com.twitter.graphjet.algorithms.counting.user.TopSecondDegreeByCountForUser;
-import com.twitter.graphjet.bipartite.LeftIndexedMultiSegmentBipartiteGraph;
-import com.twitter.graphjet.bipartite.LeftIndexedPowerLawMultiSegmentBipartiteGraph;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
 import com.twitter.graphjet.algorithms.BipartiteGraphTestHelper;
+import com.twitter.graphjet.algorithms.Pair;
 import com.twitter.graphjet.algorithms.RecommendationInfo;
 import com.twitter.graphjet.algorithms.RecommendationStats;
 import com.twitter.graphjet.algorithms.RecommendationType;
 import com.twitter.graphjet.algorithms.RequestedSetFilter;
 import com.twitter.graphjet.algorithms.ResultFilter;
 import com.twitter.graphjet.algorithms.ResultFilterChain;
+import com.twitter.graphjet.algorithms.counting.tweet.TopSecondDegreeByCountForTweet;
+import com.twitter.graphjet.algorithms.counting.tweet.TopSecondDegreeByCountRequestForTweet;
 import com.twitter.graphjet.algorithms.counting.tweet.TweetRecommendationInfo;
 import com.twitter.graphjet.bipartite.NodeMetadataLeftIndexedMultiSegmentBipartiteGraph;
 import com.twitter.graphjet.stats.NullStatsReceiver;
@@ -114,13 +110,15 @@ public class TopSecondDegreeByCountForTweetTest {
       new NullStatsReceiver()
     ).computeRecommendations(request, random);
 
-    ArrayList<HashMap<Byte, LongList>> socialProof = new ArrayList<HashMap<Byte, LongList>>();
+    LongList metadata1 = new LongArrayList(new long[]{0});
+    LongList metadata2 = new LongArrayList(new long[]{0, 0});
+    ArrayList<HashMap<Byte, Pair<LongList, LongList>>> socialProof = new ArrayList<>();
     for (int i = 0; i < 3; i++) {
-      socialProof.add(new HashMap<Byte, LongList>());
+      socialProof.add(new HashMap<>());
     }
-    socialProof.get(0).put((byte) 0, new LongArrayList(new long[]{2, 3}));
-    socialProof.get(1).put((byte) 0, new LongArrayList(new long[]{2}));
-    socialProof.get(2).put((byte) 0, new LongArrayList(new long[]{3}));
+    socialProof.get(0).put((byte) 0, new Pair<>(new LongArrayList(new long[]{2, 3}), metadata2));
+    socialProof.get(1).put((byte) 0, new Pair<>(new LongArrayList(new long[]{2}), metadata1));
+    socialProof.get(2).put((byte) 0, new Pair<>(new LongArrayList(new long[]{3}), metadata1));
 
     final List<RecommendationInfo> expectedTopResults = new ArrayList<RecommendationInfo>();
     expectedTopResults.add(new TweetRecommendationInfo(10, 1.5, socialProof.get(0)));
@@ -188,13 +186,15 @@ public class TopSecondDegreeByCountForTweetTest {
       new NullStatsReceiver()
     ).computeRecommendations(request, random);
 
-    ArrayList<HashMap<Byte, LongList>> socialProof = new ArrayList<HashMap<Byte, LongList>>();
-    for (int i = 0; i < 2; i++) {
-      socialProof.add(new HashMap<Byte, LongList>());
+    LongList metadata1 = new LongArrayList(new long[]{0});
+    LongList metadata3 = new LongArrayList(new long[]{0, 0, 0});
+    ArrayList<HashMap<Byte, Pair<LongList, LongList>>> socialProof = new ArrayList<>();
+    for (int i = 0; i < 3; i++) {
+      socialProof.add(new HashMap<>());
     }
-    socialProof.get(0).put((byte) 1, new LongArrayList(new long[]{1, 2, 3}));
-    socialProof.get(1).put((byte) 0, new LongArrayList(new long[]{2}));
-    socialProof.get(1).put((byte) 3, new LongArrayList(new long[]{1}));
+    socialProof.get(0).put((byte) 1, new Pair<>(new LongArrayList(new long[]{1, 2, 3}), metadata3));
+    socialProof.get(1).put((byte) 0, new Pair<>(new LongArrayList(new long[]{2}), metadata1));
+    socialProof.get(1).put((byte) 3, new Pair<>(new LongArrayList(new long[]{1}), metadata1));
 
     final List<RecommendationInfo> expectedTopResults = new ArrayList<RecommendationInfo>();
     expectedTopResults.add(new TweetRecommendationInfo(3, 3.0, socialProof.get(0)));
@@ -283,13 +283,17 @@ public class TopSecondDegreeByCountForTweetTest {
       new NullStatsReceiver()
     ).computeRecommendations(request, random);
 
-    ArrayList<HashMap<Byte, LongList>> socialProof = new ArrayList<HashMap<Byte, LongList>>();
+    LongList metadata1 = new LongArrayList(new long[]{0});
+    LongList metadata2 = new LongArrayList(new long[]{0, 0});
+    ArrayList<HashMap<Byte, Pair<LongList, LongList>>> socialProof = new ArrayList<>();
     for (int i = 0; i < 3; i++) {
-      socialProof.add(new HashMap<Byte, LongList>());
+      socialProof.add(new HashMap<>());
     }
-    socialProof.get(0).put((byte) 0, new LongArrayList(new long[]{990, 978}));
-    socialProof.get(1).put((byte) 0, new LongArrayList(new long[]{990, 978}));
-    socialProof.get(2).put((byte) 0, new LongArrayList(new long[]{990}));
+    socialProof.get(0).put(
+      (byte) 0, new Pair<>(new LongArrayList(new long[]{990, 978}), metadata2));
+    socialProof.get(1).put(
+      (byte) 0, new Pair<>(new LongArrayList(new long[]{990, 978}), metadata2));
+    socialProof.get(2).put((byte) 0, new Pair<>(new LongArrayList(new long[]{990}), metadata1));
 
     final List<RecommendationInfo> expectedTopResults = new ArrayList<RecommendationInfo>();
     expectedTopResults.add(

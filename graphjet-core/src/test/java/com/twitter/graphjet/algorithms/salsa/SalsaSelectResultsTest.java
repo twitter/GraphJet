@@ -28,6 +28,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 
 import com.twitter.graphjet.algorithms.BipartiteGraphTestHelper;
+import com.twitter.graphjet.algorithms.Pair;
 import com.twitter.graphjet.algorithms.RecommendationInfo;
 import com.twitter.graphjet.algorithms.RequestedSetFilter;
 import com.twitter.graphjet.algorithms.ResultFilter;
@@ -90,19 +91,21 @@ public class SalsaSelectResultsTest {
             salsaInternalState.getVisitedRightNodes());
     nodeVisitor.resetWithRequest(salsaRequest);
 
-    salsaInternalState.visitRightNode(nodeVisitor, 1, 4, (byte) 0, 1);
-    salsaInternalState.visitRightNode(nodeVisitor, 2, 4, (byte) 0, 2);
-    salsaInternalState.visitRightNode(nodeVisitor, 3, 4, (byte) 0, 3);
-    salsaInternalState.visitRightNode(nodeVisitor, 3, 8, (byte) 0, 9);
-    salsaInternalState.visitRightNode(nodeVisitor, 1, 2, (byte) 0, 1);
-    salsaInternalState.visitRightNode(nodeVisitor, 4, 2, (byte) 0, 1);
+    salsaInternalState.visitRightNode(nodeVisitor, 1, 4, (byte) 0, 0L, 1);
+    salsaInternalState.visitRightNode(nodeVisitor, 2, 4, (byte) 0, 0L, 2);
+    salsaInternalState.visitRightNode(nodeVisitor, 3, 4, (byte) 0, 0L, 3);
+    salsaInternalState.visitRightNode(nodeVisitor, 3, 8, (byte) 0, 0L, 9);
+    salsaInternalState.visitRightNode(nodeVisitor, 1, 2, (byte) 0, 0L, 1);
+    salsaInternalState.visitRightNode(nodeVisitor, 4, 2, (byte) 0, 0L, 1);
 
-    ArrayList<HashMap<Byte, LongList>> socialProof = new ArrayList<HashMap<Byte, LongList>>();
+    LongList metadata1 = new LongArrayList(new long[]{0});
+    LongList metadata2 = new LongArrayList(new long[]{0, 0});
+    ArrayList<HashMap<Byte, Pair<LongList, LongList>>> socialProof = new ArrayList<>();
     for (int i = 0; i < 2; i++) {
-      socialProof.add(new HashMap<Byte, LongList>());
+      socialProof.add(new HashMap<>());
     }
-    socialProof.get(0).put((byte) 0, new LongArrayList(new long[]{3, 2}));
-    socialProof.get(1).put((byte) 0, new LongArrayList(new long[]{4}));
+    socialProof.get(0).put((byte) 0, new Pair<>(new LongArrayList(new long[]{3, 2}), metadata2));
+    socialProof.get(1).put((byte) 0, new Pair<>(new LongArrayList(new long[]{4}), metadata1));
 
     final List<RecommendationInfo> expectedTopResults = new ArrayList<RecommendationInfo>();
     expectedTopResults.add(new TweetRecommendationInfo(4, 0.5, socialProof.get(0)));
