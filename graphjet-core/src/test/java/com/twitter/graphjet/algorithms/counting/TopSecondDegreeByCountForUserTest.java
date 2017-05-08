@@ -183,7 +183,8 @@ public class TopSecondDegreeByCountForUserTest {
 
     int expectedNodesToHit = 100;
     long randomSeed = 918324701982347L;
-    long dummyKeepEdgeWithinTime = Long.MAX_VALUE;
+    long maxRightNodeAgeInMillis = Long.MAX_VALUE;
+    long maxEdgeAgeInMillis = Long.MAX_VALUE;
     Random random = new Random(randomSeed);
 
     TopSecondDegreeByCountRequestForUser request = new TopSecondDegreeByCountRequestForUser(
@@ -195,7 +196,8 @@ public class TopSecondDegreeByCountForUserTest {
       maxSocialProofSize,
       minUserPerSocialProof,
       socialProofTypes,
-      dummyKeepEdgeWithinTime,
+      maxRightNodeAgeInMillis,
+      maxEdgeAgeInMillis,
       resultFilterChain);
 
     try {

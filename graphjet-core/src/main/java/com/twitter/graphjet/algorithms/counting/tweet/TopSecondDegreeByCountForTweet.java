@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.twitter.graphjet.algorithms.NodeInfo;
+import com.twitter.graphjet.algorithms.RecentTweetFilter;
 import com.twitter.graphjet.algorithms.RecommendationInfo;
 import com.twitter.graphjet.algorithms.RecommendationType;
 import com.twitter.graphjet.algorithms.counting.TopSecondDegreeByCount;
@@ -55,9 +56,51 @@ public class TopSecondDegreeByCountForTweet extends
     super(leftIndexedBipartiteGraph, expectedNodesToHit, statsReceiver);
   }
 
+  protected long getEdgeTimeStampInMillis(
+    long timeStampFromTweetId,
+    byte edgeType,
+    long edgeMetadata
+  ) {
+    switch (edgeType) {
+      case 1:  // FAVORITE
+        return edgeMetadata;
+      case 2:  // RETWEET
+        return RecentTweetFilter.timeStampFromTweetId(edgeMetadata);
+      case 3:  // REPLY
+        return RecentTweetFilter.timeStampFromTweetId(edgeMetadata);
+      case 4:  // TWEET
+        return timeStampFromTweetId;
+      case 5:  // IS_MENTIONED
+        return timeStampFromTweetId;
+      case 6:  // IS_MEDIATAGGED
+        return timeStampFromTweetId;
+      case 7:  // QUOTE
+        return RecentTweetFilter.timeStampFromTweetId(edgeMetadata);
+      default:
+        throw new IllegalStateException("Invalid EdgeType in getEdgeTimeStampInMillis");
+    }
+  }
+
   @Override
-  protected boolean isEdgeUpdateValid(TopSecondDegreeByCountRequestForTweet request, EdgeIterator edgeIterator) {
-    return true; // Currently there is no edge filtering in tweet recommendations
+  protected boolean isEdgeUpdateValid(
+    TopSecondDegreeByCountRequestForTweet request,
+    long rightNode,
+    byte edgeType,
+    long edgeMetadata
+    ) {
+    long currentTimeInMillis = System.currentTimeMillis();
+
+    long timeStampFromTweetId = RecentTweetFilter.originalTimeStampFromTweetId(rightNode);
+    // if the timestamp of the right node exceeds the right node age limit;
+    if (timeStampFromTweetId < (currentTimeInMillis - request.getMaxRightNodeAgeInMillis())) {
+      return false;
+    }
+
+    // if the timestamp of the edge exceeds the edge age limit;
+    return isEdgeEngagementWithinAgeLimit(
+      getEdgeTimeStampInMillis(timeStampFromTweetId, edgeType, edgeMetadata),
+      request.getMaxEdgeAgeInMillis()
+    );
   }
 
   @Override

@@ -31,6 +31,9 @@ public abstract class TopSecondDegreeByCountRequest extends RecommendationReques
   private final Long2DoubleMap leftSeedNodesWithWeight;
   private final int maxSocialProofTypeSize;
   private final ResultFilterChain resultFilterChain;
+  private final long maxRightNodeAgeInMillis;
+  private final long maxEdgeAgeInMillis;
+
   /**
    * @param queryNode                 is the query node for running TopSecondDegreeByCount
    * @param leftSeedNodesWithWeight   is the set of seed nodes and their weights to use for
@@ -38,6 +41,8 @@ public abstract class TopSecondDegreeByCountRequest extends RecommendationReques
    * @param toBeFiltered              is the set of RHS nodes to be filtered from the output
    * @param maxSocialProofTypeSize    is the number of social proof types in the graph
    * @param socialProofTypes          Social proof types, masked into a byte array
+   * @param maxRightNodeAgeInMillis   Max right node age in millisecond, such as tweet age
+   * @param maxEdgeAgeInMillis        Max edge age in millisecond, such as engagement age
    * @param resultFilterChain         Filter chain to be applied after recommendation computation
    */
   public TopSecondDegreeByCountRequest(
@@ -46,10 +51,14 @@ public abstract class TopSecondDegreeByCountRequest extends RecommendationReques
     LongSet toBeFiltered,
     int maxSocialProofTypeSize,
     byte[] socialProofTypes,
+    long maxRightNodeAgeInMillis,
+    long maxEdgeAgeInMillis,
     ResultFilterChain resultFilterChain) {
     super(queryNode, toBeFiltered, socialProofTypes);
     this.leftSeedNodesWithWeight = leftSeedNodesWithWeight;
     this.maxSocialProofTypeSize = maxSocialProofTypeSize;
+    this.maxRightNodeAgeInMillis = maxRightNodeAgeInMillis;
+    this.maxEdgeAgeInMillis = maxEdgeAgeInMillis;
     this.resultFilterChain = resultFilterChain;
   }
 
@@ -61,6 +70,13 @@ public abstract class TopSecondDegreeByCountRequest extends RecommendationReques
     return maxSocialProofTypeSize;
   }
 
+  public long getMaxRightNodeAgeInMillis() {
+    return maxRightNodeAgeInMillis;
+  }
+
+  public long getMaxEdgeAgeInMillis() {
+    return maxEdgeAgeInMillis;
+  }
 
   public void resetFilters() {
     if (resultFilterChain != null) {

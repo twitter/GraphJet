@@ -80,12 +80,30 @@ public abstract class TopSecondDegreeByCount<Request extends TopSecondDegreeByCo
   }
 
   /**
+   * Return whether the edge is within the age limit which is specified in the request.
+   * It is used to filter information of unwanted edges from being aggregated.
+   * @param edgeEngagementTime is the timestamp of the engagement edge
+   * @param edgeAgeLimit is the time to live for the edge
+   * @return true if this edge is within the max age limit, false otherwise.
+   */
+  protected boolean isEdgeEngagementWithinAgeLimit(long edgeEngagementTime, long edgeAgeLimit) {
+    return (edgeEngagementTime >= System.currentTimeMillis() - edgeAgeLimit);
+  }
+
+  /**
    * Return whether we should proceed with updating an edge's info based on the criteria specified in the request
    * @param request the request object containing the criteria
-   * @param edgeIterator contains current edge's info, such as max time-to-live and edge type
+   * @param rightNode is th RHS node
+   * @param edgeType  is the edge type
+   * @param edgeMetadata is the edge metadata
    * @return true if the edge's information should be collected, false if it should be skipped
    */
-  protected abstract boolean isEdgeUpdateValid(Request request, EdgeIterator edgeIterator);
+  protected abstract boolean isEdgeUpdateValid(
+    Request request,
+    long rightNode,
+    byte edgeType,
+    long edgeMetadata
+  );
 
   /**
    * Update node information gathered about each RHS node, such as metadata and weights.
@@ -160,7 +178,8 @@ public abstract class TopSecondDegreeByCount<Request extends TopSecondDegreeByCo
         boolean hasSeenRightNodeFromEdge =
           seenEdgesPerNode.containsKey(rightNode) && seenEdgesPerNode.get(rightNode) == edgeType;
 
-        if (!hasSeenRightNodeFromEdge && isEdgeUpdateValid(request, edgeIterator)) {
+        if (!hasSeenRightNodeFromEdge
+          && isEdgeUpdateValid(request, rightNode, edgeType, edgeMetadata)) {
           seenEdgesPerNode.put(rightNode, edgeType);
           updateNodeInfo(
             leftNode,

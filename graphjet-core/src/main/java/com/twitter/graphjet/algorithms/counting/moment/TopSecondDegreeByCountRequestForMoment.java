@@ -54,9 +54,11 @@ public class TopSecondDegreeByCountRequestForMoment extends TopSecondDegreeByCou
     int maxSocialProofTypeSize,
     Map<Byte, Integer> minUserPerSocialProof,
     byte[] socialProofTypes,
+    long maxRightNodeAgeInMillis,
+    long maxEdgeAgeInMillis,
     ResultFilterChain resultFilterChain) {
     super(queryNode, leftSeedNodesWithWeight, toBeFiltered, maxSocialProofTypeSize,
-        socialProofTypes, resultFilterChain);
+        socialProofTypes, maxRightNodeAgeInMillis, maxEdgeAgeInMillis, resultFilterChain);
     this.maxNumResults = maxNumResults;
     this.maxNumSocialProofs = maxNumSocialProofs;
     this.minUserPerSocialProof = minUserPerSocialProof;
