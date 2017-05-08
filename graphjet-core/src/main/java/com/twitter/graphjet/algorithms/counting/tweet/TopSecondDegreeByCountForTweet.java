@@ -88,11 +88,9 @@ public class TopSecondDegreeByCountForTweet extends
     byte edgeType,
     long edgeMetadata
     ) {
-    long currentTimeInMillis = System.currentTimeMillis();
-
     long timeStampFromTweetId = RecentTweetFilter.originalTimeStampFromTweetId(rightNode);
     // if the timestamp of the right node exceeds the right node age limit;
-    if (timeStampFromTweetId < (currentTimeInMillis - request.getMaxRightNodeAgeInMillis())) {
+    if (timeStampFromTweetId < (System.currentTimeMillis() - request.getMaxRightNodeAgeInMillis())) {
       return false;
     }
 
