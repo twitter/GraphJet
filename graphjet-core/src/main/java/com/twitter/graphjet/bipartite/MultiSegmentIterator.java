@@ -17,7 +17,6 @@
 package com.twitter.graphjet.bipartite;
 
 import com.twitter.graphjet.bipartite.api.EdgeIterator;
-import com.twitter.graphjet.bipartite.api.TimestampEdgeIterator;
 import com.twitter.graphjet.bipartite.segment.LeftIndexedBipartiteGraphSegment;
 
 /**
@@ -27,7 +26,7 @@ import com.twitter.graphjet.bipartite.segment.LeftIndexedBipartiteGraphSegment;
  * chronological ordering over all the edges.
  */
 public abstract class MultiSegmentIterator<T extends LeftIndexedBipartiteGraphSegment>
-    implements EdgeIterator, TimestampEdgeIterator {
+    implements EdgeIterator {
   protected final LeftIndexedMultiSegmentBipartiteGraph<T> multiSegmentBipartiteGraph;
   protected final SegmentEdgeAccessor<T> segmentEdgeAccessor;
   protected MultiSegmentReaderAccessibleInfo<T> readerAccessibleInfo;
@@ -109,10 +108,5 @@ public abstract class MultiSegmentIterator<T extends LeftIndexedBipartiteGraphSe
 
   public int skip(int i) {
     return currentSegmentIterator.skip(i);
-  }
-
-  // TimestampEdgeIterator interface
-  public long getCurrentEdgeEngagementTimeInMillis() {
-    return readerAccessibleInfo.segments.get(currentSegmentId).getCreationTimeInMillis();
   }
 }
