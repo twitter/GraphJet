@@ -93,7 +93,7 @@ public abstract class TopSecondDegreeByCount<Request extends TopSecondDegreeByCo
   /**
    * Return whether we should proceed with updating an edge's info based on the criteria specified in the request
    * @param request the request object containing the criteria
-   * @param rightNode is th RHS node
+   * @param rightNode is the RHS node
    * @param edgeType  is the edge type
    * @param edgeMetadata is the edge metadata
    * @return true if the edge's information should be collected, false if it should be skipped
