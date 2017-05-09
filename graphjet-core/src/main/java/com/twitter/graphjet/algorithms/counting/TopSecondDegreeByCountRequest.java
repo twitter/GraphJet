@@ -42,7 +42,7 @@ public abstract class TopSecondDegreeByCountRequest extends RecommendationReques
    * @param maxSocialProofTypeSize    is the number of social proof types in the graph
    * @param socialProofTypes          Social proof types, masked into a byte array
    * @param maxRightNodeAgeInMillis   Max right node age in millisecond, such as tweet age
-   * @param maxEdgeAgeInMillis        Max edge age in millisecond, such as engagement age
+   * @param maxEdgeAgeInMillis        Max edge age in millisecond such as reply edge age
    * @param resultFilterChain         Filter chain to be applied after recommendation computation
    */
   public TopSecondDegreeByCountRequest(

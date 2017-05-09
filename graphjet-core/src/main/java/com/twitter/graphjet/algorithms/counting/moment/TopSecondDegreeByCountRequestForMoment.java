@@ -43,6 +43,8 @@ public class TopSecondDegreeByCountRequestForMoment extends TopSecondDegreeByCou
    * @param maxSocialProofTypeSize    is the number of social proof types in the graph
    * @param minUserPerSocialProof     for each social proof, require a minimum number of users to be valid
    * @param socialProofTypes          is the list of valid social proofs, (i.e. Create, Like etc)
+   * @param maxRightNodeAgeInMillis   Max right node age in millisecond, such as moment age
+   * @param maxEdgeAgeInMillis        Max edge age in millisecond such as like edge age
    * @param resultFilterChain         is the chain of filters to be applied
    */
   public TopSecondDegreeByCountRequestForMoment(
