@@ -62,6 +62,8 @@ public class TopSecondDegreeByCountForTweet extends
     long edgeMetadata
   ) {
     switch (edgeType) {
+      case 0:  // CLICK
+        return edgeMetadata;
       case 1:  // FAVORITE
         return edgeMetadata;
       case 2:  // RETWEET
