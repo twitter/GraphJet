@@ -43,6 +43,8 @@ public class TopSecondDegreeByCountRequestForUser extends TopSecondDegreeByCount
    * @param maxSocialProofTypeSize    is the number of social proof types in the graph
    * @param minUserPerSocialProof     for each social proof, require a minimum number of users to be valid
    * @param socialProofTypes          is the list of valid social proofs, (i.e, Follow, Mention, Mediatag)
+   * @param maxRightNodeAgeInMillis   is the max right node age in millisecond, such as tweet age
+   * @param maxEdgeAgeInMillis        is the max edge age in millisecond such as reply edge age
    * @param resultFilterChain         is the chain of filters to be applied
    */
   public TopSecondDegreeByCountRequestForUser(
