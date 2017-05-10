@@ -26,7 +26,7 @@
     <dependency>
       <groupId>com.twitter</groupId>
       <artifactId>graphjet-core</artifactId>
-      <version>1.0.23-SNAPSHOT</version>
+      <version>1.0.23Jerry8-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>com.twitter</groupId>

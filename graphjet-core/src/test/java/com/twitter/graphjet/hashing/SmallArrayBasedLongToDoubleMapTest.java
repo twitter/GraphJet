@@ -96,4 +96,19 @@ public class SmallArrayBasedLongToDoubleMapTest {
     assertEquals(new LongArrayList(expectedKeys), new LongArrayList(map.keys()));
     assertEquals(new DoubleArrayList(expectedValues), new DoubleArrayList(map.values()));
   }
+
+  @Test
+  public void testRepeatedKeysAndMetadata() {
+    SmallArrayBasedLongToDoubleMap map = new SmallArrayBasedLongToDoubleMap();
+    for (int i = 1; i <= 10 ; i++) {
+      map.put(i, i * 0.01, 1000 + i);
+    }
+    for (int i = 1; i <= 10; i++) {
+      assertEquals(map.put(i, i * 0.01,1000 + i), false);
+    }
+
+    for (int i = 1; i <= 10; i++) {
+      assertEquals(map.put(i, i * 0.01,2000 + i), true);
+    }
+  }
 }

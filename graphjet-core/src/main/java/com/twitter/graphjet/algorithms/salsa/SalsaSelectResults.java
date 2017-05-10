@@ -29,7 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.twitter.graphjet.algorithms.NodeInfo;
-import com.twitter.graphjet.algorithms.Pair;
+import com.twitter.graphjet.hashing.Pair;
 import com.twitter.graphjet.algorithms.RecommendationInfo;
 import com.twitter.graphjet.algorithms.RecommendationRequest;
 import com.twitter.graphjet.algorithms.TweetIDMask;
@@ -139,7 +139,7 @@ public class SalsaSelectResults<T extends LeftIndexedBipartiteGraph> {
     for (int i = 0; i < length; i++) {
       SmallArrayBasedLongToDoubleMap socialProof = socialProofs[validSocialProofs[i]];
       if (socialProof != null) {
-        if (socialProof.size() > 1) {
+        if (socialProof.getNumUniqueKeys() > 1) {
           socialProof.sort();
         }
 

@@ -22,7 +22,7 @@ import java.util.Map;
 import java.util.PriorityQueue;
 
 import com.twitter.graphjet.algorithms.NodeInfo;
-import com.twitter.graphjet.algorithms.Pair;
+import com.twitter.graphjet.hashing.Pair;
 import com.twitter.graphjet.algorithms.RecommendationRequest;
 import com.twitter.graphjet.algorithms.RecommendationType;
 import com.twitter.graphjet.algorithms.counting.tweet.TopSecondDegreeByCountRequestForTweet;
@@ -51,7 +51,7 @@ public final class GeneratorHelper {
     for (int i = 0; i < socialProofs.length; i++) {
       SmallArrayBasedLongToDoubleMap socialProof = socialProofs[i];
       if (socialProof != null) {
-        if (socialProof.size() > 1) {
+        if (socialProof.getNumUniqueKeys() > 1) {
           socialProof.sort();
         }
         socialProof.trim(maxSocialProofSize);
@@ -123,7 +123,7 @@ public final class GeneratorHelper {
         // not valid, if node does not have this type of social proof
         return false;
       }
-      if (socialProofs[proofType].size() < minSocialProofSizes.get(proofType)) {
+      if (socialProofs[proofType].getNumUniqueKeys() < minSocialProofSizes.get(proofType)) {
         // not valid, if number of social proofs below threshold
         return false;
       }

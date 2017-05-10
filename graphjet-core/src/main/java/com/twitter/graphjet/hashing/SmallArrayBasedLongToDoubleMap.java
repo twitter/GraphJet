@@ -17,11 +17,16 @@
 
 package com.twitter.graphjet.hashing;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import it.unimi.dsi.fastutil.Arrays;
 import it.unimi.dsi.fastutil.Swapper;
 import it.unimi.dsi.fastutil.ints.IntComparator;
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import it.unimi.dsi.fastutil.longs.LongSet;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import it.unimi.dsi.fastutil.objects.ObjectSet;
 
 /**
  * This class provides a map from long to double. It uses three primitive arrays to store long keys,
@@ -33,13 +38,18 @@ import it.unimi.dsi.fastutil.longs.LongSet;
  * and starts to use the set for dedupping.
  */
 public class SmallArrayBasedLongToDoubleMap {
+
+  protected static final Logger LOG = LoggerFactory.getLogger("graph");
+
   private static final int ADD_KEYS_TO_SET_THRESHOLD = 8;
   private long[] keys;
   private double[] values;
   private long[] metadataArray;
   private int capacity;
   private int size;
+  private int numUniqueKeys;
   private LongSet keySet;
+  private ObjectSet<Pair<Long, Long>> keyMetadataPairSet;
 
   /**
    * Create a new empty array map.
@@ -47,10 +57,12 @@ public class SmallArrayBasedLongToDoubleMap {
   public SmallArrayBasedLongToDoubleMap() {
     this.capacity = 4;
     this.size = 0;
+    this.numUniqueKeys = 0;
     this.keys = new long[capacity];
     this.values = new double[capacity];
     this.metadataArray = new long[capacity];
     this.keySet = null;
+    this.keyMetadataPairSet = null;
   }
 
   /**
@@ -90,6 +102,15 @@ public class SmallArrayBasedLongToDoubleMap {
   }
 
   /**
+   * Return the number of unique keys in the map.
+   *
+   * @return the the number of unique keys in the map.
+   */
+  public int getNumUniqueKeys() {
+    return this.numUniqueKeys;
+  }
+
+  /**
    * Add a pair to the map.
    *
    * @param key the key.
@@ -99,19 +120,33 @@ public class SmallArrayBasedLongToDoubleMap {
    */
   public boolean put(long key, double value, long metadata) {
     if (size < ADD_KEYS_TO_SET_THRESHOLD) {
+      boolean isUniqueKey = true;
       for (int i = 0; i < size; i++) {
         if (key == keys[i]) {
-          return false;
+          isUniqueKey = false;
+          if (metadata == metadataArray[i]) {
+            return false;
+          }
         }
       }
+
+      if (isUniqueKey) numUniqueKeys++;
     } else {
       if (keySet == null) {
         keySet = new LongOpenHashSet(keys, 0.75f /* load factor */);
+        keyMetadataPairSet = new ObjectOpenHashSet<>();
+        for (int i = 0; i < size; i++) {
+          keyMetadataPairSet.add(new Pair<>(keys[i], metadataArray[i]));
+        }
       }
-      if (keySet.contains(key)) {
+      Pair<Long, Long> pair = new Pair<>(key, metadata);
+      if (keyMetadataPairSet.contains(pair)) {
         return false;
       } else {
-        keySet.add(key);
+        if (keySet.add(key)) {
+          numUniqueKeys++;
+        }
+        keyMetadataPairSet.add(pair);
       }
     }
 
@@ -192,7 +227,7 @@ public class SmallArrayBasedLongToDoubleMap {
    *
    * Note: Use this function with caution since it is linear to ADD_KEYS_TO_SET_THRESHOLD.
    */
-  public boolean contains(long key) {
+  public boolean containsKey(long key) {
     // The size might have reached the ADD_KEYS_TO_SET_THRESHOLD, but we may have not inserted
     // a new key yet. Therefore, we need to also check if the size is equal to that threshold.
     if (size <= ADD_KEYS_TO_SET_THRESHOLD) {

@@ -146,7 +146,7 @@ public final class TopSecondDegreeByCountTweetRecsGenerator {
         if (authorId != -1 &&
           // Skip tweet author social proof because its size can be only one
           validSocialProofs[i] != RecommendationRequest.AUTHOR_SOCIAL_PROOF_TYPE &&
-          socialProofs[validSocialProofs[i]].contains(authorId)) {
+          socialProofs[validSocialProofs[i]].containsKey(authorId)) {
           minUserSocialProofThreshold += 1;
         }
         if (socialProofs[validSocialProofs[i]].size() >= minUserSocialProofThreshold) {
