@@ -65,7 +65,7 @@ public class RecentTweetFilter extends ResultFilter {
     return (id >> 22) + TWEPOCH;
   }
 
-  private static long originalTimeStampFromTweetId(long id) {
+  public static long originalTimeStampFromTweetId(long id) {
     return timeStampFromTweetId(id & TweetIDMask.MASK);
   }
 }

@@ -47,8 +47,13 @@ public class TopSecondDegreeByCountForMoment extends
   }
 
   @Override
-  protected boolean isEdgeUpdateValid(TopSecondDegreeByCountRequestForMoment request, EdgeIterator edgeIterator) {
-    return true; // Currently there is no edge filtering in moment recommendations
+  protected boolean isEdgeUpdateValid(
+    TopSecondDegreeByCountRequestForMoment request,
+    long rightNode,
+    byte edgeType,
+    long edgeMetadata
+  ) {
+    return isEdgeEngagementWithinAgeLimit(edgeMetadata, request.getMaxEdgeAgeInMillis());
   }
 
   @Override

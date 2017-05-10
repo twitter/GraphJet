@@ -24,7 +24,6 @@ import com.twitter.graphjet.algorithms.counting.TopSecondDegreeByCount;
 import com.twitter.graphjet.algorithms.counting.TopSecondDegreeByCountResponse;
 import com.twitter.graphjet.bipartite.LeftIndexedPowerLawMultiSegmentBipartiteGraph;
 import com.twitter.graphjet.bipartite.api.EdgeIterator;
-import com.twitter.graphjet.bipartite.api.TimestampEdgeIterator;
 import com.twitter.graphjet.stats.StatsReceiver;
 
 public class TopSecondDegreeByCountForUser extends
@@ -48,19 +47,6 @@ public class TopSecondDegreeByCountForUser extends
   }
 
   /**
-   * Return whether the edge is within the age limit which is specified in the request.
-   * It is used to filter information of unwanted edges from being aggregated.
-   * @param keepEdgeWithinTime      is the longest time to live for the edge
-   * @param edgeIterator            is the iterator being used to iterate node's edges.
-   *                                It carries information such as the engagement time of the current edge
-   * @return true if this edge is within the max age limit, false otherwise.
-   */
-  private boolean isEdgeEngagementWithinAgeLimit(long keepEdgeWithinTime, EdgeIterator edgeIterator) {
-    long edgeEngagementTime = ((TimestampEdgeIterator)edgeIterator).getCurrentEdgeEngagementTimeInMillis();
-    return (edgeEngagementTime >= System.currentTimeMillis() - keepEdgeWithinTime);
-  }
-
-  /**
    * Only social proof types specified in the user request are counted
    * For example, a request's social proof types only contain "Follow", and a node has "Follow" and "Mention" edges.
    * Only the "Follow" edge will be counted, and the "Mention" edge is considered invalid
@@ -78,10 +64,15 @@ public class TopSecondDegreeByCountForUser extends
   }
 
   @Override
-  protected boolean isEdgeUpdateValid(TopSecondDegreeByCountRequestForUser request, EdgeIterator edgeIterator) {
+  protected boolean isEdgeUpdateValid(
+    TopSecondDegreeByCountRequestForUser request,
+    long rightNode,
+    byte edgeType,
+    long edgeMetadata
+  ) {
     // Do not update on expired edges or invalid edge types
-    return (isEdgeTypeValid(request.getSocialProofTypes(), edgeIterator.currentEdgeType()) &&
-      isEdgeEngagementWithinAgeLimit(request.getMaxEdgeEngagementAgeInMillis(), edgeIterator));
+    return (isEdgeTypeValid(request.getSocialProofTypes(), edgeType) &&
+      isEdgeEngagementWithinAgeLimit(edgeMetadata, request.getMaxEdgeAgeInMillis()));
   }
 
   @Override

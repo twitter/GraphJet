@@ -153,6 +153,8 @@ public class TopSecondDegreeByCountForMomentTest {
 
     int expectedNodesToHit = 100;
     long randomSeed = 918324701982347L;
+    long maxRightNodeAgeInMillis = Long.MAX_VALUE;
+    long maxEdgeAgeInMillis = Long.MAX_VALUE;
     Random random = new Random(randomSeed);
 
     TopSecondDegreeByCountRequestForMoment request = new TopSecondDegreeByCountRequestForMoment(
@@ -164,6 +166,8 @@ public class TopSecondDegreeByCountForMomentTest {
       maxSocialProofSize,
       minUserPerSocialProof,
       socialProofTypes,
+      maxRightNodeAgeInMillis,
+      maxEdgeAgeInMillis,
       resultFilterChain);
 
     try {

@@ -64,6 +64,8 @@ public class TopSecondDegreeByCountRequestForTweet extends TopSecondDegreeByCoun
     int maxTweetSocialProofSize,
     Map<RecommendationType, Integer> minUserSocialProofSizes,
     byte[] socialProofTypes,
+    long maxRightNodeAgeInMillis,
+    long maxEdgeAgeInMillis,
     ResultFilterChain resultFilterChain,
     Set<byte[]> socialProofTypeUnions
   ) {
@@ -73,6 +75,8 @@ public class TopSecondDegreeByCountRequestForTweet extends TopSecondDegreeByCoun
       toBeFiltered,
       maxSocialProofTypeSize,
       socialProofTypes,
+      maxRightNodeAgeInMillis,
+      maxEdgeAgeInMillis,
       resultFilterChain);
     this.recommendationTypes = recommendationTypes;
     this.maxNumResultsByType = maxNumResultsByRecType;

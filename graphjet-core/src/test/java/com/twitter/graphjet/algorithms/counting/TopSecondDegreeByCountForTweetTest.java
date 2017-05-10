@@ -84,6 +84,8 @@ public class TopSecondDegreeByCountForTweetTest {
     int expectedNodesToHit = 100;
     long randomSeed = 918324701982347L;
     Random random = new Random(randomSeed);
+    long maxRightNodeAgeInMillis = Long.MAX_VALUE;
+    long maxEdgeAgeInMillis = Long.MAX_VALUE;
     ResultFilterChain resultFilterChain = new ResultFilterChain(Lists.<ResultFilter>newArrayList(
       new RequestedSetFilter(new NullStatsReceiver())
     ));
@@ -100,6 +102,8 @@ public class TopSecondDegreeByCountForTweetTest {
       maxTweetSocialProofSize,
       minUserSocialProofSizes,
       validSocialProofs,
+      maxRightNodeAgeInMillis,
+      maxEdgeAgeInMillis,
       resultFilterChain,
       socialProofTypeUnions
     );
@@ -158,6 +162,8 @@ public class TopSecondDegreeByCountForTweetTest {
     Set<byte[]> socialProofTypeUnions = new HashSet<>();
     socialProofTypeUnions.add(new byte[]{0, 3});
     int expectedNodesToHit = 100;
+    long maxRightNodeAgeInMillis = Long.MAX_VALUE;
+    long maxEdgeAgeInMillis = Long.MAX_VALUE;
     long randomSeed = 918324701982347L;
 
     Random random = new Random(randomSeed);
@@ -176,6 +182,8 @@ public class TopSecondDegreeByCountForTweetTest {
       maxTweetSocialProofSize,
       minUserSocialProofSizes,
       validSocialProofs,
+      maxRightNodeAgeInMillis,
+      maxEdgeAgeInMillis,
       resultFilterChain,
       socialProofTypeUnions
     );
@@ -255,6 +263,8 @@ public class TopSecondDegreeByCountForTweetTest {
     int maxSocialProofTypeSize = 5;
     byte[] validSocialProofs = new byte[]{0, 1, 2, 3, 4};
     int expectedNodesToHit = 100;
+    long maxRightNodeAgeInMillis = Long.MAX_VALUE;
+    long maxEdgeAgeInMillis = Long.MAX_VALUE;
 
     ResultFilterChain resultFilterChain = new ResultFilterChain(Lists.<ResultFilter>newArrayList(
       new RequestedSetFilter(new NullStatsReceiver())
@@ -273,6 +283,8 @@ public class TopSecondDegreeByCountForTweetTest {
       maxTweetSocialProofSize,
       minUserSocialProofSizes,
       validSocialProofs,
+      maxRightNodeAgeInMillis,
+      maxEdgeAgeInMillis,
       resultFilterChain,
       socialProofTypeUnions
     );
