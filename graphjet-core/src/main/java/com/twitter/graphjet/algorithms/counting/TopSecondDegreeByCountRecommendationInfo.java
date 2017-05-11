@@ -21,11 +21,9 @@ import java.util.Map;
 
 import com.google.common.base.Objects;
 
+import com.twitter.graphjet.algorithms.ConnectingUsers;
 import com.twitter.graphjet.algorithms.RecommendationInfo;
 import com.twitter.graphjet.algorithms.RecommendationType;
-import com.twitter.graphjet.datastructures.Pair;
-
-import it.unimi.dsi.fastutil.longs.LongList;
 
 /**
  * Recommendation based on user-entity interactions, such as creation and like.
@@ -33,13 +31,13 @@ import it.unimi.dsi.fastutil.longs.LongList;
 public abstract class TopSecondDegreeByCountRecommendationInfo implements RecommendationInfo {
   private final long recommendation;
   private final double weight;
-  private final Map<Byte, Pair<LongList, LongList>> socialProof;
+  private final Map<Byte, ConnectingUsers> socialProof;
   protected RecommendationType recommendationType;
 
   public TopSecondDegreeByCountRecommendationInfo(
     long recommendation,
     double weight,
-    Map<Byte, Pair<LongList, LongList>> socialProof
+    Map<Byte, ConnectingUsers> socialProof
   ) {
     this.recommendation = recommendation;
     this.weight = weight;
@@ -58,7 +56,7 @@ public abstract class TopSecondDegreeByCountRecommendationInfo implements Recomm
     return weight;
   }
 
-  public Map<Byte, Pair<LongList, LongList>> getSocialProof() {
+  public Map<Byte, ConnectingUsers> getSocialProof() {
     return socialProof;
   }
 

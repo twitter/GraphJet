@@ -18,17 +18,15 @@ package com.twitter.graphjet.algorithms.counting.user;
 
 import java.util.Map;
 
+import com.twitter.graphjet.algorithms.ConnectingUsers;
 import com.twitter.graphjet.algorithms.RecommendationType;
 import com.twitter.graphjet.algorithms.counting.TopSecondDegreeByCountRecommendationInfo;
-import com.twitter.graphjet.datastructures.Pair;
-
-import it.unimi.dsi.fastutil.longs.LongList;
 
 public class UserRecommendationInfo extends TopSecondDegreeByCountRecommendationInfo {
   public UserRecommendationInfo(
       long recommendation,
       double weight,
-      Map<Byte, Pair<LongList, LongList>> socialProof
+      Map<Byte, ConnectingUsers> socialProof
   ) {
     super(recommendation, weight, socialProof);
     super.recommendationType = RecommendationType.USER;
