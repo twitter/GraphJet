@@ -17,11 +17,15 @@
 
 package com.twitter.graphjet.hashing;
 
+import com.twitter.graphjet.datastructures.Pair;
+
 import it.unimi.dsi.fastutil.Arrays;
 import it.unimi.dsi.fastutil.Swapper;
 import it.unimi.dsi.fastutil.ints.IntComparator;
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import it.unimi.dsi.fastutil.longs.LongSet;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import it.unimi.dsi.fastutil.objects.ObjectSet;
 
 /**
  * This class provides a map from long to double. It uses three primitive arrays to store long keys,
@@ -37,9 +41,11 @@ public class SmallArrayBasedLongToDoubleMap {
   private long[] keys;
   private double[] values;
   private long[] metadataArray;
+  private long[] uniqueKeys;
   private int capacity;
   private int size;
   private LongSet keySet;
+  private ObjectSet<Pair<Long, Long>> keyMetadataPairSet;
 
   /**
    * Create a new empty array map.
@@ -50,7 +56,9 @@ public class SmallArrayBasedLongToDoubleMap {
     this.keys = new long[capacity];
     this.values = new double[capacity];
     this.metadataArray = new long[capacity];
+    this.uniqueKeys = new long[capacity];
     this.keySet = null;
+    this.keyMetadataPairSet = null;
   }
 
   /**
@@ -90,28 +98,35 @@ public class SmallArrayBasedLongToDoubleMap {
   }
 
   /**
-   * Add a pair to the map.
+   * Add a tuple3 to the map.
    *
    * @param key the key.
    * @param value the value.
    * @param metadata the metadata.
-   * @return true if no value present for the giving key, and false otherwise.
+   * @return true if no value present for the giving key and metadata pair, and false otherwise.
    */
   public boolean put(long key, double value, long metadata) {
     if (size < ADD_KEYS_TO_SET_THRESHOLD) {
       for (int i = 0; i < size; i++) {
-        if (key == keys[i]) {
+        if (key == keys[i] && metadata == metadataArray[i]) {
           return false;
         }
       }
     } else {
       if (keySet == null) {
         keySet = new LongOpenHashSet(keys, 0.75f /* load factor */);
+        keyMetadataPairSet = new ObjectOpenHashSet<>();
+        for (int i = 0; i < size; i++) {
+          keyMetadataPairSet.add(new Pair<>(keys[i], metadataArray[i]));
+        }
       }
-      if (keySet.contains(key)) {
+      Pair<Long, Long> pair = new Pair<>(key, metadata);
+
+      if (keyMetadataPairSet.contains(pair)) {
         return false;
       } else {
         keySet.add(key);
+        keyMetadataPairSet.add(pair);
       }
     }
 

@@ -43,8 +43,8 @@ public final class GeneratorHelper {
    * Pick the top social proofs for each RHS node
    */
   public static Map<Byte, Pair<LongList, LongList>> pickTopSocialProofs(
-    SmallArrayBasedLongToDoubleMap[] socialProofs,
-    int maxSocialProofSize) {
+    SmallArrayBasedLongToDoubleMap[] socialProofs
+  ) {
 
     Map<Byte, Pair<LongList, LongList>> results = new HashMap<>();
 
@@ -54,7 +54,7 @@ public final class GeneratorHelper {
         if (socialProof.size() > 1) {
           socialProof.sort();
         }
-        socialProof.trim(maxSocialProofSize);
+        socialProof.trim(socialProof.size());
         results.put((byte)i, new Pair<LongList, LongList>(
           new LongArrayList(socialProof.keys()),
           new LongArrayList(socialProof.metadata())

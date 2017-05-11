@@ -58,14 +58,13 @@ public final class TopSecondDegreeByCountMomentRecsGenerator {
     TopSecondDegreeByCountRequestForMoment request,
     PriorityQueue<NodeInfo> topNodes) {
     List<RecommendationInfo> outputResults = Lists.newArrayListWithCapacity(topNodes.size());
-    int maxNumSocialProofs = request.getMaxNumSocialProofs();
 
     while (!topNodes.isEmpty()) {
       NodeInfo nodeInfo = topNodes.poll();
 
       Map<Byte, Pair<LongList, LongList>> topSocialProofs = GeneratorHelper.pickTopSocialProofs(
-        nodeInfo.getSocialProofs(),
-        maxNumSocialProofs);
+        nodeInfo.getSocialProofs()
+      );
 
       MomentRecommendationInfo momentRecs = new MomentRecommendationInfo(
         nodeInfo.getValue(),

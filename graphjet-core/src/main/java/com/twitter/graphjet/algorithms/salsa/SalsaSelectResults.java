@@ -87,7 +87,6 @@ public class SalsaSelectResults<T extends LeftIndexedBipartiteGraph> {
         Lists.newArrayListWithCapacity(topResults.size());
 
     byte[] validSocialProofs = salsaInternalState.getSalsaRequest().getSocialProofTypes();
-    int maxSocialProofSize = salsaInternalState.getSalsaRequest().getMaxSocialProofSize();
 
     while (!topResults.isEmpty()) {
       NodeInfo nodeInfo = topResults.poll();
@@ -95,7 +94,7 @@ public class SalsaSelectResults<T extends LeftIndexedBipartiteGraph> {
         new TweetRecommendationInfo(
           TWEET_ID_MASK.restore(nodeInfo.getValue()),
           nodeInfo.getWeight(),
-          pickTopSocialProofs(nodeInfo.getSocialProofs(), validSocialProofs, maxSocialProofSize)));
+          pickTopSocialProofs(nodeInfo.getSocialProofs(), validSocialProofs)));
     }
     Collections.reverse(outputResults);
 
@@ -130,8 +129,7 @@ public class SalsaSelectResults<T extends LeftIndexedBipartiteGraph> {
    */
   private Map<Byte, Pair<LongList, LongList>> pickTopSocialProofs(
     SmallArrayBasedLongToDoubleMap[] socialProofs,
-    byte[] validSocialProofs,
-    int maxSocialProofSize
+    byte[] validSocialProofs
   ) {
     Map<Byte, Pair<LongList, LongList>> results = new HashMap<Byte, Pair<LongList, LongList>>();
     int length = validSocialProofs.length;
@@ -143,7 +141,7 @@ public class SalsaSelectResults<T extends LeftIndexedBipartiteGraph> {
           socialProof.sort();
         }
 
-        socialProof.trim(maxSocialProofSize);
+        socialProof.trim(socialProof.size());
         results.put((byte) i, new Pair<LongList, LongList>(
           new LongArrayList(socialProof.keys()),
           new LongArrayList(socialProof.metadata())
