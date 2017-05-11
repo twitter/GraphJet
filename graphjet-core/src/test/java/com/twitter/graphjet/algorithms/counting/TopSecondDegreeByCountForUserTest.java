@@ -29,7 +29,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 
 import com.twitter.graphjet.algorithms.BipartiteGraphTestHelper;
-import com.twitter.graphjet.algorithms.Pair;
+import com.twitter.graphjet.hashing.Pair;
 import com.twitter.graphjet.algorithms.RecommendationInfo;
 import com.twitter.graphjet.algorithms.RecommendationStats;
 import com.twitter.graphjet.algorithms.RequestedSetFilter;
