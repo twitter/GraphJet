@@ -29,7 +29,6 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 
 import com.twitter.graphjet.algorithms.BipartiteGraphTestHelper;
-import com.twitter.graphjet.hashing.Pair;
 import com.twitter.graphjet.algorithms.RecommendationInfo;
 import com.twitter.graphjet.algorithms.RecommendationStats;
 import com.twitter.graphjet.algorithms.RequestedSetFilter;
@@ -39,6 +38,7 @@ import com.twitter.graphjet.algorithms.counting.moment.MomentRecommendationInfo;
 import com.twitter.graphjet.algorithms.counting.moment.TopSecondDegreeByCountForMoment;
 import com.twitter.graphjet.algorithms.counting.moment.TopSecondDegreeByCountRequestForMoment;
 import com.twitter.graphjet.bipartite.LeftIndexedPowerLawMultiSegmentBipartiteGraph;
+import com.twitter.graphjet.hashing.Pair;
 import com.twitter.graphjet.stats.NullStatsReceiver;
 
 import it.unimi.dsi.fastutil.longs.Long2DoubleArrayMap;

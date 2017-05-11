@@ -24,10 +24,10 @@ import java.util.PriorityQueue;
 import com.google.common.collect.Lists;
 
 import com.twitter.graphjet.algorithms.NodeInfo;
-import com.twitter.graphjet.hashing.Pair;
 import com.twitter.graphjet.algorithms.RecommendationInfo;
 import com.twitter.graphjet.algorithms.RecommendationRequest;
 import com.twitter.graphjet.algorithms.counting.GeneratorHelper;
+import com.twitter.graphjet.hashing.Pair;
 
 import it.unimi.dsi.fastutil.longs.LongList;
 
