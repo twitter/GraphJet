@@ -17,6 +17,9 @@
 
 package com.twitter.graphjet.hashing;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.twitter.graphjet.datastructures.Pair;
 
 import it.unimi.dsi.fastutil.Arrays;
@@ -47,6 +50,9 @@ public class SmallArrayBasedLongToDoubleMap {
   private int uniqueKeysSize;
   private LongSet keySet;
   private ObjectSet<Pair<Long, Long>> keyMetadataPairSet;
+
+
+  protected static final Logger LOG = LoggerFactory.getLogger("graph");
 
   /**
    * Create a new empty array map.
@@ -127,19 +133,19 @@ public class SmallArrayBasedLongToDoubleMap {
    */
   public boolean put(long key, double value, long metadata) {
     boolean isUniqueKey = true;
- //   System.out.println("Step One");
     if (size < ADD_KEYS_TO_SET_THRESHOLD) {
       for (int i = 0; i < size; i++) {
-    //    System.out.println("Step Two");
         if (key == keys[i]) {
           isUniqueKey = false;
           if (metadata == metadataArray[i]) {
+            LOG.info("Filter reject");
             return false;
+          } else {
+            LOG.info("key " + key + " data " + metadata + " odata " + metadataArray[i]);
           }
         }
       }
     } else {
-    //  System.out.println("Branch 2 Step 1");
       if (keySet == null) {
         keySet = new LongOpenHashSet(keys, 0.75f /* load factor */);
         keyMetadataPairSet = new ObjectOpenHashSet<>();
@@ -157,14 +163,10 @@ public class SmallArrayBasedLongToDoubleMap {
       }
     }
 
-  //  System.out.println("Step 4");
-
     if (size == capacity) {
       capacity = 2 * capacity;
       copy(capacity, size);
     }
-
- //   System.out.println("Step 5" + " unique " + uniqueKeysSize + " size " + size);
 
     if (isUniqueKey) {
       uniqueKeys[uniqueKeysSize] = key;
