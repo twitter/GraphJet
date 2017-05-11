@@ -1,6 +1,7 @@
 java_library(name = 'algorithms',
   dependencies = [
     '3rdparty/jvm/com/google/guava',
+    '3rdparty/jvm/org/apache/commons:commons-lang3',
     '3rdparty/jvm/it/unimi/dsi:fastutil',
     'science/src/java/com/twitter/graphjet/bipartite',
     'science/src/java/com/twitter/graphjet/hashing',

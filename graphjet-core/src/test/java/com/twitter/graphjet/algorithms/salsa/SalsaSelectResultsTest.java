@@ -23,6 +23,7 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -35,7 +36,6 @@ import com.twitter.graphjet.algorithms.ResultFilterChain;
 import com.twitter.graphjet.algorithms.counting.tweet.TweetRecommendationInfo;
 import com.twitter.graphjet.algorithms.salsa.fullgraph.SalsaInternalState;
 import com.twitter.graphjet.bipartite.api.BipartiteGraph;
-import com.twitter.graphjet.datastructures.Pair;
 import com.twitter.graphjet.stats.NullStatsReceiver;
 
 import it.unimi.dsi.fastutil.longs.LongArrayList;
@@ -104,8 +104,8 @@ public class SalsaSelectResultsTest {
     for (int i = 0; i < 2; i++) {
       socialProof.add(new HashMap<>());
     }
-    socialProof.get(0).put((byte) 0, new Pair<>(new LongArrayList(new long[]{3, 2}), metadata2));
-    socialProof.get(1).put((byte) 0, new Pair<>(new LongArrayList(new long[]{4}), metadata1));
+    socialProof.get(0).put((byte) 0, Pair.of(new LongArrayList(new long[]{3, 2}), metadata2));
+    socialProof.get(1).put((byte) 0, Pair.of(new LongArrayList(new long[]{4}), metadata1));
 
     final List<RecommendationInfo> expectedTopResults = new ArrayList<RecommendationInfo>();
     expectedTopResults.add(new TweetRecommendationInfo(4, 0.5, socialProof.get(0)));

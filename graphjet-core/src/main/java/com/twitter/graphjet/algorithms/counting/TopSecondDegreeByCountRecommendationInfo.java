@@ -21,9 +21,10 @@ import java.util.Map;
 
 import com.google.common.base.Objects;
 
+import org.apache.commons.lang3.tuple.Pair;
+
 import com.twitter.graphjet.algorithms.RecommendationInfo;
 import com.twitter.graphjet.algorithms.RecommendationType;
-import com.twitter.graphjet.datastructures.Pair;
 
 import it.unimi.dsi.fastutil.longs.LongList;
 

@@ -25,6 +25,7 @@ import java.util.PriorityQueue;
 
 import com.google.common.collect.Lists;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,7 +35,6 @@ import com.twitter.graphjet.algorithms.RecommendationRequest;
 import com.twitter.graphjet.algorithms.TweetIDMask;
 import com.twitter.graphjet.algorithms.counting.tweet.TweetRecommendationInfo;
 import com.twitter.graphjet.bipartite.api.LeftIndexedBipartiteGraph;
-import com.twitter.graphjet.datastructures.Pair;
 import com.twitter.graphjet.hashing.SmallArrayBasedLongToDoubleMap;
 
 import it.unimi.dsi.fastutil.longs.LongArrayList;
@@ -133,7 +133,7 @@ public class SalsaSelectResults<T extends LeftIndexedBipartiteGraph> {
     byte[] validSocialProofs,
     int maxSocialProofSize
   ) {
-    Map<Byte, Pair<LongList, LongList>> results = new HashMap<Byte, Pair<LongList, LongList>>();
+    Map<Byte, Pair<LongList, LongList>> results = new HashMap<>();
     int length = validSocialProofs.length;
 
     for (int i = 0; i < length; i++) {
@@ -144,7 +144,7 @@ public class SalsaSelectResults<T extends LeftIndexedBipartiteGraph> {
         }
 
         socialProof.trim(maxSocialProofSize);
-        results.put((byte) i, new Pair<LongList, LongList>(
+        results.put((byte) i, Pair.of(
           new LongArrayList(socialProof.keys()),
           new LongArrayList(socialProof.metadata())
         ));
