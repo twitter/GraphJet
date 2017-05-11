@@ -1,4 +1,4 @@
-package com.twitter.graphjet.algorithms;
+package com.twitter.graphjet.datastructures;
 
 import com.google.common.base.Objects;
 

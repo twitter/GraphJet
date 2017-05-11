@@ -32,7 +32,6 @@ import static org.junit.Assert.assertEquals;
 
 import com.twitter.graphjet.algorithms.BipartiteGraphTestHelper;
 import com.twitter.graphjet.algorithms.DirectInteractionsFilter;
-import com.twitter.graphjet.algorithms.Pair;
 import com.twitter.graphjet.algorithms.RecommendationInfo;
 import com.twitter.graphjet.algorithms.RequestedSetFilter;
 import com.twitter.graphjet.algorithms.ResultFilter;
@@ -42,6 +41,7 @@ import com.twitter.graphjet.algorithms.salsa.fullgraph.Salsa;
 import com.twitter.graphjet.algorithms.salsa.subgraph.SubgraphSalsa;
 import com.twitter.graphjet.bipartite.SmallLeftRegularBipartiteGraph;
 import com.twitter.graphjet.bipartite.api.BipartiteGraph;
+import com.twitter.graphjet.datastructures.Pair;
 import com.twitter.graphjet.stats.NullStatsReceiver;
 
 import it.unimi.dsi.fastutil.longs.Long2DoubleOpenHashMap;
