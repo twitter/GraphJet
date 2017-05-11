@@ -39,11 +39,12 @@ import it.unimi.dsi.fastutil.objects.ObjectSet;
 public class SmallArrayBasedLongToDoubleMap {
   private static final int ADD_KEYS_TO_SET_THRESHOLD = 8;
   private long[] keys;
+  private long[] uniqueKeys;
   private double[] values;
   private long[] metadataArray;
-  private long[] uniqueKeys;
   private int capacity;
   private int size;
+  private int uniqueKeysSize;
   private LongSet keySet;
   private ObjectSet<Pair<Long, Long>> keyMetadataPairSet;
 
@@ -53,10 +54,11 @@ public class SmallArrayBasedLongToDoubleMap {
   public SmallArrayBasedLongToDoubleMap() {
     this.capacity = 4;
     this.size = 0;
+    this.uniqueKeysSize = 0;
     this.keys = new long[capacity];
+    this.uniqueKeys = new long[capacity];
     this.values = new double[capacity];
     this.metadataArray = new long[capacity];
-    this.uniqueKeys = new long[capacity];
     this.keySet = null;
     this.keyMetadataPairSet = null;
   }
@@ -68,6 +70,15 @@ public class SmallArrayBasedLongToDoubleMap {
    */
   public long[] keys() {
     return this.keys;
+  }
+
+  /**
+   * Return the underlying primitive array of uniqueKeys.
+   *
+   * @return the underlying primitive array of uniqueKeys.
+   */
+  public long[] uniqueKeys() {
+    return this.uniqueKeys;
   }
 
   /**
@@ -98,6 +109,15 @@ public class SmallArrayBasedLongToDoubleMap {
   }
 
   /**
+   * Return the size of the map.
+   *
+   * @return the size of the map.
+   */
+  public int uniqueKeysSize() {
+    return this.uniqueKeysSize;
+  }
+
+  /**
    * Add a tuple3 to the map.
    *
    * @param key the key.
@@ -106,10 +126,14 @@ public class SmallArrayBasedLongToDoubleMap {
    * @return true if no value present for the giving key and metadata pair, and false otherwise.
    */
   public boolean put(long key, double value, long metadata) {
+    boolean isUniqueKey = true;
     if (size < ADD_KEYS_TO_SET_THRESHOLD) {
       for (int i = 0; i < size; i++) {
-        if (key == keys[i] && metadata == metadataArray[i]) {
-          return false;
+        if (key == keys[i]) {
+          isUniqueKey = false;
+          if (metadata == metadataArray[i]) {
+            return false;
+          }
         }
       }
     } else {
@@ -125,7 +149,7 @@ public class SmallArrayBasedLongToDoubleMap {
       if (keyMetadataPairSet.contains(pair)) {
         return false;
       } else {
-        keySet.add(key);
+        isUniqueKey = keySet.add(key);
         keyMetadataPairSet.add(pair);
       }
     }
@@ -133,6 +157,11 @@ public class SmallArrayBasedLongToDoubleMap {
     if (size == capacity) {
       capacity = 2 * capacity;
       copy(capacity, size);
+    }
+
+    if (isUniqueKey) {
+      uniqueKeys[uniqueKeysSize] = key;
+      uniqueKeysSize++;
     }
 
     keys[size] = key;
@@ -144,7 +173,8 @@ public class SmallArrayBasedLongToDoubleMap {
   }
 
   /**
-   * Sort both keys and values in the order of decreasing values.
+   * Sort both keys and values in the order of decreasing values. This sort function does not swap
+   * uniqueKeys array.
    */
   public void sort() {
     Arrays.quickSort(0, size, new IntComparator() {
@@ -231,12 +261,15 @@ public class SmallArrayBasedLongToDoubleMap {
    */
   private void copy(int newLength, int length) {
     long[] newKeys = new long[newLength];
+    long[] newUniqueKeys = new long[newLength];
     double[] newValues = new double[newLength];
     long[] newMetadataArray = new long[newLength];
     System.arraycopy(keys, 0, newKeys, 0, length);
+    System.arraycopy(uniqueKeys, 0, newUniqueKeys, 0, length);
     System.arraycopy(values, 0, newValues, 0, length);
     System.arraycopy(metadataArray, 0, newMetadataArray, 0, length);
     keys = newKeys;
+    uniqueKeys = newUniqueKeys;
     values = newValues;
     metadataArray = newMetadataArray;
   }

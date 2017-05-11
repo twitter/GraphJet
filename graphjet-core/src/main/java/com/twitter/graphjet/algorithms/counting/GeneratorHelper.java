@@ -123,7 +123,7 @@ public final class GeneratorHelper {
         // not valid, if node does not have this type of social proof
         return false;
       }
-      if (socialProofs[proofType].size() < minSocialProofSizes.get(proofType)) {
+      if (socialProofs[proofType].uniqueKeysSize() < minSocialProofSizes.get(proofType)) {
         // not valid, if number of social proofs below threshold
         return false;
       }

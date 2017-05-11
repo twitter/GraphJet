@@ -87,14 +87,14 @@ public class TweetMetadataRecommendationInfo
     int maxTweetSocialProofSize
   ) {
     Map<Long, LongList> socialProofByType = socialProof.get(socialProofType);
-    long[] leftNodes = userSocialProofs.keys();
+    long[] leftNodes = userSocialProofs.uniqueKeys();
 
     if (socialProofByType == null) {
       // if this is the first social proof of this type, for each user social proof, create an empty
       // tweetIds list, add tweet id in the list, and then add the list to socialProof along with
       // the user id
       socialProofByType = new HashMap<Long, LongList>();
-      for (int i = 0; i < userSocialProofs.size(); i++) {
+      for (int i = 0; i < userSocialProofs.uniqueKeysSize(); i++) {
         LongList tweetIds = new LongArrayList(INITIAL_TWEET_ARRAY_SIZE);
         tweetIds.add(rightNode);
         socialProofByType.put(leftNodes[i], tweetIds);
@@ -104,7 +104,7 @@ public class TweetMetadataRecommendationInfo
     } else {
       // if the social proof type is already in the map, for each user social proof, create or
       // update the corresponding tweet social proof.
-      for (int i = 0; i < userSocialProofs.size(); i++) {
+      for (int i = 0; i < userSocialProofs.uniqueKeysSize(); i++) {
         LongList tweetIds = socialProofByType.get(leftNodes[i]);
         if (socialProofByType.size() < maxUserSocialProofSize) {
           if (tweetIds == null) {

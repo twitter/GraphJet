@@ -93,7 +93,7 @@ public final class TopSecondDegreeByCountTweetRecsGenerator {
       socialProofSizeSum = 0;
       for (byte socialProofType: socialProofTypeUnion) {
         if (socialProofs[socialProofType] != null) {
-          socialProofSizeSum += socialProofs[socialProofType].size();
+          socialProofSizeSum += socialProofs[socialProofType].uniqueKeysSize();
           if (socialProofSizeSum >= minUserSocialProofSize) {
             return false;
           }
@@ -121,8 +121,8 @@ public final class TopSecondDegreeByCountTweetRecsGenerator {
       uniqueNodes.clear();
       for (byte socialProofType: socialProofTypeUnion) {
         if (socialProofs[socialProofType] != null) {
-          for (int i = 0; i < socialProofs[socialProofType].size(); i++) {
-            uniqueNodes.add(socialProofs[socialProofType].keys()[i]);
+          for (int i = 0; i < socialProofs[socialProofType].uniqueKeysSize(); i++) {
+            uniqueNodes.add(socialProofs[socialProofType].uniqueKeys()[i]);
             if (uniqueNodes.size() >= minUserSocialProofSize) {
               return false;
             }
@@ -149,7 +149,7 @@ public final class TopSecondDegreeByCountTweetRecsGenerator {
           socialProofs[validSocialProofs[i]].contains(authorId)) {
           minUserSocialProofThreshold += 1;
         }
-        if (socialProofs[validSocialProofs[i]].size() >= minUserSocialProofThreshold) {
+        if (socialProofs[validSocialProofs[i]].uniqueKeysSize() >= minUserSocialProofThreshold) {
           return false;
         }
       }
