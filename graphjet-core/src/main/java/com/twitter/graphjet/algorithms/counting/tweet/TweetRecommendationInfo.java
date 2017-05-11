@@ -20,7 +20,7 @@ import java.util.Map;
 
 import com.twitter.graphjet.algorithms.RecommendationType;
 import com.twitter.graphjet.algorithms.counting.TopSecondDegreeByCountRecommendationInfo;
-import com.twitter.graphjet.hashing.Pair;
+import com.twitter.graphjet.datastructures.Pair;
 
 import it.unimi.dsi.fastutil.longs.LongList;
 

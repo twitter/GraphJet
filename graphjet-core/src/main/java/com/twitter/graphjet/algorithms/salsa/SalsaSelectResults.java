@@ -34,7 +34,7 @@ import com.twitter.graphjet.algorithms.RecommendationRequest;
 import com.twitter.graphjet.algorithms.TweetIDMask;
 import com.twitter.graphjet.algorithms.counting.tweet.TweetRecommendationInfo;
 import com.twitter.graphjet.bipartite.api.LeftIndexedBipartiteGraph;
-import com.twitter.graphjet.hashing.Pair;
+import com.twitter.graphjet.datastructures.Pair;
 import com.twitter.graphjet.hashing.SmallArrayBasedLongToDoubleMap;
 
 import it.unimi.dsi.fastutil.longs.LongArrayList;

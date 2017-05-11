@@ -42,7 +42,7 @@ import com.twitter.graphjet.algorithms.counting.tweet.TopSecondDegreeByCountForT
 import com.twitter.graphjet.algorithms.counting.tweet.TopSecondDegreeByCountRequestForTweet;
 import com.twitter.graphjet.algorithms.counting.tweet.TweetRecommendationInfo;
 import com.twitter.graphjet.bipartite.NodeMetadataLeftIndexedMultiSegmentBipartiteGraph;
-import com.twitter.graphjet.hashing.Pair;
+import com.twitter.graphjet.datastructures.Pair;
 import com.twitter.graphjet.stats.NullStatsReceiver;
 
 import it.unimi.dsi.fastutil.doubles.DoubleArrayList;

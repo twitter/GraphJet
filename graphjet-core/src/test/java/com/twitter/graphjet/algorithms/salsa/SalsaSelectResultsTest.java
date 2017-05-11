@@ -35,7 +35,7 @@ import com.twitter.graphjet.algorithms.ResultFilterChain;
 import com.twitter.graphjet.algorithms.counting.tweet.TweetRecommendationInfo;
 import com.twitter.graphjet.algorithms.salsa.fullgraph.SalsaInternalState;
 import com.twitter.graphjet.bipartite.api.BipartiteGraph;
-import com.twitter.graphjet.hashing.Pair;
+import com.twitter.graphjet.datastructures.Pair;
 import com.twitter.graphjet.stats.NullStatsReceiver;
 
 import it.unimi.dsi.fastutil.longs.LongArrayList;

@@ -38,7 +38,7 @@ import com.twitter.graphjet.algorithms.counting.user.TopSecondDegreeByCountForUs
 import com.twitter.graphjet.algorithms.counting.user.TopSecondDegreeByCountRequestForUser;
 import com.twitter.graphjet.algorithms.counting.user.UserRecommendationInfo;
 import com.twitter.graphjet.bipartite.LeftIndexedPowerLawMultiSegmentBipartiteGraph;
-import com.twitter.graphjet.hashing.Pair;
+import com.twitter.graphjet.datastructures.Pair;
 import com.twitter.graphjet.stats.NullStatsReceiver;
 
 import it.unimi.dsi.fastutil.longs.Long2DoubleArrayMap;
