@@ -21,11 +21,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
 
+import org.apache.commons.lang3.tuple.Pair;
+
 import com.twitter.graphjet.algorithms.NodeInfo;
 import com.twitter.graphjet.algorithms.RecommendationRequest;
 import com.twitter.graphjet.algorithms.RecommendationType;
 import com.twitter.graphjet.algorithms.counting.tweet.TopSecondDegreeByCountRequestForTweet;
-import com.twitter.graphjet.datastructures.Pair;
 import com.twitter.graphjet.hashing.SmallArrayBasedLongToDoubleMap;
 
 import it.unimi.dsi.fastutil.longs.LongArrayList;
@@ -55,7 +56,7 @@ public final class GeneratorHelper {
           socialProof.sort();
         }
         socialProof.trim(maxSocialProofSize);
-        results.put((byte)i, new Pair<LongList, LongList>(
+        results.put((byte)i, Pair.of(
           new LongArrayList(socialProof.keys()),
           new LongArrayList(socialProof.metadata())
         ));

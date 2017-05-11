@@ -26,6 +26,7 @@ import java.util.Set;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -41,7 +42,6 @@ import com.twitter.graphjet.algorithms.salsa.fullgraph.Salsa;
 import com.twitter.graphjet.algorithms.salsa.subgraph.SubgraphSalsa;
 import com.twitter.graphjet.bipartite.SmallLeftRegularBipartiteGraph;
 import com.twitter.graphjet.bipartite.api.BipartiteGraph;
-import com.twitter.graphjet.datastructures.Pair;
 import com.twitter.graphjet.stats.NullStatsReceiver;
 
 import it.unimi.dsi.fastutil.longs.Long2DoubleOpenHashMap;
@@ -91,8 +91,8 @@ public class SalsaTest {
     for (int i = 0; i < 3; i++) {
       socialProof.add(new HashMap<>());
     }
-    socialProof.get(0).put((byte) 0, new Pair<>(new LongArrayList(new long[]{3, 2}), metadata2));
-    socialProof.get(1).put((byte) 0, new Pair<>(new LongArrayList(new long[]{3}), metadata1));
+    socialProof.get(0).put((byte) 0, Pair.of(new LongArrayList(new long[]{3, 2}), metadata2));
+    socialProof.get(1).put((byte) 0, Pair.of(new LongArrayList(new long[]{3}), metadata1));
 
     final List<RecommendationInfo> expectedTopResults = new ArrayList<RecommendationInfo>();
     expectedTopResults.add(new TweetRecommendationInfo(5, 0.2346316283435007, socialProof.get(0)));
@@ -144,7 +144,7 @@ public class SalsaTest {
     for (int i = 0; i < 3; i++) {
       subSocialProof.add(new HashMap<>());
     }
-    subSocialProof.get(0).put((byte) 0, new Pair<>(new LongArrayList(new long[]{2}), metadata1));
+    subSocialProof.get(0).put((byte) 0, Pair.of(new LongArrayList(new long[]{2}), metadata1));
 
     final List<RecommendationInfo> expectedTopResultsSubgraph = new ArrayList<RecommendationInfo>();
     expectedTopResultsSubgraph.add(
@@ -221,13 +221,13 @@ public class SalsaTest {
       socialProof.add(new HashMap<>());
     }
     socialProof.get(0).put(
-      (byte) 0, new Pair<>(new LongArrayList(new long[]{718, 889}), metadata2)
+      (byte) 0, Pair.of(new LongArrayList(new long[]{718, 889}), metadata2)
     );
     socialProof.get(1).put(
-      (byte) 0, new Pair<>(new LongArrayList(new long[]{47, 96}), metadata2)
+      (byte) 0, Pair.of(new LongArrayList(new long[]{47, 96}), metadata2)
     );
     socialProof.get(2).put(
-      (byte) 0, new Pair<>(new LongArrayList(new long[]{623, 880}), metadata2)
+      (byte) 0, Pair.of(new LongArrayList(new long[]{623, 880}), metadata2)
     );
 
     final List<RecommendationInfo> expectedTopResults = new ArrayList<RecommendationInfo>();
@@ -323,13 +323,13 @@ public class SalsaTest {
       socialProof.add(new HashMap<>());
     }
     socialProof.get(0).put(
-      (byte) 0, new Pair<>(new LongArrayList(new long[]{79, 51, 19}), metadata3)
+      (byte) 0, Pair.of(new LongArrayList(new long[]{79, 51, 19}), metadata3)
     );
     socialProof.get(1).put(
-      (byte) 0, new Pair<>(new LongArrayList(new long[]{44, 77, 13}), metadata3)
+      (byte) 0, Pair.of(new LongArrayList(new long[]{44, 77, 13}), metadata3)
     );
     socialProof.get(2).put(
-      (byte) 0, new Pair<>(new LongArrayList(new long[]{21, 65, 3}), metadata3)
+      (byte) 0, Pair.of(new LongArrayList(new long[]{21, 65, 3}), metadata3)
     );
 
     final List<RecommendationInfo> expectedTopResults = new ArrayList<RecommendationInfo>();

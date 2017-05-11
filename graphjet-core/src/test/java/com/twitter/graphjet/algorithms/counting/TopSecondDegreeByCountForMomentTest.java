@@ -24,6 +24,7 @@ import java.util.Random;
 
 import com.google.common.collect.Lists;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -38,7 +39,6 @@ import com.twitter.graphjet.algorithms.counting.moment.MomentRecommendationInfo;
 import com.twitter.graphjet.algorithms.counting.moment.TopSecondDegreeByCountForMoment;
 import com.twitter.graphjet.algorithms.counting.moment.TopSecondDegreeByCountRequestForMoment;
 import com.twitter.graphjet.bipartite.LeftIndexedPowerLawMultiSegmentBipartiteGraph;
-import com.twitter.graphjet.datastructures.Pair;
 import com.twitter.graphjet.stats.NullStatsReceiver;
 
 import it.unimi.dsi.fastutil.longs.Long2DoubleArrayMap;
@@ -56,15 +56,15 @@ public class TopSecondDegreeByCountForMomentTest {
     LongList metadata1 = new LongArrayList(new long[]{0});
     LongList metadata3 = new LongArrayList(new long[]{0, 0, 0});
     HashMap<Byte, Pair<LongList, LongList>> socialProofFor3 = new HashMap<> ();
-    socialProofFor3.put((byte) 1, new Pair<>(new LongArrayList(new long[]{1, 2, 3}), metadata3));
+    socialProofFor3.put((byte) 1, Pair.of(new LongArrayList(new long[]{1, 2, 3}), metadata3));
 
     HashMap<Byte, Pair<LongList, LongList>> socialProofFor5 = new HashMap<> ();
-    socialProofFor5.put((byte) 0, new Pair<>(new LongArrayList(new long[]{2}), metadata1));
-    socialProofFor5.put((byte) 3, new Pair<>(new LongArrayList(new long[]{1}), metadata1));
+    socialProofFor5.put((byte) 0, Pair.of(new LongArrayList(new long[]{2}), metadata1));
+    socialProofFor5.put((byte) 3, Pair.of(new LongArrayList(new long[]{1}), metadata1));
 
     HashMap<Byte, Pair<LongList, LongList>> socialProofFor7 = new HashMap<> ();
-    socialProofFor7.put((byte) 0, new Pair<>(new LongArrayList(new long[]{1}), metadata1));
-    socialProofFor7.put((byte) 1, new Pair<>(new LongArrayList(new long[]{2}), metadata1));
+    socialProofFor7.put((byte) 0, Pair.of(new LongArrayList(new long[]{1}), metadata1));
+    socialProofFor7.put((byte) 1, Pair.of(new LongArrayList(new long[]{2}), metadata1));
 
     Map<Byte, Integer> minUserPerSocialProof = new HashMap<>();
     List<TopSecondDegreeByCountRecommendationInfo> expectedTopResults = new ArrayList<>();
@@ -89,7 +89,7 @@ public class TopSecondDegreeByCountForMomentTest {
     // Test 2: Test with small maxNumResults
     LongList metadata3 = new LongArrayList(new long[]{0, 0, 0});
     HashMap<Byte, Pair<LongList, LongList>> socialProofFor3 = new HashMap<> ();
-    socialProofFor3.put((byte) 1, new Pair<>(new LongArrayList(new long[]{1, 2, 3}), metadata3));
+    socialProofFor3.put((byte) 1, Pair.of(new LongArrayList(new long[]{1, 2, 3}), metadata3));
 
     Map<Byte, Integer> minUserPerSocialProof = new HashMap<>();
     List<TopSecondDegreeByCountRecommendationInfo> expectedTopResults = new ArrayList<>();
@@ -113,7 +113,7 @@ public class TopSecondDegreeByCountForMomentTest {
     // Test 3: Test limiting minimum number of minimum per social proof
     LongList metadata3 = new LongArrayList(new long[]{0, 0, 0});
     HashMap<Byte, Pair<LongList, LongList>> socialProofFor3 = new HashMap<> ();
-    socialProofFor3.put((byte) 1, new Pair<>(new LongArrayList(new long[]{1, 2, 3}), metadata3));
+    socialProofFor3.put((byte) 1, Pair.of(new LongArrayList(new long[]{1, 2, 3}), metadata3));
 
     Map<Byte, Integer> minUserPerSocialProof = new HashMap<>();
     List<TopSecondDegreeByCountRecommendationInfo> expectedTopResults = new ArrayList<>();

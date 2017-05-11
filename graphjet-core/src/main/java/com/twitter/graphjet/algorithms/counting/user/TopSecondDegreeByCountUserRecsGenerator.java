@@ -23,11 +23,12 @@ import java.util.PriorityQueue;
 
 import com.google.common.collect.Lists;
 
+import org.apache.commons.lang3.tuple.Pair;
+
 import com.twitter.graphjet.algorithms.NodeInfo;
 import com.twitter.graphjet.algorithms.RecommendationInfo;
 import com.twitter.graphjet.algorithms.RecommendationRequest;
 import com.twitter.graphjet.algorithms.counting.GeneratorHelper;
-import com.twitter.graphjet.datastructures.Pair;
 
 import it.unimi.dsi.fastutil.longs.LongList;
 

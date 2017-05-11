@@ -18,9 +18,10 @@ package com.twitter.graphjet.algorithms.counting.user;
 
 import java.util.Map;
 
+import org.apache.commons.lang3.tuple.Pair;
+
 import com.twitter.graphjet.algorithms.RecommendationType;
 import com.twitter.graphjet.algorithms.counting.TopSecondDegreeByCountRecommendationInfo;
-import com.twitter.graphjet.datastructures.Pair;
 
 import it.unimi.dsi.fastutil.longs.LongList;
 
