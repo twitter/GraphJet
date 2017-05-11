@@ -127,8 +127,10 @@ public class SmallArrayBasedLongToDoubleMap {
    */
   public boolean put(long key, double value, long metadata) {
     boolean isUniqueKey = true;
+ //   System.out.println("Step One");
     if (size < ADD_KEYS_TO_SET_THRESHOLD) {
       for (int i = 0; i < size; i++) {
+    //    System.out.println("Step Two");
         if (key == keys[i]) {
           isUniqueKey = false;
           if (metadata == metadataArray[i]) {
@@ -137,6 +139,7 @@ public class SmallArrayBasedLongToDoubleMap {
         }
       }
     } else {
+    //  System.out.println("Branch 2 Step 1");
       if (keySet == null) {
         keySet = new LongOpenHashSet(keys, 0.75f /* load factor */);
         keyMetadataPairSet = new ObjectOpenHashSet<>();
@@ -154,21 +157,23 @@ public class SmallArrayBasedLongToDoubleMap {
       }
     }
 
+  //  System.out.println("Step 4");
+
     if (size == capacity) {
       capacity = 2 * capacity;
       copy(capacity, size);
     }
 
+ //   System.out.println("Step 5" + " unique " + uniqueKeysSize + " size " + size);
+
     if (isUniqueKey) {
       uniqueKeys[uniqueKeysSize] = key;
       uniqueKeysSize++;
     }
-
     keys[size] = key;
     values[size] = value;
     metadataArray[size] = metadata;
     size++;
-
     return true;
   }
 
@@ -219,11 +224,12 @@ public class SmallArrayBasedLongToDoubleMap {
    * @return true if the capacity of the map is trimmed down, and false otherwise.
    */
   public boolean trim(int inputCapacity) {
-    int newCapacity = inputCapacity > size ? size : inputCapacity;
+    int newCapacity = Math.min(inputCapacity, size);
 
     if (newCapacity < capacity) {
       capacity = newCapacity;
       size = newCapacity;
+      uniqueKeysSize = Math.min(newCapacity, uniqueKeysSize);
       copy(newCapacity, newCapacity);
       return true;
     } else {
