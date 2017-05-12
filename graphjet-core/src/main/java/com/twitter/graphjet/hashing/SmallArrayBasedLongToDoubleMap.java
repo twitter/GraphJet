@@ -17,9 +17,6 @@
 
 package com.twitter.graphjet.hashing;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import it.unimi.dsi.fastutil.Arrays;
 import it.unimi.dsi.fastutil.Swapper;
 import it.unimi.dsi.fastutil.ints.IntComparator;
@@ -94,9 +91,6 @@ public class SmallArrayBasedLongToDoubleMap {
   private int uniqueKeysSize;
   private LongSet keySet;
   private ObjectSet<Pair> keyMetadataPairSet;
-
-
-  protected static final Logger LOG = LoggerFactory.getLogger("graph");
 
   /**
    * Create a new empty array map.
