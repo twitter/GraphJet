@@ -39,6 +39,9 @@ import it.unimi.dsi.fastutil.objects.ObjectSet;
  */
 public class SmallArrayBasedLongToDoubleMap {
 
+  /**
+   * Holder class of a pair of key and metadata.
+   */
   private static final class Pair {
     private long key;
     private long metadata;
