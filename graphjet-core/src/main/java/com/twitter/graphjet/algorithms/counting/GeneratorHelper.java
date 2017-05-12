@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
 
-import com.twitter.graphjet.algorithms.ConnectingUsers;
+import com.twitter.graphjet.algorithms.ConnectingUsersWithMetadata;
 import com.twitter.graphjet.algorithms.NodeInfo;
 import com.twitter.graphjet.algorithms.RecommendationRequest;
 import com.twitter.graphjet.algorithms.RecommendationType;
@@ -41,11 +41,11 @@ public final class GeneratorHelper {
   /**
    * Pick the top social proofs for each RHS node
    */
-  public static Map<Byte, ConnectingUsers> pickTopSocialProofs(
+  public static Map<Byte, ConnectingUsersWithMetadata> pickTopSocialProofs(
     SmallArrayBasedLongToDoubleMap[] socialProofs,
     int maxSocialProofSize) {
 
-    Map<Byte, ConnectingUsers> results = new HashMap<>();
+    Map<Byte, ConnectingUsersWithMetadata> results = new HashMap<>();
 
     for (int i = 0; i < socialProofs.length; i++) {
       SmallArrayBasedLongToDoubleMap socialProof = socialProofs[i];
@@ -54,7 +54,7 @@ public final class GeneratorHelper {
           socialProof.sort();
         }
         socialProof.trim(maxSocialProofSize);
-        results.put((byte)i, new ConnectingUsers(
+        results.put((byte)i, new ConnectingUsersWithMetadata(
           new LongArrayList(socialProof.keys()),
           new LongArrayList(socialProof.metadata())
         ));

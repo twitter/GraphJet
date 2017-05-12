@@ -29,7 +29,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 
 import com.twitter.graphjet.algorithms.BipartiteGraphTestHelper;
-import com.twitter.graphjet.algorithms.ConnectingUsers;
+import com.twitter.graphjet.algorithms.ConnectingUsersWithMetadata;
 import com.twitter.graphjet.algorithms.RecommendationInfo;
 import com.twitter.graphjet.algorithms.RecommendationStats;
 import com.twitter.graphjet.algorithms.RequestedSetFilter;
@@ -55,16 +55,16 @@ public class TopSecondDegreeByCountForMomentTest {
     // Test 1: Test regular test case without max result limitations
     LongList metadata1 = new LongArrayList(new long[]{0});
     LongList metadata3 = new LongArrayList(new long[]{0, 0, 0});
-    HashMap<Byte, ConnectingUsers> socialProofFor3 = new HashMap<> ();
-    socialProofFor3.put((byte) 1, new ConnectingUsers(new LongArrayList(new long[]{1, 2, 3}), metadata3));
+    HashMap<Byte, ConnectingUsersWithMetadata> socialProofFor3 = new HashMap<> ();
+    socialProofFor3.put((byte) 1, new ConnectingUsersWithMetadata(new LongArrayList(new long[]{1, 2, 3}), metadata3));
 
-    HashMap<Byte, ConnectingUsers> socialProofFor5 = new HashMap<> ();
-    socialProofFor5.put((byte) 0, new ConnectingUsers(new LongArrayList(new long[]{2}), metadata1));
-    socialProofFor5.put((byte) 3, new ConnectingUsers(new LongArrayList(new long[]{1}), metadata1));
+    HashMap<Byte, ConnectingUsersWithMetadata> socialProofFor5 = new HashMap<> ();
+    socialProofFor5.put((byte) 0, new ConnectingUsersWithMetadata(new LongArrayList(new long[]{2}), metadata1));
+    socialProofFor5.put((byte) 3, new ConnectingUsersWithMetadata(new LongArrayList(new long[]{1}), metadata1));
 
-    HashMap<Byte, ConnectingUsers> socialProofFor7 = new HashMap<> ();
-    socialProofFor7.put((byte) 0, new ConnectingUsers(new LongArrayList(new long[]{1}), metadata1));
-    socialProofFor7.put((byte) 1, new ConnectingUsers(new LongArrayList(new long[]{2}), metadata1));
+    HashMap<Byte, ConnectingUsersWithMetadata> socialProofFor7 = new HashMap<> ();
+    socialProofFor7.put((byte) 0, new ConnectingUsersWithMetadata(new LongArrayList(new long[]{1}), metadata1));
+    socialProofFor7.put((byte) 1, new ConnectingUsersWithMetadata(new LongArrayList(new long[]{2}), metadata1));
 
     Map<Byte, Integer> minUserPerSocialProof = new HashMap<>();
     List<TopSecondDegreeByCountRecommendationInfo> expectedTopResults = new ArrayList<>();
@@ -88,8 +88,8 @@ public class TopSecondDegreeByCountForMomentTest {
   public void testTopSecondDegreeByCountForMomentWithSmallGraph2() throws Exception {
     // Test 2: Test with small maxNumResults
     LongList metadata3 = new LongArrayList(new long[]{0, 0, 0});
-    HashMap<Byte, ConnectingUsers> socialProofFor3 = new HashMap<> ();
-    socialProofFor3.put((byte) 1, new ConnectingUsers(new LongArrayList(new long[]{1, 2, 3}), metadata3));
+    HashMap<Byte, ConnectingUsersWithMetadata> socialProofFor3 = new HashMap<> ();
+    socialProofFor3.put((byte) 1, new ConnectingUsersWithMetadata(new LongArrayList(new long[]{1, 2, 3}), metadata3));
 
     Map<Byte, Integer> minUserPerSocialProof = new HashMap<>();
     List<TopSecondDegreeByCountRecommendationInfo> expectedTopResults = new ArrayList<>();
@@ -112,8 +112,8 @@ public class TopSecondDegreeByCountForMomentTest {
   public void testTopSecondDegreeByCountForMomentWithSmallGraph3() throws Exception {
     // Test 3: Test limiting minimum number of minimum per social proof
     LongList metadata3 = new LongArrayList(new long[]{0, 0, 0});
-    HashMap<Byte, ConnectingUsers> socialProofFor3 = new HashMap<> ();
-    socialProofFor3.put((byte) 1, new ConnectingUsers(new LongArrayList(new long[]{1, 2, 3}), metadata3));
+    HashMap<Byte, ConnectingUsersWithMetadata> socialProofFor3 = new HashMap<> ();
+    socialProofFor3.put((byte) 1, new ConnectingUsersWithMetadata(new LongArrayList(new long[]{1, 2, 3}), metadata3));
 
     Map<Byte, Integer> minUserPerSocialProof = new HashMap<>();
     List<TopSecondDegreeByCountRecommendationInfo> expectedTopResults = new ArrayList<>();

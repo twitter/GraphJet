@@ -21,7 +21,7 @@ import java.util.Map;
 
 import com.google.common.base.Objects;
 
-import com.twitter.graphjet.algorithms.ConnectingUsers;
+import com.twitter.graphjet.algorithms.ConnectingUsersWithMetadata;
 import com.twitter.graphjet.algorithms.RecommendationInfo;
 import com.twitter.graphjet.algorithms.RecommendationType;
 
@@ -31,13 +31,13 @@ import com.twitter.graphjet.algorithms.RecommendationType;
 public abstract class TopSecondDegreeByCountRecommendationInfo implements RecommendationInfo {
   private final long recommendation;
   private final double weight;
-  private final Map<Byte, ConnectingUsers> socialProof;
+  private final Map<Byte, ConnectingUsersWithMetadata> socialProof;
   protected RecommendationType recommendationType;
 
   public TopSecondDegreeByCountRecommendationInfo(
     long recommendation,
     double weight,
-    Map<Byte, ConnectingUsers> socialProof
+    Map<Byte, ConnectingUsersWithMetadata> socialProof
   ) {
     this.recommendation = recommendation;
     this.weight = weight;
@@ -56,7 +56,7 @@ public abstract class TopSecondDegreeByCountRecommendationInfo implements Recomm
     return weight;
   }
 
-  public Map<Byte, ConnectingUsers> getSocialProof() {
+  public Map<Byte, ConnectingUsersWithMetadata> getSocialProof() {
     return socialProof;
   }
 

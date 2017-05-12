@@ -23,7 +23,7 @@ import java.util.PriorityQueue;
 
 import com.google.common.collect.Lists;
 
-import com.twitter.graphjet.algorithms.ConnectingUsers;
+import com.twitter.graphjet.algorithms.ConnectingUsersWithMetadata;
 import com.twitter.graphjet.algorithms.NodeInfo;
 import com.twitter.graphjet.algorithms.RecommendationInfo;
 import com.twitter.graphjet.algorithms.RecommendationRequest;
@@ -61,7 +61,7 @@ public final class TopSecondDegreeByCountUserRecsGenerator {
     while (!topNodes.isEmpty()) {
       NodeInfo nodeInfo = topNodes.poll();
 
-      Map<Byte, ConnectingUsers> topSocialProofs = GeneratorHelper.pickTopSocialProofs(
+      Map<Byte, ConnectingUsersWithMetadata> topSocialProofs = GeneratorHelper.pickTopSocialProofs(
         nodeInfo.getSocialProofs(),
         maxNumSocialProofs);
 

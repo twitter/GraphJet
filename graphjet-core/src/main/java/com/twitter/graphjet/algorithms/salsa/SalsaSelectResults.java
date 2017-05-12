@@ -28,7 +28,7 @@ import com.google.common.collect.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.twitter.graphjet.algorithms.ConnectingUsers;
+import com.twitter.graphjet.algorithms.ConnectingUsersWithMetadata;
 import com.twitter.graphjet.algorithms.NodeInfo;
 import com.twitter.graphjet.algorithms.RecommendationInfo;
 import com.twitter.graphjet.algorithms.RecommendationRequest;
@@ -127,12 +127,12 @@ public class SalsaSelectResults<T extends LeftIndexedBipartiteGraph> {
   /**
    * Pick the top social proofs for each RHS node
    */
-  private Map<Byte, ConnectingUsers> pickTopSocialProofs(
+  private Map<Byte, ConnectingUsersWithMetadata> pickTopSocialProofs(
     SmallArrayBasedLongToDoubleMap[] socialProofs,
     byte[] validSocialProofs,
     int maxSocialProofSize
   ) {
-    Map<Byte, ConnectingUsers> results = new HashMap<Byte, ConnectingUsers>();
+    Map<Byte, ConnectingUsersWithMetadata> results = new HashMap<Byte, ConnectingUsersWithMetadata>();
     int length = validSocialProofs.length;
 
     for (int i = 0; i < length; i++) {
@@ -143,7 +143,7 @@ public class SalsaSelectResults<T extends LeftIndexedBipartiteGraph> {
         }
 
         socialProof.trim(maxSocialProofSize);
-        results.put((byte) i, new ConnectingUsers(
+        results.put((byte) i, new ConnectingUsersWithMetadata(
           new LongArrayList(socialProof.keys()),
           new LongArrayList(socialProof.metadata())
         ));

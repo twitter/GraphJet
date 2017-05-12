@@ -28,7 +28,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 
 import com.twitter.graphjet.algorithms.BipartiteGraphTestHelper;
-import com.twitter.graphjet.algorithms.ConnectingUsers;
+import com.twitter.graphjet.algorithms.ConnectingUsersWithMetadata;
 import com.twitter.graphjet.algorithms.RecommendationInfo;
 import com.twitter.graphjet.algorithms.RequestedSetFilter;
 import com.twitter.graphjet.algorithms.ResultFilter;
@@ -100,12 +100,12 @@ public class SalsaSelectResultsTest {
 
     LongList metadata1 = new LongArrayList(new long[]{0});
     LongList metadata2 = new LongArrayList(new long[]{0, 0});
-    ArrayList<HashMap<Byte, ConnectingUsers>> socialProof = new ArrayList<>();
+    ArrayList<HashMap<Byte, ConnectingUsersWithMetadata>> socialProof = new ArrayList<>();
     for (int i = 0; i < 2; i++) {
       socialProof.add(new HashMap<>());
     }
-    socialProof.get(0).put((byte) 0, new ConnectingUsers(new LongArrayList(new long[]{3, 2}), metadata2));
-    socialProof.get(1).put((byte) 0, new ConnectingUsers(new LongArrayList(new long[]{4}), metadata1));
+    socialProof.get(0).put((byte) 0, new ConnectingUsersWithMetadata(new LongArrayList(new long[]{3, 2}), metadata2));
+    socialProof.get(1).put((byte) 0, new ConnectingUsersWithMetadata(new LongArrayList(new long[]{4}), metadata1));
 
     final List<RecommendationInfo> expectedTopResults = new ArrayList<RecommendationInfo>();
     expectedTopResults.add(new TweetRecommendationInfo(4, 0.5, socialProof.get(0)));
