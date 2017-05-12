@@ -97,8 +97,13 @@ public class TweetMetadataRecommendationInfo
       // the user id
       socialProofByType = new HashMap<Long, LongList>();
       for (int i = 0; i < userSocialProofs.size(); i++) {
-        // check duplicates in leftNodes before creating LongList.
-        if (!socialProofByType.containsKey(leftNodes[i])) {
+
+        // update tweetIds if one of the following conditions is true
+        // 1. userSocialProofs does not contain duplicates
+        // 2. userSocialProofs has duplicates but this is the first time to add rightNode
+        if (userSocialProofs.size() == userSocialProofs.uniqueKeysSize()
+          || !socialProofByType.containsKey(leftNodes[i])) {
+
           LongList tweetIds = new LongArrayList(INITIAL_TWEET_ARRAY_SIZE);
           tweetIds.add(rightNode);
           socialProofByType.put(leftNodes[i], tweetIds);
