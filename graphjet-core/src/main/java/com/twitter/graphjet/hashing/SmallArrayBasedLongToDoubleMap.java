@@ -34,13 +34,14 @@ import it.unimi.dsi.fastutil.objects.ObjectSet;
  * once, and it does not support getting a specific key/value pair. The main purpose of this
  * implementation is to store a very small number of pairs. When a key/value pair is inserted into
  * the map, it scans through the keys array linearly and makes a decision whether to append the pair
- * or not. When the size of the map is equal to ADD_KEYS_TO_SET_THRESHOLD, it adds all keys to a set
- * and starts to use the set for dedupping.
+ * or not. When the size of the map is equal to ADD_KEYS_TO_SET_THRESHOLD, it adds all keys and
+ * metadata to a map and starts to use the map for dedupping.
  */
 public class SmallArrayBasedLongToDoubleMap {
 
   /**
-   * Holder class of a pair of key and metadata.
+   * Holder class of a pair of key and metadata, which is used during dedupping when the size of the
+   * map grows beyond ADD_KEYS_TO_SET_THRESHOLD.
    */
   private static final class Pair {
     private long key;
@@ -148,9 +149,9 @@ public class SmallArrayBasedLongToDoubleMap {
   }
 
   /**
-   * Return the size of the map.
+   * Return the number of unique keys in the map.
    *
-   * @return the size of the map.
+   * @return the number of unique keys in the map.
    */
   public int uniqueKeysSize() {
     return this.uniqueKeysSize;
@@ -166,19 +167,21 @@ public class SmallArrayBasedLongToDoubleMap {
    */
   public boolean put(long key, double value, long metadata) {
     boolean isUniqueKey = true;
+
+    // If the size of the array is less than ADD_KEYS_TO_SET_THRESHOLD, check against each element
+    // in the array for dedupping.
     if (size < ADD_KEYS_TO_SET_THRESHOLD) {
       for (int i = 0; i < size; i++) {
         if (key == keys[i]) {
           isUniqueKey = false;
           if (metadata == metadataArray[i]) {
-            LOG.info("Filter reject");
             return false;
-          } else {
-            LOG.info("key " + key + " data " + metadata + " odata " + metadataArray[i]);
           }
         }
       }
     } else {
+      // If the size of the array is no less than ADD_KEYS_TO_SET_THRESHOLD, check against
+      // keyMetadataPairSet for dedupping.
       if (keySet == null) {
         keySet = new LongOpenHashSet(keys, 0.75f /* load factor */);
         keyMetadataPairSet = new ObjectOpenHashSet<>();
