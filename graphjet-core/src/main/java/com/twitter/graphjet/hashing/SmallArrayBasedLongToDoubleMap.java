@@ -163,7 +163,7 @@ public class SmallArrayBasedLongToDoubleMap {
    * @param key the key.
    * @param value the value.
    * @param metadata the metadata.
-   * @return true if no value present for the giving key and metadata pair, and false otherwise.
+   * @return true if no value present for the given pair of key and metadata, and false otherwise.
    */
   public boolean put(long key, double value, long metadata) {
     boolean isUniqueKey = true;
@@ -214,7 +214,7 @@ public class SmallArrayBasedLongToDoubleMap {
   }
 
   /**
-   * Sort both keys and values in the order of decreasing values.
+   * Sort keys, values and metadataArray in the order of decreasing values.
    */
   public void sort() {
     Arrays.quickSort(0, size, new IntComparator() {
