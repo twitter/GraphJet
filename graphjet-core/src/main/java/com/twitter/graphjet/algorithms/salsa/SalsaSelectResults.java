@@ -28,17 +28,16 @@ import com.google.common.collect.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.twitter.graphjet.algorithms.ConnectingUsersWithMetadata;
 import com.twitter.graphjet.algorithms.NodeInfo;
 import com.twitter.graphjet.algorithms.RecommendationInfo;
 import com.twitter.graphjet.algorithms.RecommendationRequest;
 import com.twitter.graphjet.algorithms.TweetIDMask;
 import com.twitter.graphjet.algorithms.counting.tweet.TweetRecommendationInfo;
 import com.twitter.graphjet.bipartite.api.LeftIndexedBipartiteGraph;
-import com.twitter.graphjet.datastructures.Pair;
 import com.twitter.graphjet.hashing.SmallArrayBasedLongToDoubleMap;
 
 import it.unimi.dsi.fastutil.longs.LongArrayList;
-import it.unimi.dsi.fastutil.longs.LongList;
 
 /**
  * This class selects the top recommendations from a SALSA run.
@@ -127,11 +126,11 @@ public class SalsaSelectResults<T extends LeftIndexedBipartiteGraph> {
   /**
    * Pick the top social proofs for each RHS node
    */
-  private Map<Byte, Pair<LongList, LongList>> pickTopSocialProofs(
+  private Map<Byte, ConnectingUsersWithMetadata> pickTopSocialProofs(
     SmallArrayBasedLongToDoubleMap[] socialProofs,
     byte[] validSocialProofs
   ) {
-    Map<Byte, Pair<LongList, LongList>> results = new HashMap<Byte, Pair<LongList, LongList>>();
+    Map<Byte, ConnectingUsersWithMetadata> results = new HashMap<Byte, ConnectingUsersWithMetadata>();
     int length = validSocialProofs.length;
 
     for (int i = 0; i < length; i++) {
@@ -142,7 +141,7 @@ public class SalsaSelectResults<T extends LeftIndexedBipartiteGraph> {
         }
 
         socialProof.trim(socialProof.size());
-        results.put((byte) i, new Pair<LongList, LongList>(
+        results.put((byte) i, new ConnectingUsersWithMetadata(
           new LongArrayList(socialProof.keys()),
           new LongArrayList(socialProof.metadata())
         ));

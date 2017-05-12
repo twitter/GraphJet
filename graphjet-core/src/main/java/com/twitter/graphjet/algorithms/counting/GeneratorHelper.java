@@ -21,15 +21,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
 
+import com.twitter.graphjet.algorithms.ConnectingUsersWithMetadata;
 import com.twitter.graphjet.algorithms.NodeInfo;
 import com.twitter.graphjet.algorithms.RecommendationRequest;
 import com.twitter.graphjet.algorithms.RecommendationType;
 import com.twitter.graphjet.algorithms.counting.tweet.TopSecondDegreeByCountRequestForTweet;
-import com.twitter.graphjet.datastructures.Pair;
 import com.twitter.graphjet.hashing.SmallArrayBasedLongToDoubleMap;
 
 import it.unimi.dsi.fastutil.longs.LongArrayList;
-import it.unimi.dsi.fastutil.longs.LongList;
 
 /**
  * Shared utility functions among RecsGenerators.
@@ -42,11 +41,10 @@ public final class GeneratorHelper {
   /**
    * Pick the top social proofs for each RHS node
    */
-  public static Map<Byte, Pair<LongList, LongList>> pickTopSocialProofs(
-    SmallArrayBasedLongToDoubleMap[] socialProofs
-  ) {
+  public static Map<Byte, ConnectingUsersWithMetadata> pickTopSocialProofs(
+    SmallArrayBasedLongToDoubleMap[] socialProofs){
 
-    Map<Byte, Pair<LongList, LongList>> results = new HashMap<>();
+    Map<Byte, ConnectingUsersWithMetadata> results = new HashMap<>();
 
     for (int i = 0; i < socialProofs.length; i++) {
       SmallArrayBasedLongToDoubleMap socialProof = socialProofs[i];
@@ -54,8 +52,9 @@ public final class GeneratorHelper {
         if (socialProof.size() > 1) {
           socialProof.sort();
         }
+
         socialProof.trim(socialProof.size());
-        results.put((byte)i, new Pair<LongList, LongList>(
+        results.put((byte)i, new ConnectingUsersWithMetadata(
           new LongArrayList(socialProof.keys()),
           new LongArrayList(socialProof.metadata())
         ));

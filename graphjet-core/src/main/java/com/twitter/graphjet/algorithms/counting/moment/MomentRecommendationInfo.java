@@ -18,17 +18,15 @@ package com.twitter.graphjet.algorithms.counting.moment;
 
 import java.util.Map;
 
+import com.twitter.graphjet.algorithms.ConnectingUsersWithMetadata;
 import com.twitter.graphjet.algorithms.RecommendationType;
 import com.twitter.graphjet.algorithms.counting.TopSecondDegreeByCountRecommendationInfo;
-import com.twitter.graphjet.datastructures.Pair;
-
-import it.unimi.dsi.fastutil.longs.LongList;
 
 public class MomentRecommendationInfo extends TopSecondDegreeByCountRecommendationInfo {
   public MomentRecommendationInfo(
       long recommendation,
       double weight,
-      Map<Byte, Pair<LongList, LongList>> socialProof
+      Map<Byte, ConnectingUsersWithMetadata> socialProof
   ) {
     super(recommendation, weight, socialProof);
     super.recommendationType = RecommendationType.MOMENT;
