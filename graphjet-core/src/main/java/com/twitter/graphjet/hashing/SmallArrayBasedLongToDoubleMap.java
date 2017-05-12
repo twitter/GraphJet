@@ -20,8 +20,6 @@ package com.twitter.graphjet.hashing;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.twitter.graphjet.datastructures.Pair;
-
 import it.unimi.dsi.fastutil.Arrays;
 import it.unimi.dsi.fastutil.Swapper;
 import it.unimi.dsi.fastutil.ints.IntComparator;
@@ -40,16 +38,58 @@ import it.unimi.dsi.fastutil.objects.ObjectSet;
  * and starts to use the set for dedupping.
  */
 public class SmallArrayBasedLongToDoubleMap {
+
+  private static final class Pair {
+    private long key;
+    private long metadata;
+
+    public Pair(long key, long metadata) {
+      this.key = key;
+      this.metadata = metadata;
+    }
+
+    public long getKey() {
+      return key;
+    }
+
+    public long getMetadata() {
+      return metadata;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+      if (obj == null) {
+        return false;
+      }
+
+      if (obj == this) {
+        return true;
+      }
+
+      if (obj.getClass() != getClass()) {
+        return false;
+      }
+
+      Pair other = (Pair) obj;
+
+      return (key == other.key) && (metadata == other.metadata);
+    }
+
+    @Override
+    public int hashCode() {
+      return (int)(key & metadata);
+    }
+  }
+
   private static final int ADD_KEYS_TO_SET_THRESHOLD = 8;
   private long[] keys;
-  private long[] uniqueKeys;
   private double[] values;
   private long[] metadataArray;
   private int capacity;
   private int size;
   private int uniqueKeysSize;
   private LongSet keySet;
-  private ObjectSet<Pair<Long, Long>> keyMetadataPairSet;
+  private ObjectSet<Pair> keyMetadataPairSet;
 
 
   protected static final Logger LOG = LoggerFactory.getLogger("graph");
@@ -62,7 +102,6 @@ public class SmallArrayBasedLongToDoubleMap {
     this.size = 0;
     this.uniqueKeysSize = 0;
     this.keys = new long[capacity];
-    this.uniqueKeys = new long[capacity];
     this.values = new double[capacity];
     this.metadataArray = new long[capacity];
     this.keySet = null;
@@ -76,15 +115,6 @@ public class SmallArrayBasedLongToDoubleMap {
    */
   public long[] keys() {
     return this.keys;
-  }
-
-  /**
-   * Return the underlying primitive array of uniqueKeys.
-   *
-   * @return the underlying primitive array of uniqueKeys.
-   */
-  public long[] uniqueKeys() {
-    return this.uniqueKeys;
   }
 
   /**
@@ -150,10 +180,10 @@ public class SmallArrayBasedLongToDoubleMap {
         keySet = new LongOpenHashSet(keys, 0.75f /* load factor */);
         keyMetadataPairSet = new ObjectOpenHashSet<>();
         for (int i = 0; i < size; i++) {
-          keyMetadataPairSet.add(new Pair<>(keys[i], metadataArray[i]));
+          keyMetadataPairSet.add(new Pair(keys[i], metadataArray[i]));
         }
       }
-      Pair<Long, Long> pair = new Pair<>(key, metadata);
+      Pair pair = new Pair(key, metadata);
 
       if (keyMetadataPairSet.contains(pair)) {
         return false;
@@ -168,10 +198,8 @@ public class SmallArrayBasedLongToDoubleMap {
       copy(capacity, size);
     }
 
-    if (isUniqueKey) {
-      uniqueKeys[uniqueKeysSize] = key;
-      uniqueKeysSize++;
-    }
+    if (isUniqueKey) uniqueKeysSize++;
+
     keys[size] = key;
     values[size] = value;
     metadataArray[size] = metadata;
@@ -180,8 +208,7 @@ public class SmallArrayBasedLongToDoubleMap {
   }
 
   /**
-   * Sort both keys and values in the order of decreasing values. This sort function does not swap
-   * uniqueKeys array.
+   * Sort both keys and values in the order of decreasing values.
    */
   public void sort() {
     Arrays.quickSort(0, size, new IntComparator() {
@@ -269,15 +296,12 @@ public class SmallArrayBasedLongToDoubleMap {
    */
   private void copy(int newLength, int length) {
     long[] newKeys = new long[newLength];
-    long[] newUniqueKeys = new long[newLength];
     double[] newValues = new double[newLength];
     long[] newMetadataArray = new long[newLength];
     System.arraycopy(keys, 0, newKeys, 0, length);
-    System.arraycopy(uniqueKeys, 0, newUniqueKeys, 0, length);
     System.arraycopy(values, 0, newValues, 0, length);
     System.arraycopy(metadataArray, 0, newMetadataArray, 0, length);
     keys = newKeys;
-    uniqueKeys = newUniqueKeys;
     values = newValues;
     metadataArray = newMetadataArray;
   }

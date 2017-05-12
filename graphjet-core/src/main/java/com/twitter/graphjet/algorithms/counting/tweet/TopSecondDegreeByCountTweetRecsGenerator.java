@@ -121,8 +121,8 @@ public final class TopSecondDegreeByCountTweetRecsGenerator {
       uniqueNodes.clear();
       for (byte socialProofType: socialProofTypeUnion) {
         if (socialProofs[socialProofType] != null) {
-          for (int i = 0; i < socialProofs[socialProofType].uniqueKeysSize(); i++) {
-            uniqueNodes.add(socialProofs[socialProofType].uniqueKeys()[i]);
+          for (int i = 0; i < socialProofs[socialProofType].size(); i++) {
+            uniqueNodes.add(socialProofs[socialProofType].keys()[i]);
             if (uniqueNodes.size() >= minUserSocialProofSize) {
               return false;
             }

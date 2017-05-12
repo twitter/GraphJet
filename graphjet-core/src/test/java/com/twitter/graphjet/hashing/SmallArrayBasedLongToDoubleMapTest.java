@@ -136,10 +136,5 @@ public class SmallArrayBasedLongToDoubleMapTest {
     }
 
     assertEquals(15, mapTwo.uniqueKeysSize());
-    mapTwo.trim(mapTwo.uniqueKeysSize());
-    assertEquals(
-      new LongArrayList(new long[]{17, 5, 8, 4, 2, 19, 13, 15, 16, 12, 3, 1, 7, 18, 9}),
-      new LongArrayList(mapTwo.uniqueKeys())
-    );
   }
 }
