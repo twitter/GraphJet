@@ -22,6 +22,8 @@ import it.unimi.dsi.fastutil.Swapper;
 import it.unimi.dsi.fastutil.ints.IntComparator;
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import it.unimi.dsi.fastutil.longs.LongSet;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import it.unimi.dsi.fastutil.objects.ObjectSet;
 
 /**
  * This class provides a map from long to double. It uses three primitive arrays to store long keys,
@@ -29,17 +31,66 @@ import it.unimi.dsi.fastutil.longs.LongSet;
  * once, and it does not support getting a specific key/value pair. The main purpose of this
  * implementation is to store a very small number of pairs. When a key/value pair is inserted into
  * the map, it scans through the keys array linearly and makes a decision whether to append the pair
- * or not. When the size of the map is equal to ADD_KEYS_TO_SET_THRESHOLD, it adds all keys to a set
- * and starts to use the set for dedupping.
+ * or not. When the size of the map is equal to ADD_KEYS_TO_SET_THRESHOLD, it adds all keys and
+ * metadata to a map and starts to use the map for dedupping.
  */
 public class SmallArrayBasedLongToDoubleMap {
+
+  /**
+   * Holder class of a pair of key and metadata, which is used during dedupping when the size of the
+   * map grows beyond ADD_KEYS_TO_SET_THRESHOLD.
+   */
+  private static final class Pair {
+    private long key;
+    private long metadata;
+
+    public Pair(long key, long metadata) {
+      this.key = key;
+      this.metadata = metadata;
+    }
+
+    public long getKey() {
+      return key;
+    }
+
+    public long getMetadata() {
+      return metadata;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+      if (obj == null) {
+        return false;
+      }
+
+      if (obj == this) {
+        return true;
+      }
+
+      if (obj.getClass() != getClass()) {
+        return false;
+      }
+
+      Pair other = (Pair) obj;
+
+      return (key == other.key) && (metadata == other.metadata);
+    }
+
+    @Override
+    public int hashCode() {
+      return (int)(key & metadata);
+    }
+  }
+
   private static final int ADD_KEYS_TO_SET_THRESHOLD = 8;
   private long[] keys;
   private double[] values;
   private long[] metadataArray;
   private int capacity;
   private int size;
+  private int uniqueKeysSize;
   private LongSet keySet;
+  private ObjectSet<Pair> keyMetadataPairSet;
 
   /**
    * Create a new empty array map.
@@ -47,10 +98,12 @@ public class SmallArrayBasedLongToDoubleMap {
   public SmallArrayBasedLongToDoubleMap() {
     this.capacity = 4;
     this.size = 0;
+    this.uniqueKeysSize = 0;
     this.keys = new long[capacity];
     this.values = new double[capacity];
     this.metadataArray = new long[capacity];
     this.keySet = null;
+    this.keyMetadataPairSet = null;
   }
 
   /**
@@ -90,28 +143,53 @@ public class SmallArrayBasedLongToDoubleMap {
   }
 
   /**
-   * Add a pair to the map.
+   * Return the number of unique keys in the map.
+   *
+   * @return the number of unique keys in the map.
+   */
+  public int uniqueKeysSize() {
+    return this.uniqueKeysSize;
+  }
+
+  /**
+   * Add a tuple3 to the map.
    *
    * @param key the key.
    * @param value the value.
    * @param metadata the metadata.
-   * @return true if no value present for the giving key, and false otherwise.
+   * @return true if no value present for the given pair of key and metadata, and false otherwise.
    */
   public boolean put(long key, double value, long metadata) {
+    boolean isUniqueKey = true;
+
+    // If the size of the array is less than ADD_KEYS_TO_SET_THRESHOLD, check against each element
+    // in the array for dedupping.
     if (size < ADD_KEYS_TO_SET_THRESHOLD) {
       for (int i = 0; i < size; i++) {
         if (key == keys[i]) {
-          return false;
+          isUniqueKey = false;
+          if (metadata == metadataArray[i]) {
+            return false;
+          }
         }
       }
     } else {
+      // If the size of the array is no less than ADD_KEYS_TO_SET_THRESHOLD, check against
+      // keyMetadataPairSet for dedupping.
       if (keySet == null) {
         keySet = new LongOpenHashSet(keys, 0.75f /* load factor */);
+        keyMetadataPairSet = new ObjectOpenHashSet<>();
+        for (int i = 0; i < size; i++) {
+          keyMetadataPairSet.add(new Pair(keys[i], metadataArray[i]));
+        }
       }
-      if (keySet.contains(key)) {
+      Pair pair = new Pair(key, metadata);
+
+      if (keyMetadataPairSet.contains(pair)) {
         return false;
       } else {
-        keySet.add(key);
+        isUniqueKey = keySet.add(key);
+        keyMetadataPairSet.add(pair);
       }
     }
 
@@ -120,16 +198,17 @@ public class SmallArrayBasedLongToDoubleMap {
       copy(capacity, size);
     }
 
+    if (isUniqueKey) uniqueKeysSize++;
+
     keys[size] = key;
     values[size] = value;
     metadataArray[size] = metadata;
     size++;
-
     return true;
   }
 
   /**
-   * Sort both keys and values in the order of decreasing values.
+   * Sort keys, values and metadataArray in the order of decreasing values.
    */
   public void sort() {
     Arrays.quickSort(0, size, new IntComparator() {
@@ -174,11 +253,12 @@ public class SmallArrayBasedLongToDoubleMap {
    * @return true if the capacity of the map is trimmed down, and false otherwise.
    */
   public boolean trim(int inputCapacity) {
-    int newCapacity = inputCapacity > size ? size : inputCapacity;
+    int newCapacity = Math.min(inputCapacity, size);
 
     if (newCapacity < capacity) {
       capacity = newCapacity;
       size = newCapacity;
+      uniqueKeysSize = Math.min(newCapacity, uniqueKeysSize);
       copy(newCapacity, newCapacity);
       return true;
     } else {

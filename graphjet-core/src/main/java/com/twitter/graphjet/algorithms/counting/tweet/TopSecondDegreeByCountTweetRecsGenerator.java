@@ -76,7 +76,7 @@ public final class TopSecondDegreeByCountTweetRecsGenerator {
         new TweetRecommendationInfo(
           TWEET_ID_MASK.restore(nodeInfo.getValue()),
           nodeInfo.getWeight(),
-          GeneratorHelper.pickTopSocialProofs(nodeInfo.getSocialProofs(), request.getMaxUserSocialProofSize())));
+          GeneratorHelper.pickTopSocialProofs(nodeInfo.getSocialProofs())));
     }
     Collections.reverse(outputResults);
 
@@ -93,7 +93,7 @@ public final class TopSecondDegreeByCountTweetRecsGenerator {
       socialProofSizeSum = 0;
       for (byte socialProofType: socialProofTypeUnion) {
         if (socialProofs[socialProofType] != null) {
-          socialProofSizeSum += socialProofs[socialProofType].size();
+          socialProofSizeSum += socialProofs[socialProofType].uniqueKeysSize();
           if (socialProofSizeSum >= minUserSocialProofSize) {
             return false;
           }
@@ -149,7 +149,7 @@ public final class TopSecondDegreeByCountTweetRecsGenerator {
           socialProofs[validSocialProofs[i]].contains(authorId)) {
           minUserSocialProofThreshold += 1;
         }
-        if (socialProofs[validSocialProofs[i]].size() >= minUserSocialProofThreshold) {
+        if (socialProofs[validSocialProofs[i]].uniqueKeysSize() >= minUserSocialProofThreshold) {
           return false;
         }
       }

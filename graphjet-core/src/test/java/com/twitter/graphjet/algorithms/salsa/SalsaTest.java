@@ -215,19 +215,29 @@ public class SalsaTest {
 
     final SalsaStats expectedSalsaStats = new SalsaStats(1, 64, 998, 21050, 1, 227, 64);
 
-    LongList metadata2 = new LongArrayList(new long[]{0, 0});
+    LongList metadata7 = new LongArrayList(new long[]{0, 0, 0, 0, 0, 0, 0});
+    LongList metadata10 = new LongArrayList(new long[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0});
     ArrayList<HashMap<Byte, ConnectingUsersWithMetadata>> socialProof = new ArrayList<>();
     for (int i = 0; i < 3; i++) {
       socialProof.add(new HashMap<>());
     }
     socialProof.get(0).put(
-      (byte) 0, new ConnectingUsersWithMetadata(new LongArrayList(new long[]{718, 889}), metadata2)
+      (byte) 0, new ConnectingUsersWithMetadata(
+        new LongArrayList(new long[]{718, 889, 109, 164, 207, 767, 302, 888, 453, 738}),
+        metadata10
+      )
     );
     socialProof.get(1).put(
-      (byte) 0, new ConnectingUsersWithMetadata(new LongArrayList(new long[]{47, 96}), metadata2)
+      (byte) 0, new ConnectingUsersWithMetadata(
+        new LongArrayList(new long[]{47, 96, 499, 306, 396, 805, 351, 875, 308, 186}),
+        metadata10
+      )
     );
     socialProof.get(2).put(
-      (byte) 0, new ConnectingUsersWithMetadata(new LongArrayList(new long[]{623, 880}), metadata2)
+      (byte) 0, new ConnectingUsersWithMetadata(
+        new LongArrayList(new long[]{623, 880, 550, 363, 886, 156, 130}),
+        metadata7
+      )
     );
 
     final List<RecommendationInfo> expectedTopResults = new ArrayList<RecommendationInfo>();
@@ -317,19 +327,30 @@ public class SalsaTest {
             .withResultFilterChain(resultFilterChain)
             .build();
 
-    LongList metadata3 = new LongArrayList(new long[]{0, 0, 0});
+    LongList metadata7 = new LongArrayList(new long[]{0, 0, 0, 0, 0, 0, 0});
+    LongList metadata8 = new LongArrayList(new long[]{0, 0, 0, 0, 0, 0, 0, 0});
+    LongList metadata9 = new LongArrayList(new long[]{0, 0, 0, 0, 0, 0, 0, 0, 0});
     ArrayList<HashMap<Byte, ConnectingUsersWithMetadata>> socialProof = new ArrayList<>();
     for (int i = 0; i < 3; i++) {
       socialProof.add(new HashMap<>());
     }
     socialProof.get(0).put(
-      (byte) 0, new ConnectingUsersWithMetadata(new LongArrayList(new long[]{79, 51, 19}), metadata3)
+      (byte) 0, new ConnectingUsersWithMetadata(
+        new LongArrayList(new long[]{79, 51, 19, 13, 97, 56, 36, 2, 22}),
+        metadata9
+      )
     );
     socialProof.get(1).put(
-      (byte) 0, new ConnectingUsersWithMetadata(new LongArrayList(new long[]{44, 77, 13}), metadata3)
+      (byte) 0, new ConnectingUsersWithMetadata(
+        new LongArrayList(new long[]{44, 77, 13, 63, 16, 5, 43, 90}),
+        metadata8
+      )
     );
     socialProof.get(2).put(
-      (byte) 0, new ConnectingUsersWithMetadata(new LongArrayList(new long[]{21, 65, 3}), metadata3)
+      (byte) 0, new ConnectingUsersWithMetadata(
+        new LongArrayList(new long[]{21, 65, 3, 8, 12, 38, 40}),
+        metadata7
+      )
     );
 
     final List<RecommendationInfo> expectedTopResults = new ArrayList<RecommendationInfo>();

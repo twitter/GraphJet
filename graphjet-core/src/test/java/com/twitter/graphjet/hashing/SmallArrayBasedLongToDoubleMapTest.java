@@ -96,4 +96,45 @@ public class SmallArrayBasedLongToDoubleMapTest {
     assertEquals(new LongArrayList(expectedKeys), new LongArrayList(map.keys()));
     assertEquals(new DoubleArrayList(expectedValues), new DoubleArrayList(map.values()));
   }
+
+  @Test
+  public void testRepeatedKeyMetadataPairs() {
+    SmallArrayBasedLongToDoubleMap map = new SmallArrayBasedLongToDoubleMap();
+    for (int i = 1; i <= 100; i++) {
+      map.put(i, i * 0.01, 1000 + i);
+    }
+
+    for (int i = 1; i <= 100; i++) {
+      assertEquals(false, map.put(i, i * 0.01, 1000 + i));
+    }
+
+    for (int i = 100; i >= 1; i--) {
+      assertEquals(false, map.put(i, i * 0.01, 1000 + i));
+    }
+
+    for (int i = 1; i <= 100; i++) {
+      assertEquals(true, map.put(i, i * 0.01, 2000 + i));
+    }
+  }
+
+  @Test
+  public void testUniqueKeys() {
+    SmallArrayBasedLongToDoubleMap mapOne = new SmallArrayBasedLongToDoubleMap();
+
+    Random random = new Random(90238490238409L);
+    for (int i = 1; i <= 300; i++) {
+      mapOne.put(random.nextInt(200), i * 0.01, 1000 + i);
+    }
+
+    assertEquals(300, mapOne.size());
+    assertEquals(156, mapOne.uniqueKeysSize());
+
+    SmallArrayBasedLongToDoubleMap mapTwo = new SmallArrayBasedLongToDoubleMap();
+
+    for (int i = 1; i <= 30; i++) {
+      mapTwo.put(random.nextInt(20), i * 0.01, 1000 + i);
+    }
+
+    assertEquals(15, mapTwo.uniqueKeysSize());
+  }
 }

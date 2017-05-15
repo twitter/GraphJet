@@ -42,8 +42,7 @@ public final class GeneratorHelper {
    * Pick the top social proofs for each RHS node
    */
   public static Map<Byte, ConnectingUsersWithMetadata> pickTopSocialProofs(
-    SmallArrayBasedLongToDoubleMap[] socialProofs,
-    int maxSocialProofSize) {
+    SmallArrayBasedLongToDoubleMap[] socialProofs){
 
     Map<Byte, ConnectingUsersWithMetadata> results = new HashMap<>();
 
@@ -53,7 +52,8 @@ public final class GeneratorHelper {
         if (socialProof.size() > 1) {
           socialProof.sort();
         }
-        socialProof.trim(maxSocialProofSize);
+
+        socialProof.trim(socialProof.size());
         results.put((byte)i, new ConnectingUsersWithMetadata(
           new LongArrayList(socialProof.keys()),
           new LongArrayList(socialProof.metadata())
@@ -122,7 +122,7 @@ public final class GeneratorHelper {
         // not valid, if node does not have this type of social proof
         return false;
       }
-      if (socialProofs[proofType].size() < minSocialProofSizes.get(proofType)) {
+      if (socialProofs[proofType].uniqueKeysSize() < minSocialProofSizes.get(proofType)) {
         // not valid, if number of social proofs below threshold
         return false;
       }

@@ -44,7 +44,7 @@ public class ExactUserSocialProofSizeFilter extends ResultFilter {
     int totalNumProofs = 0;
     for (Byte validType: validSocialProofType) {
       if (socialProofs[validType] != null) {
-        totalNumProofs += socialProofs[validType].size();
+        totalNumProofs += socialProofs[validType].uniqueKeysSize();
       }
     }
     return totalNumProofs != exactNumUserSocialProof;

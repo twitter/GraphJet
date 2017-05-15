@@ -87,17 +87,27 @@ public class TweetMetadataRecommendationInfo
     int maxTweetSocialProofSize
   ) {
     Map<Long, LongList> socialProofByType = socialProof.get(socialProofType);
+    // userSocialProofs.keys might contain legitimate duplicates. for example, a user replies a
+    // tweet multiple times.
     long[] leftNodes = userSocialProofs.keys();
 
     if (socialProofByType == null) {
       // if this is the first social proof of this type, for each user social proof, create an empty
       // tweetIds list, add tweet id in the list, and then add the list to socialProof along with
-      // the user id
+      // the user id.
       socialProofByType = new HashMap<Long, LongList>();
       for (int i = 0; i < userSocialProofs.size(); i++) {
-        LongList tweetIds = new LongArrayList(INITIAL_TWEET_ARRAY_SIZE);
-        tweetIds.add(rightNode);
-        socialProofByType.put(leftNodes[i], tweetIds);
+
+        // update tweetIds if one of the following conditions is true.
+        // 1. userSocialProofs does not contain duplicates.
+        // 2. userSocialProofs has duplicates but this is the first time to add rightNode.
+        if (userSocialProofs.size() == userSocialProofs.uniqueKeysSize()
+          || !socialProofByType.containsKey(leftNodes[i])) {
+
+          LongList tweetIds = new LongArrayList(INITIAL_TWEET_ARRAY_SIZE);
+          tweetIds.add(rightNode);
+          socialProofByType.put(leftNodes[i], tweetIds);
+        }
       }
 
       socialProof.put(socialProofType, socialProofByType);
@@ -106,17 +116,25 @@ public class TweetMetadataRecommendationInfo
       // update the corresponding tweet social proof.
       for (int i = 0; i < userSocialProofs.size(); i++) {
         LongList tweetIds = socialProofByType.get(leftNodes[i]);
-        if (socialProofByType.size() < maxUserSocialProofSize) {
-          if (tweetIds == null) {
-            tweetIds = new LongArrayList(INITIAL_TWEET_ARRAY_SIZE);
-            socialProofByType.put(leftNodes[i], tweetIds);
-          }
-          if (tweetIds.size() < maxTweetSocialProofSize) {
-            tweetIds.add(rightNode);
-          }
-        } else {
-          if (tweetIds != null && tweetIds.size() < maxTweetSocialProofSize) {
-            tweetIds.add(rightNode);
+
+        // update tweetIds if one of the following conditions is true.
+        // 1. userSocialProofs does not contain duplicates.
+        // 2. userSocialProofs has duplicates but this is the first time to add rightNode.
+        if (userSocialProofs.size() == userSocialProofs.uniqueKeysSize()
+          || (tweetIds == null || !tweetIds.contains(rightNode))) {
+
+          if (socialProofByType.size() < maxUserSocialProofSize) {
+            if (tweetIds == null) {
+              tweetIds = new LongArrayList(INITIAL_TWEET_ARRAY_SIZE);
+              socialProofByType.put(leftNodes[i], tweetIds);
+            }
+            if (tweetIds.size() < maxTweetSocialProofSize) {
+              tweetIds.add(rightNode);
+            }
+          } else {
+            if (tweetIds != null && tweetIds.size() < maxTweetSocialProofSize) {
+              tweetIds.add(rightNode);
+            }
           }
         }
       }
