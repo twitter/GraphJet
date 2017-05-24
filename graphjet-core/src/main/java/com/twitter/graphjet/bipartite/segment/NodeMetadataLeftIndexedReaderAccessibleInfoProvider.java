@@ -65,9 +65,9 @@ public class NodeMetadataLeftIndexedReaderAccessibleInfoProvider
 
     readerAccessibleInfo = new NodeMetadataLeftIndexedReaderAccessibleInfo(
       new ArrayBasedLongToInternalIntBiMap(
-        expectedNumLeftNodes, LOAD_FACTOR, -1, -1, statsReceiver),
+        expectedNumLeftNodes, LOAD_FACTOR, -1, -1, statsReceiver.scope("left")),
       new ArrayBasedLongToInternalIntBiMap(
-        expectedNumRightNodes, LOAD_FACTOR, -1, -1, statsReceiver),
+        expectedNumRightNodes, LOAD_FACTOR, -1, -1, statsReceiver.scope("right")),
       leftNodeEdgePool,
       rightNodesToMetadataMap
     );
