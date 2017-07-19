@@ -1,0 +1,30 @@
+package com.twitter.graphjet.algorithms.intersection;
+
+import org.junit.Test;
+import static org.junit.Assert.*;
+import com.twitter.graphjet.algorithms.intersection.ScaledUpdateNormalization;
+
+/**
+ * Unit tests for class {@link ScaledUpdateNormalization}.
+ *
+ * @date 2017-07-19
+ * @see ScaledUpdateNormalization
+ *
+ **/
+public class ScaledUpdateNormalizationTest{
+
+  @Test
+  public void testComputeLeftNeighborContribution() {
+      ScaledUpdateNormalization scaledUpdateNormalization = new ScaledUpdateNormalization();
+
+      assertEquals(0.5, scaledUpdateNormalization.computeLeftNeighborContribution(4), 0.01);
+  }
+
+  @Test
+  public void testComputeScoreNormalization() {
+      ScaledUpdateNormalization scaledUpdateNormalization = new ScaledUpdateNormalization();
+
+      assertEquals(0.2886751345948129,  scaledUpdateNormalization.computeScoreNormalization(2, 4, 6), 0.01);
+  }
+
+}
