@@ -16,8 +16,10 @@
 
 package com.twitter.graphjet.algorithms;
 
+import com.twitter.graphjet.bipartite.segment.HigherBitsEdgeTypeMask;
 import com.twitter.graphjet.bipartite.segment.IdentityEdgeTypeMask;
 import com.twitter.graphjet.directed.OutIndexedPowerLawMultiSegmentDirectedGraph;
+import com.twitter.graphjet.stats.DefaultStatsReceiver;
 import com.twitter.graphjet.stats.NullStatsReceiver;
 import it.unimi.dsi.fastutil.longs.LongArrayList;
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
@@ -29,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 public class PageRankTest {
   // This is the coappearance network of characters in the novel Les Miserables.
@@ -367,4 +370,43 @@ public class PageRankTest {
     // Total mass should still be 1.0.
     assertEquals(1.0, totalMass, 10e-10);
   }
+
+  @Test
+  public void testRunReturningPositive() {
+
+      HigherBitsEdgeTypeMask higherBitsEdgeTypeMask = new HigherBitsEdgeTypeMask();
+      DefaultStatsReceiver defaultStatsReceiver = new DefaultStatsReceiver("a");
+      OutIndexedPowerLawMultiSegmentDirectedGraph outIndexedPowerLawMultiSegmentDirectedGraph =
+              new OutIndexedPowerLawMultiSegmentDirectedGraph(1249, 1249, 1249, 1249, 1249, higherBitsEdgeTypeMask, defaultStatsReceiver);
+      LongOpenHashSet longOpenHashSet = new LongOpenHashSet();
+      outIndexedPowerLawMultiSegmentDirectedGraph.addEdge(0L, 1170L, (byte) (-126), (byte) (-126));
+      longOpenHashSet.add(0L);
+      PageRank pageRank =
+              new PageRank(outIndexedPowerLawMultiSegmentDirectedGraph, longOpenHashSet, 1249, 1249, 1249, 1249);
+      int intOne = pageRank.run();
+
+      assertEquals(0.0, pageRank.getL1Norm(), 0.01);
+      assertEquals(3, intOne);
+
+  }
+
+
+  @Test
+  public void testFailsToCreatePageRankThrowsUnsupportedOperationException() {
+
+      HigherBitsEdgeTypeMask higherBitsEdgeTypeMask = new HigherBitsEdgeTypeMask();
+      DefaultStatsReceiver defaultStatsReceiver = new DefaultStatsReceiver("a");
+      OutIndexedPowerLawMultiSegmentDirectedGraph outIndexedPowerLawMultiSegmentDirectedGraph =
+              new OutIndexedPowerLawMultiSegmentDirectedGraph(1249, 1249, 1249, 1249, 1249, higherBitsEdgeTypeMask, defaultStatsReceiver);
+      PageRank pageRank = null;
+
+      try {
+        pageRank = new PageRank(outIndexedPowerLawMultiSegmentDirectedGraph,null, 2147483657L, 2147483657L, 2640, 1345.6519203075502);
+        fail("Expecting exception: UnsupportedOperationException");
+      } catch(UnsupportedOperationException e) {
+         assertEquals(PageRank.class.getName(), e.getStackTrace()[0].getClassName());
+      }
+
+  }
+
 }
