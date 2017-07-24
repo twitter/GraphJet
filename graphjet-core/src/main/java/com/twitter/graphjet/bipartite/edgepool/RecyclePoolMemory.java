@@ -29,19 +29,21 @@ public final class RecyclePoolMemory {
 
   /**
    * This function provides a way to recycle memory from a
-   * {@link com.twitter.graphjet.bipartite.edgepool.RegularDegreeEdgePool} by resetting it's internal
-   * state.
+   * {@link com.twitter.graphjet.bipartite.edgepool.AbstractRegularDegreeEdgePool} by resetting it's
+   * internal state.
    *
    * NOTE: This method is NOT thread-safe!
    */
-  public static void recycleRegularDegreeEdgePool(RegularDegreeEdgePool regularDegreeEdgePool) {
+  public static void recycleRegularDegreeEdgePool(
+    AbstractRegularDegreeEdgePool regularDegreeEdgePool
+  ) {
     regularDegreeEdgePool.currentPositionOffset = 0;
     regularDegreeEdgePool.currentNumNodes = 0;
     regularDegreeEdgePool.currentShardId = 0;
 
     regularDegreeEdgePool.currentNumEdgesStored = 0;
-    regularDegreeEdgePool.readerAccessibleInfo.edges.reset();
-    regularDegreeEdgePool.readerAccessibleInfo.nodeInfo.clear();
+    regularDegreeEdgePool.readerAccessibleInfo.getEdges().reset();
+    regularDegreeEdgePool.readerAccessibleInfo.getNodeInfo().clear();
   }
 
   /**
@@ -52,7 +54,7 @@ public final class RecyclePoolMemory {
    * NOTE: This method is NOT thread-safe!
    */
   public static void recyclePowerLawDegreeEdgePool(PowerLawDegreeEdgePool powerLawDegreeEdgePool) {
-    for (RegularDegreeEdgePool regularDegreeEdgePool
+    for (AbstractRegularDegreeEdgePool regularDegreeEdgePool
         : powerLawDegreeEdgePool.readerAccessibleInfo.edgePools) {
       recycleRegularDegreeEdgePool(regularDegreeEdgePool);
     }

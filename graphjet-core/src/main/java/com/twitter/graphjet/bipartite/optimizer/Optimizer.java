@@ -25,10 +25,10 @@ import org.slf4j.LoggerFactory;
 
 import com.twitter.graphjet.bipartite.api.OptimizableBipartiteGraph;
 import com.twitter.graphjet.bipartite.api.OptimizableBipartiteGraphSegment;
+import com.twitter.graphjet.bipartite.edgepool.AbstractRegularDegreeEdgePool;
 import com.twitter.graphjet.bipartite.edgepool.EdgePool;
 import com.twitter.graphjet.bipartite.edgepool.OptimizedEdgePool;
 import com.twitter.graphjet.bipartite.edgepool.PowerLawDegreeEdgePool;
-import com.twitter.graphjet.bipartite.edgepool.RegularDegreeEdgePool;
 import com.twitter.graphjet.bipartite.segment.BipartiteGraphSegment;
 import com.twitter.graphjet.bipartite.segment.LeftIndexedBipartiteGraphSegment;
 
@@ -99,7 +99,7 @@ public final class Optimizer {
     );
 
     int[] nodeDegrees = readerAccessibleInfo.getNodeDegrees();
-    RegularDegreeEdgePool[] regularDegreeEdgePools = readerAccessibleInfo.getEdgePools();
+    AbstractRegularDegreeEdgePool[] regularDegreeEdgePools = readerAccessibleInfo.getEdgePools();
 
     int nodeDegreeMapSize = nodeDegrees.length;
 

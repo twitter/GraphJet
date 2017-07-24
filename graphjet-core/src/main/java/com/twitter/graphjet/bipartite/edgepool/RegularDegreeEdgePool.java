@@ -17,23 +17,15 @@
 
 package com.twitter.graphjet.bipartite.edgepool;
 
-import java.util.Random;
-
 import com.google.common.base.Preconditions;
 
-import com.twitter.graphjet.bipartite.api.ReusableNodeIntIterator;
-import com.twitter.graphjet.bipartite.api.ReusableNodeRandomIntIterator;
 import com.twitter.graphjet.hashing.BigIntArray;
 import com.twitter.graphjet.hashing.BigLongArray;
 import com.twitter.graphjet.hashing.IntToIntPairArrayIndexBasedMap;
 import com.twitter.graphjet.hashing.IntToIntPairConcurrentHashMap;
 import com.twitter.graphjet.hashing.IntToIntPairHashMap;
 import com.twitter.graphjet.hashing.ShardedBigIntArray;
-import com.twitter.graphjet.hashing.ShardedBigLongArray;
-import com.twitter.graphjet.stats.Counter;
 import com.twitter.graphjet.stats.StatsReceiver;
-
-import it.unimi.dsi.fastutil.ints.IntIterator;
 
 /**
  * This edge pool is for the case where all the nodes have a bounded maximum degree, and most nodes
@@ -88,7 +80,7 @@ import it.unimi.dsi.fastutil.ints.IntIterator;
  * NOT true). Together, this ensures that the reader accesses to the objects are always consistent
  * with each other and safe to access by the reader.
  */
-public class RegularDegreeEdgePool implements EdgePool {
+public class RegularDegreeEdgePool extends AbstractRegularDegreeEdgePool {
   /**
    * This class encapsulates ALL the state that will be accessed by a reader (refer to the X, Y, Z
    * comment above). The final members are used to guarantee visibility to other threads without
@@ -103,9 +95,8 @@ public class RegularDegreeEdgePool implements EdgePool {
    *  (such as the elements of a final array or the contents of a HashMap refer-
    *  enced by a final field) are also guaranteed to be visible to other threads."
    */
-  public static final class ReaderAccessibleInfo {
+  public static final class ReaderAccessibleInfo implements EdgePoolReaderAccessibleInfo {
     public final BigIntArray edges;
-    public final BigLongArray metadata;
     // Each entry contains 2 ints for a node: position, degree
     protected final IntToIntPairHashMap nodeInfo;
 
@@ -117,27 +108,25 @@ public class RegularDegreeEdgePool implements EdgePool {
      */
     public ReaderAccessibleInfo(
         BigIntArray edges,
-        BigLongArray metadata,
         IntToIntPairHashMap nodeInfo) {
       this.edges = edges;
-      this.metadata = metadata;
       this.nodeInfo = nodeInfo;
+    }
+
+    public BigIntArray getEdges() {
+      return edges;
+    }
+
+    public BigLongArray getMetadata() {
+      throw new UnsupportedOperationException("get metadata is not supported in "
+        + "ReaderAccessibleInfo");
+    }
+
+    public IntToIntPairHashMap getNodeInfo() {
+      return nodeInfo;
     }
   }
 
-  // This is is the only reader-accessible data
-  protected ReaderAccessibleInfo readerAccessibleInfo;
-  // Writes and subsequent reads across this will cross the memory barrier
-  protected volatile int currentNumEdgesStored;
-
-  private final int maxDegree;
-
-  protected int currentPositionOffset;
-  protected int currentNumNodes = 0;
-  protected int currentShardId = 0;
-
-  private final Counter numEdgesCounter;
-  private final Counter numNodesCounter;
 
   /**
    * Reserves the needed memory for a {@link RegularDegreeEdgePool}, and initializes most of the
@@ -151,12 +140,8 @@ public class RegularDegreeEdgePool implements EdgePool {
    *                          if this is violated.
    */
   public RegularDegreeEdgePool(int expectedNumNodes, int maxDegree, StatsReceiver statsReceiver) {
-    Preconditions.checkArgument(expectedNumNodes > 0, "Need to have at least one node!");
-    Preconditions.checkArgument(maxDegree > 0, "Max degree must be non-zero!");
-    this.maxDegree = maxDegree;
-    StatsReceiver scopedStatsReceiver = statsReceiver.scope("RegularDegreeEdgePool");
-    this.numEdgesCounter = scopedStatsReceiver.counter("numEdges");
-    this.numNodesCounter = scopedStatsReceiver.counter("numNodes");
+    super(expectedNumNodes, maxDegree, statsReceiver.scope("RegularDegreeEdgePool"));
+
     // We use a faster map in the base case
     IntToIntPairHashMap intToIntPairHashMap;
     if (maxDegree == 2) {
@@ -170,209 +155,51 @@ public class RegularDegreeEdgePool implements EdgePool {
     readerAccessibleInfo = new ReaderAccessibleInfo(
         // We force each node's edges to fit within a shard
         new ShardedBigIntArray(expectedNumNodes, maxDegree, 0, scopedStatsReceiver),
-        // Similarly, we force each node's edge data to fit within a shard
-        new ShardedBigLongArray(expectedNumNodes, maxDegree, 0, scopedStatsReceiver),
         intToIntPairHashMap
     );
-    currentPositionOffset = 0;
   }
 
-  // Read the volatile int, which forces a happens-before ordering on the read-write operations
-  protected int crossMemoryBarrier() {
-    return currentNumEdgesStored;
-  }
-
-  // degree is set to 0 initially
-  private long addNodeInfo(int node) {
-    long nodeInfo = ((long) currentPositionOffset) << 32; // degree is 0 to start
-    readerAccessibleInfo.nodeInfo.put(node, currentPositionOffset, 0);
-    return nodeInfo;
-  }
-
-  // ALL readers who want to get the latest update should first go through this to cross the memory
-  // barrier (and for optimizing look-ups into the hash table) and ONLY then access the edges
-  protected long getNodeInfo(int node) {
-    // Hopefully branch prediction should make the memory barrier check really cheap as it'll
-    // always be false!
-    if (crossMemoryBarrier() == 0) {
-      return -1;
-    }
-    return readerAccessibleInfo.nodeInfo.getBothValues(node);
-  }
-
-  public static int getNodePositionFromNodeInfo(long nodeInfo) {
-    return IntToIntPairArrayIndexBasedMap.getFirstValueFromNodeInfo(nodeInfo);
-  }
-
-  public static int getNodeDegreeFromNodeInfo(long nodeInfo) {
-    return IntToIntPairArrayIndexBasedMap.getSecondValueFromNodeInfo(nodeInfo);
-  }
-
-  /**
-   * Get a specified edge for the node: note that it is the caller's responsibility to check that
-   * the edge number is within the degree bounds.
-   *
-   * @param node         is the node whose edges are being requested
-   * @param edgeNumber   is the required edge number
-   * @return the requested edge
-   */
-  protected int getNodeEdge(int node, int edgeNumber) {
-    long nodeInfo = getNodeInfo(node);
-    if (edgeNumber > getNodeDegreeFromNodeInfo(nodeInfo)) {
-      return -1;
-    }
-    return getNumberedEdge(getNodePositionFromNodeInfo(nodeInfo), edgeNumber);
-  }
-
-  /**
-   * Get a specified edge metadata for the node: note that it is the caller's responsibility to
-   * check that the edge number is within the degree bounds.
-   *
-   * @param node         is the node whose edges are being requested
-   * @param edgeNumber   is the required edge number
-   * @return the requested edge metadata
-   */
-  protected long getNodeEdgeMetadata(int node, int edgeNumber) {
-    long nodeInfo = getNodeInfo(node);
-    if (edgeNumber > getNodeDegreeFromNodeInfo(nodeInfo)) {
-      return -1;
-    }
-    return getNumberedEdgeMetadata(getNodePositionFromNodeInfo(nodeInfo), edgeNumber);
-  }
-
-  /**
-   * Get a specified edge for the node: note that it is the caller's responsibility to check that
-   * the edge number is within the degree bounds.
-   *
-   * @param position     is the position of the node whose edges are being requested
-   * @param edgeNumber   is the required edge number
-   * @return the requested edge
-   */
-  protected int getNumberedEdge(int position, int edgeNumber) {
-    return readerAccessibleInfo.edges.getEntry(position + edgeNumber);
-  }
-
-  /**
-   * Get the metadata of a specified edge for the node: note that it is the caller's responsibility
-   * to check that the edge number is within the degree bounds.
-   *
-   * @param position    is the position index for the node
-   * @param edgeNumber  is the required edge number
-   * @return the requested edge metadata
-   */
-  protected long getNumberedEdgeMetadata(int position, int edgeNumber) {
-    return readerAccessibleInfo.metadata.getEntry(position + edgeNumber);
-  }
-
-  @Override
-  public int getNodeDegree(int node) {
-    long nodeInfo = getNodeInfo(node);
-    if (nodeInfo == -1) {
-      return 0;
-    }
-    return getNodeDegreeFromNodeInfo(getNodeInfo(node));
-  }
-
-  @Override
-  public IntIterator getNodeEdges(int node) {
-    return getNodeEdges(node, new RegularDegreeEdgeIterator(this));
-  }
-
-  /**
-   * Reuses the given iterator to point to the current nodes edges.
-   *
-   * @param node                       is the node whose edges are being returned
-   * @param regularDegreeEdgeIterator  is the iterator to reuse
-   * @return the iterator itself, reset over the nodes edges
-   */
-  @Override
-  public IntIterator getNodeEdges(int node, ReusableNodeIntIterator regularDegreeEdgeIterator) {
-    return regularDegreeEdgeIterator.resetForNode(node);
-  }
-
-  @Override
-  public IntIterator getRandomNodeEdges(int node, int numSamples, Random random) {
-    return getRandomNodeEdges(node, numSamples, random, new RegularDegreeEdgeRandomIterator(this));
-  }
-
-  @Override
-  public IntIterator getRandomNodeEdges(
-      int node,
-      int numSamples,
-      Random random,
-      ReusableNodeRandomIntIterator regularDegreeEdgeRandomIterator) {
-    return regularDegreeEdgeRandomIterator.resetForNode(node, numSamples, random);
-  }
 
   @Override
   public void addEdge(int nodeA, int nodeB) {
-    addEdge(nodeA, nodeB, 0L);
-  }
-
-  @Override
-  public void addEdge(int nodeA, int nodeB, long metadata) {
     long nodeAInfo;
     // Add the node if it doesn't exist
-    if (readerAccessibleInfo.nodeInfo.getBothValues(nodeA) == -1L) {
+    if (readerAccessibleInfo.getNodeInfo().getBothValues(nodeA) == -1L) {
       // Note that the degree is set to 0 so this is safe to access after this point
       nodeAInfo = addNewNode(nodeA);
     } else {
-      nodeAInfo = readerAccessibleInfo.nodeInfo.getBothValues(nodeA);
+      nodeAInfo = readerAccessibleInfo.getNodeInfo().getBothValues(nodeA);
     }
     int nodeADegree = getNodeDegreeFromNodeInfo(nodeAInfo);
     Preconditions.checkArgument(nodeADegree < maxDegree,
-        "Exceeded the maximum degree (" + maxDegree + ") for node " + nodeA);
+      "Exceeded the maximum degree (" + maxDegree + ") for node " + nodeA);
     int nodeAPosition = getNodePositionFromNodeInfo(nodeAInfo);
     int position = nodeAPosition + nodeADegree;
-    readerAccessibleInfo.edges.addEntry(nodeB, position);
-    readerAccessibleInfo.metadata.addEntry(metadata, position);
+    readerAccessibleInfo.getEdges().addEntry(nodeB, position);
     // This is to guarantee that if a reader sees the updated degree later, they can find the edge
     currentNumEdgesStored++;
     // The order is important -- the updated degree is the ONLY way for a reader for going to the
     // new edge, so this needs to be the last update
     // since this is a volatile increment any reader will now see the updated degree
-    readerAccessibleInfo.nodeInfo.incrementSecondValue(nodeA, 1);
+    readerAccessibleInfo.getNodeInfo().incrementSecondValue(nodeA, 1);
 
     numEdgesCounter.incr();
-  }
 
-  private long addNewNode(int nodeA) {
-    // This is an atomic entry, so it is safe for readers to access the node as long as they
-    // account for the degree being 0
-    long nodeInfo = addNodeInfo(nodeA);
-    currentPositionOffset += maxDegree;
-    currentNumNodes++;
-    numNodesCounter.incr();
-    return nodeInfo;
+
   }
 
   @Override
-  public boolean isOptimized() {
-    return false;
+  public void addEdge(int nodeA, int nodeB, long metadata) {
+    throw new UnsupportedOperationException("add a single edge one by one is not supported in "
+      + "OptimizedEdgePool");
   }
 
-  public int[] getShard(int node) {
-    return ((ShardedBigIntArray) readerAccessibleInfo.edges).
-      getShard(readerAccessibleInfo.nodeInfo.getFirstValue(node));
+
+  protected long getNumberedEdgeMetadata(int position, int edgeNumber) {
+    return 0;
   }
 
   public long[] getMetadataShard(int node) {
-    return ((ShardedBigLongArray) readerAccessibleInfo.metadata).
-      getShard(readerAccessibleInfo.nodeInfo.getFirstValue(node));
-  }
-
-  public int getShardOffset(int node) {
-    return ((ShardedBigIntArray) readerAccessibleInfo.edges).
-      getShardOffset(readerAccessibleInfo.nodeInfo.getFirstValue(node));
-  }
-
-  @Override
-  public void removeEdge(int nodeA, int nodeB) {
-    throw new UnsupportedOperationException("The remove operation is currently not supported");
-  }
-
-  @Override
-  public double getFillPercentage() {
-    return readerAccessibleInfo.edges.getFillPercentage();
+    return null;
   }
 }

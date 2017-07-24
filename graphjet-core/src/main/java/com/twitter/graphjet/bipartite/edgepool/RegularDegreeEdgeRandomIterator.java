@@ -39,7 +39,7 @@ public class RegularDegreeEdgeRandomIterator extends RegularDegreeEdgeIterator
    *
    * @param regularDegreeEdgePool  is the underlying {@link RegularDegreeEdgePool}
    */
-  public RegularDegreeEdgeRandomIterator(RegularDegreeEdgePool regularDegreeEdgePool) {
+  public RegularDegreeEdgeRandomIterator(AbstractRegularDegreeEdgePool regularDegreeEdgePool) {
     super(regularDegreeEdgePool);
   }
 

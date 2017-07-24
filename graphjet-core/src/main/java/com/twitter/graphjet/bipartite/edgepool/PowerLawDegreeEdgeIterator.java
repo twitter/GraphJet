@@ -27,7 +27,7 @@ import com.twitter.graphjet.bipartite.api.ReusableNodeIntIterator;
  */
 public class PowerLawDegreeEdgeIterator extends ReadOnlyIntIterator
                                         implements WithEdgeMetadataIntIterator, ReusableNodeIntIterator {
-  protected final PowerLawDegreeEdgePool powerLawDegreeEdgePool;
+  protected final AbstractPowerLawDegreeEdgePool powerLawDegreeEdgePool;
   protected RegularDegreeEdgeIterator[] regularDegreeEdgeIterators;
   protected int node;
   protected int nodeDegree;
@@ -41,9 +41,9 @@ public class PowerLawDegreeEdgeIterator extends ReadOnlyIntIterator
    * Creates an iterator that can be reused. Note that the client needs to call the resetForNode
    * method before using the iterator.
    *
-   * @param powerLawDegreeEdgePool  is the underlying {@link PowerLawDegreeEdgePool}
+   * @param powerLawDegreeEdgePool  is the underlying {@link AbstractPowerLawDegreeEdgePool}
    */
-  public PowerLawDegreeEdgeIterator(PowerLawDegreeEdgePool powerLawDegreeEdgePool) {
+  public PowerLawDegreeEdgeIterator(AbstractPowerLawDegreeEdgePool powerLawDegreeEdgePool) {
     this.powerLawDegreeEdgePool = powerLawDegreeEdgePool;
     int numPools = powerLawDegreeEdgePool.getNumPools();
     this.regularDegreeEdgeIterators = new RegularDegreeEdgeIterator[numPools];
