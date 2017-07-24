@@ -170,7 +170,7 @@ public abstract class LeftIndexedBipartiteGraphSegment implements
   }
 
   @Override
-  public void addEdge(long leftNode, long rightNode, byte edgeType, long edgeMetadata) {
+  public void addEdge(long leftNode, long rightNode, byte edgeType) {
     // We need to the nodes to the map at the very top since once we write an edge, we need to be
     // able to find it's corresponding external id. On the other hand, if a reader finds an id in
     // the map it still won't be able to get to the edges till the edge is written so this is safe.
@@ -184,7 +184,7 @@ public abstract class LeftIndexedBipartiteGraphSegment implements
     // so that node mappings are visible if the edge is visible
 
     // Now we can add the edge
-    updateEdgePool(leftNodeInternalId, rightNodeInternalId, edgeType, edgeMetadata);
+    updateEdgePool(leftNodeInternalId, rightNodeInternalId, edgeType);
 
     // Finally, explicitly flush the edge write so that the edge is visible to the readers
     currentNumEdges++;
@@ -195,13 +195,12 @@ public abstract class LeftIndexedBipartiteGraphSegment implements
   protected void updateEdgePool(
     int leftNodeInternalId,
     int rightNodeInternalId,
-    byte edgeType,
-    long edgeMetadata
+    byte edgeType
   ) {
     // First we add the edges to the left pool so that it is ready to be accessed
     leftIndexedReaderAccessibleInfoProvider
       .getLeftIndexedReaderAccessibleInfo().getLeftNodeEdgePool().addEdge(
-      leftNodeInternalId, edgeTypeMask.encode(rightNodeInternalId, edgeType), edgeMetadata);
+      leftNodeInternalId, edgeTypeMask.encode(rightNodeInternalId, edgeType));
   }
 
   @Override

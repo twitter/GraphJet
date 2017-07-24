@@ -75,8 +75,8 @@ public class OutIndexedPowerLawMultiSegmentDirectedGraph implements OutIndexedDi
   }
 
   @Override
-  public void addEdge(long srcNode, long destNode, byte edgeType, long edgeMetadata) {
-    graph.addEdge(srcNode, destNode, edgeType, edgeMetadata);
+  public void addEdge(long srcNode, long destNode, byte edgeType) {
+    graph.addEdge(srcNode, destNode, edgeType);
   }
 
   @Override

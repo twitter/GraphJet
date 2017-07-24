@@ -141,7 +141,11 @@ public abstract class NodeMetadataLeftIndexedBipartiteGraphSegment
     // so that node mappings are visible if the edge is visible
 
     // Now we can add the edge
-    updateEdgePool(leftNodeInternalId, rightNodeInternalId, edgeType, edgeMetadata);
+
+    // First we add the edges to the left pool so that it is ready to be accessed
+    readerAccessibleInfoProvider
+      .getLeftIndexedReaderAccessibleInfo().getLeftNodeEdgePool().addEdge(
+      leftNodeInternalId, edgeTypeMask.encode(rightNodeInternalId, edgeType));
 
     // Finally, explicitly flush the edge write so that the edge is visible to the readers
     currentNumEdges++;
