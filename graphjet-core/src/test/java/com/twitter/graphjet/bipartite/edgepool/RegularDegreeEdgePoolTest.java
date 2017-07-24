@@ -26,7 +26,6 @@ import com.google.common.collect.Lists;
 import com.twitter.graphjet.hashing.IntToIntPairArrayIndexBasedMap;
 import com.twitter.graphjet.hashing.ShardedBigIntArray;
 import com.twitter.graphjet.hashing.ShardedBigLongArray;
-import com.twitter.graphjet.stats.DefaultStatsReceiver;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.Test;
 
@@ -213,7 +212,7 @@ public class RegularDegreeEdgePoolTest {
  }
 
   @Test
-  public void testAddEdgeTakingFourArgumentsThrowsIllegalArgumentException() {
+  public void testAddEdgeTakingThreeArgumentsThrowsIllegalArgumentException() {
       NullStatsReceiver nullStatsReceiver = new NullStatsReceiver();
       RegularDegreeEdgePool regularDegreeEdgePool = new RegularDegreeEdgePool(508, 2, nullStatsReceiver);
       ShardedBigIntArray shardedBigIntArray = new ShardedBigIntArray(3157, 2, (-1035), nullStatsReceiver);
@@ -231,12 +230,9 @@ public class RegularDegreeEdgePoolTest {
   }
 
   @Test
-  public void testFailsToCreateRegularDegreeEdgePoolTakingFourArgumentsThrowsIllegalArgumentExceptionOne() {
-      DefaultStatsReceiver defaultStatsReceiver = new DefaultStatsReceiver("a");
-      RegularDegreeEdgePool regularDegreeEdgePool = null;
-
+  public void testFailsToCreateRegularDegreeEdgePoolTakingThreeArgumentsThrowsIllegalArgumentExceptionOne() {
       try {
-          regularDegreeEdgePool = new RegularDegreeEdgePool(2, 0, defaultStatsReceiver);
+          new RegularDegreeEdgePool(2, 0, new NullStatsReceiver());
           fail("Expecting exception: IllegalArgumentException");
       } catch (IllegalArgumentException e) {
           assertEquals(Preconditions.class.getName(), e.getStackTrace()[0].getClassName());
@@ -244,12 +240,9 @@ public class RegularDegreeEdgePoolTest {
   }
 
   @Test
-  public void testFailsToCreateRegularDegreeEdgePoolTakingFourArgumentsThrowsIllegalArgumentExceptionTwo() {
-      NullStatsReceiver nullStatsReceiver = new NullStatsReceiver();
-      RegularDegreeEdgePool regularDegreeEdgePool = null;
-
+  public void testFailsToCreateRegularDegreeEdgePoolTakingThreeArgumentsThrowsIllegalArgumentExceptionTwo() {
       try {
-          regularDegreeEdgePool = new RegularDegreeEdgePool((-1), (-1), nullStatsReceiver);
+          new RegularDegreeEdgePool((-1), (-1), new NullStatsReceiver());
           fail("Expecting exception: IllegalArgumentException");
       } catch (IllegalArgumentException e) {
           assertEquals(Preconditions.class.getName(), e.getStackTrace()[0].getClassName());
@@ -258,8 +251,7 @@ public class RegularDegreeEdgePoolTest {
 
   @Test
   public void testAddEdgeTakingTwoArgumentsReturningMinsOne() {
-      DefaultStatsReceiver defaultStatsReceiver = new DefaultStatsReceiver("i");
-      RegularDegreeEdgePool regularDegreeEdgePool = new RegularDegreeEdgePool(4355, 4355, defaultStatsReceiver);
+      RegularDegreeEdgePool regularDegreeEdgePool = new RegularDegreeEdgePool(4355, 4355, new NullStatsReceiver());
       regularDegreeEdgePool.addEdge(4355, 4355);
 
       assertEquals((-1), regularDegreeEdgePool.getNodeEdge(4355, 4355));
@@ -267,8 +259,7 @@ public class RegularDegreeEdgePoolTest {
 
   @Test
   public void testIsOptimized() {
-      NullStatsReceiver nullStatsReceiver = new NullStatsReceiver();
-      RegularDegreeEdgePool regularDegreeEdgePool = new RegularDegreeEdgePool(569, 569, nullStatsReceiver);
+      RegularDegreeEdgePool regularDegreeEdgePool = new RegularDegreeEdgePool(569, 569, new NullStatsReceiver());
 
       assertFalse(regularDegreeEdgePool.isOptimized());
   }

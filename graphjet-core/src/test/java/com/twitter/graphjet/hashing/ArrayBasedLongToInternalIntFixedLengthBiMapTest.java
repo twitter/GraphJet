@@ -20,7 +20,6 @@ package com.twitter.graphjet.hashing;
 import java.util.Random;
 
 import com.google.common.base.Preconditions;
-import com.twitter.graphjet.stats.DefaultStatsReceiver;
 import org.junit.Test;
 
 import com.twitter.graphjet.stats.NullStatsReceiver;
@@ -88,9 +87,8 @@ public class ArrayBasedLongToInternalIntFixedLengthBiMapTest {
 
     @Test
     public void testClear() {
-        DefaultStatsReceiver defaultStatsReceiver = new DefaultStatsReceiver("a");
         ArrayBasedLongToInternalIntFixedLengthBiMap arrayBasedLongToInternalIntFixedLengthBiMap =
-                new ArrayBasedLongToInternalIntFixedLengthBiMap((-6206), 2154.072652232, 1, 1, defaultStatsReceiver);
+                new ArrayBasedLongToInternalIntFixedLengthBiMap((-6206), 2154.072652232, 1, 1, new NullStatsReceiver());
 
         arrayBasedLongToInternalIntFixedLengthBiMap.put( 1L );
 
@@ -147,9 +145,8 @@ public class ArrayBasedLongToInternalIntFixedLengthBiMapTest {
 
     @Test
     public void testGetKeyThrowsIndexOutOfBoundsException() {
-        DefaultStatsReceiver defaultStatsReceiver = new DefaultStatsReceiver("a");
         ArrayBasedLongToInternalIntFixedLengthBiMap arrayBasedLongToInternalIntFixedLengthBiMap =
-                new ArrayBasedLongToInternalIntFixedLengthBiMap(0, 0, 22, 0L, defaultStatsReceiver);
+                new ArrayBasedLongToInternalIntFixedLengthBiMap(0, 0, 22, 0L, new NullStatsReceiver());
 
         try {
             arrayBasedLongToInternalIntFixedLengthBiMap.getKey(722);

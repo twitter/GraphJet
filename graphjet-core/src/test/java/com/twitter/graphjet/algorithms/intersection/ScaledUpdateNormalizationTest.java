@@ -2,7 +2,6 @@ package com.twitter.graphjet.algorithms.intersection;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
-import com.twitter.graphjet.algorithms.intersection.ScaledUpdateNormalization;
 
 /**
  * Unit tests for class {@link ScaledUpdateNormalization}.

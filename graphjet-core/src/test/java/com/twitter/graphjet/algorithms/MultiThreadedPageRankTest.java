@@ -20,7 +20,6 @@ import com.google.common.util.concurrent.AtomicDoubleArray;
 import com.twitter.graphjet.bipartite.segment.IdentityEdgeTypeMask;
 import com.twitter.graphjet.directed.OutIndexedPowerLawMultiSegmentDirectedGraph;
 import com.twitter.graphjet.directed.api.OutIndexedDirectedGraph;
-import com.twitter.graphjet.stats.DefaultStatsReceiver;
 import com.twitter.graphjet.stats.NullStatsReceiver;
 import it.unimi.dsi.fastutil.longs.LongArrayList;
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
@@ -386,11 +385,9 @@ public class MultiThreadedPageRankTest {
   public void testFailsToCreateMultiThreadedPageRankThrowsUnsupportedOperationException() {
       long[] longArray = new long[5];
       LongArrayList longArrayList = new LongArrayList(longArray);
-      MultiThreadedPageRank multiThreadedPageRank = null;
 
       try {
-          multiThreadedPageRank =
-                  new MultiThreadedPageRank((OutIndexedDirectedGraph) null, longArrayList, 4294967295L, (-409L), 16, 535.0, (-561));
+        new MultiThreadedPageRank((OutIndexedDirectedGraph) null, longArrayList, 4294967295L, (-409L), 16, 535.0, (-561));
           fail("Expecting exception: UnsupportedOperationException");
       } catch (UnsupportedOperationException e) {
           assertEquals(MultiThreadedPageRank.class.getName(), e.getStackTrace()[0].getClassName());

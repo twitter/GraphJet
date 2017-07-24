@@ -25,7 +25,6 @@ import java.util.Random;
 import java.util.TreeMap;
 
 import com.google.common.base.Preconditions;
-import com.twitter.graphjet.stats.DefaultStatsReceiver;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -181,12 +180,9 @@ public class ArrayBasedIntToIntArrayMapTest {
   }
 
   @Test
-  public void testFailsToCreateArrayBasedIntToIntArrayMapTakingFourArgumentsThrowsIllegalArgumentException() {
-      DefaultStatsReceiver defaultStatsReceiver = new DefaultStatsReceiver("a");
-      ArrayBasedIntToIntArrayMap arrayBasedIntToIntArrayMap = null;
-
+  public void testFailsToCreateArrayBasedIntToIntArrayMapTakingThreeArgumentsThrowsIllegalArgumentException() {
       try {
-        arrayBasedIntToIntArrayMap = new ArrayBasedIntToIntArrayMap((-1), (-1), defaultStatsReceiver);
+        new ArrayBasedIntToIntArrayMap((-1), (-1), new NullStatsReceiver());
         fail("Expecting exception: IllegalArgumentException");
       } catch(IllegalArgumentException e) {
          assertEquals(Preconditions.class.getName(), e.getStackTrace()[0].getClassName());
@@ -195,8 +191,7 @@ public class ArrayBasedIntToIntArrayMapTest {
 
   @Test
   public void testGetArrayLengthReturningZero() {
-      NullStatsReceiver nullStatsReceiver = new NullStatsReceiver();
-      ArrayBasedIntToIntArrayMap arrayBasedIntToIntArrayMap = new ArrayBasedIntToIntArrayMap(2856, 0, nullStatsReceiver);
+      ArrayBasedIntToIntArrayMap arrayBasedIntToIntArrayMap = new ArrayBasedIntToIntArrayMap(2856, 0, new NullStatsReceiver());
 
       assertEquals(0, arrayBasedIntToIntArrayMap.getArrayLength(2856));
   }
