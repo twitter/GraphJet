@@ -73,6 +73,10 @@ public class WithMetadataPowerLawDegreeEdgePool extends AbstractPowerLawDegreeEd
     numEdgesCounter.incr();
   }
 
+  @Override
+  public boolean hasEdgeMetadata() {
+    return true;
+  }
 
   /**
    * Synchronization comment: this method works fine without needing synchronization between the

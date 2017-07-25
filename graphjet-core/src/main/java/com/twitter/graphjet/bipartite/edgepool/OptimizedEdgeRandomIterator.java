@@ -37,9 +37,9 @@ public class OptimizedEdgeRandomIterator extends OptimizedEdgeIterator
    * Creates an iterator that can be reused. Note that the client needs to call the resetForNode
    * method before using the iterator.
    *
-   * @param optimizedDegreeEdgePool is the underlying {@link OptimizedEdgePool}
+   * @param optimizedDegreeEdgePool is the underlying {@link AbstractOptimizedEdgePool}
    */
-  public OptimizedEdgeRandomIterator(OptimizedEdgePool optimizedDegreeEdgePool) {
+  public OptimizedEdgeRandomIterator(AbstractOptimizedEdgePool optimizedDegreeEdgePool) {
     super(optimizedDegreeEdgePool);
   }
 

@@ -160,33 +160,11 @@ public class PowerLawDegreeEdgePool extends AbstractPowerLawDegreeEdgePool {
     throw new UnsupportedOperationException("add a single edge one by one is not supported in "
       + "OptimizedEdgePool");
   }
-/*
-  @Override
-  public void addEdge(int nodeA, int nodeB, long metadata) {
-    // First add the node if it doesn't exist
-    int nextPoolForNodeA;
-    if (nodeA >= readerAccessibleInfo.nodeDegrees.length) {
-      expandArray(nodeA);
-      nextPoolForNodeA = 0;
-    } else {
-      nextPoolForNodeA = getNextPoolForNode(nodeA);
-      // Add a pool if needed
-      if (nextPoolForNodeA >= numPools) {
-        addPool();
-      }
-    }
-    // Now add the edge
-    readerAccessibleInfo.edgePools[nextPoolForNodeA].addEdge(nodeA, nodeB, metadata);
-    // This is to guarantee that if a reader sees the updated degree later, they can find the edge
-    currentNumEdgesStored += 2;
-    // The order is important -- the updated degree is the ONLY way for a reader for going to the
-    // new edge, so this needs to be the last update
-    incrementNodeDegree(nodeA);
-    currentNumEdgesStored--;
 
-    numEdgesCounter.incr();
+  @Override
+  public boolean hasEdgeMetadata() {
+    return false;
   }
-  */
 
   /**
    * Synchronization comment: this method works fine without needing synchronization between the

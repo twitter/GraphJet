@@ -184,8 +184,6 @@ public class RegularDegreeEdgePool extends AbstractRegularDegreeEdgePool {
     readerAccessibleInfo.getNodeInfo().incrementSecondValue(nodeA, 1);
 
     numEdgesCounter.incr();
-
-
   }
 
   @Override
@@ -193,7 +191,6 @@ public class RegularDegreeEdgePool extends AbstractRegularDegreeEdgePool {
     throw new UnsupportedOperationException("add a single edge one by one is not supported in "
       + "OptimizedEdgePool");
   }
-
 
   protected long getNumberedEdgeMetadata(int position, int edgeNumber) {
     return 0;

@@ -25,10 +25,13 @@ import org.slf4j.LoggerFactory;
 
 import com.twitter.graphjet.bipartite.api.OptimizableBipartiteGraph;
 import com.twitter.graphjet.bipartite.api.OptimizableBipartiteGraphSegment;
+import com.twitter.graphjet.bipartite.edgepool.AbstractOptimizedEdgePool;
+import com.twitter.graphjet.bipartite.edgepool.AbstractPowerLawDegreeEdgePool;
 import com.twitter.graphjet.bipartite.edgepool.AbstractRegularDegreeEdgePool;
 import com.twitter.graphjet.bipartite.edgepool.EdgePool;
 import com.twitter.graphjet.bipartite.edgepool.OptimizedEdgePool;
 import com.twitter.graphjet.bipartite.edgepool.PowerLawDegreeEdgePool;
+import com.twitter.graphjet.bipartite.edgepool.WithMetadataOptimizedEdgePool;
 import com.twitter.graphjet.bipartite.segment.BipartiteGraphSegment;
 import com.twitter.graphjet.bipartite.segment.LeftIndexedBipartiteGraphSegment;
 
@@ -85,18 +88,28 @@ public final class Optimizer {
    * @param edgePool is an active index edge pool.
    * @return an optimized read-only index edge pool.
    */
-  public static EdgePool optimizePowerLawDegreeEdgePool(PowerLawDegreeEdgePool edgePool) {
+  public static EdgePool optimizePowerLawDegreeEdgePool(AbstractPowerLawDegreeEdgePool edgePool) {
     long start = System.currentTimeMillis();
     LOG.info("PowerLawDegreeEdgePool optimization starts.");
 
     PowerLawDegreeEdgePool.ReaderAccessibleInfo readerAccessibleInfo =
       edgePool.getReaderAccessibleInfo();
 
-    OptimizedEdgePool optimizedEdgePool = new OptimizedEdgePool(
-      readerAccessibleInfo.getNodeDegrees(),
-      edgePool.getCurrentNumEdgesStored(),
-      edgePool.getStatsReceiver()
-    );
+    AbstractOptimizedEdgePool optimizedEdgePool;
+
+    if (!edgePool.hasEdgeMetadata()) {
+      optimizedEdgePool = new OptimizedEdgePool(
+        readerAccessibleInfo.getNodeDegrees(),
+        edgePool.getCurrentNumEdgesStored(),
+        edgePool.getStatsReceiver()
+      );
+    } else {
+      optimizedEdgePool = new WithMetadataOptimizedEdgePool(
+        readerAccessibleInfo.getNodeDegrees(),
+        edgePool.getCurrentNumEdgesStored(),
+        edgePool.getStatsReceiver()
+      );
+    }
 
     int[] nodeDegrees = readerAccessibleInfo.getNodeDegrees();
     AbstractRegularDegreeEdgePool[] regularDegreeEdgePools = readerAccessibleInfo.getEdgePools();
@@ -109,7 +122,7 @@ public final class Optimizer {
       if (nodeDegree == 0) {
         continue;
       }
-      int edgePoolNumber = PowerLawDegreeEdgePool.getPoolForEdgeNumber(nodeDegree - 1);
+      int edgePoolNumber = AbstractPowerLawDegreeEdgePool.getPoolForEdgeNumber(nodeDegree - 1);
 
       for (int j = 0; j <= edgePoolNumber; j++) {
         int[] shard = regularDegreeEdgePools[j].getShard(i);
@@ -118,10 +131,7 @@ public final class Optimizer {
         int nodeDegreeInPool = regularDegreeEdgePools[j].getNodeDegree(i);
 
         optimizedEdgePool.addEdges(
-          i, j, shard, shardOffset, nodeDegreeInPool
-        );
-        optimizedEdgePool.addMetadata(
-          i, j, metadataShard, shardOffset, nodeDegreeInPool
+          i, j, shard, metadataShard, shardOffset, nodeDegreeInPool
         );
       }
     }
@@ -147,7 +157,7 @@ public final class Optimizer {
     LOG.info("LeftIndexedBipartiteGraphSegment optimization starts. ");
 
     EdgePool optimizedEdgePool = optimizePowerLawDegreeEdgePool(
-      (PowerLawDegreeEdgePool) leftIndexedBipartiteGraphSegment
+      (AbstractPowerLawDegreeEdgePool) leftIndexedBipartiteGraphSegment
         .getLeftIndexedReaderAccessibleInfoProvider()
         .getLeftIndexedReaderAccessibleInfo()
         .getLeftNodeEdgePool()
@@ -179,8 +189,8 @@ public final class Optimizer {
 
     LOG.info("BipartiteGraphSegment optimization starts.");
 
-    PowerLawDegreeEdgePool leftNodeEdgePool =
-      (PowerLawDegreeEdgePool) bipartiteGraphSegment
+    AbstractPowerLawDegreeEdgePool leftNodeEdgePool =
+      (AbstractPowerLawDegreeEdgePool) bipartiteGraphSegment
         .getLeftIndexedReaderAccessibleInfoProvider()
         .getLeftIndexedReaderAccessibleInfo()
         .getLeftNodeEdgePool();
@@ -189,8 +199,8 @@ public final class Optimizer {
 
     LOG.info("BipartiteGraphSegment left edge pool optimization finishes.");
 
-    PowerLawDegreeEdgePool rightNodeEdgePool =
-      (PowerLawDegreeEdgePool) bipartiteGraphSegment
+    AbstractPowerLawDegreeEdgePool rightNodeEdgePool =
+      (AbstractPowerLawDegreeEdgePool) bipartiteGraphSegment
         .getReaderAccessibleInfoProvider()
         .getReaderAccessibleInfo()
         .getRightNodeEdgePool();

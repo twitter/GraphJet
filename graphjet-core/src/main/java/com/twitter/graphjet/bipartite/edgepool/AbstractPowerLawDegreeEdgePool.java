@@ -244,6 +244,8 @@ public abstract class AbstractPowerLawDegreeEdgePool implements EdgePool {
     numNodesCounter.incr();
   }
 
+  public abstract boolean hasEdgeMetadata();
+
   @Override
   public boolean isOptimized() {
     return false;
