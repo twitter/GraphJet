@@ -158,7 +158,7 @@ public class PowerLawDegreeEdgePool extends AbstractPowerLawDegreeEdgePool {
   @Override
   public void addEdge(int nodeA, int nodeB, long metadata) {
     throw new UnsupportedOperationException("add a single edge one by one is not supported in "
-      + "OptimizedEdgePool");
+      + "PowerLawDegreeEdgePool");
   }
 
   @Override

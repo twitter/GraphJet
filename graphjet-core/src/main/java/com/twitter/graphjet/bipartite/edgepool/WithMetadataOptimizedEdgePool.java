@@ -72,6 +72,11 @@ public class WithMetadataOptimizedEdgePool extends AbstractOptimizedEdgePool {
     );
   }
 
+  @Override
+  protected long getEdgeMetadata(int position, int edgeNumber) {
+    return readerAccessibleInfo.getMetadata().getEntry(position + edgeNumber);
+  }
+
   public void addEdges(int node, int pool, int[] src, long[] metadata, int srcPos, int length) {
     int position = getNodePosition(node);
 

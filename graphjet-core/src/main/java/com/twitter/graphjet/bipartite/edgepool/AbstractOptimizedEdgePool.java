@@ -105,9 +105,7 @@ public abstract class AbstractOptimizedEdgePool implements EdgePool {
    * @param edgeNumber is the required edge number
    * @return the requested edge metdata
    */
-  protected long getEdgeMetadata(int position, int edgeNumber) {
-    return readerAccessibleInfo.getMetadata().getEntry(position + edgeNumber);
-  }
+  protected abstract long getEdgeMetadata(int position, int edgeNumber);
 
   protected int getNodePosition(int node) {
     return readerAccessibleInfo.getNodeInfo().getFirstValue(node);
@@ -152,13 +150,13 @@ public abstract class AbstractOptimizedEdgePool implements EdgePool {
   @Override
   public void addEdge(int nodeA, int nodeB) {
     throw new UnsupportedOperationException("add a single edge one by one is not supported in "
-      + "OptimizedEdgePool");
+      + "AbstractOptimizedEdgePool");
   }
 
   @Override
   public void addEdge(int nodeA, int nodeB, long metadata) {
     throw new UnsupportedOperationException("add a single edge one by one is not supported in "
-      + "OptimizedEdgePool");
+      + "AbstractOptimizedEdgePool");
   }
 
   /**

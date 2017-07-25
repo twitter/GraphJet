@@ -44,7 +44,7 @@ public class WithMetadataPowerLawDegreeEdgePool extends AbstractPowerLawDegreeEd
   @Override
   public void addEdge(int nodeA, int nodeB) {
     throw new UnsupportedOperationException("add a single edge one by one is not supported in "
-      + "OptimizedEdgePool");
+      + "WithMetadataPowerLawDegreeEdgePool");
   }
 
   @Override

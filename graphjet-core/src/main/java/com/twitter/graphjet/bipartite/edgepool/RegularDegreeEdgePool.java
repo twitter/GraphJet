@@ -189,7 +189,7 @@ public class RegularDegreeEdgePool extends AbstractRegularDegreeEdgePool {
   @Override
   public void addEdge(int nodeA, int nodeB, long metadata) {
     throw new UnsupportedOperationException("add a single edge one by one is not supported in "
-      + "OptimizedEdgePool");
+      + "RegularDegreeEdgePool");
   }
 
   protected long getNumberedEdgeMetadata(int position, int edgeNumber) {
