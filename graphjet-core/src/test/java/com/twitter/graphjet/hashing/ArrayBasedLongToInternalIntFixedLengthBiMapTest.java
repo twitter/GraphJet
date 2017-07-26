@@ -85,79 +85,79 @@ public class ArrayBasedLongToInternalIntFixedLengthBiMapTest {
         map, -1, 600, maxNumKeys, random);
   }
 
-    @Test
-    public void testClear() {
-        ArrayBasedLongToInternalIntFixedLengthBiMap arrayBasedLongToInternalIntFixedLengthBiMap =
-                new ArrayBasedLongToInternalIntFixedLengthBiMap((-6206),
-                        2154.072652232,
-                        1,
-                        1,
-                        new NullStatsReceiver());
+  @Test
+  public void testClear() {
+    ArrayBasedLongToInternalIntFixedLengthBiMap arrayBasedLongToInternalIntFixedLengthBiMap =
+            new ArrayBasedLongToInternalIntFixedLengthBiMap((-6206),
+                    2154.072652232,
+                    1,
+                    1,
+                    new NullStatsReceiver());
 
-        arrayBasedLongToInternalIntFixedLengthBiMap.put( 1L );
+    arrayBasedLongToInternalIntFixedLengthBiMap.put(1L);
 
-        assertEquals( 1, arrayBasedLongToInternalIntFixedLengthBiMap.getNumStoredKeys() );
-        assertEquals( 16, arrayBasedLongToInternalIntFixedLengthBiMap.getBackingArrayLength() );
+    assertEquals(1, arrayBasedLongToInternalIntFixedLengthBiMap.getNumStoredKeys());
+    assertEquals(16, arrayBasedLongToInternalIntFixedLengthBiMap.getBackingArrayLength());
 
-        arrayBasedLongToInternalIntFixedLengthBiMap.clear();
+    arrayBasedLongToInternalIntFixedLengthBiMap.clear();
 
-        assertEquals( 0, arrayBasedLongToInternalIntFixedLengthBiMap.getNumStoredKeys() );
-        assertEquals( 16, arrayBasedLongToInternalIntFixedLengthBiMap.getBackingArrayLength() );
+    assertEquals(0, arrayBasedLongToInternalIntFixedLengthBiMap.getNumStoredKeys());
+    assertEquals(16, arrayBasedLongToInternalIntFixedLengthBiMap.getBackingArrayLength());
+  }
+
+  @Test
+  public void testGetKeyWithNegative() {
+    NullStatsReceiver nullStatsReceiver = new NullStatsReceiver();
+    ArrayBasedLongToInternalIntFixedLengthBiMap arrayBasedLongToInternalIntFixedLengthBiMap =
+            new ArrayBasedLongToInternalIntFixedLengthBiMap((-1768), 0.0, 14, (-1768), nullStatsReceiver);
+
+    try {
+      arrayBasedLongToInternalIntFixedLengthBiMap.getKey((-1768));
+      fail("Expecting exception: IndexOutOfBoundsException");
+    } catch (IndexOutOfBoundsException e) {
+      assertEquals(ArrayBasedLongToInternalIntFixedLengthBiMap.class.getName(), e.getStackTrace()[0].getClassName());
     }
+  }
 
-    @Test
-    public void testGetKeyWithNegative() {
-        NullStatsReceiver nullStatsReceiver = new NullStatsReceiver();
-        ArrayBasedLongToInternalIntFixedLengthBiMap arrayBasedLongToInternalIntFixedLengthBiMap =
-                new ArrayBasedLongToInternalIntFixedLengthBiMap((-1768), 0.0, 14, (-1768), nullStatsReceiver);
+  @Test
+  public void testPutThrowsRuntimeException() {
+    NullStatsReceiver nullStatsReceiver = new NullStatsReceiver();
+    ArrayBasedLongToInternalIntFixedLengthBiMap arrayBasedLongToInternalIntFixedLengthBiMap =
+            new ArrayBasedLongToInternalIntFixedLengthBiMap(204, 0.0, 204, 204, nullStatsReceiver);
 
-        try {
-            arrayBasedLongToInternalIntFixedLengthBiMap.getKey((-1768));
-            fail("Expecting exception: IndexOutOfBoundsException");
-        } catch (IndexOutOfBoundsException e) {
-            assertEquals(ArrayBasedLongToInternalIntFixedLengthBiMap.class.getName(), e.getStackTrace()[0].getClassName());
-        }
+    try {
+      arrayBasedLongToInternalIntFixedLengthBiMap.put(0L);
+      fail("Expecting exception: RuntimeException");
+    } catch (RuntimeException e) {
+      assertEquals(ArrayBasedLongToInternalIntFixedLengthBiMap.class.getName(), e.getStackTrace()[0].getClassName());
     }
+  }
 
-    @Test
-    public void testPutThrowsRuntimeException() {
-        NullStatsReceiver nullStatsReceiver = new NullStatsReceiver();
-        ArrayBasedLongToInternalIntFixedLengthBiMap arrayBasedLongToInternalIntFixedLengthBiMap =
-                new ArrayBasedLongToInternalIntFixedLengthBiMap(204, 0.0, 204, 204, nullStatsReceiver);
+  @Test
+  public void testFailsToCreateThrowsIllegalArgumentException() {
+    NullStatsReceiver nullStatsReceiver = new NullStatsReceiver();
+    ArrayBasedLongToInternalIntFixedLengthBiMap arrayBasedLongToInternalIntFixedLengthBiMap = null;
 
-        try {
-            arrayBasedLongToInternalIntFixedLengthBiMap.put(0L);
-            fail("Expecting exception: RuntimeException");
-        } catch (RuntimeException e) {
-            assertEquals(ArrayBasedLongToInternalIntFixedLengthBiMap.class.getName(), e.getStackTrace()[0].getClassName());
-        }
+    try {
+      arrayBasedLongToInternalIntFixedLengthBiMap =
+              new ArrayBasedLongToInternalIntFixedLengthBiMap(610, 610, 0, 610, nullStatsReceiver);
+      fail("Expecting exception: IllegalArgumentException");
+    } catch (IllegalArgumentException e) {
+      assertEquals(Preconditions.class.getName(), e.getStackTrace()[0].getClassName());
     }
+  }
 
-    @Test
-    public void testFailsToCreateThrowsIllegalArgumentException() {
-        NullStatsReceiver nullStatsReceiver = new NullStatsReceiver();
-        ArrayBasedLongToInternalIntFixedLengthBiMap arrayBasedLongToInternalIntFixedLengthBiMap = null;
+  @Test
+  public void testGetKeyThrowsIndexOutOfBoundsException() {
+    ArrayBasedLongToInternalIntFixedLengthBiMap arrayBasedLongToInternalIntFixedLengthBiMap =
+            new ArrayBasedLongToInternalIntFixedLengthBiMap(0, 0, 22, 0L, new NullStatsReceiver());
 
-        try {
-            arrayBasedLongToInternalIntFixedLengthBiMap =
-                    new ArrayBasedLongToInternalIntFixedLengthBiMap(610, 610, 0, 610, nullStatsReceiver);
-            fail("Expecting exception: IllegalArgumentException");
-        } catch (IllegalArgumentException e) {
-            assertEquals(Preconditions.class.getName(), e.getStackTrace()[0].getClassName());
-        }
+    try {
+      arrayBasedLongToInternalIntFixedLengthBiMap.getKey(722);
+      fail("Expecting exception: IndexOutOfBoundsException");
+    } catch (IndexOutOfBoundsException e) {
+      assertEquals(ArrayBasedLongToInternalIntFixedLengthBiMap.class.getName(), e.getStackTrace()[0].getClassName());
     }
-
-    @Test
-    public void testGetKeyThrowsIndexOutOfBoundsException() {
-        ArrayBasedLongToInternalIntFixedLengthBiMap arrayBasedLongToInternalIntFixedLengthBiMap =
-                new ArrayBasedLongToInternalIntFixedLengthBiMap(0, 0, 22, 0L, new NullStatsReceiver());
-
-        try {
-            arrayBasedLongToInternalIntFixedLengthBiMap.getKey(722);
-            fail("Expecting exception: IndexOutOfBoundsException");
-        } catch (IndexOutOfBoundsException e) {
-            assertEquals(ArrayBasedLongToInternalIntFixedLengthBiMap.class.getName(), e.getStackTrace()[0].getClassName());
-        }
-    }
+  }
 
 }

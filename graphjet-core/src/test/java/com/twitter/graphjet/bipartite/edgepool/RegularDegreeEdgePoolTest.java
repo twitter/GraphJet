@@ -194,84 +194,84 @@ public class RegularDegreeEdgePoolTest {
     int maxNumNodes = 10;
     int maxDegree = 100;
     RegularDegreeEdgePool regularDegreeEdgePool =
-        new RegularDegreeEdgePool(maxNumNodes, maxDegree, new NullStatsReceiver());
+            new RegularDegreeEdgePool(maxNumNodes, maxDegree, new NullStatsReceiver());
 
     // Sets up a concurrent read-write situation with the given pool and edges
     Random random = new Random(89234758923475L);
     testRandomConcurrentReadWriteThreads(
-        regularDegreeEdgePool, 3, 10 * maxNumNodes, maxDegree, 0.1, random);
+            regularDegreeEdgePool, 3, 10 * maxNumNodes, maxDegree, 0.1, random);
   }
 
   @Test
   public void testGetNodeEdgeMetadataReturningNegative() {
-      NullStatsReceiver nullStatsReceiver = new NullStatsReceiver();
-      RegularDegreeEdgePool regularDegreeEdgePool =
-              new RegularDegreeEdgePool(4, 4, nullStatsReceiver);
-      regularDegreeEdgePool.addEdge(2048, 587, (-424L));
+    NullStatsReceiver nullStatsReceiver = new NullStatsReceiver();
+    RegularDegreeEdgePool regularDegreeEdgePool =
+            new RegularDegreeEdgePool(4, 4, nullStatsReceiver);
+    regularDegreeEdgePool.addEdge(2048, 587, (-424L));
 
-      assertEquals((-1L), regularDegreeEdgePool.getNodeEdgeMetadata(2048, 426));
- }
+    assertEquals((-1L), regularDegreeEdgePool.getNodeEdgeMetadata(2048, 426));
+  }
 
   @Test
   public void testAddEdgeTakingThreeArgumentsThrowsIllegalArgumentException() {
-      NullStatsReceiver nullStatsReceiver = new NullStatsReceiver();
-      RegularDegreeEdgePool regularDegreeEdgePool =
-              new RegularDegreeEdgePool(508, 2, nullStatsReceiver);
-      ShardedBigIntArray shardedBigIntArray =
-              new ShardedBigIntArray(3157, 2, (-1035), nullStatsReceiver);
-      ShardedBigLongArray shardedBigLongArray =
-              new ShardedBigLongArray(1431655765, 2, 2, nullStatsReceiver);
-      IntToIntPairArrayIndexBasedMap intToIntPairArrayIndexBasedMap =
-              new IntToIntPairArrayIndexBasedMap(3157, 16, nullStatsReceiver);
-      RegularDegreeEdgePool.ReaderAccessibleInfo regularDegreeEdgePool_ReaderAccessibleInfo =
-              new RegularDegreeEdgePool.ReaderAccessibleInfo(shardedBigIntArray,
-                      shardedBigLongArray,
-                      intToIntPairArrayIndexBasedMap);
-      regularDegreeEdgePool.readerAccessibleInfo = regularDegreeEdgePool_ReaderAccessibleInfo;
+    NullStatsReceiver nullStatsReceiver = new NullStatsReceiver();
+    RegularDegreeEdgePool regularDegreeEdgePool =
+            new RegularDegreeEdgePool(508, 2, nullStatsReceiver);
+    ShardedBigIntArray shardedBigIntArray =
+            new ShardedBigIntArray(3157, 2, (-1035), nullStatsReceiver);
+    ShardedBigLongArray shardedBigLongArray =
+            new ShardedBigLongArray(1431655765, 2, 2, nullStatsReceiver);
+    IntToIntPairArrayIndexBasedMap intToIntPairArrayIndexBasedMap =
+            new IntToIntPairArrayIndexBasedMap(3157, 16, nullStatsReceiver);
+    RegularDegreeEdgePool.ReaderAccessibleInfo regularDegreeEdgePool_ReaderAccessibleInfo =
+            new RegularDegreeEdgePool.ReaderAccessibleInfo(shardedBigIntArray,
+                    shardedBigLongArray,
+                    intToIntPairArrayIndexBasedMap);
+    regularDegreeEdgePool.readerAccessibleInfo = regularDegreeEdgePool_ReaderAccessibleInfo;
 
-      try {
-          regularDegreeEdgePool.addEdge(0, 0, (-2353L));
-          fail("Expecting exception: IllegalArgumentException");
-      } catch (IllegalArgumentException e) {
-          assertEquals(Preconditions.class.getName(), e.getStackTrace()[0].getClassName());
-      }
+    try {
+      regularDegreeEdgePool.addEdge(0, 0, (-2353L));
+      fail("Expecting exception: IllegalArgumentException");
+    } catch (IllegalArgumentException e) {
+      assertEquals(Preconditions.class.getName(), e.getStackTrace()[0].getClassName());
+    }
   }
 
   @Test
   public void testFailsTakingThreeArgumentsOne() {
-      try {
-          new RegularDegreeEdgePool(2, 0, new NullStatsReceiver());
-          fail("Expecting exception: IllegalArgumentException");
-      } catch (IllegalArgumentException e) {
-          assertEquals(Preconditions.class.getName(), e.getStackTrace()[0].getClassName());
-      }
+    try {
+      new RegularDegreeEdgePool(2, 0, new NullStatsReceiver());
+      fail("Expecting exception: IllegalArgumentException");
+    } catch (IllegalArgumentException e) {
+      assertEquals(Preconditions.class.getName(), e.getStackTrace()[0].getClassName());
+    }
   }
 
   @Test
   public void testFailsTakingThreeArgumentsThrowsIllegalArgumentExceptionTwo() {
-      try {
-          new RegularDegreeEdgePool((-1), (-1), new NullStatsReceiver());
-          fail("Expecting exception: IllegalArgumentException");
-      } catch (IllegalArgumentException e) {
-          assertEquals(Preconditions.class.getName(), e.getStackTrace()[0].getClassName());
-      }
+    try {
+      new RegularDegreeEdgePool((-1), (-1), new NullStatsReceiver());
+      fail("Expecting exception: IllegalArgumentException");
+    } catch (IllegalArgumentException e) {
+      assertEquals(Preconditions.class.getName(), e.getStackTrace()[0].getClassName());
+    }
   }
 
   @Test
   public void testAddEdgeTakingTwoArgumentsReturningMinsOne() {
-      RegularDegreeEdgePool regularDegreeEdgePool =
-              new RegularDegreeEdgePool(4355, 4355, new NullStatsReceiver());
-      regularDegreeEdgePool.addEdge(4355, 4355);
+    RegularDegreeEdgePool regularDegreeEdgePool =
+            new RegularDegreeEdgePool(4355, 4355, new NullStatsReceiver());
+    regularDegreeEdgePool.addEdge(4355, 4355);
 
-      assertEquals((-1), regularDegreeEdgePool.getNodeEdge(4355, 4355));
+    assertEquals((-1), regularDegreeEdgePool.getNodeEdge(4355, 4355));
   }
 
   @Test
   public void testIsOptimized() {
-      RegularDegreeEdgePool regularDegreeEdgePool =
-              new RegularDegreeEdgePool(569, 569, new NullStatsReceiver());
+    RegularDegreeEdgePool regularDegreeEdgePool =
+            new RegularDegreeEdgePool(569, 569, new NullStatsReceiver());
 
-      assertFalse(regularDegreeEdgePool.isOptimized());
+    assertFalse(regularDegreeEdgePool.isOptimized());
   }
 
 }

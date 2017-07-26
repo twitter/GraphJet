@@ -373,25 +373,25 @@ public class MultiThreadedPageRankTest {
 
   @Test
   public void testRun() {
-      LongArrayList longArrayList = new LongArrayList();
-      MultiThreadedPageRank multiThreadedPageRank =
-              new MultiThreadedPageRank(null, longArrayList, 3237L, 0.0, 1, 0.0, 1);
+    LongArrayList longArrayList = new LongArrayList();
+    MultiThreadedPageRank multiThreadedPageRank =
+            new MultiThreadedPageRank(null, longArrayList, 3237L, 0.0, 1, 0.0, 1);
 
-      assertEquals(1, multiThreadedPageRank.run());
-      assertEquals(0.0, multiThreadedPageRank.getL1Norm(), 0.01);
+    assertEquals(1, multiThreadedPageRank.run());
+    assertEquals(0.0, multiThreadedPageRank.getL1Norm(), 0.01);
   }
 
   @Test
   public void testFailsToCreateThrowsUnsupportedOperationException() {
-      long[] longArray = new long[5];
-      LongArrayList longArrayList = new LongArrayList(longArray);
+    long[] longArray = new long[5];
+    LongArrayList longArrayList = new LongArrayList(longArray);
 
-      try {
-        new MultiThreadedPageRank(null, longArrayList, 4294967295L, (-409L), 16, 535.0, (-561));
-          fail("Expecting exception: UnsupportedOperationException");
-      } catch (UnsupportedOperationException e) {
-          assertEquals(MultiThreadedPageRank.class.getName(), e.getStackTrace()[0].getClassName());
-      }
+    try {
+      new MultiThreadedPageRank(null, longArrayList, 4294967295L, (-409L), 16, 535.0, (-561));
+      fail("Expecting exception: UnsupportedOperationException");
+    } catch (UnsupportedOperationException e) {
+      assertEquals(MultiThreadedPageRank.class.getName(), e.getStackTrace()[0].getClassName());
+    }
   }
 
 }

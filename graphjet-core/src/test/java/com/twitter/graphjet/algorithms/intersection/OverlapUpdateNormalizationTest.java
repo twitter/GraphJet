@@ -14,18 +14,18 @@ public class OverlapUpdateNormalizationTest{
 
   @Test
   public void testComputeScoreNormalization() {
-      OverlapUpdateNormalization overlapUpdateNormalization = new OverlapUpdateNormalization();
+    OverlapUpdateNormalization overlapUpdateNormalization = new OverlapUpdateNormalization();
 
-      assertNotNull(overlapUpdateNormalization.computeScoreNormalization(0.0, 0, 0));
-      assertNotEquals(0, overlapUpdateNormalization.computeScoreNormalization(0.0, 0, 0));
+    assertNotNull(overlapUpdateNormalization.computeScoreNormalization(0.0, 0, 0));
+    assertNotEquals(0, overlapUpdateNormalization.computeScoreNormalization(0.0, 0, 0));
   }
 
   @Test
   public void testComputeLeftNeighborContribution() {
-      OverlapUpdateNormalization overlapUpdateNormalization = new OverlapUpdateNormalization();
+    OverlapUpdateNormalization overlapUpdateNormalization = new OverlapUpdateNormalization();
 
-      assertNotNull(overlapUpdateNormalization.computeLeftNeighborContribution(0));
-      assertNotEquals(0, overlapUpdateNormalization.computeLeftNeighborContribution(0));
+    assertNotNull(overlapUpdateNormalization.computeLeftNeighborContribution(0));
+    assertNotEquals(0, overlapUpdateNormalization.computeLeftNeighborContribution(0));
   }
 
 }

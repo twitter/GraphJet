@@ -181,20 +181,20 @@ public class ArrayBasedIntToIntArrayMapTest {
 
   @Test
   public void testFailsCreateTakingThreeArgumentsThrowsIllegalArgumentException() {
-      try {
-        new ArrayBasedIntToIntArrayMap((-1), (-1), new NullStatsReceiver());
-        fail("Expecting exception: IllegalArgumentException");
-      } catch(IllegalArgumentException e) {
-         assertEquals(Preconditions.class.getName(), e.getStackTrace()[0].getClassName());
-      }
+    try {
+      new ArrayBasedIntToIntArrayMap((-1), (-1), new NullStatsReceiver());
+      fail("Expecting exception: IllegalArgumentException");
+    } catch (IllegalArgumentException e) {
+      assertEquals(Preconditions.class.getName(), e.getStackTrace()[0].getClassName());
+    }
   }
 
   @Test
   public void testGetArrayLengthReturningZero() {
-      ArrayBasedIntToIntArrayMap arrayBasedIntToIntArrayMap =
-              new ArrayBasedIntToIntArrayMap(2856, 0, new NullStatsReceiver());
+    ArrayBasedIntToIntArrayMap arrayBasedIntToIntArrayMap =
+            new ArrayBasedIntToIntArrayMap(2856, 0, new NullStatsReceiver());
 
-      assertEquals(0, arrayBasedIntToIntArrayMap.getArrayLength(2856));
+    assertEquals(0, arrayBasedIntToIntArrayMap.getArrayLength(2856));
   }
 
 }

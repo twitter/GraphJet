@@ -372,50 +372,50 @@ public class PageRankTest {
 
   @Test
   public void testRunReturningPositive() {
-      HigherBitsEdgeTypeMask higherBitsEdgeTypeMask = new HigherBitsEdgeTypeMask();
-      OutIndexedPowerLawMultiSegmentDirectedGraph powerLawMultiSegmentDirectedGraph =
-              new OutIndexedPowerLawMultiSegmentDirectedGraph(1249,
-                      1249,
-                      1249,
-                      1249,
-                      1249,
-                      higherBitsEdgeTypeMask,
-                      new NullStatsReceiver());
-      LongOpenHashSet longOpenHashSet = new LongOpenHashSet();
-      powerLawMultiSegmentDirectedGraph.addEdge(0L, 1170L, (byte) (-126), (byte) (-126));
-      longOpenHashSet.add(0L);
-      PageRank pageRank =
-              new PageRank(powerLawMultiSegmentDirectedGraph, longOpenHashSet, 1249, 1249, 1249, 1249);
-      int resultInt = pageRank.run();
+    HigherBitsEdgeTypeMask higherBitsEdgeTypeMask = new HigherBitsEdgeTypeMask();
+    OutIndexedPowerLawMultiSegmentDirectedGraph powerLawMultiSegmentDirectedGraph =
+            new OutIndexedPowerLawMultiSegmentDirectedGraph(1249,
+                    1249,
+                    1249,
+                    1249,
+                    1249,
+                    higherBitsEdgeTypeMask,
+                    new NullStatsReceiver());
+    LongOpenHashSet longOpenHashSet = new LongOpenHashSet();
+    powerLawMultiSegmentDirectedGraph.addEdge(0L, 1170L, (byte) (-126), (byte) (-126));
+    longOpenHashSet.add(0L);
+    PageRank pageRank =
+            new PageRank(powerLawMultiSegmentDirectedGraph, longOpenHashSet, 1249, 1249, 1249, 1249);
+    int resultInt = pageRank.run();
 
-      assertEquals(0.0, pageRank.getL1Norm(), 0.01);
-      assertEquals(3, resultInt);
+    assertEquals(0.0, pageRank.getL1Norm(), 0.01);
+    assertEquals(3, resultInt);
   }
 
 
   @Test
   public void testFailsToCreateThrowsUnsupportedOperationException() {
-      HigherBitsEdgeTypeMask higherBitsEdgeTypeMask = new HigherBitsEdgeTypeMask();
-      OutIndexedPowerLawMultiSegmentDirectedGraph outIndexedPowerLawMultiSegmentDirectedGraph =
-              new OutIndexedPowerLawMultiSegmentDirectedGraph(1249,
-                      1249,
-                      1249,
-                      1249,
-                      1249,
-                      higherBitsEdgeTypeMask,
-                      new NullStatsReceiver());
+    HigherBitsEdgeTypeMask higherBitsEdgeTypeMask = new HigherBitsEdgeTypeMask();
+    OutIndexedPowerLawMultiSegmentDirectedGraph outIndexedPowerLawMultiSegmentDirectedGraph =
+            new OutIndexedPowerLawMultiSegmentDirectedGraph(1249,
+                    1249,
+                    1249,
+                    1249,
+                    1249,
+                    higherBitsEdgeTypeMask,
+                    new NullStatsReceiver());
 
-      try {
-          new PageRank(outIndexedPowerLawMultiSegmentDirectedGraph,
-                  null,
-                  2147483657L,
-                  2147483657L,
-                  2640,
-                  1345.6519203075502);
-          fail("Expecting exception: UnsupportedOperationException");
-      } catch(UnsupportedOperationException e) {
-         assertEquals(PageRank.class.getName(), e.getStackTrace()[0].getClassName());
-      }
+    try {
+      new PageRank(outIndexedPowerLawMultiSegmentDirectedGraph,
+              null,
+              2147483657L,
+              2147483657L,
+              2640,
+              1345.6519203075502);
+      fail("Expecting exception: UnsupportedOperationException");
+    } catch (UnsupportedOperationException e) {
+      assertEquals(PageRank.class.getName(), e.getStackTrace()[0].getClassName());
+    }
   }
 
 }

@@ -57,30 +57,30 @@ public class RegularDegreeEdgeIteratorTest {
 
   @Test
   public void testResetForNodeReturningRegularDegreeEdgeIteratorWhereHasNextIsFalse() {
-      RegularDegreeEdgePool regularDegreeEdgePool = new RegularDegreeEdgePool(1224, 1224, new NullStatsReceiver());
-      RegularDegreeEdgeIterator regularDegreeEdgeIterator = new RegularDegreeEdgeIterator(regularDegreeEdgePool);
-      RegularDegreeEdgeIterator regularDegreeEdgeIteratorTwo = regularDegreeEdgeIterator.resetForNode(3307);
+    RegularDegreeEdgePool regularDegreeEdgePool = new RegularDegreeEdgePool(1224, 1224, new NullStatsReceiver());
+    RegularDegreeEdgeIterator regularDegreeEdgeIterator = new RegularDegreeEdgeIterator(regularDegreeEdgePool);
+    RegularDegreeEdgeIterator regularDegreeEdgeIteratorTwo = regularDegreeEdgeIterator.resetForNode(3307);
 
-      assertFalse(regularDegreeEdgeIteratorTwo.hasNext());
+    assertFalse(regularDegreeEdgeIteratorTwo.hasNext());
   }
 
   @Test
   public void testSkip() {
-      NullStatsReceiver nullStatsReceiver = new NullStatsReceiver();
-      RegularDegreeEdgePool regularDegreeEdgePool = new RegularDegreeEdgePool(61, 3311, nullStatsReceiver);
-      RegularDegreeEdgeIterator regularDegreeEdgeIterator = new RegularDegreeEdgeIterator(regularDegreeEdgePool);
+    NullStatsReceiver nullStatsReceiver = new NullStatsReceiver();
+    RegularDegreeEdgePool regularDegreeEdgePool = new RegularDegreeEdgePool(61, 3311, nullStatsReceiver);
+    RegularDegreeEdgeIterator regularDegreeEdgeIterator = new RegularDegreeEdgeIterator(regularDegreeEdgePool);
 
-      assertEquals(0, regularDegreeEdgeIterator.skip(3311));
+    assertEquals(0, regularDegreeEdgeIterator.skip(3311));
   }
 
   @Test
   public void testNext() {
-      NullStatsReceiver nullStatsReceiver = new NullStatsReceiver();
-      RegularDegreeEdgePool regularDegreeEdgePool = new RegularDegreeEdgePool(61, 3311, nullStatsReceiver);
-      RegularDegreeEdgeIterator regularDegreeEdgeIterator = new RegularDegreeEdgeIterator(regularDegreeEdgePool);
-      regularDegreeEdgeIterator.next();
+    NullStatsReceiver nullStatsReceiver = new NullStatsReceiver();
+    RegularDegreeEdgePool regularDegreeEdgePool = new RegularDegreeEdgePool(61, 3311, nullStatsReceiver);
+    RegularDegreeEdgeIterator regularDegreeEdgeIterator = new RegularDegreeEdgeIterator(regularDegreeEdgePool);
+    regularDegreeEdgeIterator.next();
 
-      assertFalse(regularDegreeEdgeIterator.hasNext());
+    assertFalse(regularDegreeEdgeIterator.hasNext());
   }
 
 }
