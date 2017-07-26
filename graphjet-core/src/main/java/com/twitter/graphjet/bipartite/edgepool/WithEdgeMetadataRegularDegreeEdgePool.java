@@ -28,6 +28,9 @@ import com.twitter.graphjet.hashing.ShardedBigIntArray;
 import com.twitter.graphjet.hashing.ShardedBigLongArray;
 import com.twitter.graphjet.stats.StatsReceiver;
 
+/**
+ * An {@link AbstractRegularDegreeEdgePool} which supports edge metadata.
+ */
 public class WithEdgeMetadataRegularDegreeEdgePool extends AbstractRegularDegreeEdgePool {
 
   /**

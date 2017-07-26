@@ -21,7 +21,7 @@ package com.twitter.graphjet.bipartite.edgepool;
 import com.twitter.graphjet.stats.StatsReceiver;
 
 /**
- * A {@link WithEdgeMetadataPowerLawDegreeEdgePool} which supports edge metadata.
+ * An {@link AbstractPowerLawDegreeEdgePool} which supports edge metadata.
  */
 public class WithEdgeMetadataPowerLawDegreeEdgePool extends AbstractPowerLawDegreeEdgePool {
   /**

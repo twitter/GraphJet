@@ -28,57 +28,7 @@ import com.twitter.graphjet.hashing.ShardedBigIntArray;
 import com.twitter.graphjet.stats.StatsReceiver;
 
 /**
- * This edge pool is for the case where all the nodes have a bounded maximum degree, and most nodes
- * are expected to be near or at the maximum degree. For simplicity, we assume that the nodes have
- * a regular degree and allocate memory accordingly.
- *
- * Assuming n nodes and maximum degree d, the amount of memory used by this pool is:
- * - 4*d*n bytes for edges (which is expected to dominate)
- * - O(4*3*n) bytes for nodes
- *
- * Conceptually, the implementation works by allocating an array of size 4*d*n, and then fills it up
- * sequentially. Thus, when a node arrives that has not been seen yet, it is added to the current
- * position in this array and the position is moved forward by d (reserving space for d edges for
- * this node). And a map for nodes keeps track of their positions in this array. The concrete
- * implementation differs from the conceptual one only in that it spreads the big array across a
- * few small ones, called shards. The only additional change this requires is that nodes also need
- * to keep track of their shard id in addition to the offset. If more nodes arrive than we expect,
- * then additional shards are added. Note that the shard length itself is never re-sized, which
- * we can fix if needed.
- *
- * NOTE: The implementation here-in assumes that the int id's being inserted are "packed" nicely. In
- * particular, suppose there are n nodes to be inserted. Then the actual int id's for these n nodes
- * _must_ always be no larger than c*n for some constant c. The memory usage here is proportional to
- * c, so it is best to make it as small as possible.
- *
- * This class is thread-safe even though it does not do any locking: it achieves this by leveraging
- * the assumptions stated below and using a "memory barrier" between writes and reads to sync
- * updates.
- *
- * Here are the client assumptions needed to enable lock-free read/writes:
- * 1. There is a SINGLE writer thread -- this is extremely important as we don't lock during writes.
- * 2. Readers are OK reading stale data, i.e. if even if a reader thread arrives after the writer
- * thread started doing a write, the update is NOT guaranteed to be available to it.
- *
- * This class enables lock-free read/writes by guaranteeing the following:
- * 1. The writes that are done are always "safe", i.e. in no time during the writing do they leave
- *    things in a state such that a reader would either encounter an exception or do wrong
- *    computation.
- * 2. After a write is done, it is explicitly "published" such that a reader that arrives after
- *    the published write it would see updated data.
- *
- * The way this works is as follows: suppose we have some linked objects X, Y and Z that need to be
- * maintained in a consistent state. First, our setup ensures that the reader is _only_ allowed to
- * access these in a linear manner as follows: read X -> read Y -> read Z. Then, we ensure that the
- * writer behavior is to write (safe, atomic) updates to each of these in the exact opposite order:
- * write Z --flush--> write Y --flush--> write X.
- *
- * Note that the flushing ensures that if a reader sees Y then it _must_ also see the updated Z,
- * and if sees X then it _must_ also see the updated Y and Z. Further, each update itself is safe.
- * For instance, a reader can safely access an updated Z even if X and Y are not updated since the
- * updated information will only be accessible through the updated X and Y (the converse though is
- * NOT true). Together, this ensures that the reader accesses to the objects are always consistent
- * with each other and safe to access by the reader.
+ * An {@link AbstractRegularDegreeEdgePool} which does not support edge metadata.
  */
 public class RegularDegreeEdgePool extends AbstractRegularDegreeEdgePool {
   /**

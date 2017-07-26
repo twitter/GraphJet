@@ -26,7 +26,7 @@ import com.twitter.graphjet.stats.StatsReceiver;
 
 /**
  *
- * A {@link WithEdgeMetadataOptimizedEdgePool} which supports edge metadata.
+ * An {@link AbstractOptimizedEdgePool} which supports edge metadata.
  *
  * Assuming n nodes and m edges, the amount of memory used by this pool is:
  * - 4*m bytes for edges
