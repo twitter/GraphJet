@@ -46,7 +46,7 @@ import it.unimi.dsi.fastutil.ints.IntSet;
 
 /**
  * This is a utility class that contains common paradigms for testing concurrent read-writes for
- * an {@link EdgePool}.
+ * an {@link com.twitter.graphjet.bipartite.edgepool.EdgePool}.
  */
 public final class EdgePoolConcurrentTestHelper {
 
@@ -56,7 +56,7 @@ public final class EdgePoolConcurrentTestHelper {
 
   /**
    * Helper class to allow reading from a
-   * {@link EdgePool} in a controlled manner.
+   * {@link com.twitter.graphjet.bipartite.edgepool.EdgePool} in a controlled manner.
    */
   public static class EdgePoolReader implements Runnable {
     private final EdgePool edgePool;
@@ -106,7 +106,7 @@ public final class EdgePoolConcurrentTestHelper {
 
   /**
    * Helper class to allow writing to a
-   * {@link EdgePool} in a controlled manner.
+   * {@link com.twitter.graphjet.bipartite.edgepool.EdgePool} in a controlled manner.
    */
   public static class EdgePoolWriter implements Runnable {
     private final EdgePool edgePool;
@@ -154,13 +154,13 @@ public final class EdgePoolConcurrentTestHelper {
    * readers that access the same underlying edgePool, and tests for correct edge access after
    * every single edge write via latches. This helps test write flushing after every edge insertion.
    *
-   * @param edgePool    is the underlying {@link EdgePool}
+   * @param edgePool    is the underlying {@link com.twitter.graphjet.bipartite.edgepool.EdgePool}
    * @param edgesToAdd  is a list of edges to add in the graph
    * @return the readers that store the state that they saw so that the state can be tested. There
    *         is a reader for every edge insertion.
    */
   public static List<EdgePoolReader> runConcurrentReadWriteThreads(
-    EdgePool edgePool, List<Pair<Integer, Integer>> edgesToAdd) {
+      EdgePool edgePool, List<Pair<Integer, Integer>> edgesToAdd) {
     int numReaders = edgesToAdd.size(); // start reading after first edge is written
     ExecutorService executor = Executors.newFixedThreadPool(numReaders + 1); // single writer
 
@@ -235,7 +235,7 @@ public final class EdgePoolConcurrentTestHelper {
    * to other testing.
    *
    * @param edgePool           is the underlying
-   *                           {@link EdgePool}
+   *                           {@link com.twitter.graphjet.bipartite.edgepool.EdgePool}
    * @param numReadersPerNode  is the number of reader threads to use per node
    * @param leftSize           is the number of left nodes
    * @param rightSize          is the number of right nodes
