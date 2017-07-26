@@ -23,6 +23,14 @@ import com.twitter.graphjet.hashing.IntToIntPairHashMap;
 import com.twitter.graphjet.hashing.ShardedBigIntArray;
 import com.twitter.graphjet.stats.StatsReceiver;
 
+/**
+ *
+ * An {@link OptimizedEdgePool} which does not support edge metadata.
+ *
+ * Assuming n nodes and m edges, the amount of memory used by this pool is:
+ * - 4*m bytes for edges (which is expected to dominate)
+ * - O(4*3*n) bytes for nodes
+ */
 public class OptimizedEdgePool extends AbstractOptimizedEdgePool {
 
   public static final class ReaderAccessibleInfo implements EdgePoolReaderAccessibleInfo {

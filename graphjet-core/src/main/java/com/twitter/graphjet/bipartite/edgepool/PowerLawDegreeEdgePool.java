@@ -20,74 +20,7 @@ package com.twitter.graphjet.bipartite.edgepool;
 import com.twitter.graphjet.stats.StatsReceiver;
 
 /**
- * This edge pool is for the case where the nodes degrees approximately follow a power law with the
- * restriction that the node degrees are upper bounded by the power law, i.e. if the power law
- * assumes that there are x nodes with degree d, then the graph will have at most x nodes with
- * degree d.
- *
- * Conceptually, the implementation works by spreading the edges of nodes across a number of pools.
- * Each of these pool services nodes at a particular level in the power law distribution, i.e. pool
- * 0 contains all nodes, and pool i only has nodes who have degree greater than 2^{i + 1}. Note that
- * our assumption of the power law (as stated above) implies that we have an exact upper bound on
- * the number of nodes in pool i. Within each pool, we allocate the same fixed amount of space for
- * each node. Since each pool allocates a fixed number of edges per node, it is implemented via the
- * {@link RegularDegreeEdgePool}. Note that the overall setup ensures that all pools are the same
- * size, with the degree per node increasing as the pool number increases while the number of nodes
- * in the pool decreases.
- *
- * NOTE: The implementation here-in assumes that the int id's being inserted are "packed" nicely. In
- * particular, suppose there are n nodes to be inserted. Then the actual int id's for these n nodes
- * _must_ always be no larger than c*n for some constant c. The memory usage here is proportional to
- * c*n, so it is best to make c as small as possible.
- *
- * Assuming that there are n nodes, we can allocate memory in the pools via a power-law scheme.
- * Here is a sample calculation assuming an exponent of 2:
- * - There will be k pools, numbered 1 through k
- * - Max edges per node stored in pool i = 2^i
- * - Max number of nodes in pool i = n / 2^{i-1} (power-law assumption)
- * - Total number of edges stored, m = 2n + 2^2 * n/2 + 2^3 * n/2^2 + ... + 2^k * n / 2^(k-1) = 2kn
- * - Max degree of a node = 2^{k+1} - 1 = 2^{m/2n + 1} - 1 (example: max degree = 2047, if m = 20n)
- *
- * Assuming n nodes and maximum degree in the pool is d, the amount of memory used by this pool is:
- * - O(4*2*lg(d)*n) bytes for edges (which is expected to dominate)
- * - O(4*lg(d)*n) bytes for nodes
- * - Note that if d = O(n), which is expected for power law graphs, the amount of memory used here
- *   is O(n*lg(n)) as opposed to O(n^2) which is what would happen if we allocate a regular-degree
- *   pool instead.
- *
- * Note that the power-law assumption is NOT binding, i.e. if the degree distribution violates the
- * power law (or has a different exponent), the graph operations will still work with the same
- * complexity. The only harmful effect is that the amount of memory needed would be more than the
- * calculation states above.
- *
- * This class is thread-safe even though it does not do any locking: it achieves this by leveraging
- * the assumptions stated below and using a "memory barrier" between writes and reads to sync
- * updates.
- *
- * Here are the client assumptions needed to enable lock-free read/writes:
- * 1. There is a SINGLE writer thread -- this is extremely important as we don't lock during writes.
- * 2. Readers are OK reading stale data, i.e. if even if a reader thread arrives after the writer
- * thread started doing a write, the update is NOT guaranteed to be available to it.
- *
- * This class enables lock-free read/writes by guaranteeing the following:
- * 1. The writes that are done are always "safe", i.e. in no time during the writing do they leave
- *    things in a state such that a reader would either encounter an exception or do wrong
- *    computation.
- * 2. After a write is done, it is explicitly "published" such that a reader that arrives after
- *    the published write it would see updated data.
- *
- * The way this works is as follows: suppose we have some linked objects X, Y and Z that need to be
- * maintained in a consistent state. First, our setup ensures that the reader is _only_ allowed to
- * access these in a linear manner as follows: read X -> read Y -> read Z. Then, we ensure that the
- * writer behavior is to write (safe, atomic) updates to each of these in the exact opposite order:
- * write Z --flush--> write Y --flush--> write X.
- *
- * Note that the flushing ensures that if a reader sees Y then it _must_ also see the updated Z,
- * and if sees X then it _must_ also see the updated Y and Z. Further, each update itself is safe.
- * For instance, a reader can safely access an updated Z even if X and Y are not updated since the
- * updated information will only be accessible through the updated X and Y (the converse though is
- * NOT true). Together, this ensures that the reader accesses to the objects are always consistent
- * with each other and safe to access by the reader.
+ * A {@link PowerLawDegreeEdgePool} which does not support edge metadata.
  */
 public class PowerLawDegreeEdgePool extends AbstractPowerLawDegreeEdgePool {
 
@@ -128,6 +61,38 @@ public class PowerLawDegreeEdgePool extends AbstractPowerLawDegreeEdgePool {
     readerAccessibleInfo.poolDegrees[poolNumber] = maxDegreeInPool;
   }
 
+  /**
+   * Synchronization comment: this method works fine without needing synchronization between the
+   * writer and the readers due to the wrapping of the arrays in ReaderAccessibleInfo.
+   * See the publication safety comment in ReaderAccessibleInfo for details.
+   */
+  private void addPool() {
+    int newNumPools = (int) Math.ceil(numPools * POOL_GROWTH_FACTOR);
+
+    numPoolsCounter.incr(newNumPools - numPools);
+
+    RegularDegreeEdgePool[] newEdgePools = new RegularDegreeEdgePool[newNumPools];
+    int[] newPoolDegrees = new int[newNumPools];
+    System.arraycopy(readerAccessibleInfo.edgePools, 0,
+      newEdgePools, 0,
+      readerAccessibleInfo.edgePools.length);
+    System.arraycopy(readerAccessibleInfo.poolDegrees, 0,
+      newPoolDegrees, 0,
+      readerAccessibleInfo.poolDegrees.length);
+    // This flushes all the reader-accessible data *together* to all threads: the readers are safe
+    // as they reference the wrapper object since the data locations stay the same and also no one
+    // can access the new pool yet since no node points to the new pool yet
+    readerAccessibleInfo = new ReaderAccessibleInfo(
+      newEdgePools,
+      newPoolDegrees,
+      readerAccessibleInfo.nodeDegrees);
+    for (int i = numPools; i < newNumPools; i++) {
+      initPool(i);
+    }
+    numPools = newNumPools;
+    // Self-assignment to flush the numPools update across the memory barrier
+    currentNumEdgesStored = currentNumEdgesStored;
+  }
 
   @Override
   public void addEdge(int nodeA, int nodeB) {
@@ -165,38 +130,4 @@ public class PowerLawDegreeEdgePool extends AbstractPowerLawDegreeEdgePool {
   public boolean hasEdgeMetadata() {
     return false;
   }
-
-  /**
-   * Synchronization comment: this method works fine without needing synchronization between the
-   * writer and the readers due to the wrapping of the arrays in ReaderAccessibleInfo.
-   * See the publication safety comment in ReaderAccessibleInfo for details.
-   */
-  private void addPool() {
-    int newNumPools = (int) Math.ceil(numPools * POOL_GROWTH_FACTOR);
-
-    numPoolsCounter.incr(newNumPools - numPools);
-
-    RegularDegreeEdgePool[] newEdgePools = new RegularDegreeEdgePool[newNumPools];
-    int[] newPoolDegrees = new int[newNumPools];
-    System.arraycopy(readerAccessibleInfo.edgePools, 0,
-                     newEdgePools, 0,
-                     readerAccessibleInfo.edgePools.length);
-    System.arraycopy(readerAccessibleInfo.poolDegrees, 0,
-                     newPoolDegrees, 0,
-                     readerAccessibleInfo.poolDegrees.length);
-    // This flushes all the reader-accessible data *together* to all threads: the readers are safe
-    // as they reference the wrapper object since the data locations stay the same and also no one
-    // can access the new pool yet since no node points to the new pool yet
-    readerAccessibleInfo = new ReaderAccessibleInfo(
-        newEdgePools,
-        newPoolDegrees,
-        readerAccessibleInfo.nodeDegrees);
-    for (int i = numPools; i < newNumPools; i++) {
-      initPool(i);
-    }
-    numPools = newNumPools;
-    // Self-assignment to flush the numPools update across the memory barrier
-    currentNumEdgesStored = currentNumEdgesStored;
-  }
-
 }

@@ -1,3 +1,20 @@
+/**
+ * Copyright 2017 Twitter. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+
 package com.twitter.graphjet.bipartite.edgepool;
 
 import java.util.Random;
@@ -20,10 +37,6 @@ import it.unimi.dsi.fastutil.ints.IntIterator;
  * between writer and reader threads, and it accepts reader access only after it is completely
  * populated by a writer thread. It assumes that no new edges will be added to the pool after it
  * accepts reader access.
- *
- * Assuming n nodes and m edges, the amount of memory used by this pool is:
- * - 4*m bytes for edges (which is expected to dominate)
- * - O(4*3*n) bytes for nodes
  */
 public abstract class AbstractOptimizedEdgePool implements EdgePool {
 

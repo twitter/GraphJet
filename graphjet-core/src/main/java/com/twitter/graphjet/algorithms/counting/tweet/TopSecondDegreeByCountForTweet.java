@@ -35,7 +35,7 @@ import com.twitter.graphjet.stats.StatsReceiver;
 public class TopSecondDegreeByCountForTweet extends
   TopSecondDegreeByCount<TopSecondDegreeByCountRequestForTweet, TopSecondDegreeByCountResponse> {
   // Max number of node metadata associated with each right node.
-  private static final int MaxNumMetadata = 200;
+  private static final int MAX_NUM_METADATA = 200;
 
   /**
    * Initialize all the states needed to run TopSecondDegreeByCountForTweet. Note that the object can
@@ -127,7 +127,7 @@ public class TopSecondDegreeByCountForTweet extends
 
         int numOfMetadata = metadataIterator.size();
 
-        if (numOfMetadata > 0 && numOfMetadata < MaxNumMetadata) {
+        if (numOfMetadata > 0 && numOfMetadata <= MAX_NUM_METADATA) {
           int[] metadata = new int[numOfMetadata];
           int j = 0;
           while (metadataIterator.hasNext()) {

@@ -1,3 +1,20 @@
+/**
+ * Copyright 2017 Twitter. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+
 package com.twitter.graphjet.bipartite.edgepool;
 
 import java.util.Random;
@@ -11,8 +28,77 @@ import com.twitter.graphjet.stats.StatsReceiver;
 
 import it.unimi.dsi.fastutil.ints.IntIterator;
 
+/**
+ * This edge pool is for the case where the nodes degrees approximately follow a power law with the
+ * restriction that the node degrees are upper bounded by the power law, i.e. if the power law
+ * assumes that there are x nodes with degree d, then the graph will have at most x nodes with
+ * degree d.
+ *
+ * Conceptually, the implementation works by spreading the edges of nodes across a number of pools.
+ * Each of these pool services nodes at a particular level in the power law distribution, i.e. pool
+ * 0 contains all nodes, and pool i only has nodes who have degree greater than 2^{i + 1}. Note that
+ * our assumption of the power law (as stated above) implies that we have an exact upper bound on
+ * the number of nodes in pool i. Within each pool, we allocate the same fixed amount of space for
+ * each node. Since each pool allocates a fixed number of edges per node, it is implemented via the
+ * {@link RegularDegreeEdgePool}. Note that the overall setup ensures that all pools are the same
+ * size, with the degree per node increasing as the pool number increases while the number of nodes
+ * in the pool decreases.
+ *
+ * NOTE: The implementation here-in assumes that the int id's being inserted are "packed" nicely. In
+ * particular, suppose there are n nodes to be inserted. Then the actual int id's for these n nodes
+ * _must_ always be no larger than c*n for some constant c. The memory usage here is proportional to
+ * c*n, so it is best to make c as small as possible.
+ *
+ * Assuming that there are n nodes, we can allocate memory in the pools via a power-law scheme.
+ * Here is a sample calculation assuming an exponent of 2:
+ * - There will be k pools, numbered 1 through k
+ * - Max edges per node stored in pool i = 2^i
+ * - Max number of nodes in pool i = n / 2^{i-1} (power-law assumption)
+ * - Total number of edges stored, m = 2n + 2^2 * n/2 + 2^3 * n/2^2 + ... + 2^k * n / 2^(k-1) = 2kn
+ * - Max degree of a node = 2^{k+1} - 1 = 2^{m/2n + 1} - 1 (example: max degree = 2047, if m = 20n)
+ *
+ * Assuming n nodes and maximum degree in the pool is d, the amount of memory used by this pool is:
+ * - O(4*2*lg(d)*n) bytes for edges (which is expected to dominate)
+ * - O(4*lg(d)*n) bytes for nodes
+ * - Note that if d = O(n), which is expected for power law graphs, the amount of memory used here
+ *   is O(n*lg(n)) as opposed to O(n^2) which is what would happen if we allocate a regular-degree
+ *   pool instead.
+ *
+ * Note that the power-law assumption is NOT binding, i.e. if the degree distribution violates the
+ * power law (or has a different exponent), the graph operations will still work with the same
+ * complexity. The only harmful effect is that the amount of memory needed would be more than the
+ * calculation states above.
+ *
+ * This class is thread-safe even though it does not do any locking: it achieves this by leveraging
+ * the assumptions stated below and using a "memory barrier" between writes and reads to sync
+ * updates.
+ *
+ * Here are the client assumptions needed to enable lock-free read/writes:
+ * 1. There is a SINGLE writer thread -- this is extremely important as we don't lock during writes.
+ * 2. Readers are OK reading stale data, i.e. if even if a reader thread arrives after the writer
+ * thread started doing a write, the update is NOT guaranteed to be available to it.
+ *
+ * This class enables lock-free read/writes by guaranteeing the following:
+ * 1. The writes that are done are always "safe", i.e. in no time during the writing do they leave
+ *    things in a state such that a reader would either encounter an exception or do wrong
+ *    computation.
+ * 2. After a write is done, it is explicitly "published" such that a reader that arrives after
+ *    the published write it would see updated data.
+ *
+ * The way this works is as follows: suppose we have some linked objects X, Y and Z that need to be
+ * maintained in a consistent state. First, our setup ensures that the reader is _only_ allowed to
+ * access these in a linear manner as follows: read X -> read Y -> read Z. Then, we ensure that the
+ * writer behavior is to write (safe, atomic) updates to each of these in the exact opposite order:
+ * write Z --flush--> write Y --flush--> write X.
+ *
+ * Note that the flushing ensures that if a reader sees Y then it _must_ also see the updated Z,
+ * and if sees X then it _must_ also see the updated Y and Z. Further, each update itself is safe.
+ * For instance, a reader can safely access an updated Z even if X and Y are not updated since the
+ * updated information will only be accessible through the updated X and Y (the converse though is
+ * NOT true). Together, this ensures that the reader accesses to the objects are always consistent
+ * with each other and safe to access by the reader.
+ */
 public abstract class AbstractPowerLawDegreeEdgePool implements EdgePool {
-
   /**
    * This class encapsulates ALL the state that will be accessed by a reader (refer to the X, Y, Z
    * comment above). The final members are used to guarantee visibility to other threads without
@@ -63,7 +149,6 @@ public abstract class AbstractPowerLawDegreeEdgePool implements EdgePool {
       return nodeDegrees;
     }
   }
-
 
   protected static final double POOL_GROWTH_FACTOR = 1.1;
   protected static final double ARRAY_GROWTH_FACTOR = 1.1;
@@ -117,34 +202,7 @@ public abstract class AbstractPowerLawDegreeEdgePool implements EdgePool {
     this.numPoolsCounter = this.statsReceiver.counter("numPools");
     numPools = Math.max((int) Math.ceil(Math.log(expectedMaxDegree + 1) / Math.log(2.0) - 1.0), 1);
     numPoolsCounter.incr(numPools);
-    /*
-    RegularDegreeEdgePool[] edgePools = new RegularDegreeEdgePool[numPools];
-    int[] poolDegrees = new int[numPools];
-    readerAccessibleInfo =
-      new ReaderAccessibleInfo(edgePools, poolDegrees, new int[expectedNumNodes]);
-    for (int i = 0; i < numPools; i++) {
-      initPool(i);
-    }
-    */
     currentNumEdgesStored = 0;
-  }
-
-  private void initPool(int poolNumber) {
-    int expectedNumNodesInPool =
-      (int) Math.ceil(expectedNumNodes / Math.pow(powerLawExponent, poolNumber));
-    int maxDegreeInPool = (int) Math.pow(2, poolNumber + 1);
-    readerAccessibleInfo.edgePools[poolNumber] = new RegularDegreeEdgePool(
-      expectedNumNodesInPool, maxDegreeInPool, statsReceiver.scope("poolNumber_" + poolNumber));
-    readerAccessibleInfo.poolDegrees[poolNumber] = maxDegreeInPool;
-  }
-
-  @Override
-  public int getNodeDegree(int node) {
-    if (node >= readerAccessibleInfo.nodeDegrees.length) {
-      return 0;
-    } else {
-      return readerAccessibleInfo.nodeDegrees[node];
-    }
   }
 
   // Assumes that the node is already in the array
@@ -191,8 +249,56 @@ public abstract class AbstractPowerLawDegreeEdgePool implements EdgePool {
     return currentNumEdgesStored;
   }
 
+  private int[] growArray(int[] array, int minIndex) {
+    int arrayLength = array.length;
+    int[] newArray =
+      new int[Math.max((int) Math.ceil(arrayLength * ARRAY_GROWTH_FACTOR), minIndex + 1)];
+    System.arraycopy(array, 0, newArray, 0, arrayLength);
+    return newArray;
+  }
+
   protected int getNextPoolForNode(int node) {
     return getPoolForEdgeNumber(getNodeDegree(node));
+  }
+
+  protected int getDegreeForPool(int pool) {
+    // Hopefully branch prediction should make this really cheap as it'll always be false!
+    if (crossMemoryBarrier() == 0) {
+      return -1;
+    }
+    return readerAccessibleInfo.poolDegrees[pool];
+  }
+
+  protected void expandArray(int nodeA) {
+    readerAccessibleInfo = new ReaderAccessibleInfo(
+      readerAccessibleInfo.edgePools,
+      readerAccessibleInfo.poolDegrees,
+      growArray(readerAccessibleInfo.nodeDegrees, nodeA)
+    );
+    numNodesCounter.incr();
+  }
+
+  protected AbstractRegularDegreeEdgePool getRegularDegreeEdgePool(int poolNumber) {
+    return readerAccessibleInfo.edgePools[poolNumber];
+  }
+
+  protected int getNumPools() {
+    // Hopefully branch prediction should make this really cheap as it'll always be false!
+    if (crossMemoryBarrier() == 0) {
+      return 0;
+    }
+    return numPools;
+  }
+
+  public abstract boolean hasEdgeMetadata();
+
+  @Override
+  public int getNodeDegree(int node) {
+    if (node >= readerAccessibleInfo.nodeDegrees.length) {
+      return 0;
+    } else {
+      return readerAccessibleInfo.nodeDegrees[node];
+    }
   }
 
   @Override
@@ -218,33 +324,6 @@ public abstract class AbstractPowerLawDegreeEdgePool implements EdgePool {
     ReusableNodeRandomIntIterator powerLawDegreeEdgeRandomIterator) {
     return powerLawDegreeEdgeRandomIterator.resetForNode(node, numSamples, random);
   }
-
-  protected int getDegreeForPool(int pool) {
-    // Hopefully branch prediction should make this really cheap as it'll always be false!
-    if (crossMemoryBarrier() == 0) {
-      return -1;
-    }
-    return readerAccessibleInfo.poolDegrees[pool];
-  }
-
-  private int[] growArray(int[] array, int minIndex) {
-    int arrayLength = array.length;
-    int[] newArray =
-      new int[Math.max((int) Math.ceil(arrayLength * ARRAY_GROWTH_FACTOR), minIndex + 1)];
-    System.arraycopy(array, 0, newArray, 0, arrayLength);
-    return newArray;
-  }
-
-  protected void expandArray(int nodeA) {
-    readerAccessibleInfo = new ReaderAccessibleInfo(
-      readerAccessibleInfo.edgePools,
-      readerAccessibleInfo.poolDegrees,
-      growArray(readerAccessibleInfo.nodeDegrees, nodeA)
-    );
-    numNodesCounter.incr();
-  }
-
-  public abstract boolean hasEdgeMetadata();
 
   @Override
   public boolean isOptimized() {
@@ -301,17 +380,5 @@ public abstract class AbstractPowerLawDegreeEdgePool implements EdgePool {
 
   public ReaderAccessibleInfo getReaderAccessibleInfo() {
     return readerAccessibleInfo;
-  }
-
-  protected AbstractRegularDegreeEdgePool getRegularDegreeEdgePool(int poolNumber) {
-    return readerAccessibleInfo.edgePools[poolNumber];
-  }
-
-  protected int getNumPools() {
-    // Hopefully branch prediction should make this really cheap as it'll always be false!
-    if (crossMemoryBarrier() == 0) {
-      return 0;
-    }
-    return numPools;
   }
 }

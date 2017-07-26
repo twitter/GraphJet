@@ -1,3 +1,20 @@
+/**
+ * Copyright 2017 Twitter. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+
 package com.twitter.graphjet.bipartite.edgepool;
 
 import java.util.Random;
@@ -34,10 +51,10 @@ abstract public class AbstractRegularDegreeEdgePool implements EdgePool {
     Preconditions.checkArgument(expectedNumNodes > 0, "Need to have at least one node!");
     Preconditions.checkArgument(maxDegree > 0, "Max degree must be non-zero!");
     this.maxDegree = maxDegree;
-    this.scopedStatsReceiver = statsReceiver;
+    this.scopedStatsReceiver = statsReceiver.scope(this.getClass().getSimpleName());
     this.numEdgesCounter = scopedStatsReceiver.counter("numEdges");
     this.numNodesCounter = scopedStatsReceiver.counter("numNodes");
-    currentPositionOffset = 0;
+    this.currentPositionOffset = 0;
   }
 
   // Read the volatile int, which forces a happens-before ordering on the read-write operations
@@ -115,21 +132,6 @@ abstract public class AbstractRegularDegreeEdgePool implements EdgePool {
     return readerAccessibleInfo.getEdges().getEntry(position + edgeNumber);
   }
 
-  /**
-   * Get the metadata of a specified edge for the node: note that it is the caller's responsibility
-   * to check that the edge number is within the degree bounds.
-   *
-   * @param position    is the position index for the node
-   * @param edgeNumber  is the required edge number
-   * @return the requested edge metadata
-   */
-  abstract protected long getNumberedEdgeMetadata(int position, int edgeNumber);
-  /*
-  protected long getNumberedEdgeMetadata(int position, int edgeNumber) {
-    return readerAccessibleInfo.getMetadata().getEntry(position + edgeNumber);
-  }
-  */
-
   @Override
   public int getNodeDegree(int node) {
     long nodeInfo = getNodeInfo(node);
@@ -180,7 +182,6 @@ abstract public class AbstractRegularDegreeEdgePool implements EdgePool {
     return nodeInfo;
   }
 
-
   @Override
   public boolean isOptimized() {
     return false;
@@ -191,19 +192,23 @@ abstract public class AbstractRegularDegreeEdgePool implements EdgePool {
       getShard(readerAccessibleInfo.getNodeInfo().getFirstValue(node));
   }
 
-  abstract public long[] getMetadataShard(int node);
-
-  /*
-  public long[] getMetadataShard(int node) {
-    return ((ShardedBigLongArray) readerAccessibleInfo.getMetadata()).
-      getShard(readerAccessibleInfo.getNodeInfo().getFirstValue(node));
-  }
-  */
-
   public int getShardOffset(int node) {
     return ((ShardedBigIntArray) readerAccessibleInfo.getEdges()).
       getShardOffset(readerAccessibleInfo.getNodeInfo().getFirstValue(node));
   }
+
+
+  /**
+   * Get the metadata of a specified edge for the node: note that it is the caller's responsibility
+   * to check that the edge number is within the degree bounds.
+   *
+   * @param position    is the position index for the node
+   * @param edgeNumber  is the required edge number
+   * @return the requested edge metadata
+   */
+  abstract protected long getNumberedEdgeMetadata(int position, int edgeNumber);
+
+  abstract public long[] getMetadataShard(int node);
 
   @Override
   public void removeEdge(int nodeA, int nodeB) {

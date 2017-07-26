@@ -127,7 +127,6 @@ public class RegularDegreeEdgePool extends AbstractRegularDegreeEdgePool {
     }
   }
 
-
   /**
    * Reserves the needed memory for a {@link RegularDegreeEdgePool}, and initializes most of the
    * objects that would be needed for this graph. Note that actual memory would be allocated as
@@ -140,7 +139,7 @@ public class RegularDegreeEdgePool extends AbstractRegularDegreeEdgePool {
    *                          if this is violated.
    */
   public RegularDegreeEdgePool(int expectedNumNodes, int maxDegree, StatsReceiver statsReceiver) {
-    super(expectedNumNodes, maxDegree, statsReceiver.scope("RegularDegreeEdgePool"));
+    super(expectedNumNodes, maxDegree, statsReceiver);
 
     // We use a faster map in the base case
     IntToIntPairHashMap intToIntPairHashMap;
@@ -188,14 +187,16 @@ public class RegularDegreeEdgePool extends AbstractRegularDegreeEdgePool {
 
   @Override
   public void addEdge(int nodeA, int nodeB, long metadata) {
-    throw new UnsupportedOperationException("add a single edge one by one is not supported in "
+    throw new UnsupportedOperationException("add edge with metadata is not supported in "
       + "RegularDegreeEdgePool");
   }
 
+  @Override
   protected long getNumberedEdgeMetadata(int position, int edgeNumber) {
     return 0;
   }
 
+  @Override
   public long[] getMetadataShard(int node) {
     return null;
   }

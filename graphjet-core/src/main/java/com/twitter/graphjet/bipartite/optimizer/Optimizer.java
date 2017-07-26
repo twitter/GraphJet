@@ -31,7 +31,7 @@ import com.twitter.graphjet.bipartite.edgepool.AbstractRegularDegreeEdgePool;
 import com.twitter.graphjet.bipartite.edgepool.EdgePool;
 import com.twitter.graphjet.bipartite.edgepool.OptimizedEdgePool;
 import com.twitter.graphjet.bipartite.edgepool.PowerLawDegreeEdgePool;
-import com.twitter.graphjet.bipartite.edgepool.WithMetadataOptimizedEdgePool;
+import com.twitter.graphjet.bipartite.edgepool.WithEdgeMetadataOptimizedEdgePool;
 import com.twitter.graphjet.bipartite.segment.BipartiteGraphSegment;
 import com.twitter.graphjet.bipartite.segment.LeftIndexedBipartiteGraphSegment;
 
@@ -104,7 +104,7 @@ public final class Optimizer {
         edgePool.getStatsReceiver()
       );
     } else {
-      optimizedEdgePool = new WithMetadataOptimizedEdgePool(
+      optimizedEdgePool = new WithEdgeMetadataOptimizedEdgePool(
         readerAccessibleInfo.getNodeDegrees(),
         edgePool.getCurrentNumEdgesStored(),
         edgePool.getStatsReceiver()
