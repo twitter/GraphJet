@@ -21,9 +21,9 @@ public class ScaledUpdateNormalizationTest{
 
   @Test
   public void testComputeScoreNormalization() {
-      ScaledUpdateNormalization scaledUpdateNormalization = new ScaledUpdateNormalization();
-
-      assertEquals(0.2886751345948129,  scaledUpdateNormalization.computeScoreNormalization(2, 4, 6), 0.01);
+      assertEquals(0.2886751345948129,
+              new ScaledUpdateNormalization().computeScoreNormalization(2, 4, 6), 0.01
+      );
   }
 
 }

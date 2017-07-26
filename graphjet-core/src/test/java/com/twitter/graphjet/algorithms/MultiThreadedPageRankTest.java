@@ -382,12 +382,12 @@ public class MultiThreadedPageRankTest {
   }
 
   @Test
-  public void testFailsToCreateMultiThreadedPageRankThrowsUnsupportedOperationException() {
+  public void testFailsToCreateThrowsUnsupportedOperationException() {
       long[] longArray = new long[5];
       LongArrayList longArrayList = new LongArrayList(longArray);
 
       try {
-        new MultiThreadedPageRank((OutIndexedDirectedGraph) null, longArrayList, 4294967295L, (-409L), 16, 535.0, (-561));
+        new MultiThreadedPageRank(null, longArrayList, 4294967295L, (-409L), 16, 535.0, (-561));
           fail("Expecting exception: UnsupportedOperationException");
       } catch (UnsupportedOperationException e) {
           assertEquals(MultiThreadedPageRank.class.getName(), e.getStackTrace()[0].getClassName());

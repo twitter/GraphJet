@@ -180,7 +180,7 @@ public class ArrayBasedIntToIntArrayMapTest {
   }
 
   @Test
-  public void testFailsToCreateArrayBasedIntToIntArrayMapTakingThreeArgumentsThrowsIllegalArgumentException() {
+  public void testFailsCreateTakingThreeArgumentsThrowsIllegalArgumentException() {
       try {
         new ArrayBasedIntToIntArrayMap((-1), (-1), new NullStatsReceiver());
         fail("Expecting exception: IllegalArgumentException");
@@ -191,7 +191,8 @@ public class ArrayBasedIntToIntArrayMapTest {
 
   @Test
   public void testGetArrayLengthReturningZero() {
-      ArrayBasedIntToIntArrayMap arrayBasedIntToIntArrayMap = new ArrayBasedIntToIntArrayMap(2856, 0, new NullStatsReceiver());
+      ArrayBasedIntToIntArrayMap arrayBasedIntToIntArrayMap =
+              new ArrayBasedIntToIntArrayMap(2856, 0, new NullStatsReceiver());
 
       assertEquals(0, arrayBasedIntToIntArrayMap.getArrayLength(2856));
   }

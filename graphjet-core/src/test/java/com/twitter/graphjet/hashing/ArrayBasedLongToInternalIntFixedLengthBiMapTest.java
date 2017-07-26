@@ -88,7 +88,11 @@ public class ArrayBasedLongToInternalIntFixedLengthBiMapTest {
     @Test
     public void testClear() {
         ArrayBasedLongToInternalIntFixedLengthBiMap arrayBasedLongToInternalIntFixedLengthBiMap =
-                new ArrayBasedLongToInternalIntFixedLengthBiMap((-6206), 2154.072652232, 1, 1, new NullStatsReceiver());
+                new ArrayBasedLongToInternalIntFixedLengthBiMap((-6206),
+                        2154.072652232,
+                        1,
+                        1,
+                        new NullStatsReceiver());
 
         arrayBasedLongToInternalIntFixedLengthBiMap.put( 1L );
 
@@ -130,7 +134,7 @@ public class ArrayBasedLongToInternalIntFixedLengthBiMapTest {
     }
 
     @Test
-    public void testFailsToCreateArrayBasedLongToInternalIntFixedLengthBiMapThrowsIllegalArgumentException() {
+    public void testFailsToCreateThrowsIllegalArgumentException() {
         NullStatsReceiver nullStatsReceiver = new NullStatsReceiver();
         ArrayBasedLongToInternalIntFixedLengthBiMap arrayBasedLongToInternalIntFixedLengthBiMap = null;
 
