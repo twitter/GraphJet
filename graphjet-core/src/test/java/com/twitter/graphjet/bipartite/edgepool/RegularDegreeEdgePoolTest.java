@@ -23,23 +23,18 @@ import java.util.Random;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
-import com.twitter.graphjet.hashing.IntToIntPairArrayIndexBasedMap;
-import com.twitter.graphjet.hashing.ShardedBigIntArray;
-import com.twitter.graphjet.hashing.ShardedBigLongArray;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
+import com.twitter.graphjet.hashing.IntToIntPairArrayIndexBasedMap;
+import com.twitter.graphjet.hashing.ShardedBigIntArray;
 import com.twitter.graphjet.stats.NullStatsReceiver;
 
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 
-import static com.twitter.graphjet.bipartite.edgepool.EdgePoolConcurrentTestHelper.EdgePoolReader;
-import static com.twitter.graphjet.bipartite.edgepool.EdgePoolConcurrentTestHelper.runConcurrentReadWriteThreads;
-import static com.twitter.graphjet.bipartite.edgepool.EdgePoolConcurrentTestHelper.testRandomConcurrentReadWriteThreads;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.fail;
+import static com.twitter.graphjet.bipartite.edgepool.EdgePoolConcurrentTestHelper.*;
 
 public class RegularDegreeEdgePoolTest {
   private static final double EPSILON = 0.00001;
@@ -219,13 +214,10 @@ public class RegularDegreeEdgePoolTest {
             new RegularDegreeEdgePool(508, 2, nullStatsReceiver);
     ShardedBigIntArray shardedBigIntArray =
             new ShardedBigIntArray(3157, 2, (-1035), nullStatsReceiver);
-    ShardedBigLongArray shardedBigLongArray =
-            new ShardedBigLongArray(1431655765, 2, 2, nullStatsReceiver);
     IntToIntPairArrayIndexBasedMap intToIntPairArrayIndexBasedMap =
             new IntToIntPairArrayIndexBasedMap(3157, 16, nullStatsReceiver);
     RegularDegreeEdgePool.ReaderAccessibleInfo regularDegreeEdgePool_ReaderAccessibleInfo =
             new RegularDegreeEdgePool.ReaderAccessibleInfo(shardedBigIntArray,
-                    shardedBigLongArray,
                     intToIntPairArrayIndexBasedMap);
     regularDegreeEdgePool.readerAccessibleInfo = regularDegreeEdgePool_ReaderAccessibleInfo;
 
