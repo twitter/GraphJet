@@ -301,7 +301,7 @@ public class PageRankTest {
             new IdentityEdgeTypeMask(), new NullStatsReceiver());
 
     for (int i=0; i<LES_MIS_GRAPH.length; i++) {
-      graph.addEdge(LES_MIS_GRAPH[i][0], LES_MIS_GRAPH[i][1], (byte) 0, 0L);
+      graph.addEdge(LES_MIS_GRAPH[i][0], LES_MIS_GRAPH[i][1], (byte) 0);
     }
 
     // Spot check the graph to make sure it's been loaded correctly.
@@ -382,7 +382,7 @@ public class PageRankTest {
                     higherBitsEdgeTypeMask,
                     new NullStatsReceiver());
     LongOpenHashSet longOpenHashSet = new LongOpenHashSet();
-    powerLawMultiSegmentDirectedGraph.addEdge(0L, 1170L, (byte) (-126), (byte) (-126));
+    powerLawMultiSegmentDirectedGraph.addEdge(0L, 1170L, (byte) (-126));
     longOpenHashSet.add(0L);
     PageRank pageRank =
             new PageRank(powerLawMultiSegmentDirectedGraph, longOpenHashSet, 1249, 1249, 1249, 1249);
