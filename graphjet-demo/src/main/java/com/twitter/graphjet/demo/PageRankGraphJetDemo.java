@@ -125,7 +125,7 @@ public class PageRankGraphJetDemo {
             if (tokens.length > 1) {
               final long from = Long.parseLong(tokens[0]);
               final long to = Long.parseLong(tokens[1]);
-              graph.addEdge(from, to, EDGE_TYPE, 0L);
+              graph.addEdge(from, to, EDGE_TYPE);
               fileEdgeCounter.incrementAndGet();
 
               // Print logging output every 10 million edges.
