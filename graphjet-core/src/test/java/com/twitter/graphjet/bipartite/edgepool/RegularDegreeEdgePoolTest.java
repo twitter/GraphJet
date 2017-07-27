@@ -202,7 +202,7 @@ public class RegularDegreeEdgePoolTest {
     NullStatsReceiver nullStatsReceiver = new NullStatsReceiver();
     RegularDegreeEdgePool regularDegreeEdgePool =
             new RegularDegreeEdgePool(4, 4, nullStatsReceiver);
-    regularDegreeEdgePool.addEdge(2048, 587, (-424L));
+    regularDegreeEdgePool.addEdge(2048, 587);
 
     assertEquals((-1L), regularDegreeEdgePool.getNodeEdgeMetadata(2048, 426));
   }
@@ -222,7 +222,7 @@ public class RegularDegreeEdgePoolTest {
     regularDegreeEdgePool.readerAccessibleInfo = regularDegreeEdgePool_ReaderAccessibleInfo;
 
     try {
-      regularDegreeEdgePool.addEdge(0, 0, (-2353L));
+      regularDegreeEdgePool.addEdge(0, 0);
       fail("Expecting exception: IllegalArgumentException");
     } catch (IllegalArgumentException e) {
       assertEquals(Preconditions.class.getName(), e.getStackTrace()[0].getClassName());
