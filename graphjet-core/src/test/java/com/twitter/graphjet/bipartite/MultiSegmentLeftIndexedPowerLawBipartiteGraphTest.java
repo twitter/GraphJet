@@ -97,7 +97,7 @@ public class MultiSegmentLeftIndexedPowerLawBipartiteGraphTest {
 
     assertEquals(new LongArrayList(new long[]{11, 12, 13}),
         new LongArrayList(multiSegmentLeftIndexedPowerLawBipartiteGraph.getLeftNodeEdges(1)));
-    assertEquals(new LongArrayList(new long[]{21, 22}),
+    assertEquals(new LongArrayList(new long[]{22, 21}),
         new LongArrayList(multiSegmentLeftIndexedPowerLawBipartiteGraph.getLeftNodeEdges(2)));
     assertEquals(new LongArrayList(new long[]{31}),
         new LongArrayList(multiSegmentLeftIndexedPowerLawBipartiteGraph.getLeftNodeEdges(3)));
