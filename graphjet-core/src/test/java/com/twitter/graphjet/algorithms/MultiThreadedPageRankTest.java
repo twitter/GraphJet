@@ -19,6 +19,7 @@ package com.twitter.graphjet.algorithms;
 import com.google.common.util.concurrent.AtomicDoubleArray;
 import com.twitter.graphjet.bipartite.segment.IdentityEdgeTypeMask;
 import com.twitter.graphjet.directed.OutIndexedPowerLawMultiSegmentDirectedGraph;
+import com.twitter.graphjet.directed.api.OutIndexedDirectedGraph;
 import com.twitter.graphjet.stats.NullStatsReceiver;
 import it.unimi.dsi.fastutil.longs.LongArrayList;
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
@@ -30,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 public class MultiThreadedPageRankTest {
   // This is the coappearance network of characters in the novel Les Miserables.
@@ -368,4 +370,28 @@ public class MultiThreadedPageRankTest {
     // Total mass should still be 1.0.
     assertEquals(1.0, totalMass, 10e-10);
   }
+
+  @Test
+  public void testRun() {
+    LongArrayList longArrayList = new LongArrayList();
+    MultiThreadedPageRank multiThreadedPageRank =
+            new MultiThreadedPageRank(null, longArrayList, 3237L, 0.0, 1, 0.0, 1);
+
+    assertEquals(1, multiThreadedPageRank.run());
+    assertEquals(0.0, multiThreadedPageRank.getL1Norm(), 0.01);
+  }
+
+  @Test
+  public void testFailsToCreateThrowsUnsupportedOperationException() {
+    long[] longArray = new long[5];
+    LongArrayList longArrayList = new LongArrayList(longArray);
+
+    try {
+      new MultiThreadedPageRank(null, longArrayList, 4294967295L, (-409L), 16, 535.0, (-561));
+      fail("Expecting exception: UnsupportedOperationException");
+    } catch (UnsupportedOperationException e) {
+      assertEquals(MultiThreadedPageRank.class.getName(), e.getStackTrace()[0].getClassName());
+    }
+  }
+
 }

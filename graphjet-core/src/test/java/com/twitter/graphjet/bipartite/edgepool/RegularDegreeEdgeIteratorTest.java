@@ -26,6 +26,7 @@ import com.twitter.graphjet.stats.NullStatsReceiver;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 
 import static com.twitter.graphjet.bipartite.edgepool.RegularDegreeEdgePoolTest.addEdgesToPool;
+import static org.junit.Assert.assertFalse;
 
 public class RegularDegreeEdgeIteratorTest {
 
@@ -53,4 +54,33 @@ public class RegularDegreeEdgeIteratorTest {
     assertEquals(new IntArrayList(new int[]{41, 42, 43}),
                  new IntArrayList(regularDegreeEdgeIterator));
   }
+
+  @Test
+  public void testResetForNodeReturningRegularDegreeEdgeIteratorWhereHasNextIsFalse() {
+    RegularDegreeEdgePool regularDegreeEdgePool = new RegularDegreeEdgePool(1224, 1224, new NullStatsReceiver());
+    RegularDegreeEdgeIterator regularDegreeEdgeIterator = new RegularDegreeEdgeIterator(regularDegreeEdgePool);
+    RegularDegreeEdgeIterator regularDegreeEdgeIteratorTwo = regularDegreeEdgeIterator.resetForNode(3307);
+
+    assertFalse(regularDegreeEdgeIteratorTwo.hasNext());
+  }
+
+  @Test
+  public void testSkip() {
+    NullStatsReceiver nullStatsReceiver = new NullStatsReceiver();
+    RegularDegreeEdgePool regularDegreeEdgePool = new RegularDegreeEdgePool(61, 3311, nullStatsReceiver);
+    RegularDegreeEdgeIterator regularDegreeEdgeIterator = new RegularDegreeEdgeIterator(regularDegreeEdgePool);
+
+    assertEquals(0, regularDegreeEdgeIterator.skip(3311));
+  }
+
+  @Test
+  public void testNext() {
+    NullStatsReceiver nullStatsReceiver = new NullStatsReceiver();
+    RegularDegreeEdgePool regularDegreeEdgePool = new RegularDegreeEdgePool(61, 3311, nullStatsReceiver);
+    RegularDegreeEdgeIterator regularDegreeEdgeIterator = new RegularDegreeEdgeIterator(regularDegreeEdgePool);
+    regularDegreeEdgeIterator.next();
+
+    assertFalse(regularDegreeEdgeIterator.hasNext());
+  }
+
 }

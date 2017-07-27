@@ -24,9 +24,11 @@ import java.util.Map;
 import java.util.Random;
 import java.util.TreeMap;
 
+import com.google.common.base.Preconditions;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import com.twitter.graphjet.stats.NullStatsReceiver;
 import com.twitter.graphjet.stats.StatsReceiver;
@@ -176,4 +178,23 @@ public class ArrayBasedIntToIntArrayMapTest {
       random
     );
   }
+
+  @Test
+  public void testFailsCreateTakingThreeArgumentsThrowsIllegalArgumentException() {
+    try {
+      new ArrayBasedIntToIntArrayMap((-1), (-1), new NullStatsReceiver());
+      fail("Expecting exception: IllegalArgumentException");
+    } catch (IllegalArgumentException e) {
+      assertEquals(Preconditions.class.getName(), e.getStackTrace()[0].getClassName());
+    }
+  }
+
+  @Test
+  public void testGetArrayLengthReturningZero() {
+    ArrayBasedIntToIntArrayMap arrayBasedIntToIntArrayMap =
+            new ArrayBasedIntToIntArrayMap(2856, 0, new NullStatsReceiver());
+
+    assertEquals(0, arrayBasedIntToIntArrayMap.getArrayLength(2856));
+  }
+
 }

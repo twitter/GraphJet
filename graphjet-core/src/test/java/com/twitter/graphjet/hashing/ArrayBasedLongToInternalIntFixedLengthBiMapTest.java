@@ -19,10 +19,14 @@ package com.twitter.graphjet.hashing;
 
 import java.util.Random;
 
+import com.google.common.base.Preconditions;
 import org.junit.Test;
 
 import com.twitter.graphjet.stats.NullStatsReceiver;
 import com.twitter.graphjet.stats.StatsReceiver;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 public class ArrayBasedLongToInternalIntFixedLengthBiMapTest {
   private final StatsReceiver nullStatsReceiver = new NullStatsReceiver();
@@ -80,4 +84,80 @@ public class ArrayBasedLongToInternalIntFixedLengthBiMapTest {
     InternalIdMapConcurrentTestHelper.testRandomConcurrentReadWriteThreads(
         map, -1, 600, maxNumKeys, random);
   }
+
+  @Test
+  public void testClear() {
+    ArrayBasedLongToInternalIntFixedLengthBiMap arrayBasedLongToInternalIntFixedLengthBiMap =
+            new ArrayBasedLongToInternalIntFixedLengthBiMap((-6206),
+                    2154.072652232,
+                    1,
+                    1,
+                    new NullStatsReceiver());
+
+    arrayBasedLongToInternalIntFixedLengthBiMap.put(1L);
+
+    assertEquals(1, arrayBasedLongToInternalIntFixedLengthBiMap.getNumStoredKeys());
+    assertEquals(16, arrayBasedLongToInternalIntFixedLengthBiMap.getBackingArrayLength());
+
+    arrayBasedLongToInternalIntFixedLengthBiMap.clear();
+
+    assertEquals(0, arrayBasedLongToInternalIntFixedLengthBiMap.getNumStoredKeys());
+    assertEquals(16, arrayBasedLongToInternalIntFixedLengthBiMap.getBackingArrayLength());
+  }
+
+  @Test
+  public void testGetKeyWithNegative() {
+    NullStatsReceiver nullStatsReceiver = new NullStatsReceiver();
+    ArrayBasedLongToInternalIntFixedLengthBiMap arrayBasedLongToInternalIntFixedLengthBiMap =
+            new ArrayBasedLongToInternalIntFixedLengthBiMap((-1768), 0.0, 14, (-1768), nullStatsReceiver);
+
+    try {
+      arrayBasedLongToInternalIntFixedLengthBiMap.getKey((-1768));
+      fail("Expecting exception: IndexOutOfBoundsException");
+    } catch (IndexOutOfBoundsException e) {
+      assertEquals(ArrayBasedLongToInternalIntFixedLengthBiMap.class.getName(), e.getStackTrace()[0].getClassName());
+    }
+  }
+
+  @Test
+  public void testPutThrowsRuntimeException() {
+    NullStatsReceiver nullStatsReceiver = new NullStatsReceiver();
+    ArrayBasedLongToInternalIntFixedLengthBiMap arrayBasedLongToInternalIntFixedLengthBiMap =
+            new ArrayBasedLongToInternalIntFixedLengthBiMap(204, 0.0, 204, 204, nullStatsReceiver);
+
+    try {
+      arrayBasedLongToInternalIntFixedLengthBiMap.put(0L);
+      fail("Expecting exception: RuntimeException");
+    } catch (RuntimeException e) {
+      assertEquals(ArrayBasedLongToInternalIntFixedLengthBiMap.class.getName(), e.getStackTrace()[0].getClassName());
+    }
+  }
+
+  @Test
+  public void testFailsToCreateThrowsIllegalArgumentException() {
+    NullStatsReceiver nullStatsReceiver = new NullStatsReceiver();
+    ArrayBasedLongToInternalIntFixedLengthBiMap arrayBasedLongToInternalIntFixedLengthBiMap = null;
+
+    try {
+      arrayBasedLongToInternalIntFixedLengthBiMap =
+              new ArrayBasedLongToInternalIntFixedLengthBiMap(610, 610, 0, 610, nullStatsReceiver);
+      fail("Expecting exception: IllegalArgumentException");
+    } catch (IllegalArgumentException e) {
+      assertEquals(Preconditions.class.getName(), e.getStackTrace()[0].getClassName());
+    }
+  }
+
+  @Test
+  public void testGetKeyThrowsIndexOutOfBoundsException() {
+    ArrayBasedLongToInternalIntFixedLengthBiMap arrayBasedLongToInternalIntFixedLengthBiMap =
+            new ArrayBasedLongToInternalIntFixedLengthBiMap(0, 0, 22, 0L, new NullStatsReceiver());
+
+    try {
+      arrayBasedLongToInternalIntFixedLengthBiMap.getKey(722);
+      fail("Expecting exception: IndexOutOfBoundsException");
+    } catch (IndexOutOfBoundsException e) {
+      assertEquals(ArrayBasedLongToInternalIntFixedLengthBiMap.class.getName(), e.getStackTrace()[0].getClassName());
+    }
+  }
+
 }
