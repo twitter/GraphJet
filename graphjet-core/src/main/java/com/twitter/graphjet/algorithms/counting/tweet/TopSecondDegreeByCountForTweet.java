@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.twitter.graphjet.algorithms.NodeInfo;
-import com.twitter.graphjet.algorithms.RecentTweetFilter;
+import com.twitter.graphjet.algorithms.filters.RecentTweetFilter;
 import com.twitter.graphjet.algorithms.RecommendationInfo;
 import com.twitter.graphjet.algorithms.RecommendationType;
 import com.twitter.graphjet.algorithms.counting.TopSecondDegreeByCount;
@@ -58,7 +58,7 @@ public class TopSecondDegreeByCountForTweet extends
     super(leftIndexedBipartiteGraph, expectedNodesToHit, statsReceiver);
   }
 
-  protected long getEdgeTimeStampInMillis(
+  private long getEdgeTimeStampInMillis(
     long timeStampFromTweetId,
     byte edgeType,
     long edgeMetadata
@@ -105,6 +105,26 @@ public class TopSecondDegreeByCountForTweet extends
     );
   }
 
+  private int[][] collectNodeMetadata(EdgeIterator edgeIterator) {
+    int metadataSize = RecommendationType.METADATASIZE.getValue();
+    int[][] nodeMetadata = new int[metadataSize][];
+    for (int i = 0; i < metadataSize; i++) {
+      IntArrayIterator metadataIterator =
+          (IntArrayIterator) ((NodeMetadataMultiSegmentIterator)edgeIterator).getRightNodeMetadata((byte) i);
+
+      int numOfMetadata = metadataIterator.size();
+      if (numOfMetadata > 0 && numOfMetadata <= MAX_NUM_METADATA) {
+        int[] metadata = new int[numOfMetadata];
+        int j = 0;
+        while (metadataIterator.hasNext()) {
+          metadata[j++] = metadataIterator.nextInt();
+        }
+        nodeMetadata[i] = metadata;
+      }
+    }
+    return nodeMetadata;
+  }
+
   @Override
   protected void updateNodeInfo(
     long leftNode,
@@ -117,26 +137,7 @@ public class TopSecondDegreeByCountForTweet extends
 
     NodeInfo nodeInfo;
     if (!super.visitedRightNodes.containsKey(rightNode)) {
-      int metadataSize = RecommendationType.METADATASIZE.getValue();
-
-      int[][] nodeMetadata = new int[metadataSize][];
-
-      for (int i = 0; i < metadataSize; i++) {
-        IntArrayIterator metadataIterator =
-          (IntArrayIterator) ((NodeMetadataMultiSegmentIterator)edgeIterator).getRightNodeMetadata((byte) i);
-
-        int numOfMetadata = metadataIterator.size();
-
-        if (numOfMetadata > 0 && numOfMetadata <= MAX_NUM_METADATA) {
-          int[] metadata = new int[numOfMetadata];
-          int j = 0;
-          while (metadataIterator.hasNext()) {
-            metadata[j++] = metadataIterator.nextInt();
-          }
-          nodeMetadata[i] = metadata;
-        }
-      }
-
+      int[][] nodeMetadata = collectNodeMetadata(edgeIterator);
       nodeInfo = new NodeInfo(rightNode, nodeMetadata, 0.0, maxSocialProofTypeSize);
       super.visitedRightNodes.put(rightNode, nodeInfo);
     } else {

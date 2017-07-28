@@ -15,10 +15,11 @@
  */
 
 
-package com.twitter.graphjet.algorithms;
+package com.twitter.graphjet.algorithms.filters;
 
 import java.util.List;
 
+import com.twitter.graphjet.algorithms.RecommendationRequest;
 import com.twitter.graphjet.hashing.SmallArrayBasedLongToDoubleMap;
 
 /**

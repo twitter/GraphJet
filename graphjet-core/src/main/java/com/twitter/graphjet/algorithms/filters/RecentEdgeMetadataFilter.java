@@ -1,0 +1,52 @@
+package com.twitter.graphjet.algorithms.filters;
+
+import com.twitter.graphjet.algorithms.RecommendationRequest;
+import com.twitter.graphjet.hashing.SmallArrayBasedLongToDoubleMap;
+import com.twitter.graphjet.stats.StatsReceiver;
+
+/**
+ * This filter assumes the social proofs' edge metadata represent timestamps.
+ * Guarantees that the social proofs for a result node at at least older than a
+ * specified value, ex. at least 3 days old. If any social proof is younger, the node is filtered
+ */
+public class RecentEdgeMetadataFilter extends ResultFilter {
+  private final long youngestTimestampMillis;
+  private final byte socialProofType;
+
+  /**
+   * @param minTimeFromNowInMillis The miminum age of a social proof edge to not have it filtered
+   * @param socialProofType Only check social proof edges of this type
+   * @param statsReceiver
+   */
+  public RecentEdgeMetadataFilter(
+    long minTimeFromNowInMillis,
+    byte socialProofType,
+    StatsReceiver statsReceiver
+  ) {
+    super(statsReceiver);
+    this.youngestTimestampMillis = System.currentTimeMillis() - minTimeFromNowInMillis;
+    this.socialProofType = socialProofType;
+  }
+
+  @Override
+  public void resetFilter(RecommendationRequest request) { }
+
+  @Override
+  public boolean filterResult(long resultNode, SmallArrayBasedLongToDoubleMap[] socialProofs) {
+    SmallArrayBasedLongToDoubleMap socialProof = socialProofs[socialProofType];
+    if (socialProof == null) {
+      return false;
+    }
+
+    long[] allMetadata = socialProof.metadata();
+    int numMetadata = socialProof.size();
+
+    for (int i = 0; i < numMetadata; i++) {
+      long timestamp = allMetadata[i];
+      if (youngestTimestampMillis < timestamp) {
+        return true; // Too young, filter
+      }
+    }
+    return false;
+  }
+}

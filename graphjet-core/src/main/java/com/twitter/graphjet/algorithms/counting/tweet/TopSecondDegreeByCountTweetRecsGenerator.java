@@ -135,21 +135,20 @@ public final class TopSecondDegreeByCountTweetRecsGenerator {
 
   private static boolean isLessThanMinUserSocialProofSize(
     SmallArrayBasedLongToDoubleMap[] socialProofs,
-    byte[] validSocialProofs,
+    byte[] validSocialProofTypes,
     int minUserSocialProofSize) {
-    int length = validSocialProofs.length;
     long authorId = getAuthorId(socialProofs);
 
-    for (int i = 0; i < length; i++) {
-      if (socialProofs[validSocialProofs[i]] != null) {
+    for (byte validSocialProofType: validSocialProofTypes) {
+      if (socialProofs[validSocialProofType] != null) {
         int minUserSocialProofThreshold = minUserSocialProofSize;
         if (authorId != -1 &&
           // Skip tweet author social proof because its size can be only one
-          validSocialProofs[i] != RecommendationRequest.AUTHOR_SOCIAL_PROOF_TYPE &&
-          socialProofs[validSocialProofs[i]].contains(authorId)) {
+          validSocialProofType != RecommendationRequest.AUTHOR_SOCIAL_PROOF_TYPE &&
+          socialProofs[validSocialProofType].contains(authorId)) {
           minUserSocialProofThreshold += 1;
         }
-        if (socialProofs[validSocialProofs[i]].uniqueKeysSize() >= minUserSocialProofThreshold) {
+        if (socialProofs[validSocialProofType].uniqueKeysSize() >= minUserSocialProofThreshold) {
           return false;
         }
       }

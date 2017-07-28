@@ -19,7 +19,7 @@ package com.twitter.graphjet.algorithms.counting.moment;
 import java.util.Map;
 
 import com.twitter.graphjet.algorithms.RecommendationType;
-import com.twitter.graphjet.algorithms.ResultFilterChain;
+import com.twitter.graphjet.algorithms.filters.ResultFilterChain;
 import com.twitter.graphjet.algorithms.counting.TopSecondDegreeByCountRequest;
 
 import it.unimi.dsi.fastutil.longs.Long2DoubleMap;

@@ -15,41 +15,38 @@
  */
 
 
-package com.twitter.graphjet.algorithms;
+package com.twitter.graphjet.algorithms.filters;
 
+import com.twitter.graphjet.algorithms.RecommendationRequest;
+import com.twitter.graphjet.bipartite.api.LeftIndexedBipartiteGraph;
 import com.twitter.graphjet.hashing.SmallArrayBasedLongToDoubleMap;
 import com.twitter.graphjet.stats.StatsReceiver;
 
-public class SocialProofTypesFilter extends ResultFilter {
-  private byte[] socialProofTypes;
+/**
+ * This filter removes the direct interactions of the query node based on the bipartite graph.
+ */
+public class DirectInteractionsFilter extends ResultFilter {
+  private final DirectInteractions directInteractions;
 
-  /**
-   * construct valid social proof types filter
-   */
-  public SocialProofTypesFilter(StatsReceiver statsReceiver) {
+  public DirectInteractionsFilter(
+      LeftIndexedBipartiteGraph bipartiteGraph,
+      StatsReceiver statsReceiver) {
     super(statsReceiver);
+    this.directInteractions = new DirectInteractions(bipartiteGraph);
+  }
+
+  @Override
+  public String getStatsScope() {
+    return this.getClass().getSimpleName();
   }
 
   @Override
   public void resetFilter(RecommendationRequest request) {
-    socialProofTypes = request.getSocialProofTypes();
+    directInteractions.addDirectInteractions(request.getQueryNode());
   }
 
-  /**
-   * discard results without valid social proof types specified by clients
-   *
-   * @param resultNode is the result node to be checked
-   * @param socialProofs is the socialProofs of different types associated with the node
-   * @return true if none of the specified socialProofTypes are present in the socialProofs map
-   */
   @Override
   public boolean filterResult(long resultNode, SmallArrayBasedLongToDoubleMap[] socialProofs) {
-    int size = socialProofTypes.length;
-    for (int i = 0; i < size; i++) {
-      if (socialProofs[socialProofTypes[i]] != null) {
-        return false;
-      }
-    }
-    return true;
+    return directInteractions.isDirectInteraction(resultNode);
   }
 }
