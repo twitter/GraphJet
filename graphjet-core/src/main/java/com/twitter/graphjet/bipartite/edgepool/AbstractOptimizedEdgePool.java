@@ -63,7 +63,7 @@ public abstract class AbstractOptimizedEdgePool implements EdgePool {
   }
 
   /**
-   * OptimizedEdgePool
+   * AbstractOptimizedEdgePool
    *
    * @param nodeDegrees node degree map
    * @param maxNumEdges the max number of edges will be added in the pool

@@ -24,6 +24,7 @@ import com.twitter.graphjet.stats.StatsReceiver;
  * An {@link AbstractPowerLawDegreeEdgePool} which supports edge metadata.
  */
 public class WithEdgeMetadataPowerLawDegreeEdgePool extends AbstractPowerLawDegreeEdgePool {
+
   /**
    * Reserves the needed memory for a {@link WithEdgeMetadataPowerLawDegreeEdgePool}, and
    * initializes most of the objects that would be needed for this graph. Note that memory would be

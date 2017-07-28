@@ -99,6 +99,7 @@ import it.unimi.dsi.fastutil.ints.IntIterator;
  * with each other and safe to access by the reader.
  */
 public abstract class AbstractPowerLawDegreeEdgePool implements EdgePool {
+
   /**
    * This class encapsulates ALL the state that will be accessed by a reader (refer to the X, Y, Z
    * comment above). The final members are used to guarantee visibility to other threads without
@@ -176,9 +177,8 @@ public abstract class AbstractPowerLawDegreeEdgePool implements EdgePool {
   protected final Counter numPoolsCounter;
 
   /**
-   * Reserves the needed memory for a {@link PowerLawDegreeEdgePool}, and initializes most of the
-   * objects that would be needed for this graph. Note that memory would be allocated as needed,
-   * and the amount of memory needed can change if the input parameters are violated.
+   * Common variable initialization for an {@link AbstractPowerLawDegreeEdgePool}, the bulk of the
+   * memory is allocated in the constructors of its child classes.
    *
    * @param expectedNumNodes    is the expected number of nodes that will be added into this pool
    * @param expectedMaxDegree   is the expected maximum degree for a node in the pool

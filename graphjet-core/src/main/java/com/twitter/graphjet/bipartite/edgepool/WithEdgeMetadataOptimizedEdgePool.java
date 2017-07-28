@@ -34,6 +34,7 @@ import com.twitter.graphjet.stats.StatsReceiver;
  * - O(4*3*n) bytes for nodes
  */
 public class WithEdgeMetadataOptimizedEdgePool extends AbstractOptimizedEdgePool {
+
   public static final class WithEdgeMetadataReaderAccessibleInfo
     implements EdgePoolReaderAccessibleInfo {
     public final BigIntArray edges;
