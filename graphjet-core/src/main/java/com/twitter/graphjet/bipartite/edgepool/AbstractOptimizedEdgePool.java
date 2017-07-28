@@ -116,7 +116,7 @@ public abstract class AbstractOptimizedEdgePool implements EdgePool {
    *
    * @param position is the position index for the node
    * @param edgeNumber is the required edge number
-   * @return the requested edge metdata
+   * @return the requested edge metadata
    */
   protected abstract long getEdgeMetadata(int position, int edgeNumber);
 

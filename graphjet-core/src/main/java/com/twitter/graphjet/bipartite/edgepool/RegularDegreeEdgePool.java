@@ -77,6 +77,8 @@ public class RegularDegreeEdgePool extends AbstractRegularDegreeEdgePool {
     }
   }
 
+  private static final long[] EMPTY_METADATA_SHARD = new long[4];
+
   /**
    * Reserves the needed memory for a {@link RegularDegreeEdgePool}, and initializes most of the
    * objects that would be needed for this graph. Note that actual memory would be allocated as
@@ -143,11 +145,14 @@ public class RegularDegreeEdgePool extends AbstractRegularDegreeEdgePool {
 
   @Override
   protected long getNumberedEdgeMetadata(int position, int edgeNumber) {
+    // Callers will invoke this function for edge metadata, and all edge metadata is set to 0.
     return 0;
   }
 
   @Override
   public long[] getMetadataShard(int node) {
-    return null;
+    // Callers will invoke this function to get metadata shard, and they will discard the content if
+    // it is from RegularDegreeEdgePool.
+    return EMPTY_METADATA_SHARD;
   }
 }

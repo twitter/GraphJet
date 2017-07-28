@@ -85,6 +85,7 @@ import it.unimi.dsi.fastutil.ints.IntIterator;
  * with each other and safe to access by the reader.
  */
 abstract public class AbstractRegularDegreeEdgePool implements EdgePool {
+
   // This is is the only reader-accessible data
   protected EdgePoolReaderAccessibleInfo readerAccessibleInfo;
 
