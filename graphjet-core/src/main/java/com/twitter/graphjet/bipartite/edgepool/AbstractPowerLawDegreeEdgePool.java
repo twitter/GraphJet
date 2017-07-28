@@ -196,7 +196,7 @@ public abstract class AbstractPowerLawDegreeEdgePool implements EdgePool {
       "The power-law exponent must be greater than 1.0!");
     this.expectedNumNodes = expectedNumNodes;
     this.powerLawExponent = powerLawExponent;
-    this.statsReceiver = statsReceiver.scope("PowerLawDegreeEdgePool");
+    this.statsReceiver = statsReceiver.scope(this.getClass().getSimpleName());
     this.numEdgesCounter = this.statsReceiver.counter("numEdges");
     this.numNodesCounter = this.statsReceiver.counter("numNodes");
     this.numPoolsCounter = this.statsReceiver.counter("numPools");
