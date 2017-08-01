@@ -110,7 +110,6 @@ public class RegularDegreeEdgePool extends AbstractRegularDegreeEdgePool {
     );
   }
 
-
   @Override
   public void addEdge(int nodeA, int nodeB) {
     long nodeAInfo;
