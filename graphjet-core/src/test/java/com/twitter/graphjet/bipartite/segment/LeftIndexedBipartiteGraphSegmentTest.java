@@ -10,13 +10,12 @@ import static org.junit.Assert.fail;
 /**
  * Unit tests for class {@link LeftIndexedBipartiteGraphSegment}.
  *
- * @date 2017-07-28
  * @see LeftIndexedBipartiteGraphSegment
  **/
 public class LeftIndexedBipartiteGraphSegmentTest {
 
   @Test
-  public void testOne() {
+  public void testCreateThrowsIllegalArgumentException() {
     IdentityEdgeTypeMask identityEdgeTypeMask = new IdentityEdgeTypeMask();
     NullStatsReceiver statsReceiver = new NullStatsReceiver();
     LeftIndexedPowerLawBipartiteGraphSegment leftIndexedPowerLawBipartiteGraphSegment = null;
@@ -36,7 +35,7 @@ public class LeftIndexedBipartiteGraphSegmentTest {
   }
 
   @Test
-  public void testTwo() {
+  public void testInitializeRightInternalIdToLongIterator() {
     MockEdgeTypeMask mockEdgeTypeMask = new MockEdgeTypeMask((byte) (-64));
     NullStatsReceiver statsReceiver = new NullStatsReceiver();
     LeftIndexedPowerLawBipartiteGraphSegment leftIndexedPowerLawBipartiteGraphSegment =

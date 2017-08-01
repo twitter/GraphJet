@@ -7,7 +7,6 @@ import static org.junit.Assert.*;
 /**
  * Unit tests for class {@link InverseDegreeUpdateNormalization}.
  *
- * @date 2017-07-28
  * @see InverseDegreeUpdateNormalization
  **/
 public class InverseDegreeUpdateNormalizationTest {
