@@ -106,24 +106,24 @@ public class TopSecondDegreeByCountForTweet extends
   }
 
 
-   private int[][] collectNodeMetadata(EdgeIterator edgeIterator) {
-     int metadataSize = RecommendationType.METADATASIZE.getValue();
-     int[][] nodeMetadata = new int[metadataSize][];
-     for (int i = 0; i < metadataSize; i++) {
-       IntArrayIterator metadataIterator =
-           (IntArrayIterator) ((NodeMetadataMultiSegmentIterator)edgeIterator).getRightNodeMetadata((byte) i);
-       int numOfMetadata = metadataIterator.size();
-       if (numOfMetadata > 0 && numOfMetadata <= MAX_NUM_METADATA) {
-         int[] metadata = new int[numOfMetadata];
-         int j = 0;
-         while (metadataIterator.hasNext()) {
-           metadata[j++] = metadataIterator.nextInt();
-         }
-         nodeMetadata[i] = metadata;
-       }
-     }
-    return nodeMetadata;
+  private int[][] collectNodeMetadata(EdgeIterator edgeIterator) {
+    int metadataSize = RecommendationType.METADATASIZE.getValue();
+    int[][] nodeMetadata = new int[metadataSize][];
+    for (int i = 0; i < metadataSize; i++) {
+      IntArrayIterator metadataIterator =
+          (IntArrayIterator) ((NodeMetadataMultiSegmentIterator)edgeIterator).getRightNodeMetadata((byte) i);
+      int numOfMetadata = metadataIterator.size();
+      if (numOfMetadata > 0 && numOfMetadata <= MAX_NUM_METADATA) {
+        int[] metadata = new int[numOfMetadata];
+        int j = 0;
+        while (metadataIterator.hasNext()) {
+          metadata[j++] = metadataIterator.nextInt();
+        }
+        nodeMetadata[i] = metadata;
+      }
     }
+    return nodeMetadata;
+  }
 
   @Override
   protected void updateNodeInfo(
