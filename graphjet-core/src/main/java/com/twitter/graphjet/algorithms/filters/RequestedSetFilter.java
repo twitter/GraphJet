@@ -15,25 +15,25 @@
  */
 
 
-package com.twitter.graphjet.algorithms;
+package com.twitter.graphjet.algorithms.filters;
 
-import com.twitter.graphjet.bipartite.api.BipartiteGraph;
+import com.twitter.graphjet.algorithms.RecommendationRequest;
+import com.twitter.graphjet.algorithms.TweetIDMask;
 import com.twitter.graphjet.hashing.SmallArrayBasedLongToDoubleMap;
 import com.twitter.graphjet.stats.StatsReceiver;
 
-/**
- * Filters a right hand side node if it has less than a minimum number of interactions.
- */
-public class MinNumInteractionsFilter extends ResultFilter {
-  private final BipartiteGraph bipartiteGraph;
-  private final int minNumInteractions;
+import it.unimi.dsi.fastutil.longs.LongSet;
 
-  public MinNumInteractionsFilter(BipartiteGraph bipartiteGraph,
-                                  int minNumInteractions,
-                                  StatsReceiver statsReceiver) {
+/**
+ * This filter applies a simple set-based filtering: given a set, filter the result if it's in the
+ * set.
+ */
+public class RequestedSetFilter extends ResultFilter {
+  private LongSet filterSet;
+  private static final TweetIDMask TWEET_ID_MASK = new TweetIDMask();
+
+  public RequestedSetFilter(StatsReceiver statsReceiver) {
     super(statsReceiver);
-    this.bipartiteGraph = bipartiteGraph;
-    this.minNumInteractions = minNumInteractions;
   }
 
   @Override
@@ -43,10 +43,11 @@ public class MinNumInteractionsFilter extends ResultFilter {
 
   @Override
   public void resetFilter(RecommendationRequest request) {
+    filterSet = request.getToBeFiltered();
   }
 
   @Override
   public boolean filterResult(long resultNode, SmallArrayBasedLongToDoubleMap[] socialProofs) {
-    return bipartiteGraph.getRightNodeDegree(resultNode) < minNumInteractions;
+    return filterSet != null && filterSet.contains(TWEET_ID_MASK.restore(resultNode));
   }
 }

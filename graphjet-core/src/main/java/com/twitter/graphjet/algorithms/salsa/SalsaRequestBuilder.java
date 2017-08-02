@@ -19,7 +19,7 @@ package com.twitter.graphjet.algorithms.salsa;
 
 import com.google.common.base.Preconditions;
 
-import com.twitter.graphjet.algorithms.ResultFilterChain;
+import com.twitter.graphjet.algorithms.filters.ResultFilterChain;
 
 import it.unimi.dsi.fastutil.longs.Long2DoubleMap;
 import it.unimi.dsi.fastutil.longs.Long2DoubleOpenHashMap;

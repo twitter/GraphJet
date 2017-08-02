@@ -21,7 +21,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-import com.twitter.graphjet.algorithms.SocialProofTypesFilter;
+import com.twitter.graphjet.algorithms.filters.SocialProofTypesFilter;
 import com.twitter.graphjet.algorithms.salsa.SalsaRequest;
 import com.twitter.graphjet.algorithms.salsa.SalsaRequestBuilder;
 import com.twitter.graphjet.hashing.SmallArrayBasedLongToDoubleMap;

@@ -20,9 +20,9 @@ import java.util.ArrayList;
 
 import org.junit.Test;
 
-import com.twitter.graphjet.algorithms.ANDFilters;
+import com.twitter.graphjet.algorithms.filters.ANDFilters;
 import com.twitter.graphjet.algorithms.RecommendationRequest;
-import com.twitter.graphjet.algorithms.ResultFilter;
+import com.twitter.graphjet.algorithms.filters.ResultFilter;
 import com.twitter.graphjet.hashing.SmallArrayBasedLongToDoubleMap;
 import com.twitter.graphjet.stats.NullStatsReceiver;
 

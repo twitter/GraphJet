@@ -20,7 +20,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-import com.twitter.graphjet.algorithms.ExactUserSocialProofSizeFilter;
+import com.twitter.graphjet.algorithms.filters.ExactUserSocialProofSizeFilter;
 import com.twitter.graphjet.hashing.SmallArrayBasedLongToDoubleMap;
 import com.twitter.graphjet.stats.NullStatsReceiver;
 

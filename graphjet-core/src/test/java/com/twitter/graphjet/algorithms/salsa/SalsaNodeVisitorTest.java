@@ -26,10 +26,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import com.twitter.graphjet.algorithms.BipartiteGraphTestHelper;
-import com.twitter.graphjet.algorithms.DirectInteractionsFilter;
+import com.twitter.graphjet.algorithms.filters.DirectInteractionsFilter;
 import com.twitter.graphjet.algorithms.NodeInfo;
-import com.twitter.graphjet.algorithms.RequestedSetFilter;
-import com.twitter.graphjet.algorithms.ResultFilterChain;
+import com.twitter.graphjet.algorithms.filters.RequestedSetFilter;
+import com.twitter.graphjet.algorithms.filters.ResultFilterChain;
 import com.twitter.graphjet.algorithms.salsa.fullgraph.SalsaInternalState;
 import com.twitter.graphjet.bipartite.api.BipartiteGraph;
 import com.twitter.graphjet.stats.NullStatsReceiver;

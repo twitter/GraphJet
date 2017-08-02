@@ -15,24 +15,26 @@
  */
 
 
-package com.twitter.graphjet.algorithms;
+package com.twitter.graphjet.algorithms.filters;
 
-import com.twitter.graphjet.algorithms.filters.DirectInteractions;
-import com.twitter.graphjet.bipartite.api.LeftIndexedBipartiteGraph;
+import com.twitter.graphjet.algorithms.RecommendationRequest;
+import com.twitter.graphjet.bipartite.api.BipartiteGraph;
 import com.twitter.graphjet.hashing.SmallArrayBasedLongToDoubleMap;
 import com.twitter.graphjet.stats.StatsReceiver;
 
 /**
- * This filter removes the direct interactions of the query node based on the bipartite graph.
+ * Filters a right hand side node if it has less than a minimum number of interactions.
  */
-public class DirectInteractionsFilter extends ResultFilter {
-  private final DirectInteractions directInteractions;
+public class MinNumInteractionsFilter extends ResultFilter {
+  private final BipartiteGraph bipartiteGraph;
+  private final int minNumInteractions;
 
-  public DirectInteractionsFilter(
-      LeftIndexedBipartiteGraph bipartiteGraph,
-      StatsReceiver statsReceiver) {
+  public MinNumInteractionsFilter(BipartiteGraph bipartiteGraph,
+                                  int minNumInteractions,
+                                  StatsReceiver statsReceiver) {
     super(statsReceiver);
-    this.directInteractions = new DirectInteractions(bipartiteGraph);
+    this.bipartiteGraph = bipartiteGraph;
+    this.minNumInteractions = minNumInteractions;
   }
 
   @Override
@@ -42,11 +44,10 @@ public class DirectInteractionsFilter extends ResultFilter {
 
   @Override
   public void resetFilter(RecommendationRequest request) {
-    directInteractions.addDirectInteractions(request.getQueryNode());
   }
 
   @Override
   public boolean filterResult(long resultNode, SmallArrayBasedLongToDoubleMap[] socialProofs) {
-    return directInteractions.isDirectInteraction(resultNode);
+    return bipartiteGraph.getRightNodeDegree(resultNode) < minNumInteractions;
   }
 }
