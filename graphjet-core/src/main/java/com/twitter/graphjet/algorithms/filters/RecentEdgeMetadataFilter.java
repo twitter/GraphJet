@@ -26,26 +26,30 @@ import com.twitter.graphjet.stats.StatsReceiver;
  * specified value, ex. at least 3 days old. If any social proof is younger, the node is filtered
  */
 public class RecentEdgeMetadataFilter extends ResultFilter {
-  private final long youngestTimestampMillis;
   private final byte socialProofType;
+  private final long rejectWithInLastXMillis;
+  private long cutoff;
 
   /**
-   * @param minTimeFromNowInMillis The minimum age of a social proof edge to not have it filtered
+   * @param rejectWithInLastXMillis The minimum age of a social proof edge to not have it filtered
    * @param socialProofType Only check social proof edges of this type
    * @param statsReceiver
    */
   public RecentEdgeMetadataFilter(
-    long minTimeFromNowInMillis,
+    long rejectWithInLastXMillis,
     byte socialProofType,
     StatsReceiver statsReceiver
   ) {
     super(statsReceiver);
-    this.youngestTimestampMillis = System.currentTimeMillis() - minTimeFromNowInMillis;
+    this.rejectWithInLastXMillis = rejectWithInLastXMillis;
+    this.cutoff = System.currentTimeMillis() - rejectWithInLastXMillis;
     this.socialProofType = socialProofType;
   }
 
   @Override
-  public void resetFilter(RecommendationRequest request) { }
+  public void resetFilter(RecommendationRequest request) {
+    cutoff = System.currentTimeMillis() - rejectWithInLastXMillis;
+  }
 
   @Override
   public boolean filterResult(long resultNode, SmallArrayBasedLongToDoubleMap[] socialProofs) {
@@ -56,7 +60,7 @@ public class RecentEdgeMetadataFilter extends ResultFilter {
 
     long[] allMetadata = socialProof.metadata();
     for (long metadataTimestamp: allMetadata) {
-      if (youngestTimestampMillis < metadataTimestamp) {
+      if (cutoff < metadataTimestamp) {
         return true; // Too young, filter
       }
     }
