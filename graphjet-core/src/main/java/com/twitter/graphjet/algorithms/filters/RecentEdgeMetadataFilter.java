@@ -55,11 +55,8 @@ public class RecentEdgeMetadataFilter extends ResultFilter {
     }
 
     long[] allMetadata = socialProof.metadata();
-    int numMetadata = socialProof.size();
-
-    for (int i = 0; i < numMetadata; i++) {
-      long timestamp = allMetadata[i];
-      if (youngestTimestampMillis < timestamp) {
+    for (long metadataTimestamp: allMetadata) {
+      if (youngestTimestampMillis < metadataTimestamp) {
         return true; // Too young, filter
       }
     }
