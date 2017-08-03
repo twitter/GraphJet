@@ -28,11 +28,11 @@ import org.junit.Test;
 import static org.junit.Assert.assertArrayEquals;
 
 import com.twitter.graphjet.algorithms.RecommendationInfo;
-import com.twitter.graphjet.algorithms.RequestedSetFilter;
-import com.twitter.graphjet.algorithms.ResultFilter;
-import com.twitter.graphjet.algorithms.ResultFilterChain;
+import com.twitter.graphjet.algorithms.filters.RequestedSetFilter;
+import com.twitter.graphjet.algorithms.filters.ResultFilter;
+import com.twitter.graphjet.algorithms.filters.ResultFilterChain;
 import com.twitter.graphjet.algorithms.StaticBipartiteGraph;
-import com.twitter.graphjet.algorithms.TweetCardFilter;
+import com.twitter.graphjet.algorithms.filters.TweetCardFilter;
 import com.twitter.graphjet.algorithms.TweetIDMask;
 import com.twitter.graphjet.algorithms.counting.tweet.TweetRecommendationInfo;
 import com.twitter.graphjet.algorithms.salsa.fullgraph.Salsa;

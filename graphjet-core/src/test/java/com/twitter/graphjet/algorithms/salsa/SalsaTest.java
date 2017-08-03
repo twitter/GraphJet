@@ -32,11 +32,11 @@ import static org.junit.Assert.assertEquals;
 
 import com.twitter.graphjet.algorithms.BipartiteGraphTestHelper;
 import com.twitter.graphjet.algorithms.ConnectingUsersWithMetadata;
-import com.twitter.graphjet.algorithms.DirectInteractionsFilter;
+import com.twitter.graphjet.algorithms.filters.DirectInteractionsFilter;
 import com.twitter.graphjet.algorithms.RecommendationInfo;
-import com.twitter.graphjet.algorithms.RequestedSetFilter;
-import com.twitter.graphjet.algorithms.ResultFilter;
-import com.twitter.graphjet.algorithms.ResultFilterChain;
+import com.twitter.graphjet.algorithms.filters.RequestedSetFilter;
+import com.twitter.graphjet.algorithms.filters.ResultFilter;
+import com.twitter.graphjet.algorithms.filters.ResultFilterChain;
 import com.twitter.graphjet.algorithms.counting.tweet.TweetRecommendationInfo;
 import com.twitter.graphjet.algorithms.salsa.fullgraph.Salsa;
 import com.twitter.graphjet.algorithms.salsa.subgraph.SubgraphSalsa;

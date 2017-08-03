@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package com.twitter.graphjet.algorithms;
+package com.twitter.graphjet.algorithms.filters;
 
+import com.twitter.graphjet.algorithms.RecommendationRequest;
 import com.twitter.graphjet.hashing.SmallArrayBasedLongToDoubleMap;
 import com.twitter.graphjet.stats.StatsReceiver;
 

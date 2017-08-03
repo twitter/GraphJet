@@ -1,5 +1,5 @@
 /**
- * Copyright 2017 Twitter. All rights reserved.
+ * Copyright 2016 Twitter. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,42 +14,40 @@
  * limitations under the License.
  */
 
-package com.twitter.graphjet.algorithms;
 
-import java.util.List;
+package com.twitter.graphjet.algorithms.filters;
 
+import com.twitter.graphjet.algorithms.RecommendationRequest;
 import com.twitter.graphjet.hashing.SmallArrayBasedLongToDoubleMap;
 import com.twitter.graphjet.stats.StatsReceiver;
 
-/**
- * This filter applies logical AND operation to all the filters in this class.
- * It will return true if only if all filters return true.
- * For example, given 3 filters, List[A, B, C], ANDFilters will return the result of (A && B && C).
- */
-public class ANDFilters extends ResultFilter {
-  private final List<ResultFilter> resultFilterList;
+public class SocialProofTypesFilter extends ResultFilter {
+  private byte[] socialProofTypes;
 
-  public ANDFilters(List<ResultFilter> resultFilterList, StatsReceiver statsReceiver) {
+  /**
+   * construct valid social proof types filter
+   */
+  public SocialProofTypesFilter(StatsReceiver statsReceiver) {
     super(statsReceiver);
-    this.resultFilterList = resultFilterList;
   }
 
   @Override
   public void resetFilter(RecommendationRequest request) {
-    for (ResultFilter filter: resultFilterList) {
-      filter.resetFilter(request);
-    }
+    socialProofTypes = request.getSocialProofTypes();
   }
 
+  /**
+   * discard results without valid social proof types specified by clients
+   *
+   * @param resultNode is the result node to be checked
+   * @param socialProofs is the socialProofs of different types associated with the node
+   * @return true if none of the specified socialProofTypes are present in the socialProofs map
+   */
   @Override
   public boolean filterResult(long resultNode, SmallArrayBasedLongToDoubleMap[] socialProofs) {
-    if (resultFilterList.size() == 0) {
-      return false;
-    }
-
-    for (ResultFilter filter: resultFilterList) {
-      if (!filter.filterResult(resultNode, socialProofs)) {
-        // only filter if all filters agree to filter
+    int size = socialProofTypes.length;
+    for (int i = 0; i < size; i++) {
+      if (socialProofs[socialProofTypes[i]] != null) {
         return false;
       }
     }

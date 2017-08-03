@@ -21,7 +21,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 
 import com.twitter.graphjet.algorithms.RecommendationRequest;
-import com.twitter.graphjet.algorithms.TweetAuthorFilter;
+import com.twitter.graphjet.algorithms.filters.TweetAuthorFilter;
 import com.twitter.graphjet.bipartite.LeftIndexedMultiSegmentBipartiteGraph;
 import com.twitter.graphjet.bipartite.NodeMetadataLeftIndexedMultiSegmentBipartiteGraph;
 import com.twitter.graphjet.bipartite.NodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraph;
