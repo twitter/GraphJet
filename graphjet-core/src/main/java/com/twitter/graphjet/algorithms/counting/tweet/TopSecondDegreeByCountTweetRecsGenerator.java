@@ -137,6 +137,7 @@ public final class TopSecondDegreeByCountTweetRecsGenerator {
     SmallArrayBasedLongToDoubleMap[] socialProofs,
     byte[] validSocialProofTypes,
     int minUserSocialProofSize) {
+
     long authorId = getAuthorId(socialProofs);
 
     for (byte validSocialProofType: validSocialProofTypes) {
@@ -144,7 +145,7 @@ public final class TopSecondDegreeByCountTweetRecsGenerator {
         int minUserSocialProofThreshold = minUserSocialProofSize;
         if (authorId != -1 &&
           // Skip tweet author social proof because its size can be only one
-          validSocialProofType != RecommendationRequest.AUTHOR_SOCIAL_PROOF_TYPE &&
+            validSocialProofType != RecommendationRequest.AUTHOR_SOCIAL_PROOF_TYPE &&
           socialProofs[validSocialProofType].contains(authorId)) {
           minUserSocialProofThreshold += 1;
         }

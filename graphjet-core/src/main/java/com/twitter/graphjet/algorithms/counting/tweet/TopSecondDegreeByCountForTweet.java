@@ -111,7 +111,6 @@ public class TopSecondDegreeByCountForTweet extends
     for (int i = 0; i < metadataSize; i++) {
       IntArrayIterator metadataIterator =
           (IntArrayIterator) ((NodeMetadataMultiSegmentIterator)edgeIterator).getRightNodeMetadata((byte) i);
-
       int numOfMetadata = metadataIterator.size();
       if (numOfMetadata > 0 && numOfMetadata <= MAX_NUM_METADATA) {
         int[] metadata = new int[numOfMetadata];
