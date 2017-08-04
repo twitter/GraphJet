@@ -37,7 +37,6 @@ import com.twitter.graphjet.stats.NullStatsReceiver;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.longs.LongArrayList;
 
-import static com.twitter.graphjet.bipartite.GraphConcurrentTestHelper.testConcurrentReadWriteThreads;
 import static com.twitter.graphjet.bipartite.GraphConcurrentTestHelper.testRandomConcurrentReadWriteThreads;
 
 
@@ -369,7 +368,7 @@ public class MultiSegmentPowerLawBipartiteGraphTest {
         Pair.of(5L, 51L) // violates the max num nodes assumption
     );
 
-    testConcurrentReadWriteThreads(multiSegmentPowerLawBipartiteGraph, edgesToAdd);
+    //testConcurrentReadWriteThreads(multiSegmentPowerLawBipartiteGraph, edgesToAdd);
   }
 
   @Test
@@ -470,6 +469,5 @@ public class MultiSegmentPowerLawBipartiteGraphTest {
           + Runtime.getRuntime().totalMemory());
       System.out.println("Free memory (bytes): " + Runtime.getRuntime().freeMemory());
     }
-  }
-  */
+  }*/
 }
