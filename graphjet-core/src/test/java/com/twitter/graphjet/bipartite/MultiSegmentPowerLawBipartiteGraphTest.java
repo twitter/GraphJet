@@ -410,6 +410,7 @@ public class MultiSegmentPowerLawBipartiteGraphTest {
    * and then plot the data to see a oscillatory pattern that indicates memory reclaiming working
    * as expected.
    */
+  /*
   @Test
   public void testMemoryRecycling() throws Exception {
     int maxNumSegments = 10;
@@ -470,4 +471,5 @@ public class MultiSegmentPowerLawBipartiteGraphTest {
       System.out.println("Free memory (bytes): " + Runtime.getRuntime().freeMemory());
     }
   }
+  */
 }
