@@ -83,7 +83,7 @@ public class LeftIndexedPowerLawMultiSegmentBipartiteGraph
 
   @Override
   ReusableNodeLongIterator initializeLeftNodeEdgesLongIterator() {
-    return new ChronologicalMultiSegmentIterator<LeftIndexedBipartiteGraphSegment>(
+    return new ReverseChronologicalMultiSegmentIterator<LeftIndexedBipartiteGraphSegment>(
         this,
         new LeftSegmentEdgeAccessor<LeftIndexedBipartiteGraphSegment>(
             getReaderAccessibleInfo(),

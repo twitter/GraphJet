@@ -38,9 +38,8 @@ public interface DynamicDirectedGraph {
    * @param srcNode      the source node
    * @param destNode     the destination node
    * @param edgeType     the edge type
-   * @param edgeMetadata the edge metadata
    */
-  void addEdge(long srcNode, long destNode, byte edgeType, long edgeMetadata);
+  void addEdge(long srcNode, long destNode, byte edgeType);
 
   /**
    * Removes an edge from this graph. This is assumed to be an O(1) operation.

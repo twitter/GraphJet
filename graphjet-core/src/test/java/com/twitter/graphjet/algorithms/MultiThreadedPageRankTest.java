@@ -302,7 +302,7 @@ public class MultiThreadedPageRankTest {
             new IdentityEdgeTypeMask(), new NullStatsReceiver());
 
     for (int i=0; i<LES_MIS_GRAPH.length; i++) {
-      graph.addEdge(LES_MIS_GRAPH[i][0], LES_MIS_GRAPH[i][1], (byte) 0, 0L);
+      graph.addEdge(LES_MIS_GRAPH[i][0], LES_MIS_GRAPH[i][1], (byte) 0);
     }
 
     // Spot check the graph to make sure it's been loaded correctly.

@@ -20,9 +20,10 @@ package com.twitter.graphjet.bipartite.segment;
 import com.twitter.graphjet.bipartite.api.EdgeTypeMask;
 import com.twitter.graphjet.bipartite.api.ReusableNodeIntIterator;
 import com.twitter.graphjet.bipartite.api.ReusableNodeRandomIntIterator;
+import com.twitter.graphjet.bipartite.edgepool.AbstractPowerLawDegreeEdgePool;
 import com.twitter.graphjet.bipartite.edgepool.PowerLawDegreeEdgeIterator;
-import com.twitter.graphjet.bipartite.edgepool.PowerLawDegreeEdgePool;
 import com.twitter.graphjet.bipartite.edgepool.PowerLawDegreeEdgeRandomIterator;
+import com.twitter.graphjet.bipartite.edgepool.WithEdgeMetadataPowerLawDegreeEdgePool;
 import com.twitter.graphjet.stats.StatsReceiver;
 
 /**
@@ -71,7 +72,7 @@ public class NodeMetadataLeftIndexedPowerLawBipartiteGraphSegment
         expectedNumLeftNodes,
         expectedNumRightNodes,
         numRightNodeMetadataTypes,
-        new PowerLawDegreeEdgePool(
+        new WithEdgeMetadataPowerLawDegreeEdgePool(
           expectedNumLeftNodes,
           expectedMaxLeftDegree,
           leftPowerLawExponent,
@@ -82,11 +83,15 @@ public class NodeMetadataLeftIndexedPowerLawBipartiteGraphSegment
   }
 
   public ReusableNodeIntIterator initializeLeftNodeEdgesIntIterator() {
-    return new PowerLawDegreeEdgeIterator((PowerLawDegreeEdgePool) getLeftNodeEdgePool());
+    return new PowerLawDegreeEdgeIterator(
+      (AbstractPowerLawDegreeEdgePool) getLeftNodeEdgePool()
+    );
   }
 
   public ReusableNodeRandomIntIterator initializeLeftNodeEdgesRandomIntIterator() {
-    return new PowerLawDegreeEdgeRandomIterator((PowerLawDegreeEdgePool) getLeftNodeEdgePool());
+    return new PowerLawDegreeEdgeRandomIterator(
+      (AbstractPowerLawDegreeEdgePool) getLeftNodeEdgePool()
+    );
   }
 
   /**

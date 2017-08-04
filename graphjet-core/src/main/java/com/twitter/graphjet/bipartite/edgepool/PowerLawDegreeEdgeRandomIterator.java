@@ -40,9 +40,9 @@ public class PowerLawDegreeEdgeRandomIterator extends PowerLawDegreeEdgeIterator
    * Creates an iterator that can be reused. Note that the client needs to call the resetForNode
    * method before using the iterator.
    *
-   * @param powerLawDegreeEdgePool  is the underlying {@link PowerLawDegreeEdgePool}
+   * @param powerLawDegreeEdgePool  is the underlying {@link AbstractPowerLawDegreeEdgePool}
    */
-  public PowerLawDegreeEdgeRandomIterator(PowerLawDegreeEdgePool powerLawDegreeEdgePool) {
+  public PowerLawDegreeEdgeRandomIterator(AbstractPowerLawDegreeEdgePool powerLawDegreeEdgePool) {
     super(powerLawDegreeEdgePool);
   }
 

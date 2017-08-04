@@ -139,7 +139,7 @@ public class TwitterStreamReader {
         long resolvedTweetId = status.isRetweet() ? status.getRetweetedStatus().getId() : status.getId();
         HashtagEntity[] hashtagEntities = status.getHashtagEntities();
 
-        userTweetBigraph.addEdge(userId, resolvedTweetId, (byte) 0, 0L);
+        userTweetBigraph.addEdge(userId, resolvedTweetId, (byte) 0);
 
         if (!users.containsKey(userId)) {
           users.put(userId, screenname);
@@ -154,7 +154,7 @@ public class TwitterStreamReader {
 
         for (HashtagEntity entity: hashtagEntities) {
           long hashtagHash = (long)entity.getText().toLowerCase().hashCode();
-          tweetHashtagBigraph.addEdge(tweetId, hashtagHash, (byte) 0, 0L);
+          tweetHashtagBigraph.addEdge(tweetId, hashtagHash, (byte) 0);
           if (!hashtags.containsKey(hashtagHash)) {
             hashtags.put(hashtagHash, entity.getText().toLowerCase());
           }

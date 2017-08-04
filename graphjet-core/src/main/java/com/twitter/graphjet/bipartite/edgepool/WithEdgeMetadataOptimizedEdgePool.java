@@ -1,5 +1,5 @@
 /**
- * Copyright 2016 Twitter. All rights reserved.
+ * Copyright 2017 Twitter. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,20 +21,24 @@ import com.twitter.graphjet.hashing.BigIntArray;
 import com.twitter.graphjet.hashing.BigLongArray;
 import com.twitter.graphjet.hashing.IntToIntPairHashMap;
 import com.twitter.graphjet.hashing.ShardedBigIntArray;
+import com.twitter.graphjet.hashing.ShardedBigLongArray;
 import com.twitter.graphjet.stats.StatsReceiver;
 
 /**
  *
- * An {@link AbstractOptimizedEdgePool} which does not support edge metadata.
+ * An {@link AbstractOptimizedEdgePool} which supports edge metadata.
  *
  * Assuming n nodes and m edges, the amount of memory used by this pool is:
- * - 4*m bytes for edges (which is expected to dominate)
+ * - 4*m bytes for edges
+ * - 8*m bytes for edge metadata (edges and edge metadata are expected to dominate memory usage)
  * - O(4*3*n) bytes for nodes
  */
-public class OptimizedEdgePool extends AbstractOptimizedEdgePool {
+public class WithEdgeMetadataOptimizedEdgePool extends AbstractOptimizedEdgePool {
 
-  public static final class ReaderAccessibleInfo implements EdgePoolReaderAccessibleInfo {
+  public static final class WithEdgeMetadataReaderAccessibleInfo
+    implements EdgePoolReaderAccessibleInfo {
     public final BigIntArray edges;
+    public final BigLongArray metadata;
     // Each entry contains 2 ints for a node: position, degree
     protected final IntToIntPairHashMap nodeInfo;
 
@@ -42,12 +46,15 @@ public class OptimizedEdgePool extends AbstractOptimizedEdgePool {
      * A new instance is immediately visible to the readers due to publication safety.
      *
      * @param edges                  contains all the edges in the pool
+     * @param metadata               contains all the edge metadata in the pool
      * @param nodeInfo               contains all the node information that is stored
      */
-    public ReaderAccessibleInfo(
+    public WithEdgeMetadataReaderAccessibleInfo(
       BigIntArray edges,
+      BigLongArray metadata,
       IntToIntPairHashMap nodeInfo) {
       this.edges = edges;
+      this.metadata = metadata;
       this.nodeInfo = nodeInfo;
     }
 
@@ -56,8 +63,7 @@ public class OptimizedEdgePool extends AbstractOptimizedEdgePool {
     }
 
     public BigLongArray getMetadata() {
-      throw new UnsupportedOperationException("get metadata is not supported in "
-        + "ReaderAccessibleInfo");
+      return metadata;
     }
 
     public IntToIntPairHashMap getNodeInfo() {
@@ -66,13 +72,13 @@ public class OptimizedEdgePool extends AbstractOptimizedEdgePool {
   }
 
   /**
-   * OptimizedEdgePool
+   * WithEdgeMetadataOptimizedEdgePool
    *
    * @param nodeDegrees node degree map
    * @param maxNumEdges the max number of edges will be added in the pool
    * @param statsReceiver stats receiver
    */
-  public OptimizedEdgePool(
+  public WithEdgeMetadataOptimizedEdgePool(
     int[] nodeDegrees,
     int maxNumEdges,
     StatsReceiver statsReceiver
@@ -80,28 +86,37 @@ public class OptimizedEdgePool extends AbstractOptimizedEdgePool {
     super(nodeDegrees, maxNumEdges, statsReceiver);
 
     BigIntArray edges = new ShardedBigIntArray(maxNumEdges, maxDegree, 0, scopedStatsReceiver);
+    BigLongArray metadata = new ShardedBigLongArray(maxNumEdges, maxDegree, 0, scopedStatsReceiver);
 
-    readerAccessibleInfo = new ReaderAccessibleInfo(
+    readerAccessibleInfo = new WithEdgeMetadataReaderAccessibleInfo(
       edges,
+      metadata,
       intToIntPairHashMap
     );
 
     LOG.info(
-      "OptimizedEdgePool: maxNumEdges " + maxNumEdges + " maxNumNodes " + numOfNodes
+      "WithEdgeMetadataOptimizedEdgePool: maxNumEdges " + maxNumEdges + " maxNumNodes " + numOfNodes
     );
   }
 
   @Override
   protected long getEdgeMetadata(int position, int edgeNumber) {
-    return 0;
+    return readerAccessibleInfo.getMetadata().getEntry(position + edgeNumber);
   }
 
-  @Override
   public void addEdges(int node, int pool, int[] src, long[] metadata, int srcPos, int length) {
     int position = getNodePosition(node);
 
     readerAccessibleInfo.getEdges().arrayCopy(
       src,
+      srcPos,
+      position + POW_TABLE_30[pool],
+      length,
+      true /*updateStats*/
+    );
+
+    readerAccessibleInfo.getMetadata().arrayCopy(
+      metadata,
       srcPos,
       position + POW_TABLE_30[pool],
       length,

@@ -105,7 +105,6 @@ public class TopSecondDegreeByCountForTweet extends
     );
   }
 
-
   private int[][] collectNodeMetadata(EdgeIterator edgeIterator) {
     int metadataSize = RecommendationType.METADATASIZE.getValue();
     int[][] nodeMetadata = new int[metadataSize][];
@@ -138,7 +137,6 @@ public class TopSecondDegreeByCountForTweet extends
     NodeInfo nodeInfo;
     if (!super.visitedRightNodes.containsKey(rightNode)) {
       int[][] nodeMetadata = collectNodeMetadata(edgeIterator);
-
       nodeInfo = new NodeInfo(rightNode, nodeMetadata, 0.0, maxSocialProofTypeSize);
       super.visitedRightNodes.put(rightNode, nodeInfo);
     } else {

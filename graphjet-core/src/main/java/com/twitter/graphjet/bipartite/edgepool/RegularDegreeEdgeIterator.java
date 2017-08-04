@@ -27,7 +27,7 @@ import com.twitter.graphjet.bipartite.api.WithEdgeMetadataIntIterator;
  */
 public class RegularDegreeEdgeIterator extends ReadOnlyIntIterator
                                        implements WithEdgeMetadataIntIterator, ReusableNodeIntIterator {
-  protected final RegularDegreeEdgePool regularDegreeEdgePool;
+  protected final AbstractRegularDegreeEdgePool regularDegreeEdgePool;
   protected int position;
   protected int degree;
   protected int currentEdge;
@@ -38,7 +38,7 @@ public class RegularDegreeEdgeIterator extends ReadOnlyIntIterator
    *
    * @param regularDegreeEdgePool  is the underlying {@link RegularDegreeEdgePool}
    */
-  public RegularDegreeEdgeIterator(RegularDegreeEdgePool regularDegreeEdgePool) {
+  public RegularDegreeEdgeIterator(AbstractRegularDegreeEdgePool regularDegreeEdgePool) {
     this.regularDegreeEdgePool = regularDegreeEdgePool;
   }
 

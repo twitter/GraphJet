@@ -37,17 +37,17 @@ import it.unimi.dsi.fastutil.longs.LongArrayList;
 public class MultiSegmentLeftIndexedPowerLawBipartiteGraphTest {
   private void addEdges(
       LeftIndexedPowerLawMultiSegmentBipartiteGraph multiSegmentLeftIndexedPowerLawBipartiteGraph) {
-    multiSegmentLeftIndexedPowerLawBipartiteGraph.addEdge(1, 11, (byte) 0, 0L);
-    multiSegmentLeftIndexedPowerLawBipartiteGraph.addEdge(1, 12, (byte) 0, 0L);
-    multiSegmentLeftIndexedPowerLawBipartiteGraph.addEdge(4, 41, (byte) 0, 0L);
-    multiSegmentLeftIndexedPowerLawBipartiteGraph.addEdge(2, 21, (byte) 0, 0L);
-    multiSegmentLeftIndexedPowerLawBipartiteGraph.addEdge(4, 42, (byte) 0, 0L);
-    multiSegmentLeftIndexedPowerLawBipartiteGraph.addEdge(3, 31, (byte) 0, 0L);
-    multiSegmentLeftIndexedPowerLawBipartiteGraph.addEdge(2, 22, (byte) 0, 0L);
-    multiSegmentLeftIndexedPowerLawBipartiteGraph.addEdge(1, 13, (byte) 0, 0L);
-    multiSegmentLeftIndexedPowerLawBipartiteGraph.addEdge(4, 43, (byte) 0, 0L);
+    multiSegmentLeftIndexedPowerLawBipartiteGraph.addEdge(1, 11, (byte) 0);
+    multiSegmentLeftIndexedPowerLawBipartiteGraph.addEdge(1, 12, (byte) 0);
+    multiSegmentLeftIndexedPowerLawBipartiteGraph.addEdge(4, 41, (byte) 0);
+    multiSegmentLeftIndexedPowerLawBipartiteGraph.addEdge(2, 21, (byte) 0);
+    multiSegmentLeftIndexedPowerLawBipartiteGraph.addEdge(4, 42, (byte) 0);
+    multiSegmentLeftIndexedPowerLawBipartiteGraph.addEdge(3, 31, (byte) 0);
+    multiSegmentLeftIndexedPowerLawBipartiteGraph.addEdge(2, 22, (byte) 0);
+    multiSegmentLeftIndexedPowerLawBipartiteGraph.addEdge(1, 13, (byte) 0);
+    multiSegmentLeftIndexedPowerLawBipartiteGraph.addEdge(4, 43, (byte) 0);
     // violates the max num nodes assumption
-    multiSegmentLeftIndexedPowerLawBipartiteGraph.addEdge(5, 11, (byte) 0, 0L);
+    multiSegmentLeftIndexedPowerLawBipartiteGraph.addEdge(5, 11, (byte) 0);
   }
 
   private void testGraph(
@@ -57,13 +57,13 @@ public class MultiSegmentLeftIndexedPowerLawBipartiteGraphTest {
     assertEquals(1, multiSegmentLeftIndexedPowerLawBipartiteGraph.getLeftNodeDegree(3));
     assertEquals(3, multiSegmentLeftIndexedPowerLawBipartiteGraph.getLeftNodeDegree(4));
 
-    assertEquals(new LongArrayList(new long[]{11, 12, 13}),
+    assertEquals(new LongArrayList(new long[]{13, 11, 12}),
         new LongArrayList(multiSegmentLeftIndexedPowerLawBipartiteGraph.getLeftNodeEdges(1)));
-    assertEquals(new LongArrayList(new long[]{21, 22}),
+    assertEquals(new LongArrayList(new long[]{22, 21}),
         new LongArrayList(multiSegmentLeftIndexedPowerLawBipartiteGraph.getLeftNodeEdges(2)));
     assertEquals(new LongArrayList(new long[]{31}),
         new LongArrayList(multiSegmentLeftIndexedPowerLawBipartiteGraph.getLeftNodeEdges(3)));
-    assertEquals(new LongArrayList(new long[]{41, 42, 43}),
+    assertEquals(new LongArrayList(new long[]{43, 42, 41}),
         new LongArrayList(multiSegmentLeftIndexedPowerLawBipartiteGraph.getLeftNodeEdges(4)));
     assertEquals(new LongArrayList(new long[]{11}),
         new LongArrayList(multiSegmentLeftIndexedPowerLawBipartiteGraph.getLeftNodeEdges(5)));
@@ -95,13 +95,13 @@ public class MultiSegmentLeftIndexedPowerLawBipartiteGraphTest {
     assertEquals(1, multiSegmentLeftIndexedPowerLawBipartiteGraph.getLeftNodeDegree(3));
     assertEquals(3, multiSegmentLeftIndexedPowerLawBipartiteGraph.getLeftNodeDegree(4));
 
-    assertEquals(new LongArrayList(new long[]{11, 12, 13}),
+    assertEquals(new LongArrayList(new long[]{13, 11, 12}),
         new LongArrayList(multiSegmentLeftIndexedPowerLawBipartiteGraph.getLeftNodeEdges(1)));
-    assertEquals(new LongArrayList(new long[]{21, 22}),
+    assertEquals(new LongArrayList(new long[]{22, 21}),
         new LongArrayList(multiSegmentLeftIndexedPowerLawBipartiteGraph.getLeftNodeEdges(2)));
     assertEquals(new LongArrayList(new long[]{31}),
         new LongArrayList(multiSegmentLeftIndexedPowerLawBipartiteGraph.getLeftNodeEdges(3)));
-    assertEquals(new LongArrayList(new long[]{41, 42, 43}),
+    assertEquals(new LongArrayList(new long[]{43, 41, 42}),
         new LongArrayList(multiSegmentLeftIndexedPowerLawBipartiteGraph.getLeftNodeEdges(4)));
     assertEquals(new LongArrayList(new long[]{11}),
         new LongArrayList(multiSegmentLeftIndexedPowerLawBipartiteGraph.getLeftNodeEdges(5)));
@@ -154,7 +154,7 @@ public class MultiSegmentLeftIndexedPowerLawBipartiteGraphTest {
     for (int i = 0; i < leftSize; i++) {
       for (int j = 0; j < rightSize; j++) {
         if (random.nextDouble() < edgeProbability) {
-          multiSegmentLeftIndexedPowerLawBipartiteGraph.addEdge(i, j, (byte) 0, 0L);
+          multiSegmentLeftIndexedPowerLawBipartiteGraph.addEdge(i, j, (byte) 0);
         }
       }
     }
@@ -249,7 +249,7 @@ public class MultiSegmentLeftIndexedPowerLawBipartiteGraphTest {
       for (int i = 0; i < leftSize; i++) {
         for (int j = 0; j < rightSize; j++) {
           if (random.nextDouble() < edgeProbability) {
-            multiSegmentLeftIndexedPowerLawBipartiteGraph.addEdge(i, j, (byte) 0, 0L);
+            multiSegmentLeftIndexedPowerLawBipartiteGraph.addEdge(i, j, (byte) 0);
           }
         }
       }

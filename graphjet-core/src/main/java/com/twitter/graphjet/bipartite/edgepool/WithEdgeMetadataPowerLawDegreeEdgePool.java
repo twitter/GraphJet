@@ -1,5 +1,5 @@
 /**
- * Copyright 2016 Twitter. All rights reserved.
+ * Copyright 2017 Twitter. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,35 +17,37 @@
 
 package com.twitter.graphjet.bipartite.edgepool;
 
+
 import com.twitter.graphjet.stats.StatsReceiver;
 
 /**
- * An {@link AbstractPowerLawDegreeEdgePool} which does not support edge metadata.
+ * An {@link AbstractPowerLawDegreeEdgePool} which supports edge metadata.
  */
-public class PowerLawDegreeEdgePool extends AbstractPowerLawDegreeEdgePool {
+public class WithEdgeMetadataPowerLawDegreeEdgePool extends AbstractPowerLawDegreeEdgePool {
 
   /**
-   * Reserves the needed memory for a {@link PowerLawDegreeEdgePool}, and initializes most of the
-   * objects that would be needed for this graph. Note that memory would be allocated as needed,
-   * and the amount of memory needed can change if the input parameters are violated.
+   * Reserves the needed memory for a {@link WithEdgeMetadataPowerLawDegreeEdgePool}, and
+   * initializes most of the objects that would be needed for this graph. Note that memory would be
+   * allocated as needed, and the amount of memory needed can change if the input parameters are
+   * violated.
    *
    * @param expectedNumNodes    is the expected number of nodes that will be added into this pool
    * @param expectedMaxDegree   is the expected maximum degree for a node in the pool
    * @param powerLawExponent    is the expected exponent of the power-law graph, i.e.
    *                            (# nodes with degree greater than 2^i) <= (n / powerLawExponent^i)
    */
-  public PowerLawDegreeEdgePool(
-      int expectedNumNodes,
-      int expectedMaxDegree,
-      double powerLawExponent,
-      StatsReceiver statsReceiver) {
-
+  public WithEdgeMetadataPowerLawDegreeEdgePool(
+    int expectedNumNodes,
+    int expectedMaxDegree,
+    double powerLawExponent,
+    StatsReceiver statsReceiver) {
     super(expectedNumNodes, expectedMaxDegree, powerLawExponent, statsReceiver);
 
-    RegularDegreeEdgePool[] edgePools = new RegularDegreeEdgePool[numPools];
+    WithEdgeMetadataRegularDegreeEdgePool[] edgePools =
+      new WithEdgeMetadataRegularDegreeEdgePool[numPools];
     int[] poolDegrees = new int[numPools];
     readerAccessibleInfo =
-        new ReaderAccessibleInfo(edgePools, poolDegrees, new int[expectedNumNodes]);
+      new ReaderAccessibleInfo(edgePools, poolDegrees, new int[expectedNumNodes]);
     for (int i = 0; i < numPools; i++) {
       initPool(i);
     }
@@ -54,10 +56,10 @@ public class PowerLawDegreeEdgePool extends AbstractPowerLawDegreeEdgePool {
 
   private void initPool(int poolNumber) {
     int expectedNumNodesInPool =
-        (int) Math.ceil(expectedNumNodes / Math.pow(powerLawExponent, poolNumber));
+      (int) Math.ceil(expectedNumNodes / Math.pow(powerLawExponent, poolNumber));
     int maxDegreeInPool = (int) Math.pow(2, poolNumber + 1);
-    readerAccessibleInfo.edgePools[poolNumber] = new RegularDegreeEdgePool(
-        expectedNumNodesInPool, maxDegreeInPool, statsReceiver.scope("poolNumber_" + poolNumber));
+    readerAccessibleInfo.edgePools[poolNumber] = new WithEdgeMetadataRegularDegreeEdgePool(
+      expectedNumNodesInPool, maxDegreeInPool, statsReceiver.scope("poolNumber_" + poolNumber));
     readerAccessibleInfo.poolDegrees[poolNumber] = maxDegreeInPool;
   }
 
@@ -71,7 +73,8 @@ public class PowerLawDegreeEdgePool extends AbstractPowerLawDegreeEdgePool {
 
     numPoolsCounter.incr(newNumPools - numPools);
 
-    RegularDegreeEdgePool[] newEdgePools = new RegularDegreeEdgePool[newNumPools];
+    WithEdgeMetadataRegularDegreeEdgePool[] newEdgePools =
+      new WithEdgeMetadataRegularDegreeEdgePool[newNumPools];
     int[] newPoolDegrees = new int[newNumPools];
     System.arraycopy(readerAccessibleInfo.edgePools, 0,
       newEdgePools, 0,
@@ -96,6 +99,12 @@ public class PowerLawDegreeEdgePool extends AbstractPowerLawDegreeEdgePool {
 
   @Override
   public void addEdge(int nodeA, int nodeB) {
+    throw new UnsupportedOperationException("add a single edge without metadata is not supported "
+      + "WithEdgeMetadataPowerLawDegreeEdgePool");
+  }
+
+  @Override
+  public void addEdge(int nodeA, int nodeB, long metadata) {
     // First add the node if it doesn't exist
     int nextPoolForNodeA;
     if (nodeA >= readerAccessibleInfo.nodeDegrees.length) {
@@ -109,7 +118,7 @@ public class PowerLawDegreeEdgePool extends AbstractPowerLawDegreeEdgePool {
       }
     }
     // Now add the edge
-    readerAccessibleInfo.edgePools[nextPoolForNodeA].addEdge(nodeA, nodeB);
+    readerAccessibleInfo.edgePools[nextPoolForNodeA].addEdge(nodeA, nodeB, metadata);
     // This is to guarantee that if a reader sees the updated degree later, they can find the edge
     currentNumEdgesStored += 2;
     // The order is important -- the updated degree is the ONLY way for a reader for going to the
@@ -121,13 +130,7 @@ public class PowerLawDegreeEdgePool extends AbstractPowerLawDegreeEdgePool {
   }
 
   @Override
-  public void addEdge(int nodeA, int nodeB, long metadata) {
-    throw new UnsupportedOperationException("add a single edge one by one is not supported in "
-      + "PowerLawDegreeEdgePool");
-  }
-
-  @Override
   public boolean hasEdgeMetadata() {
-    return false;
+    return true;
   }
 }

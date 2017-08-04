@@ -22,12 +22,12 @@ import com.twitter.graphjet.bipartite.api.ReadOnlyIntIterator;
 import com.twitter.graphjet.bipartite.api.ReusableNodeIntIterator;
 
 /**
- * Returns an iterator over the edges stored in an {@link OptimizedEdgePool}. The iterator is
- * meant to be reusable via the resetForIndex method.
+ * Returns an iterator over the edges stored in an {@link AbstractOptimizedEdgePool}. The iterator
+ * is meant to be reusable via the resetForIndex method.
  */
 public class OptimizedEdgeIterator extends ReadOnlyIntIterator
   implements WithEdgeMetadataIntIterator, ReusableNodeIntIterator {
-  protected final OptimizedEdgePool optimizedDegreeEdgePool;
+  protected final AbstractOptimizedEdgePool optimizedDegreeEdgePool;
   protected int position;
   protected int degree;
   protected int currentEdge;
@@ -36,9 +36,9 @@ public class OptimizedEdgeIterator extends ReadOnlyIntIterator
    * Creates an iterator that can be reused. Note that the client needs to call the resetForNode
    * method before using the iterator.
    *
-   * @param optimizedDegreeEdgePool is the underlying {@link OptimizedEdgePool}
+   * @param optimizedDegreeEdgePool is the underlying {@link AbstractOptimizedEdgePool}
    */
-  public OptimizedEdgeIterator(OptimizedEdgePool optimizedDegreeEdgePool) {
+  public OptimizedEdgeIterator(AbstractOptimizedEdgePool optimizedDegreeEdgePool) {
     this.optimizedDegreeEdgePool = optimizedDegreeEdgePool;
   }
 
