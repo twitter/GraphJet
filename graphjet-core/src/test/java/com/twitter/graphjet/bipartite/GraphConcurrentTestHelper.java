@@ -65,7 +65,7 @@ public final class GraphConcurrentTestHelper {
     private final BipartiteGraph bipartiteGraph;
     private final CountDownLatch startSignal;
     private final CountDownLatch doneSignal;
-    private final long queryNode;
+    public final long queryNode;
     private final boolean leftOrRight;
     private final int sleepTimeInMilliseconds;
     private int queryNodeDegree;
