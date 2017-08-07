@@ -544,7 +544,7 @@ public class MultiSegmentPowerLawBipartiteGraphTest {
       }
     }
   }
-  }
+
 
   /**
    * This test is here as an example of checking for a memory leak: the idea here is to start with
