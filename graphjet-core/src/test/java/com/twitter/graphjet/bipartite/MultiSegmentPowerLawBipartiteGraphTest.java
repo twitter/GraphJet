@@ -382,7 +382,7 @@ public class MultiSegmentPowerLawBipartiteGraphTest {
 
   @Test
   public void testRandomConcurrentReadWrites() throws Exception {
-    for (int count = 0; count < 20; count++) {
+    for (int count = 0; count < 10; count++) {
       int maxNumSegments = 10;
       int maxNumEdgesPerSegment = 1500;
       int numLeftNodes = 10;
@@ -401,7 +401,7 @@ public class MultiSegmentPowerLawBipartiteGraphTest {
           new NullStatsReceiver());
 
       // Sets up a concurrent read-write situation with the given pool and edges
-      Random random = new Random(89234758923475L);
+      Random random = new Random();
 
       // total number of threads needed = 3 * 10 * numLeftNodes + 3 * numRightNodes = 600
       //   testRandomConcurrentReadWriteThreads(
@@ -550,7 +550,7 @@ public class MultiSegmentPowerLawBipartiteGraphTest {
 
   @Test
   public void testRandomConcurrentReadWritesTwo() throws Exception {
-    for (int count = 0; count < 20; count++) {
+    for (int count = 0; count < 10; count++) {
       int maxNumSegments = 10;
       int maxNumEdgesPerSegment = 1500;
       int numLeftNodes = 10;
@@ -569,7 +569,7 @@ public class MultiSegmentPowerLawBipartiteGraphTest {
           new NullStatsReceiver());
 
       // Sets up a concurrent read-write situation with the given pool and edges
-      Random random = new Random(89234758923475L);
+      Random random = new Random();
 
       // total number of threads needed = 3 * 10 * numLeftNodes + 3 * numRightNodes = 600
       //   testRandomConcurrentReadWriteThreads(
