@@ -119,6 +119,7 @@ public abstract class
   abstract ReusableNodeRandomLongIterator initializeLeftNodeEdgesRandomLongIterator();
 
   protected int crossMemoryBarrier() {
+    int ttt = numEdgesInLiveSegment;
     return multiSegmentReaderAccessibleInfoProvider.getLiveSegmentId();
   }
 

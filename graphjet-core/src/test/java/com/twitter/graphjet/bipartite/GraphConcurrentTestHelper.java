@@ -102,7 +102,7 @@ public final class GraphConcurrentTestHelper {
       } else {
         queryNodeDegree = bipartiteGraph.getRightNodeDegree(queryNode);
         if (queryNodeDegree > 0) {
-          queryNodeEdges = new LongArrayList(bipartiteGraph.getRightNodeEdges(queryNode));
+          queryNodeEdges = new LongArrayList();
         }
       }
       doneSignal.countDown();
