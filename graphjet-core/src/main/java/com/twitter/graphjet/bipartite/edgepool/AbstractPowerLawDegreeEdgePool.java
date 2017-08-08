@@ -294,6 +294,10 @@ public abstract class AbstractPowerLawDegreeEdgePool implements EdgePool {
 
   @Override
   public int getNodeDegree(int node) {
+    if (crossMemoryBarrier() == 0) {
+      return 0;
+    }
+
     if (node >= readerAccessibleInfo.nodeDegrees.length) {
       return 0;
     } else {
