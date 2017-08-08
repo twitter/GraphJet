@@ -453,7 +453,6 @@ public class MultiSegmentPowerLawBipartiteGraphTest {
             random.nextInt(maxWaitingTimeForThreads)));
         }
       }
-
       // Create a bunch of rightReaders per node that'll read from the graph at random
       for (int i = 0; i < rightSize; i++) {
         for (int j = 0; j < numReadersPerNode; j++) {
