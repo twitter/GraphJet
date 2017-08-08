@@ -231,10 +231,11 @@ public class LeftRegularBipartiteGraphSegmentTest {
     for (int count = 0; count < 5; count++) {
       int numLeftNodes = 10;
       int numRightNodes = 100;
-      LeftRegularBipartiteGraphSegment leftRegularBipartiteGraphSegment =
-        new LeftRegularBipartiteGraphSegment(
+      PowerLawBipartiteGraphSegment leftRegularBipartiteGraphSegment =
+        new PowerLawBipartiteGraphSegment(
           numLeftNodes,
           numRightNodes,
+          2.0,
           numRightNodes,
           numRightNodes,
           2.0,
@@ -255,10 +256,11 @@ public class LeftRegularBipartiteGraphSegmentTest {
     for (int count = 0; count < 5; count++) {
       int numLeftNodes = 10;
       int numRightNodes = 100;
-      LeftRegularBipartiteGraphSegment leftRegularBipartiteGraphSegment =
-        new LeftRegularBipartiteGraphSegment(
+      PowerLawBipartiteGraphSegment leftRegularBipartiteGraphSegment =
+        new PowerLawBipartiteGraphSegment(
           numLeftNodes,
           numRightNodes,
+          2.0,
           numRightNodes,
           numRightNodes,
           2.0,
@@ -279,10 +281,11 @@ public class LeftRegularBipartiteGraphSegmentTest {
     for (int count = 0; count < 5; count++) {
       int numLeftNodes = 10;
       int numRightNodes = 100;
-      LeftRegularBipartiteGraphSegment leftRegularBipartiteGraphSegment =
-        new LeftRegularBipartiteGraphSegment(
+      PowerLawBipartiteGraphSegment leftRegularBipartiteGraphSegment =
+        new PowerLawBipartiteGraphSegment(
           numLeftNodes,
           numRightNodes,
+          2.0,
           numRightNodes,
           numRightNodes,
           2.0,
@@ -303,10 +306,11 @@ public class LeftRegularBipartiteGraphSegmentTest {
     for (int count = 0; count < 5; count++) {
       int numLeftNodes = 10;
       int numRightNodes = 100;
-      LeftRegularBipartiteGraphSegment leftRegularBipartiteGraphSegment =
-        new LeftRegularBipartiteGraphSegment(
+      PowerLawBipartiteGraphSegment leftRegularBipartiteGraphSegment =
+        new PowerLawBipartiteGraphSegment(
           numLeftNodes,
           numRightNodes,
+          2.0,
           numRightNodes,
           numRightNodes,
           2.0,
@@ -327,10 +331,11 @@ public class LeftRegularBipartiteGraphSegmentTest {
     for (int count = 0; count < 5; count++) {
       int numLeftNodes = 10;
       int numRightNodes = 100;
-      LeftRegularBipartiteGraphSegment leftRegularBipartiteGraphSegment =
-        new LeftRegularBipartiteGraphSegment(
+      PowerLawBipartiteGraphSegment leftRegularBipartiteGraphSegment =
+        new PowerLawBipartiteGraphSegment(
           numLeftNodes,
           numRightNodes,
+          2.0,
           numRightNodes,
           numRightNodes,
           2.0,
