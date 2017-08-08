@@ -228,126 +228,24 @@ public class LeftRegularBipartiteGraphSegmentTest {
 
   @Test
   public void testRandomConcurrentReadWrites() throws Exception {
-    for (int count = 0; count < 5; count++) {
-      int numLeftNodes = 10;
-      int numRightNodes = 100;
-      PowerLawBipartiteGraphSegment leftRegularBipartiteGraphSegment =
-        new PowerLawBipartiteGraphSegment(
-          numLeftNodes,
-          numRightNodes,
-          2.0,
-          numRightNodes,
-          numRightNodes,
-          2.0,
-          Integer.MAX_VALUE,
-          new IdentityEdgeTypeMask(),
-          new NullStatsReceiver());
+    int numLeftNodes = 10;
+    int numRightNodes = 100;
+    PowerLawBipartiteGraphSegment leftRegularBipartiteGraphSegment =
+      new PowerLawBipartiteGraphSegment(
+        numLeftNodes,
+        numRightNodes,
+        2.0,
+        numRightNodes,
+        numRightNodes,
+        2.0,
+        Integer.MAX_VALUE,
+        new IdentityEdgeTypeMask(),
+        new NullStatsReceiver());
 
-      // Sets up a concurrent read-write situation with the given pool and edges
-      Random random = new Random();
+    // Sets up a concurrent read-write situation with the given pool and edges
+    Random random = new Random();
 
-      testRandomConcurrentReadWriteThreads(
-        leftRegularBipartiteGraphSegment, 3, 10 * numLeftNodes, numRightNodes, 0.1, random);
-    }
-  }
-
-  @Test
-  public void testRandomConcurrentReadWritesTwo() throws Exception {
-    for (int count = 0; count < 5; count++) {
-      int numLeftNodes = 10;
-      int numRightNodes = 100;
-      PowerLawBipartiteGraphSegment leftRegularBipartiteGraphSegment =
-        new PowerLawBipartiteGraphSegment(
-          numLeftNodes,
-          numRightNodes,
-          2.0,
-          numRightNodes,
-          numRightNodes,
-          2.0,
-          Integer.MAX_VALUE,
-          new IdentityEdgeTypeMask(),
-          new NullStatsReceiver());
-
-      // Sets up a concurrent read-write situation with the given pool and edges
-      Random random = new Random();
-
-      testRandomConcurrentReadWriteThreads(
-        leftRegularBipartiteGraphSegment, 3, 10 * numLeftNodes, numRightNodes, 0.1, random);
-    }
-  }
-
-  @Test
-  public void testRandomConcurrentReadWritesThree() throws Exception {
-    for (int count = 0; count < 5; count++) {
-      int numLeftNodes = 10;
-      int numRightNodes = 100;
-      PowerLawBipartiteGraphSegment leftRegularBipartiteGraphSegment =
-        new PowerLawBipartiteGraphSegment(
-          numLeftNodes,
-          numRightNodes,
-          2.0,
-          numRightNodes,
-          numRightNodes,
-          2.0,
-          Integer.MAX_VALUE,
-          new IdentityEdgeTypeMask(),
-          new NullStatsReceiver());
-
-      // Sets up a concurrent read-write situation with the given pool and edges
-      Random random = new Random();
-
-      testRandomConcurrentReadWriteThreads(
-        leftRegularBipartiteGraphSegment, 3, 10 * numLeftNodes, numRightNodes, 0.1, random);
-    }
-  }
-
-  @Test
-  public void testRandomConcurrentReadWritesFour() throws Exception {
-    for (int count = 0; count < 5; count++) {
-      int numLeftNodes = 10;
-      int numRightNodes = 100;
-      PowerLawBipartiteGraphSegment leftRegularBipartiteGraphSegment =
-        new PowerLawBipartiteGraphSegment(
-          numLeftNodes,
-          numRightNodes,
-          2.0,
-          numRightNodes,
-          numRightNodes,
-          2.0,
-          Integer.MAX_VALUE,
-          new IdentityEdgeTypeMask(),
-          new NullStatsReceiver());
-
-      // Sets up a concurrent read-write situation with the given pool and edges
-      Random random = new Random();
-
-      testRandomConcurrentReadWriteThreads(
-        leftRegularBipartiteGraphSegment, 3, 10 * numLeftNodes, numRightNodes, 0.1, random);
-    }
-  }
-
-  @Test
-  public void testRandomConcurrentReadWritesFive() throws Exception {
-    for (int count = 0; count < 5; count++) {
-      int numLeftNodes = 10;
-      int numRightNodes = 100;
-      PowerLawBipartiteGraphSegment leftRegularBipartiteGraphSegment =
-        new PowerLawBipartiteGraphSegment(
-          numLeftNodes,
-          numRightNodes,
-          2.0,
-          numRightNodes,
-          numRightNodes,
-          2.0,
-          Integer.MAX_VALUE,
-          new IdentityEdgeTypeMask(),
-          new NullStatsReceiver());
-
-      // Sets up a concurrent read-write situation with the given pool and edges
-      Random random = new Random();
-
-      testRandomConcurrentReadWriteThreads(
-        leftRegularBipartiteGraphSegment, 3, 10 * numLeftNodes, numRightNodes, 0.1, random);
-    }
+    testRandomConcurrentReadWriteThreads(
+      leftRegularBipartiteGraphSegment, 3, 10 * numLeftNodes, numRightNodes, 0.1, random);
   }
 }
