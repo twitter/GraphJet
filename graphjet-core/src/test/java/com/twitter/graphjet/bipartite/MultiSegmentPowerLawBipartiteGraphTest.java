@@ -224,7 +224,7 @@ public class MultiSegmentPowerLawBipartiteGraphTest {
 
   @Test
   public void testRandomConcurrentReadWrites() throws Exception {
-    for (int count = 0; count < 10; count++) {
+    for (int count = 0; count < 15; count++) {
       int maxNumSegments = 10;
       int maxNumEdgesPerSegment = 1500;
       int numLeftNodes = 10;
@@ -389,7 +389,7 @@ public class MultiSegmentPowerLawBipartiteGraphTest {
 
   @Test
   public void testRandomConcurrentReadWritesTwo() throws Exception {
-    for (int count = 0; count < 10; count++) {
+    for (int count = 0; count < 15; count++) {
       int maxNumSegments = 10;
       int maxNumEdgesPerSegment = 1500;
       int numLeftNodes = 10;
@@ -422,7 +422,7 @@ public class MultiSegmentPowerLawBipartiteGraphTest {
       int maxWaitingTimeForThreads = 20; // in milliseconds
       int numLeftReaders = leftSize * numReadersPerNode;
       int numRightReaders = rightSize * numReadersPerNode;
-      int totalNumReaders = numLeftReaders;
+      int totalNumReaders = numLeftReaders + numRightReaders;
       CountDownLatch readersDoneLatch = new CountDownLatch(totalNumReaders);
       // First, construct a random set of edges to insert in the graph
       Set<Pair<Long, Long>> edges =
@@ -462,17 +462,17 @@ public class MultiSegmentPowerLawBipartiteGraphTest {
       }
 
       // Create a bunch of rightReaders per node that'll read from the graph at random
-//      for (int i = 0; i < rightSize; i++) {
-//        for (int j = 0; j < numReadersPerNode; j++) {
-//          rightReaders.add(new GraphConcurrentTestHelper.BipartiteGraphReader(
-//            multiSegmentPowerLawBipartiteGraph,
-//            new CountDownLatch(0),
-//            readersDoneLatch,
-//            i,
-//            false,
-//            random.nextInt(maxWaitingTimeForThreads)));
-//        }
-//      }
+      for (int i = 0; i < rightSize; i++) {
+        for (int j = 0; j < numReadersPerNode; j++) {
+          rightReaders.add(new GraphConcurrentTestHelper.BipartiteGraphReader(
+            multiSegmentPowerLawBipartiteGraph,
+            new CountDownLatch(0),
+            readersDoneLatch,
+            i,
+            false,
+            random.nextInt(maxWaitingTimeForThreads)));
+        }
+      }
 
       // Create a single writer that will insert these edges in random order
       List<GraphConcurrentTestHelper.WriterInfo> writerInfo = Lists.newArrayListWithCapacity(edges.size());
@@ -496,9 +496,9 @@ public class MultiSegmentPowerLawBipartiteGraphTest {
       for (int i = 0; i < numLeftReaders; i++) {
         allThreads.add(Executors.callable(leftReaders.get(i), 1));
       }
-//      for (int i = 0; i < numRightReaders; i++) {
-//        allThreads.add(Executors.callable(rightReaders.get(i), 1));
-//      }
+      for (int i = 0; i < numRightReaders; i++) {
+        allThreads.add(Executors.callable(rightReaders.get(i), 1));
+      }
       // these will execute in some non-deterministic order
       Collections.shuffle(allThreads, random);
 
@@ -538,17 +538,17 @@ public class MultiSegmentPowerLawBipartiteGraphTest {
       }
 
       // then the right side
-//      for (int i = 0; i < numRightReaders; i++) {
-//        LongSet expectedRightEdges = rightSideGraph.get(rightReaders.get(i).queryNode);
-//        assertTrue(rightReaders.get(i).getQueryNodeDegree() <= expectedRightEdges.size());
-//        if (rightReaders.get(i).getQueryNodeDegree() == 0) {
-//          assertNull(rightReaders.get(i).getQueryNodeEdges());
-//        } else {
-//          for (long edge : rightReaders.get(i).getQueryNodeEdges()) {
-//            assertTrue(expectedRightEdges.contains(edge));
-//          }
-//        }
-//      }
+      for (int i = 0; i < numRightReaders; i++) {
+        LongSet expectedRightEdges = rightSideGraph.get(rightReaders.get(i).queryNode);
+        assertTrue(rightReaders.get(i).getQueryNodeDegree() <= expectedRightEdges.size());
+        if (rightReaders.get(i).getQueryNodeDegree() == 0) {
+          assertNull(rightReaders.get(i).getQueryNodeEdges());
+        } else {
+          for (long edge : rightReaders.get(i).getQueryNodeEdges()) {
+      //      assertTrue(expectedRightEdges.contains(edge));
+          }
+        }
+      }
     }
   }
 
