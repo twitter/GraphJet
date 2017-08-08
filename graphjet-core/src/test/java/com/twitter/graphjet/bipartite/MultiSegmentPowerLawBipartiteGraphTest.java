@@ -224,7 +224,7 @@ public class MultiSegmentPowerLawBipartiteGraphTest {
 
   @Test
   public void testRandomConcurrentReadWrites() throws Exception {
-    for (int count = 0; count < 10; count++) {
+    for (int count = 0; count < 5; count++) {
       int maxNumSegments = 10;
       int maxNumEdgesPerSegment = 1500;
       int numLeftNodes = 10;
@@ -389,7 +389,7 @@ public class MultiSegmentPowerLawBipartiteGraphTest {
 
   @Test
   public void testRandomConcurrentReadWritesTwo() throws Exception {
-    for (int count = 0; count < 10; count++) {
+    for (int count = 0; count < 5; count++) {
       int maxNumSegments = 10;
       int maxNumEdgesPerSegment = 1500;
       int numLeftNodes = 10;
@@ -555,7 +555,7 @@ public class MultiSegmentPowerLawBipartiteGraphTest {
 
   @Test
   public void testRandomConcurrentReadWritesThree() throws Exception {
-    for (int count = 0; count < 10; count++) {
+    for (int count = 0; count < 5; count++) {
       int maxNumSegments = 10;
       int maxNumEdgesPerSegment = 1500;
       int numLeftNodes = 10;
