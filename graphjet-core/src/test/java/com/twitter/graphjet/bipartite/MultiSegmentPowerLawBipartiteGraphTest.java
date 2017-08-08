@@ -415,7 +415,7 @@ public class MultiSegmentPowerLawBipartiteGraphTest {
       int maxWaitingTimeForThreads = 20; // in milliseconds
       int numLeftReaders = leftSize * numReadersPerNode;
       int numRightReaders = rightSize * numReadersPerNode;
-      int totalNumReaders = numLeftReaders + numRightReaders;
+      int totalNumReaders = numLeftReaders;
       CountDownLatch readersDoneLatch = new CountDownLatch(totalNumReaders);
       // First, construct a random set of edges to insert in the graph
       Set<Pair<Long, Long>> edges =
@@ -455,17 +455,17 @@ public class MultiSegmentPowerLawBipartiteGraphTest {
       }
 
       // Create a bunch of rightReaders per node that'll read from the graph at random
-      for (int i = 0; i < rightSize; i++) {
-        for (int j = 0; j < numReadersPerNode; j++) {
-          rightReaders.add(new GraphConcurrentTestHelper.BipartiteGraphReader(
-            multiSegmentPowerLawBipartiteGraph,
-            new CountDownLatch(0),
-            readersDoneLatch,
-            i,
-            false,
-            random.nextInt(maxWaitingTimeForThreads)));
-        }
-      }
+//      for (int i = 0; i < rightSize; i++) {
+//        for (int j = 0; j < numReadersPerNode; j++) {
+//          rightReaders.add(new GraphConcurrentTestHelper.BipartiteGraphReader(
+//            multiSegmentPowerLawBipartiteGraph,
+//            new CountDownLatch(0),
+//            readersDoneLatch,
+//            i,
+//            false,
+//            random.nextInt(maxWaitingTimeForThreads)));
+//        }
+//      }
 
       // Create a single writer that will insert these edges in random order
       List<GraphConcurrentTestHelper.WriterInfo> writerInfo = Lists.newArrayListWithCapacity(edges.size());
@@ -583,7 +583,7 @@ public class MultiSegmentPowerLawBipartiteGraphTest {
       int maxWaitingTimeForThreads = 20; // in milliseconds
       int numLeftReaders = leftSize * numReadersPerNode;
       int numRightReaders = rightSize * numReadersPerNode;
-      int totalNumReaders = numLeftReaders + numRightReaders;
+      int totalNumReaders = numLeftReaders;
       CountDownLatch readersDoneLatch = new CountDownLatch(totalNumReaders);
       // First, construct a random set of edges to insert in the graph
       Set<Pair<Long, Long>> edges =
@@ -623,17 +623,17 @@ public class MultiSegmentPowerLawBipartiteGraphTest {
       }
 
       // Create a bunch of rightReaders per node that'll read from the graph at random
-      for (int i = 0; i < rightSize; i++) {
-        for (int j = 0; j < numReadersPerNode; j++) {
-          rightReaders.add(new GraphConcurrentTestHelper.BipartiteGraphReader(
-            multiSegmentPowerLawBipartiteGraph,
-            new CountDownLatch(0),
-            readersDoneLatch,
-            i,
-            false,
-            random.nextInt(maxWaitingTimeForThreads)));
-        }
-      }
+//      for (int i = 0; i < rightSize; i++) {
+//        for (int j = 0; j < numReadersPerNode; j++) {
+//          rightReaders.add(new GraphConcurrentTestHelper.BipartiteGraphReader(
+//            multiSegmentPowerLawBipartiteGraph,
+//            new CountDownLatch(0),
+//            readersDoneLatch,
+//            i,
+//            false,
+//            random.nextInt(maxWaitingTimeForThreads)));
+//        }
+//      }
 
       // Create a single writer that will insert these edges in random order
       List<GraphConcurrentTestHelper.WriterInfo> writerInfo = Lists.newArrayListWithCapacity(edges.size());
