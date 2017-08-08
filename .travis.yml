@@ -1,3 +1,5 @@
 language: java
+dist: precise
+sudo: true
 jdk:
   - oraclejdk8
