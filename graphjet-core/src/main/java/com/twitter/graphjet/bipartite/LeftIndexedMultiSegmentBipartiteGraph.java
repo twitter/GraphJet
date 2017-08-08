@@ -120,6 +120,9 @@ public abstract class
 
   protected int crossMemoryBarrier() {
     int ttt = numEdgesInLiveSegment;
+    if (ttt < -1) {
+      return numEdgesInLiveSegment;
+    }
     return multiSegmentReaderAccessibleInfoProvider.getLiveSegmentId();
   }
 
