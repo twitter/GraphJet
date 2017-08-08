@@ -228,23 +228,73 @@ public class LeftRegularBipartiteGraphSegmentTest {
 
   @Test
   public void testRandomConcurrentReadWrites() throws Exception {
-    int numLeftNodes = 10;
-    int numRightNodes = 100;
-    LeftRegularBipartiteGraphSegment leftRegularBipartiteGraphSegment =
+    for (int count = 0; count < 25; count++) {
+      int numLeftNodes = 10;
+      int numRightNodes = 100;
+      LeftRegularBipartiteGraphSegment leftRegularBipartiteGraphSegment =
         new LeftRegularBipartiteGraphSegment(
-            numLeftNodes,
-            numRightNodes,
-            numRightNodes,
-            numRightNodes,
-            2.0,
-            Integer.MAX_VALUE,
-            new IdentityEdgeTypeMask(),
-            new NullStatsReceiver());
+          numLeftNodes,
+          numRightNodes,
+          numRightNodes,
+          numRightNodes,
+          2.0,
+          Integer.MAX_VALUE,
+          new IdentityEdgeTypeMask(),
+          new NullStatsReceiver());
 
-    // Sets up a concurrent read-write situation with the given pool and edges
-    Random random = new Random(89234758923475L);
+      // Sets up a concurrent read-write situation with the given pool and edges
+      Random random = new Random();
 
-    testRandomConcurrentReadWriteThreads(
+      testRandomConcurrentReadWriteThreads(
         leftRegularBipartiteGraphSegment, 3, 10 * numLeftNodes, numRightNodes, 0.1, random);
+    }
+  }
+
+  @Test
+  public void testRandomConcurrentReadWritesTwo() throws Exception {
+    for (int count = 0; count < 25; count++) {
+      int numLeftNodes = 10;
+      int numRightNodes = 100;
+      LeftRegularBipartiteGraphSegment leftRegularBipartiteGraphSegment =
+        new LeftRegularBipartiteGraphSegment(
+          numLeftNodes,
+          numRightNodes,
+          numRightNodes,
+          numRightNodes,
+          2.0,
+          Integer.MAX_VALUE,
+          new IdentityEdgeTypeMask(),
+          new NullStatsReceiver());
+
+      // Sets up a concurrent read-write situation with the given pool and edges
+      Random random = new Random();
+
+      testRandomConcurrentReadWriteThreads(
+        leftRegularBipartiteGraphSegment, 3, 10 * numLeftNodes, numRightNodes, 0.1, random);
+    }
+  }
+
+  @Test
+  public void testRandomConcurrentReadWritesThree() throws Exception {
+    for (int count = 0; count < 25; count++) {
+      int numLeftNodes = 10;
+      int numRightNodes = 100;
+      LeftRegularBipartiteGraphSegment leftRegularBipartiteGraphSegment =
+        new LeftRegularBipartiteGraphSegment(
+          numLeftNodes,
+          numRightNodes,
+          numRightNodes,
+          numRightNodes,
+          2.0,
+          Integer.MAX_VALUE,
+          new IdentityEdgeTypeMask(),
+          new NullStatsReceiver());
+
+      // Sets up a concurrent read-write situation with the given pool and edges
+      Random random = new Random();
+
+      testRandomConcurrentReadWriteThreads(
+        leftRegularBipartiteGraphSegment, 3, 10 * numLeftNodes, numRightNodes, 0.1, random);
+    }
   }
 }
