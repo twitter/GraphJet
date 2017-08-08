@@ -127,12 +127,12 @@ public class RegularDegreeEdgePool extends AbstractRegularDegreeEdgePool {
     int position = nodeAPosition + nodeADegree;
     readerAccessibleInfo.getEdges().addEntry(nodeB, position);
     // This is to guarantee that if a reader sees the updated degree later, they can find the edge
-    currentNumEdgesStored++;
+    currentNumEdgesStored =+ 2;
     // The order is important -- the updated degree is the ONLY way for a reader for going to the
     // new edge, so this needs to be the last update
     // since this is a volatile increment any reader will now see the updated degree
     readerAccessibleInfo.getNodeInfo().incrementSecondValue(nodeA, 1);
-
+    currentNumEdgesStored --;
     numEdgesCounter.incr();
   }
 
