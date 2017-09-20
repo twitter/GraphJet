@@ -79,7 +79,7 @@ public class TopUsersServlet extends HttpServlet {
       }
     }
 
-    if (queue.size() == 0) {
+    if (queue.isEmpty()) {
       response.getWriter().println("[]\n");
       return;
     }
