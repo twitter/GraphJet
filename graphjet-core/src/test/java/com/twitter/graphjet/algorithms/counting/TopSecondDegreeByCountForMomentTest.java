@@ -38,7 +38,7 @@ import com.twitter.graphjet.algorithms.filters.ResultFilterChain;
 import com.twitter.graphjet.algorithms.counting.moment.MomentRecommendationInfo;
 import com.twitter.graphjet.algorithms.counting.moment.TopSecondDegreeByCountForMoment;
 import com.twitter.graphjet.algorithms.counting.moment.TopSecondDegreeByCountRequestForMoment;
-import com.twitter.graphjet.bipartite.LeftIndexedPowerLawMultiSegmentBipartiteGraph;
+import com.twitter.graphjet.bipartite.NodeMetadataLeftIndexedMultiSegmentBipartiteGraph;
 import com.twitter.graphjet.stats.NullStatsReceiver;
 
 import it.unimi.dsi.fastutil.longs.Long2DoubleArrayMap;
@@ -140,8 +140,8 @@ public class TopSecondDegreeByCountForMomentTest {
     List<TopSecondDegreeByCountRecommendationInfo> expectedTopResults,
     RecommendationStats expectedTopSecondDegreeByCountStats
   ) throws Exception {
-    LeftIndexedPowerLawMultiSegmentBipartiteGraph bipartiteGraph =
-      BipartiteGraphTestHelper.buildSmallTestLeftIndexedPowerLawMultiSegmentBipartiteGraphWithEdgeTypes();
+    NodeMetadataLeftIndexedMultiSegmentBipartiteGraph bipartiteGraph =
+      BipartiteGraphTestHelper.buildSmallTestNodeMetadataLeftIndexedMultiSegmentBipartiteGraphWithEdgeTypes();
 
     long queryNode = 1;
     int maxSocialProofSize = 4;
