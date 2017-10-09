@@ -59,7 +59,7 @@ public abstract class EntitySocialProofGenerator implements
       new Byte2ObjectArrayMap<>();
 
   private NodeMetadataLeftIndexedMultiSegmentBipartiteGraph nodeMetadataLeftIndexedBipartiteGraph;
-  // Entity Int -> Engagements Byte -> Tweet Long -> Users Seq[Long]
+  // Entity Int -> Engagements Byte -> User Long -> Tweets Seq[Long]
   private final Int2ObjectMap<Byte2ObjectMap<Long2ObjectMap<LongSet>>> socialProofs;
   // Tweet Long -> Sum of social proof edges Double
   private final Int2DoubleMap socialProofWeights;
@@ -117,21 +117,21 @@ public abstract class EntitySocialProofGenerator implements
                     weight + socialProofWeights.get(entity)
                 );
 
-                // Get the tweet map variable by the engagement type.
+                // Get the user to tweets map variable by the engagement type.
                 if (!socialProofMap.containsKey(edgeType)) {
                   socialProofMap.put(edgeType, new Long2ObjectArrayMap<>());
                 }
-                Long2ObjectMap<LongSet> tweetsMap = socialProofMap.get(edgeType);
+                Long2ObjectMap<LongSet> userToTweetsMap = socialProofMap.get(edgeType);
 
-                // Add the connecting tweet to the tweet map.
-                if (!tweetsMap.containsKey(rightNode)) {
-                  tweetsMap.put(rightNode, new LongArraySet());
+                // Add the connecting user to the user map.
+                if (!userToTweetsMap.containsKey(leftNode)) {
+                  userToTweetsMap.put(leftNode, new LongArraySet());
                 }
-                LongSet connectingUsers = tweetsMap.get(rightNode);
+                LongSet connectingTweets = userToTweetsMap.get(leftNode);
 
-                // Add the connecting user to the user set.
-                if (!connectingUsers.contains(leftNode)) {
-                  connectingUsers.add(leftNode);
+                // Add the connecting tweet to the tweet set.
+                if (!connectingTweets.contains(rightNode)) {
+                  connectingTweets.add(rightNode);
                 }
               }
             }
