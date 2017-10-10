@@ -22,7 +22,7 @@ import com.twitter.graphjet.algorithms.NodeInfo;
 import com.twitter.graphjet.algorithms.RecommendationInfo;
 import com.twitter.graphjet.algorithms.counting.TopSecondDegreeByCount;
 import com.twitter.graphjet.algorithms.counting.TopSecondDegreeByCountResponse;
-import com.twitter.graphjet.bipartite.LeftIndexedPowerLawMultiSegmentBipartiteGraph;
+import com.twitter.graphjet.bipartite.NodeMetadataLeftIndexedMultiSegmentBipartiteGraph;
 import com.twitter.graphjet.bipartite.api.EdgeIterator;
 import com.twitter.graphjet.stats.StatsReceiver;
 
@@ -32,7 +32,7 @@ public class TopSecondDegreeByCountForMoment extends
   /**
    * Construct a TopSecondDegreeByCount algorithm runner for moment recommendations.
    * @param leftIndexedBipartiteGraph is the
-   *                                  {@link LeftIndexedPowerLawMultiSegmentBipartiteGraph}
+   *                                  {@link NodeMetadataLeftIndexedMultiSegmentBipartiteGraph}
    *                                  to run TopSecondDegreeByCountForMoment on
    * @param expectedNodesToHit        is an estimate of how many nodes can be hit in
    *                                  TopSecondDegreeByCountForMoment. This is purely for allocating needed
@@ -40,7 +40,7 @@ public class TopSecondDegreeByCountForMoment extends
    * @param statsReceiver             tracks the internal stats
    */
   public TopSecondDegreeByCountForMoment(
-    LeftIndexedPowerLawMultiSegmentBipartiteGraph leftIndexedBipartiteGraph,
+      NodeMetadataLeftIndexedMultiSegmentBipartiteGraph leftIndexedBipartiteGraph,
     int expectedNodesToHit,
     StatsReceiver statsReceiver) {
     super(leftIndexedBipartiteGraph, expectedNodesToHit, statsReceiver);
