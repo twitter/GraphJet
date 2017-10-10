@@ -1,5 +1,5 @@
 /**
- * Copyright 2016 Twitter. All rights reserved.
+ * Copyright 2017 Twitter. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,8 +25,9 @@ import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.LongSet;
 
 /**
- * This class wraps a social proof recommendation result for one entity (right node).
- * The {@link SocialProofResponse} wraps a list of SocialProofResult objects.
+ * This class wraps a entity social proof recommendation result for one entity within a
+ * right nodes metadata.
+ * The {@link SocialProofResponse} wraps a list of EntitySocialProofResult objects.
  */
 public class EntitySocialProofResult implements RecommendationInfo {
 
@@ -66,16 +67,17 @@ public class EntitySocialProofResult implements RecommendationInfo {
   }
 
   /**
-   * Calculate the total number of interactions for current entity (right node)
-   * on given set of users (left nodes).
+   * Calculate the total number of interactions for the current entity (right node's metadata)
+   * given the set of users (left nodes).
    *
-   * @return the number of interactions.
+   * @return the number of unique edgeType/user/tweet interactions.
+   * For example (0 (byte), 12 (long), 99 (long)) would be a single unique interaction.
    */
   public int getSocialProofSize() {
     int socialProofSize = 0;
-    for (Long2ObjectMap<LongSet> tweetsMap: socialProof.values()) {
-      for (LongSet connectingUsers: tweetsMap.values()) {
-        socialProofSize += connectingUsers.size();
+    for (Long2ObjectMap<LongSet> userToTweetsMap: socialProof.values()) {
+      for (LongSet connectingTweets: userToTweetsMap.values()) {
+        socialProofSize += connectingTweets.size();
       }
     }
     return socialProofSize;

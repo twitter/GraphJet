@@ -1,5 +1,5 @@
 /**
- * Copyright 2016 Twitter. All rights reserved.
+ * Copyright 2017 Twitter. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@
 package com.twitter.graphjet.algorithms.socialproof;
 
 import com.twitter.graphjet.algorithms.RecommendationRequest;
+import com.twitter.graphjet.algorithms.RecommendationType;
 
 import it.unimi.dsi.fastutil.ints.IntSet;
 import it.unimi.dsi.fastutil.longs.Long2DoubleMap;
@@ -33,7 +34,8 @@ public class EntitySocialProofRequest extends RecommendationRequest {
   /**
    * Create a social proof request.
    *
-   * @param entityIds           is the set of entities within the right nodes to query for social proof.
+   * @param entityIds           is the set of entities within the right nodes' metadata to query
+   *                            for social proof.
    * @param weightedSeedNodes   is the set of left nodes to be used as social proofs.
    * @param socialProofTypes    is the social proof types to return.
    */
