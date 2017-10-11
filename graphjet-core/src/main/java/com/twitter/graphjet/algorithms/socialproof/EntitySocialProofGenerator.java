@@ -63,7 +63,7 @@ public abstract class EntitySocialProofGenerator implements
   private NodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraph graph;
   // Entity (Int) -> Engagements (Byte) -> User (Long) -> Tweets (LongSet)
   private final Int2ObjectMap<Byte2ObjectMap<Long2ObjectMap<LongSet>>> socialProofs;
-  // Tweet (Long) -> Sum of social proof edges (Double)
+  // Entity (Int) -> Sum of social proof edges (Double)
   private final Int2DoubleMap socialProofWeights;
   protected RecommendationType recommendationType;
   protected IDMask idMask;
@@ -132,16 +132,18 @@ public abstract class EntitySocialProofGenerator implements
       double weight = entry.getDoubleValue();
       NodeMetadataMultiSegmentIterator edgeIterator =
         (NodeMetadataMultiSegmentIterator) graph.getLeftNodeEdges(leftNode);
+      if (edgeIterator == null) { continue; }
 
       int numEdgePerNode = 0;
-      if (edgeIterator == null) { continue; }
       while (edgeIterator.hasNext() && numEdgePerNode++ < MAX_EDGES_PER_NODE) {
+        long rightNode = idMask.restore(edgeIterator.nextLong());
         byte edgeType = edgeIterator.currentEdgeType();
         if (!socialProofTypes.contains(edgeType)) { continue; }
-        long rightNode = idMask.restore(edgeIterator.nextLong());
+
         IntArrayIterator metadataIterator =
           (IntArrayIterator) edgeIterator.getRightNodeMetadata(entityType);
         if (metadataIterator == null) { continue; }
+
         while (metadataIterator.hasNext()) {
           int entity = metadataIterator.nextInt();
           // If the current id is in the set of inputIds, we find and store its social proof.
