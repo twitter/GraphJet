@@ -284,6 +284,51 @@ public final class BipartiteGraphTestHelper {
   }
 
   /**
+   * Build a small test NodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraph.
+   *
+   * @return a small test {@link LeftIndexedPowerLawMultiSegmentBipartiteGraph}
+   */
+  public static NodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraph
+  buildSmallTestNodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraphWithEdgeTypes() {
+    NodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraph graph =
+        new NodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraph(
+            2,
+            10,
+            3,
+            6,
+            2.0,
+            6,
+            2,
+            new HigherBitsEdgeTypeMask(),
+            new NullStatsReceiver()
+        );
+    int[][] emptyLeftNodeMetadata = new int[][]{};
+    int[][] emptyRightNodeMetadata = new int[][]{};
+    int[][] hashtagNodeMetadata = new int[][]{new int[]{100}, null};
+    int[][] urlNodeMetadata = new int[][]{null, new int[]{200}};
+    long emptyEdgeMetadata = 0L;
+
+    graph.addEdge(1, 2, (byte) 0, emptyEdgeMetadata, emptyLeftNodeMetadata, emptyRightNodeMetadata);
+    graph.addEdge(1, 7, (byte) 0, emptyEdgeMetadata, emptyLeftNodeMetadata, emptyRightNodeMetadata);
+    graph.addEdge(1, 3, (byte) 1, emptyEdgeMetadata, emptyLeftNodeMetadata, hashtagNodeMetadata);
+    graph.addEdge(1, 5, (byte) 3, emptyEdgeMetadata, emptyLeftNodeMetadata, hashtagNodeMetadata);
+    // User id 1, took action 2, on tweet id 4 , which contains url id 200
+    graph.addEdge(1, 4, (byte) 2, emptyEdgeMetadata, emptyLeftNodeMetadata, urlNodeMetadata);
+
+    graph.addEdge(2, 3, (byte) 1, emptyEdgeMetadata, emptyLeftNodeMetadata, hashtagNodeMetadata);
+    graph.addEdge(2, 5, (byte) 0, emptyEdgeMetadata, emptyLeftNodeMetadata, hashtagNodeMetadata);
+    graph.addEdge(2, 7, (byte) 1, emptyEdgeMetadata, emptyLeftNodeMetadata, emptyRightNodeMetadata);
+    // User id 2, took action 1, on tweet id 4 and tweet id 6, which both contain url id 200
+    graph.addEdge(2, 4, (byte) 1, emptyEdgeMetadata, emptyLeftNodeMetadata, urlNodeMetadata);
+    graph.addEdge(2, 6, (byte) 1, emptyEdgeMetadata, emptyLeftNodeMetadata, urlNodeMetadata);
+
+    // User id 3, took action 4, on tweet id 4, which contains url id 200
+    graph.addEdge(3, 4, (byte) 4, emptyEdgeMetadata, emptyLeftNodeMetadata, urlNodeMetadata);
+
+    return graph;
+  }
+
+  /**
    * Build a random NodeMetadataLeftIndexedMultiSegmentBipartiteGraph of given left size.
    *
    * @param leftSize   is the left hand size of the bipartite graph
