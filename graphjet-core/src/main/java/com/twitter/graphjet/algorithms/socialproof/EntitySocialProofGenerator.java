@@ -46,7 +46,8 @@ import it.unimi.dsi.fastutil.longs.LongArraySet;
 import it.unimi.dsi.fastutil.longs.LongSet;
 
 /**
- * SocialProofGenerator shares similar logic with {@link com.twitter.graphjet.algorithms.counting.TopSecondDegreeByCount}.
+ * EntitySocialProofGenerator shares similar logic with
+ * {@link com.twitter.graphjet.algorithms.counting.TopSecondDegreeByCount}.
  * In the request, clients specify a seed user set (left nodes) and an entity set
  * (right nodes' metadata).
  * EntitySocialProofGenerator finds the intersection between the seed users' (left node) edges and
