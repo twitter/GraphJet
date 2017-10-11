@@ -51,7 +51,7 @@ import it.unimi.dsi.fastutil.longs.LongSet;
  * In the request, clients specify a seed user set (left nodes) and an node metadata set
  * (right nodes' metadata).
  * NodeMetadataSocialProofGenerator finds the intersection between the seed users' (left node)
- * edges and the given entity set by traversing each right node's metadata.
+ * edges and the given node metadata id set by traversing each right node's metadata.
  * Only entities with at least one social proof will be returned to clients.
  */
 public abstract class NodeMetadataSocialProofGenerator implements
@@ -125,7 +125,7 @@ public abstract class NodeMetadataSocialProofGenerator implements
     socialProofWeights.clear();
     IntSet nodeMetadataIds = request.getNodeMetadataIds();
     ByteSet socialProofTypes = new ByteArraySet(request.getSocialProofTypes());
-    byte entityType = (byte) recommendationType.getValue();
+    byte nodeMetadataType = (byte) this.recommendationType.getValue();
 
     // Iterate through the set of seed users with weights. For each seed user, we go through his edges.
     for (Long2DoubleMap.Entry entry: request.getLeftSeedNodesWithWeight().long2DoubleEntrySet()) {
@@ -142,7 +142,7 @@ public abstract class NodeMetadataSocialProofGenerator implements
         if (!socialProofTypes.contains(edgeType)) continue;
 
         IntArrayIterator metadataIterator =
-          (IntArrayIterator) edgeIterator.getRightNodeMetadata(entityType);
+          (IntArrayIterator) edgeIterator.getRightNodeMetadata(nodeMetadataType);
         if (metadataIterator == null) continue;
 
         while (metadataIterator.hasNext()) {
