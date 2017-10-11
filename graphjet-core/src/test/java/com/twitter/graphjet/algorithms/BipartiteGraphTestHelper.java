@@ -291,17 +291,17 @@ public final class BipartiteGraphTestHelper {
   public static NodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraph
   buildSmallTestNodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraphWithEdgeTypes() {
     NodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraph graph =
-        new NodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraph(
-            2,
-            10,
-            3,
-            6,
-            2.0,
-            6,
-            2,
-            new HigherBitsEdgeTypeMask(),
-            new NullStatsReceiver()
-        );
+      new NodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraph(
+        2,
+        10,
+        3,
+        6,
+        2.0,
+        6,
+        2,
+        new HigherBitsEdgeTypeMask(),
+        new NullStatsReceiver()
+      );
     int[][] emptyLeftNodeMetadata = new int[][]{};
     int[][] emptyRightNodeMetadata = new int[][]{};
     int[][] hashtagNodeMetadata = new int[][]{new int[]{100}, null};

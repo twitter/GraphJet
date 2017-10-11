@@ -46,33 +46,33 @@ import it.unimi.dsi.fastutil.longs.LongArraySet;
 import it.unimi.dsi.fastutil.longs.LongSet;
 
 /**
- * EntitySocialProofGenerator shares similar logic with
+ * NodeMetadataSocialProofGenerator shares similar logic with
  * {@link com.twitter.graphjet.algorithms.counting.TopSecondDegreeByCount}.
- * In the request, clients specify a seed user set (left nodes) and an entity set
+ * In the request, clients specify a seed user set (left nodes) and an node metadata set
  * (right nodes' metadata).
- * EntitySocialProofGenerator finds the intersection between the seed users' (left node) edges and
- * the given entity set by traversing each right node's metadata.
+ * NodeMetadataSocialProofGenerator finds the intersection between the seed users' (left node)
+ * edges and the given entity set by traversing each right node's metadata.
  * Only entities with at least one social proof will be returned to clients.
  */
-public abstract class EntitySocialProofGenerator implements
-    RecommendationAlgorithm<EntitySocialProofRequest, SocialProofResponse> {
+public abstract class NodeMetadataSocialProofGenerator implements
+  RecommendationAlgorithm<NodeMetadataSocialProofRequest, SocialProofResponse> {
 
   private static final int MAX_EDGES_PER_NODE = 500;
   private static final Byte2ObjectMap<Long2ObjectMap<LongSet>> EMPTY_SOCIALPROOF_MAP =
-      new Byte2ObjectArrayMap<>();
+    new Byte2ObjectArrayMap<>();
 
   private NodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraph graph;
-  // Entity (Int) -> Engagements (Byte) -> User (Long) -> Tweets (LongSet)
+  // NodeMetadata (Int) -> Engagement (Byte) -> User (Long) -> Tweets (LongSet)
   private final Int2ObjectMap<Byte2ObjectMap<Long2ObjectMap<LongSet>>> socialProofs;
-  // Entity (Int) -> Sum of social proof edges (Double)
+  // NodeMetadata (Int) -> Sum of social proof edges (Double)
   private final Int2DoubleMap socialProofWeights;
   protected RecommendationType recommendationType;
   protected IDMask idMask;
 
-  public EntitySocialProofGenerator(
-      NodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraph graph,
-      TweetIDMask mask,
-      RecommendationType recommendationType
+  public NodeMetadataSocialProofGenerator(
+    NodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraph graph,
+    TweetIDMask mask,
+    RecommendationType recommendationType
   ) {
     this.graph = graph;
     this.idMask = mask;
@@ -82,20 +82,20 @@ public abstract class EntitySocialProofGenerator implements
     this.socialProofWeights = new Int2DoubleOpenHashMap();
   }
 
-  private void updateSocialProofWeight(int entity, double weight) {
+  private void updateSocialProofWeight(int metadataId, double weight) {
     // We sum the weights of incoming leftNodes as the weight of the rightNode.
     socialProofWeights.put(
-        entity,
-        weight + socialProofWeights.get(entity)
+      metadataId,
+      weight + socialProofWeights.get(metadataId)
     );
   }
 
-  private void addSocialProof(int entity, byte edgeType, long leftNode, long rightNode) {
-    if (!socialProofs.containsKey(entity)) {
-      socialProofs.put(entity, new Byte2ObjectArrayMap<>());
-      socialProofWeights.put(entity, 0);
+  private void addSocialProof(int metadataId, byte edgeType, long leftNode, long rightNode) {
+    if (!socialProofs.containsKey(metadataId)) {
+      socialProofs.put(metadataId, new Byte2ObjectArrayMap<>());
+      socialProofWeights.put(metadataId, 0);
     }
-    Byte2ObjectMap<Long2ObjectMap<LongSet>> socialProofMap = socialProofs.get(entity);
+    Byte2ObjectMap<Long2ObjectMap<LongSet>> socialProofMap = socialProofs.get(metadataId);
 
     // Get the user to tweets map variable by the engagement type.
     if (!socialProofMap.containsKey(edgeType)) {
@@ -120,10 +120,10 @@ public abstract class EntitySocialProofGenerator implements
    *
    * @param request contains a set of input ids and a set of seed users.
    */
-  private void collectRecommendations(EntitySocialProofRequest request) {
+  private void collectRecommendations(NodeMetadataSocialProofRequest request) {
     socialProofs.clear();
     socialProofWeights.clear();
-    IntSet inputEntityIds = request.getEntityIds();
+    IntSet nodeMetadataIds = request.getNodeMetadataIds();
     ByteSet socialProofTypes = new ByteArraySet(request.getSocialProofTypes());
     byte entityType = (byte) recommendationType.getValue();
 
@@ -133,24 +133,24 @@ public abstract class EntitySocialProofGenerator implements
       double weight = entry.getDoubleValue();
       NodeMetadataMultiSegmentIterator edgeIterator =
         (NodeMetadataMultiSegmentIterator) graph.getLeftNodeEdges(leftNode);
-      if (edgeIterator == null) { continue; }
+      if (edgeIterator == null) continue;
 
       int numEdgePerNode = 0;
       while (edgeIterator.hasNext() && numEdgePerNode++ < MAX_EDGES_PER_NODE) {
         long rightNode = idMask.restore(edgeIterator.nextLong());
         byte edgeType = edgeIterator.currentEdgeType();
-        if (!socialProofTypes.contains(edgeType)) { continue; }
+        if (!socialProofTypes.contains(edgeType)) continue;
 
         IntArrayIterator metadataIterator =
           (IntArrayIterator) edgeIterator.getRightNodeMetadata(entityType);
-        if (metadataIterator == null) { continue; }
+        if (metadataIterator == null) continue;
 
         while (metadataIterator.hasNext()) {
-          int entity = metadataIterator.nextInt();
+          int metadataId = metadataIterator.nextInt();
           // If the current id is in the set of inputIds, we find and store its social proof.
-          if (inputEntityIds.contains(entity)) {
-            addSocialProof(entity, edgeType, leftNode, rightNode);
-            updateSocialProofWeight(entity, weight);
+          if (nodeMetadataIds.contains(metadataId)) {
+            addSocialProof(metadataId, edgeType, leftNode, rightNode);
+            updateSocialProofWeight(metadataId, weight);
           }
         }
       }
@@ -158,18 +158,18 @@ public abstract class EntitySocialProofGenerator implements
   }
 
   @Override
-  public SocialProofResponse computeRecommendations(EntitySocialProofRequest request, Random rand) {
+  public SocialProofResponse computeRecommendations(NodeMetadataSocialProofRequest request, Random rand) {
     collectRecommendations(request);
 
     List<RecommendationInfo> socialProofList = new LinkedList<>();
-    for (Integer id: request.getEntityIds()) {
+    for (Integer id: request.getNodeMetadataIds()) {
       // Return only ids with at least one social proof
       if (socialProofs.containsKey(id)) {
-        socialProofList.add(new EntitySocialProofResult(
-            id,
-            socialProofs.getOrDefault(id, EMPTY_SOCIALPROOF_MAP),
-            socialProofWeights.getOrDefault(id, 0.0),
-            recommendationType));
+        socialProofList.add(new NodeMetadataSocialProofResult(
+          id,
+          socialProofs.getOrDefault(id, EMPTY_SOCIALPROOF_MAP),
+          socialProofWeights.getOrDefault(id, 0.0),
+          recommendationType));
       }
     }
 

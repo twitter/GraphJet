@@ -49,7 +49,7 @@ public class UrlSocialProofTest {
   @Test
   public void testComputeRecommendations() throws Exception {
     NodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraph graph = BipartiteGraphTestHelper.
-        buildSmallTestNodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraphWithEdgeTypes();
+      buildSmallTestNodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraphWithEdgeTypes();
 
     Long2DoubleMap seedsMap = new Long2DoubleArrayMap(new long[]{2, 3}, new double[]{1.0, 0.5});
     IntSet urlIds = new IntArraySet(new int[]{200, 300});
@@ -58,22 +58,22 @@ public class UrlSocialProofTest {
     long randomSeed = 918324701982347L;
     Random random = new Random(randomSeed);
 
-    EntitySocialProofRequest request = new EntitySocialProofRequest(
-        urlIds,
-        seedsMap,
-        validSocialProofs
+    NodeMetadataSocialProofRequest request = new NodeMetadataSocialProofRequest(
+      urlIds,
+      seedsMap,
+      validSocialProofs
     );
 
     SocialProofResponse socialProofResponse = new UrlSocialProofGenerator(
-        graph
+      graph
     ).computeRecommendations(request, random);
 
     List<RecommendationInfo> socialProofResults =
-        Lists.newArrayList(socialProofResponse.getRankedRecommendations());
+      Lists.newArrayList(socialProofResponse.getRankedRecommendations());
 
     for (RecommendationInfo recommendationInfo: socialProofResults) {
-      EntitySocialProofResult socialProofResult = (EntitySocialProofResult) recommendationInfo;
-      int urlId = socialProofResult.getEntity();
+      NodeMetadataSocialProofResult socialProofResult = (NodeMetadataSocialProofResult) recommendationInfo;
+      int urlId = socialProofResult.getNodeMetadataId();
       Byte2ObjectMap<Long2ObjectMap<LongSet>> socialProofs = socialProofResult.getSocialProof();
 
       if (urlId == 300) {

@@ -18,43 +18,42 @@
 package com.twitter.graphjet.algorithms.socialproof;
 
 import com.twitter.graphjet.algorithms.RecommendationRequest;
-import com.twitter.graphjet.algorithms.RecommendationType;
 
 import it.unimi.dsi.fastutil.ints.IntSet;
 import it.unimi.dsi.fastutil.longs.Long2DoubleMap;
 import it.unimi.dsi.fastutil.longs.LongArraySet;
 import it.unimi.dsi.fastutil.longs.LongSet;
 
-public class EntitySocialProofRequest extends RecommendationRequest {
+public class NodeMetadataSocialProofRequest extends RecommendationRequest {
   private static final LongSet EMPTY_SET = new LongArraySet();
 
   private final Long2DoubleMap leftSeedNodesWithWeight;
-  private final IntSet entityIds;
+  private final IntSet nodeMetadataIds;
 
   /**
    * Create a social proof request.
    *
-   * @param entityIds           is the set of entities within the right nodes' metadata to query
+   * @param nodeMetadataIds     is the set of ids within the right nodes' metadata to query
    *                            for social proof.
    * @param weightedSeedNodes   is the set of left nodes to be used as social proofs.
    * @param socialProofTypes    is the social proof types to return.
    */
-  public EntitySocialProofRequest(
-      IntSet entityIds,
-      Long2DoubleMap weightedSeedNodes,
-      byte[] socialProofTypes
+  public NodeMetadataSocialProofRequest(
+    IntSet nodeMetadataIds,
+    Long2DoubleMap weightedSeedNodes,
+    byte[] socialProofTypes
   ) {
     super(0, EMPTY_SET, socialProofTypes);
     this.leftSeedNodesWithWeight = weightedSeedNodes;
-    this.entityIds = entityIds;
+    this.nodeMetadataIds = nodeMetadataIds;
   }
 
   public Long2DoubleMap getLeftSeedNodesWithWeight() {
     return leftSeedNodesWithWeight;
   }
 
-  public IntSet getEntityIds() {
-    return this.entityIds;
+  public IntSet getNodeMetadataIds() {
+    return this.nodeMetadataIds;
   }
 
 }

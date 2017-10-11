@@ -19,14 +19,11 @@ package com.twitter.graphjet.algorithms.socialproof;
 
 import com.twitter.graphjet.algorithms.RecommendationType;
 import com.twitter.graphjet.algorithms.TweetIDMask;
-import com.twitter.graphjet.bipartite.NodeMetadataLeftIndexedMultiSegmentBipartiteGraph;
 import com.twitter.graphjet.bipartite.NodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraph;
 
-public class UrlSocialProofGenerator extends EntitySocialProofGenerator {
+public class UrlSocialProofGenerator extends NodeMetadataSocialProofGenerator {
 
-  public UrlSocialProofGenerator(
-      NodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraph graph
-  ) {
+  public UrlSocialProofGenerator(NodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraph graph) {
     super(graph, new TweetIDMask(), RecommendationType.URL);
   }
 }

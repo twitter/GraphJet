@@ -25,24 +25,25 @@ import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.LongSet;
 
 /**
- * This class wraps a entity social proof recommendation result for one entity within a
- * right nodes metadata.
- * The {@link SocialProofResponse} wraps a list of EntitySocialProofResult objects.
+ * This class wraps a nodeMetadataId social proof recommendation result for one nodeMetadataId
+ * within a right node.
+ * The {@link SocialProofResponse} wraps a list of NodeMetadataSocialProofResult objects.
  */
-public class EntitySocialProofResult implements RecommendationInfo {
+public class NodeMetadataSocialProofResult implements RecommendationInfo {
 
-  private final int entity;
+  private final int nodeMetadataId;
+  // Engagement (Byte) -> User (Long) -> Tweets (LongSet)
   private final Byte2ObjectMap<Long2ObjectMap<LongSet>> socialProof;
   private final double weight;
   private final RecommendationType recommendationType;
 
-  public EntitySocialProofResult(
-      Integer entity,
-      Byte2ObjectMap<Long2ObjectMap<LongSet>> socialProof,
-      double weight,
-      RecommendationType recommendationType
+  public NodeMetadataSocialProofResult(
+    Integer nodeMetadataId,
+    Byte2ObjectMap<Long2ObjectMap<LongSet>> socialProof,
+    double weight,
+    RecommendationType recommendationType
   ) {
-    this.entity = entity;
+    this.nodeMetadataId = nodeMetadataId;
     this.socialProof = socialProof;
     this.weight = weight;
     this.recommendationType = recommendationType;
@@ -62,12 +63,12 @@ public class EntitySocialProofResult implements RecommendationInfo {
     return this.socialProof;
   }
 
-  public int getEntity() {
-    return this.entity;
+  public int getNodeMetadataId() {
+    return this.nodeMetadataId;
   }
 
   /**
-   * Calculate the total number of interactions for the current entity (right node's metadata)
+   * Calculate the total number of interactions for the current nodeMetadataId (right node's metadata)
    * given the set of users (left nodes).
    *
    * @return the number of unique edgeType/user/tweet interactions.
