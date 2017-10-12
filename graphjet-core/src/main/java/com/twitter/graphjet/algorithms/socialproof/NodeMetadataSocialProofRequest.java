@@ -31,12 +31,12 @@ public class NodeMetadataSocialProofRequest extends RecommendationRequest {
   private final IntSet nodeMetadataIds;
 
   /**
-   * Create a social proof request.
+   * Create a social proof request for a right node's metadata.
    *
-   * @param nodeMetadataIds     is the set of ids within the right nodes' metadata to query
+   * @param nodeMetadataIds     The set of ids within the right nodes' metadata to query
    *                            for social proof.
-   * @param weightedSeedNodes   is the set of left nodes to be used as social proofs.
-   * @param socialProofTypes    is the social proof types to return.
+   * @param weightedSeedNodes   The set of left nodes to be used as social proofs.
+   * @param socialProofTypes    The social proof types to return.
    */
   public NodeMetadataSocialProofRequest(
     IntSet nodeMetadataIds,

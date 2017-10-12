@@ -39,9 +39,9 @@ import it.unimi.dsi.fastutil.longs.LongSet;
 import static org.junit.Assert.*;
 
 /**
- * Unit test for social proof finder.
+ * Unit test for the RecommendationType.URL metadata social proof finder.
  *
- * Build graph using BipartiteGraphTestHelper, and test the proof finder logic for url entities
+ * Build the graph using BipartiteGraphTestHelper, and test the proof finder logic for url metadata
  * stored in the metadata of the right nodes.
  */
 public class UrlSocialProofTest {

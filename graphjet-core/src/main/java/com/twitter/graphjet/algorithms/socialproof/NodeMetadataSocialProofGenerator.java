@@ -30,29 +30,19 @@ import com.twitter.graphjet.bipartite.NodeMetadataLeftIndexedPowerLawMultiSegmen
 import com.twitter.graphjet.bipartite.NodeMetadataMultiSegmentIterator;
 import com.twitter.graphjet.hashing.IntArrayIterator;
 
-import it.unimi.dsi.fastutil.bytes.Byte2ObjectArrayMap;
-import it.unimi.dsi.fastutil.bytes.Byte2ObjectMap;
-import it.unimi.dsi.fastutil.bytes.ByteArraySet;
-import it.unimi.dsi.fastutil.bytes.ByteSet;
-import it.unimi.dsi.fastutil.ints.Int2DoubleMap;
-import it.unimi.dsi.fastutil.ints.Int2DoubleOpenHashMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.ints.IntSet;
-import it.unimi.dsi.fastutil.longs.Long2DoubleMap;
-import it.unimi.dsi.fastutil.longs.Long2ObjectArrayMap;
-import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
-import it.unimi.dsi.fastutil.longs.LongArraySet;
-import it.unimi.dsi.fastutil.longs.LongSet;
+import it.unimi.dsi.fastutil.bytes.*;
+import it.unimi.dsi.fastutil.ints.*;
+import it.unimi.dsi.fastutil.longs.*;
 
 /**
  * NodeMetadataSocialProofGenerator shares similar logic with
  * {@link com.twitter.graphjet.algorithms.counting.TopSecondDegreeByCount}.
- * In the request, clients specify a seed user set (left nodes) and an node metadata set
- * (right nodes' metadata).
- * NodeMetadataSocialProofGenerator finds the intersection between the seed users' (left node)
- * edges and the given node metadata id set by traversing each right node's metadata.
- * Only entities with at least one social proof will be returned to clients.
+ * In the request, clients specify a seed user set (left nodes) and a node metadata set
+ * (right node's metadata).
+ * NodeMetadataSocialProofGenerator finds the intersection between the seed users (left nodes)
+ * and the given node metadata id set. It accomplishes this by traversing each outgoing edge from
+ * the seed set and each right node's metadata from those edges.
+ * Only node metadatas with at least one social proof will be returned to clients.
  */
 public abstract class NodeMetadataSocialProofGenerator implements
   RecommendationAlgorithm<NodeMetadataSocialProofRequest, SocialProofResponse> {
@@ -78,8 +68,10 @@ public abstract class NodeMetadataSocialProofGenerator implements
     this.idMask = mask;
     this.recommendationType = recommendationType;
     // Variables socialProofs and socialProofWeights are re-used for each request.
-    this.socialProofs = new Int2ObjectOpenHashMap<>();
-    this.socialProofWeights = new Int2DoubleOpenHashMap();
+    // We chose to use an ArrayMap since, on average, we will request social proof for very few
+    // (<10) metadatas in a single request.
+    this.socialProofs = new Int2ObjectArrayMap<>();
+    this.socialProofWeights = new Int2DoubleArrayMap();
   }
 
   private void updateSocialProofWeight(int metadataId, double weight) {
@@ -92,6 +84,8 @@ public abstract class NodeMetadataSocialProofGenerator implements
 
   private void addSocialProof(int metadataId, byte edgeType, long leftNode, long rightNode) {
     if (!socialProofs.containsKey(metadataId)) {
+      // We chose to use an ArrayMap here since we will at most have 5 edge types that we request
+      // social proof for.
       socialProofs.put(metadataId, new Byte2ObjectArrayMap<>());
       socialProofWeights.put(metadataId, 0);
     }
@@ -99,13 +93,17 @@ public abstract class NodeMetadataSocialProofGenerator implements
 
     // Get the user to tweets map variable by the engagement type.
     if (!socialProofMap.containsKey(edgeType)) {
-      socialProofMap.put(edgeType, new Long2ObjectArrayMap<>());
+      // We chose to use an OpenHashMap since a single edge type may have dozens or even hundreds
+      // of user seed ids associated.
+      socialProofMap.put(edgeType, new Long2ObjectOpenHashMap<>());
     }
     Long2ObjectMap<LongSet> userToTweetsMap = socialProofMap.get(edgeType);
 
     // Add the connecting user to the user map.
     if (!userToTweetsMap.containsKey(leftNode)) {
-      userToTweetsMap.put(leftNode, new LongArraySet());
+      // We chose to use an OpenHashSet since a single user may engage with dozens or even
+      // hundreds of tweet ids.
+      userToTweetsMap.put(leftNode, new LongOpenHashSet());
     }
     LongSet connectingTweets = userToTweetsMap.get(leftNode);
 
@@ -118,16 +116,16 @@ public abstract class NodeMetadataSocialProofGenerator implements
   /**
    * Collect social proofs for a given {@link SocialProofRequest}.
    *
-   * @param request contains a set of input ids and a set of seed users.
+   * @param request contains a set of input metadata ids and a set of seed users.
    */
   private void collectRecommendations(NodeMetadataSocialProofRequest request) {
     socialProofs.clear();
     socialProofWeights.clear();
-    IntSet nodeMetadataIds = request.getNodeMetadataIds();
+    IntSet inputNodeMetadataIds = request.getNodeMetadataIds();
     ByteSet socialProofTypes = new ByteArraySet(request.getSocialProofTypes());
     byte nodeMetadataType = (byte) this.recommendationType.getValue();
 
-    // Iterate through the set of seed users with weights. For each seed user, we go through his edges.
+    // Iterate through the set of seed users with weights.
     for (Long2DoubleMap.Entry entry: request.getLeftSeedNodesWithWeight().long2DoubleEntrySet()) {
       long leftNode = entry.getLongKey();
       double weight = entry.getDoubleValue();
@@ -135,6 +133,7 @@ public abstract class NodeMetadataSocialProofGenerator implements
         (NodeMetadataMultiSegmentIterator) graph.getLeftNodeEdges(leftNode);
       if (edgeIterator == null) continue;
 
+      // For each seed user node, we traverse all of its outgoing edges, up to the MAX_EDGES_PER_NODE.
       int numEdgePerNode = 0;
       while (edgeIterator.hasNext() && numEdgePerNode++ < MAX_EDGES_PER_NODE) {
         long rightNode = idMask.restore(edgeIterator.nextLong());
@@ -145,10 +144,12 @@ public abstract class NodeMetadataSocialProofGenerator implements
           (IntArrayIterator) edgeIterator.getRightNodeMetadata(nodeMetadataType);
         if (metadataIterator == null) continue;
 
+        // For each of the accepted edges, we traverse the metadata ids for the specified node
+        // metadata type (either RecommendationType.HASHTAG or RecommendationType.URL).
         while (metadataIterator.hasNext()) {
           int metadataId = metadataIterator.nextInt();
           // If the current id is in the set of inputIds, we find and store its social proof.
-          if (nodeMetadataIds.contains(metadataId)) {
+          if (inputNodeMetadataIds.contains(metadataId)) {
             addSocialProof(metadataId, edgeType, leftNode, rightNode);
             updateSocialProofWeight(metadataId, weight);
           }
@@ -163,11 +164,14 @@ public abstract class NodeMetadataSocialProofGenerator implements
 
     List<RecommendationInfo> socialProofList = new LinkedList<>();
     for (Integer id: request.getNodeMetadataIds()) {
-      // Return only ids with at least one social proof
+      // Return only ids with at least one social proof.
       if (socialProofs.containsKey(id)) {
         socialProofList.add(new NodeMetadataSocialProofResult(
           id,
+          // The EMPTY_SOCIALPROOF_MAP will never be used, since we check if (socialProofs.containsKey(id)).
           socialProofs.getOrDefault(id, EMPTY_SOCIALPROOF_MAP),
+          // The weight of 0.0 will never be used, since we insert the socialProofWeights entry
+          // when we insert the corresponding socialProofs entry.
           socialProofWeights.getOrDefault(id, 0.0),
           recommendationType));
       }
