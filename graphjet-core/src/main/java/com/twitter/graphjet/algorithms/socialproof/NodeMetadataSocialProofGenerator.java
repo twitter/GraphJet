@@ -48,7 +48,7 @@ public abstract class NodeMetadataSocialProofGenerator implements
   RecommendationAlgorithm<NodeMetadataSocialProofRequest, SocialProofResponse> {
 
   private static final int MAX_EDGES_PER_NODE = 500;
-  private static final Byte2ObjectMap<Long2ObjectMap<LongSet>> EMPTY_SOCIALPROOF_MAP =
+  private static final Byte2ObjectMap<Long2ObjectMap<LongSet>> EMPTY_SOCIAL_PROOF_MAP =
     new Byte2ObjectArrayMap<>();
 
   private NodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraph graph;
@@ -67,11 +67,12 @@ public abstract class NodeMetadataSocialProofGenerator implements
     this.graph = graph;
     this.idMask = mask;
     this.recommendationType = recommendationType;
-    // Variables socialProofs and socialProofWeights are re-used for each request.
-    // We chose to use an ArrayMap since, on average, we will request social proof for very few
-    // (<10) metadatas in a single request.
-    this.socialProofs = new Int2ObjectArrayMap<>();
-    this.socialProofWeights = new Int2DoubleArrayMap();
+    // Variables such as socialProofs and socialProofWeights, are re-used for each request.
+    // We choose to use an OpenHashMap to future proof the potential performance degradation,
+    // and the memory is re-used, so we are less concerned about the memory overhead of OpenHashMap
+    // compared with ArrayMap.
+    this.socialProofs = new Int2ObjectOpenHashMap<>();
+    this.socialProofWeights = new Int2DoubleOpenHashMap();
   }
 
   private void updateSocialProofWeight(int metadataId, double weight) {
@@ -84,8 +85,8 @@ public abstract class NodeMetadataSocialProofGenerator implements
 
   private void addSocialProof(int metadataId, byte edgeType, long leftNode, long rightNode) {
     if (!socialProofs.containsKey(metadataId)) {
-      // We chose to use an ArrayMap here since we will at most have 5 edge types that we request
-      // social proof for.
+      // We choose ArrayMap over OpenHashMap since the request will have at most a few edge types,
+      // usually less than five.
       socialProofs.put(metadataId, new Byte2ObjectArrayMap<>());
       socialProofWeights.put(metadataId, 0);
     }
@@ -93,7 +94,7 @@ public abstract class NodeMetadataSocialProofGenerator implements
 
     // Get the user to tweets map variable by the engagement type.
     if (!socialProofMap.containsKey(edgeType)) {
-      // We chose to use an OpenHashMap since a single edge type may have dozens or even hundreds
+      // We choose to use an OpenHashMap since a single edge type may have dozens or even hundreds
       // of user seed ids associated.
       socialProofMap.put(edgeType, new Long2ObjectOpenHashMap<>());
     }
@@ -101,7 +102,7 @@ public abstract class NodeMetadataSocialProofGenerator implements
 
     // Add the connecting user to the user map.
     if (!userToTweetsMap.containsKey(leftNode)) {
-      // We chose to use an OpenHashSet since a single user may engage with dozens or even
+      // We choose to use an OpenHashSet since a single user may engage with dozens or even
       // hundreds of tweet ids.
       userToTweetsMap.put(leftNode, new LongOpenHashSet());
     }
@@ -163,13 +164,13 @@ public abstract class NodeMetadataSocialProofGenerator implements
     collectRecommendations(request);
 
     List<RecommendationInfo> socialProofList = new LinkedList<>();
-    for (Integer id: request.getNodeMetadataIds()) {
+    for (int id: request.getNodeMetadataIds()) {
       // Return only ids with at least one social proof.
       if (socialProofs.containsKey(id)) {
         socialProofList.add(new NodeMetadataSocialProofResult(
           id,
           // The EMPTY_SOCIALPROOF_MAP will never be used, since we check if (socialProofs.containsKey(id)).
-          socialProofs.getOrDefault(id, EMPTY_SOCIALPROOF_MAP),
+          socialProofs.getOrDefault(id, EMPTY_SOCIAL_PROOF_MAP),
           // The weight of 0.0 will never be used, since we insert the socialProofWeights entry
           // when we insert the corresponding socialProofs entry.
           socialProofWeights.getOrDefault(id, 0.0),

@@ -38,7 +38,7 @@ public class NodeMetadataSocialProofResult implements RecommendationInfo {
   private final RecommendationType recommendationType;
 
   public NodeMetadataSocialProofResult(
-    Integer nodeMetadataId,
+    int nodeMetadataId,
     Byte2ObjectMap<Long2ObjectMap<LongSet>> socialProof,
     double weight,
     RecommendationType recommendationType
