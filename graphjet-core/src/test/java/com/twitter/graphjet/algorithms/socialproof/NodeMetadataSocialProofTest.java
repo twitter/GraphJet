@@ -26,8 +26,10 @@ import org.junit.Test;
 
 import com.twitter.graphjet.algorithms.BipartiteGraphTestHelper;
 import com.twitter.graphjet.algorithms.RecommendationInfo;
+import com.twitter.graphjet.algorithms.RecommendationType;
 import com.twitter.graphjet.bipartite.NodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraph;
 
+import it.unimi.dsi.fastutil.bytes.Byte2ObjectArrayMap;
 import it.unimi.dsi.fastutil.bytes.Byte2ObjectMap;
 import it.unimi.dsi.fastutil.ints.IntArraySet;
 import it.unimi.dsi.fastutil.ints.IntSet;
@@ -39,12 +41,12 @@ import it.unimi.dsi.fastutil.longs.LongSet;
 import static org.junit.Assert.*;
 
 /**
- * Unit test for the RecommendationType.URL metadata social proof finder.
+ * Unit test for the node metadata social proof finder.
  *
  * Build the graph using BipartiteGraphTestHelper, and test the proof finder logic for url metadata
- * stored in the metadata of the right nodes.
+ * and hashtag metadata stored in the metadata of the right nodes.
  */
-public class UrlSocialProofTest {
+public class NodeMetadataSocialProofTest {
 
   @Test
   public void testComputeRecommendations() throws Exception {
@@ -53,18 +55,22 @@ public class UrlSocialProofTest {
 
     Long2DoubleMap seedsMap = new Long2DoubleArrayMap(new long[]{2, 3}, new double[]{1.0, 0.5});
     IntSet urlIds = new IntArraySet(new int[]{200, 300});
+    IntSet hashtagIds = new IntArraySet(new int[]{100, 101, 102});
+    Byte2ObjectMap<IntSet> nodeMetadataTypeToIdsMap = new Byte2ObjectArrayMap<>();
+    nodeMetadataTypeToIdsMap.put((byte) RecommendationType.HASHTAG.getValue(), hashtagIds);
+    nodeMetadataTypeToIdsMap.put((byte) RecommendationType.URL.getValue(), urlIds);
 
     byte[] validSocialProofs = new byte[]{1, 2, 3, 4};
     long randomSeed = 918324701982347L;
     Random random = new Random(randomSeed);
 
     NodeMetadataSocialProofRequest request = new NodeMetadataSocialProofRequest(
-      urlIds,
-      seedsMap,
-      validSocialProofs
+        nodeMetadataTypeToIdsMap,
+        seedsMap,
+        validSocialProofs
     );
 
-    SocialProofResponse socialProofResponse = new UrlSocialProofGenerator(
+    SocialProofResponse socialProofResponse = new NodeMetadataSocialProofGenerator(
       graph
     ).computeRecommendations(request, random);
 
@@ -73,12 +79,19 @@ public class UrlSocialProofTest {
 
     for (RecommendationInfo recommendationInfo: socialProofResults) {
       NodeMetadataSocialProofResult socialProofResult = (NodeMetadataSocialProofResult) recommendationInfo;
-      int urlId = socialProofResult.getNodeMetadataId();
+      int nodeMetadataId = socialProofResult.getNodeMetadataId();
       Byte2ObjectMap<Long2ObjectMap<LongSet>> socialProofs = socialProofResult.getSocialProof();
 
-      if (urlId == 300) {
+      if (nodeMetadataId == 100) {
+        assertEquals(socialProofResult.getSocialProofSize(), 1);
+        assertEquals(socialProofs.get((byte) 1).get(2).contains(3), true);
+      } else if (nodeMetadataId == 101) {
         assertEquals(socialProofs.isEmpty(), true);
-      } else if (urlId == 200) {
+      } else if (nodeMetadataId == 102) {
+        assertEquals(socialProofs.isEmpty(), true);
+      } else if (nodeMetadataId == 300) {
+        assertEquals(socialProofs.isEmpty(), true);
+      } else if (nodeMetadataId == 200) {
         assertEquals(socialProofResult.getSocialProofSize(), 3);
         assertEquals(socialProofs.get((byte) 1).get(2).contains(4), true);
         assertEquals(socialProofs.get((byte) 1).get(2).contains(6), true);

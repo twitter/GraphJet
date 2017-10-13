@@ -19,6 +19,7 @@ package com.twitter.graphjet.algorithms.socialproof;
 
 import com.twitter.graphjet.algorithms.RecommendationRequest;
 
+import it.unimi.dsi.fastutil.bytes.Byte2ObjectMap;
 import it.unimi.dsi.fastutil.ints.IntSet;
 import it.unimi.dsi.fastutil.longs.Long2DoubleMap;
 import it.unimi.dsi.fastutil.longs.LongArraySet;
@@ -28,32 +29,34 @@ public class NodeMetadataSocialProofRequest extends RecommendationRequest {
   private static final LongSet EMPTY_SET = new LongArraySet();
 
   private final Long2DoubleMap leftSeedNodesWithWeight;
-  private final IntSet nodeMetadataIds;
+  private final Byte2ObjectMap<IntSet> nodeMetadataTypeToIdsMap;
 
   /**
    * Create a social proof request for a right node's metadata.
    *
-   * @param nodeMetadataIds     The set of ids within the right nodes' metadata to query
-   *                            for social proof.
-   * @param weightedSeedNodes   The set of left nodes to be used as social proofs.
-   * @param socialProofTypes    The social proof types to return.
+   * @param nodeMetadataTypeToIdsMap  The map of node metadata type to ids map. Used to specify
+   *                                  which node metadata types to retrieve social proof for, and
+   *                                  for which ids. These metadata types are derived from
+   *                                  the RecommendationType enum.
+   * @param weightedSeedNodes         The set of left nodes to be used as social proofs.
+   * @param socialProofTypes          The social proof types to return.
    */
   public NodeMetadataSocialProofRequest(
-    IntSet nodeMetadataIds,
+    Byte2ObjectMap<IntSet> nodeMetadataTypeToIdsMap,
     Long2DoubleMap weightedSeedNodes,
     byte[] socialProofTypes
   ) {
     super(0, EMPTY_SET, socialProofTypes);
     this.leftSeedNodesWithWeight = weightedSeedNodes;
-    this.nodeMetadataIds = nodeMetadataIds;
+    this.nodeMetadataTypeToIdsMap = nodeMetadataTypeToIdsMap;
   }
 
   public Long2DoubleMap getLeftSeedNodesWithWeight() {
     return leftSeedNodesWithWeight;
   }
 
-  public IntSet getNodeMetadataIds() {
-    return this.nodeMetadataIds;
+  public Byte2ObjectMap<IntSet> getNodeMetadataTypeToIdsMap() {
+    return this.nodeMetadataTypeToIdsMap;
   }
 
 }

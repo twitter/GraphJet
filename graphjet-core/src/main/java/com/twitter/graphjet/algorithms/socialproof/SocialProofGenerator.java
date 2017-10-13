@@ -72,8 +72,6 @@ public abstract class SocialProofGenerator implements
    * @param request contains a set of input ids and a set of seed users.
    */
   private void collectRecommendations(SocialProofRequest request) {
-    socialProofs.clear();
-    socialProofWeights.clear();
     LongSet inputRightNodeIds = request.getRightNodeIds();
     ByteSet socialProofTypes = new ByteArraySet(request.getSocialProofTypes());
 
@@ -119,8 +117,14 @@ public abstract class SocialProofGenerator implements
     }
   }
 
+  private void resetSocialProofs() {
+    socialProofs.clear();
+    socialProofWeights.clear();
+  }
+
   @Override
   public SocialProofResponse computeRecommendations(SocialProofRequest request, Random rand) {
+    resetSocialProofs();
     collectRecommendations(request);
 
     List<RecommendationInfo> socialProofList = new LinkedList<>();
