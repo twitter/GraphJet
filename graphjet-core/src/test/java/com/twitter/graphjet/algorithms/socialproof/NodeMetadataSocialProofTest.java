@@ -31,7 +31,7 @@ import com.twitter.graphjet.bipartite.NodeMetadataLeftIndexedPowerLawMultiSegmen
 
 import it.unimi.dsi.fastutil.bytes.Byte2ObjectArrayMap;
 import it.unimi.dsi.fastutil.bytes.Byte2ObjectMap;
-import it.unimi.dsi.fastutil.ints.IntArraySet;
+import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import it.unimi.dsi.fastutil.ints.IntSet;
 import it.unimi.dsi.fastutil.longs.Long2DoubleArrayMap;
 import it.unimi.dsi.fastutil.longs.Long2DoubleMap;
@@ -54,8 +54,8 @@ public class NodeMetadataSocialProofTest {
       buildSmallTestNodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraphWithEdgeTypes();
 
     Long2DoubleMap seedsMap = new Long2DoubleArrayMap(new long[]{2, 3}, new double[]{1.0, 0.5});
-    IntSet urlIds = new IntArraySet(new int[]{200, 300});
-    IntSet hashtagIds = new IntArraySet(new int[]{100, 101, 102});
+    IntSet urlIds = new IntOpenHashSet(new int[]{200, 300});
+    IntSet hashtagIds = new IntOpenHashSet(new int[]{100, 101, 102});
     Byte2ObjectMap<IntSet> nodeMetadataTypeToIdsMap = new Byte2ObjectArrayMap<>();
     nodeMetadataTypeToIdsMap.put((byte) RecommendationType.HASHTAG.getValue(), hashtagIds);
     nodeMetadataTypeToIdsMap.put((byte) RecommendationType.URL.getValue(), urlIds);
