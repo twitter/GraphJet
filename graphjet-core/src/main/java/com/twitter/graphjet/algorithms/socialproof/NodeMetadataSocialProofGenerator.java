@@ -71,13 +71,13 @@ public class NodeMetadataSocialProofGenerator implements
     this.idMask = new TweetIDMask();
     // Variables such as socialProofs and socialProofWeights, are re-used for each request.
     // We choose to use an ArrayList of size RecommendationType.METADATASIZE since we will have
-    // at most 8 node metadata types. We only support 8 metadata types since each a node's metadata
+    // at most 8 node metadata types. We only support 8 metadata types since each node's metadata
     // type is a byte.
     this.socialProofs = new ArrayList<>(RecommendationType.METADATASIZE.getValue());
     for (int i = 0; i < RecommendationType.METADATASIZE.getValue(); i++) {
-      // We choose to use an OpenHashMap to future proof the potential performance degradation,
-      // and the memory is re-used, so we are less concerned about the memory overhead of OpenHashMap
-      // compared with ArrayMap.
+      // We choose to use an OpenHashMap to future proof the potential performance degradation.
+      // Additionally, the memory is re-used, so we are less concerned about the memory overhead
+      // of OpenHashMap compared with ArrayMap.
       socialProofs.add(i, new Int2ObjectOpenHashMap<>());
     }
     this.socialProofWeights = new Int2DoubleOpenHashMap();
@@ -98,16 +98,17 @@ public class NodeMetadataSocialProofGenerator implements
     long leftNode,
     long rightNode
   ) {
-    Int2ObjectMap<Byte2ObjectMap<Long2ObjectMap<LongSet>>> nodeMetadataMap =
-        socialProofs.get(nodeMetaDataType);
+    Int2ObjectMap<Byte2ObjectMap<Long2ObjectMap<LongSet>>> nodeMetadataToSocialProofMap =
+      socialProofs.get(nodeMetaDataType);
 
-    if (!nodeMetadataMap.containsKey(metadataId)) {
+    if (!nodeMetadataToSocialProofMap.containsKey(metadataId)) {
       // We choose ArrayMap over OpenHashMap since the request will have at most a few edge types,
       // usually less than five.
-      nodeMetadataMap.put(metadataId, new Byte2ObjectArrayMap<>());
+      nodeMetadataToSocialProofMap.put(metadataId, new Byte2ObjectArrayMap<>());
       socialProofWeights.put(metadataId, 0);
     }
-    Byte2ObjectMap<Long2ObjectMap<LongSet>> socialProofMap = nodeMetadataMap.get(metadataId);
+    Byte2ObjectMap<Long2ObjectMap<LongSet>> socialProofMap =
+      nodeMetadataToSocialProofMap.get(metadataId);
 
     // Get the user to tweets map variable by the engagement type.
     if (!socialProofMap.containsKey(edgeType)) {
@@ -155,25 +156,21 @@ public class NodeMetadataSocialProofGenerator implements
         byte edgeType = edgeIterator.currentEdgeType();
         if (!socialProofTypes.contains(edgeType)) continue;
 
+        // For each of the accepted edges, we traverse the metadata ids for all of the specified node
+        // metadata types in the request.
         for (byte nodeMetadataType: request.getNodeMetadataTypeToIdsMap().keySet()) {
           IntSet inputNodeMetadataIds = inputNodeMetadataTypeToIdsMap.get(nodeMetadataType);
           IntArrayIterator metadataIterator =
             (IntArrayIterator) edgeIterator.getRightNodeMetadata(nodeMetadataType);
           if (metadataIterator == null) continue;
 
-          // For each of the accepted edges, we traverse the metadata ids for the specified node
-          // metadata type (either RecommendationType.HASHTAG or RecommendationType.URL).
           while (metadataIterator.hasNext()) {
             int metadataId = metadataIterator.nextInt();
-            // If the current id is in the set of inputNodeMetadataIds, we find and store its social proof.
+            // If the current id is in the set of inputNodeMetadataIds,
+            // we find and store its social proof.
             if (!inputNodeMetadataIds.contains(metadataId)) continue;
-            try {
-              addSocialProof(nodeMetadataType, metadataId, edgeType, leftNode, rightNode);
-              updateSocialProofWeight(metadataId, weight);
-            } catch (IndexOutOfBoundsException e) {
-              System.out.println("fail");
-              return;
-            }
+            addSocialProof(nodeMetadataType, metadataId, edgeType, leftNode, rightNode);
+            updateSocialProofWeight(metadataId, weight);
           }
         }
       }
@@ -195,16 +192,15 @@ public class NodeMetadataSocialProofGenerator implements
     List<RecommendationInfo> socialProofList = new LinkedList<>();
     for (byte inputNodeMetadataType : request.getNodeMetadataTypeToIdsMap().keySet()) {
       for (int inputNodeMetadataId : request.getNodeMetadataTypeToIdsMap().get(inputNodeMetadataType)) {
-        Int2ObjectMap<Byte2ObjectMap<Long2ObjectMap<LongSet>>> nodeMetadataMap =
+        Int2ObjectMap<Byte2ObjectMap<Long2ObjectMap<LongSet>>> nodeMetadataToSocialProofMap =
           socialProofs.get(inputNodeMetadataType);
         // Return only ids with at least one social proof.
-        if (nodeMetadataMap == null || !nodeMetadataMap.containsKey(inputNodeMetadataId))
-          continue;
+        if (!nodeMetadataToSocialProofMap.containsKey(inputNodeMetadataId)) continue;
         socialProofList.add(new NodeMetadataSocialProofResult(
           inputNodeMetadataId,
           // The EMPTY_SOCIALPROOF_MAP will never be used, since we check if
           // (nodeMetadataMap.containsKey(id)).
-          nodeMetadataMap.getOrDefault(inputNodeMetadataId, EMPTY_SOCIAL_PROOF_MAP),
+          nodeMetadataToSocialProofMap.getOrDefault(inputNodeMetadataId, EMPTY_SOCIAL_PROOF_MAP),
           // The weight of 0.0 will never be used, since we insert the socialProofWeights entry
           // when we insert the corresponding socialProofs entry.
           socialProofWeights.getOrDefault(inputNodeMetadataId, 0.0),
