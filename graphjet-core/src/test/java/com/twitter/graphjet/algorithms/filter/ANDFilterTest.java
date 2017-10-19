@@ -67,6 +67,9 @@ public class ANDFilterTest {
     ANDFilters andFilters = new ANDFilters(new ArrayList<>(), new NullStatsReceiver());
     SmallArrayBasedLongToDoubleMap[] socialProofs = {};
     assertEquals(false, andFilters.filterResult(0L, socialProofs));
+
+    socialProofs = new SmallArrayBasedLongToDoubleMap[9];
+    assertFalse(andFilters.filterResult(1633L, socialProofs));
   }
 
   @Test
@@ -91,24 +94,14 @@ public class ANDFilterTest {
   }
 
   @Test
-  public void testFilterResultReturningFalseOne() {
-    List<ResultFilter> linkedList = new LinkedList<ResultFilter>();
-    StatsReceiver statsReceiver = new NullStatsReceiver();
-    ANDFilters aNDFilters = new ANDFilters(linkedList, statsReceiver);
-    SmallArrayBasedLongToDoubleMap[] smallArrayBasedLongToDoubleMapArray = new SmallArrayBasedLongToDoubleMap[9];
-
-    assertFalse(aNDFilters.filterResult(1633L, smallArrayBasedLongToDoubleMapArray));
-  }
-
-  @Test
-  public void testFilterResultReturningFalseTwo() {
-    List<ResultFilter> linkedList = new LinkedList<ResultFilter>();
+  public void testWithRecentTweetFilter() {
+    List<ResultFilter> filters = new LinkedList<ResultFilter>();
     StatsReceiver statsReceiver = new NullStatsReceiver();
     RecentTweetFilter recentTweetFilter = new RecentTweetFilter(2147483639L, statsReceiver);
-    linkedList.add(recentTweetFilter);
-    ANDFilters aNDFilters = new ANDFilters(linkedList, statsReceiver);
+    filters.add(recentTweetFilter);
+    ANDFilters andFilters = new ANDFilters(filters, statsReceiver);
     SmallArrayBasedLongToDoubleMap[] smallArrayBasedLongToDoubleMapArray = new SmallArrayBasedLongToDoubleMap[5];
 
-    assertFalse(aNDFilters.filterResult(1L, smallArrayBasedLongToDoubleMapArray));
+    assertFalse(andFilters.filterResult(1L, smallArrayBasedLongToDoubleMapArray));
   }
 }
