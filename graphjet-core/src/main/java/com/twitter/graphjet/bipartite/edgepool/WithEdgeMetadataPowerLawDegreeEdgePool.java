@@ -68,7 +68,6 @@ public class WithEdgeMetadataPowerLawDegreeEdgePool extends AbstractPowerLawDegr
    * writer and the readers due to the wrapping of the arrays in ReaderAccessibleInfo.
    * See the publication safety comment in ReaderAccessibleInfo for details.
    */
-  @SuppressWarnings("squid:S1656")
   private void addPool() {
     int newNumPools = (int) Math.ceil(numPools * POOL_GROWTH_FACTOR);
 
