@@ -146,7 +146,6 @@ public class ShardedBigIntArray implements BigIntArray {
         "Exceeded the max storage capacity for ShardedBigIntArray");
     readerAccessibleInfo = new ReaderAccessibleInfo(new int[numShards][]);
     this.numAllocatedSlotsForEntries = shardLength;
-    allocateMemoryForShard(0);
   }
 
   /**
