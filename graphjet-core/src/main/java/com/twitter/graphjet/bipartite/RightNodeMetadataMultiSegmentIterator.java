@@ -53,5 +53,11 @@ public class RightNodeMetadataMultiSegmentIterator
     return ((NodeMetadataEdgeIterator) currentSegmentIterator)
       .getRightNodeMetadata(nodeMetadataType);
   }
+
+  @Override
+  // Return 0 because RightNodeMetadataMultiSegmentIterator does not contain edge metadata.
+  public long currentMetadata() {
+    return 0L;
+  }
 }
 
