@@ -22,8 +22,8 @@ import com.twitter.graphjet.bipartite.api.ReusableNodeIntIterator;
 import com.twitter.graphjet.bipartite.api.ReusableNodeRandomIntIterator;
 import com.twitter.graphjet.bipartite.edgepool.AbstractPowerLawDegreeEdgePool;
 import com.twitter.graphjet.bipartite.edgepool.PowerLawDegreeEdgeIterator;
+import com.twitter.graphjet.bipartite.edgepool.PowerLawDegreeEdgePool;
 import com.twitter.graphjet.bipartite.edgepool.PowerLawDegreeEdgeRandomIterator;
-import com.twitter.graphjet.bipartite.edgepool.WithEdgeMetadataPowerLawDegreeEdgePool;
 import com.twitter.graphjet.stats.StatsReceiver;
 
 /**
@@ -72,7 +72,7 @@ public class RightNodeMetadataLeftIndexedPowerLawBipartiteGraphSegment
         expectedNumLeftNodes,
         expectedNumRightNodes,
         numRightNodeMetadataTypes,
-        new WithEdgeMetadataPowerLawDegreeEdgePool(
+        new PowerLawDegreeEdgePool(
           expectedNumLeftNodes,
           expectedMaxLeftDegree,
           leftPowerLawExponent,

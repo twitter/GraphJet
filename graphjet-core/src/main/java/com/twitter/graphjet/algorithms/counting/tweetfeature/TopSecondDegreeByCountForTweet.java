@@ -29,6 +29,7 @@ import com.twitter.graphjet.algorithms.counting.tweet.TopSecondDegreeByCountRequ
 import com.twitter.graphjet.algorithms.filters.RecentTweetFilter;
 import com.twitter.graphjet.bipartite.NodeMetadataLeftIndexedMultiSegmentBipartiteGraph;
 import com.twitter.graphjet.bipartite.NodeMetadataMultiSegmentIterator;
+import com.twitter.graphjet.bipartite.RightNodeMetadataLeftIndexedMultiSegmentBipartiteGraph;
 import com.twitter.graphjet.bipartite.api.EdgeIterator;
 import com.twitter.graphjet.hashing.IntArrayIterator;
 import com.twitter.graphjet.stats.StatsReceiver;
@@ -52,7 +53,7 @@ public class TopSecondDegreeByCountForTweet extends
    * @param statsReceiver             tracks the internal stats
    */
   public TopSecondDegreeByCountForTweet(
-    NodeMetadataLeftIndexedMultiSegmentBipartiteGraph leftIndexedBipartiteGraph,
+    RightNodeMetadataLeftIndexedMultiSegmentBipartiteGraph leftIndexedBipartiteGraph,
     int expectedNodesToHit,
     StatsReceiver statsReceiver
   ) {
@@ -76,7 +77,7 @@ public class TopSecondDegreeByCountForTweet extends
   }
 
   private int[][] collectNodeMetadata(EdgeIterator edgeIterator) {
-    int metadataSize = RecommendationType.METADATASIZE.getValue();
+    int metadataSize = TweetFeature.TWEET_FEATURE_SIZE.getValue();
     int[][] nodeMetadata = new int[metadataSize][];
     for (int i = 0; i < metadataSize; i++) {
       IntArrayIterator metadataIterator =
