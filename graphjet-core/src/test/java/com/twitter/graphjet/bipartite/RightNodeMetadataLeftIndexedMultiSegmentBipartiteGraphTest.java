@@ -1,7 +1,5 @@
 package com.twitter.graphjet.bipartite;
 
-import java.util.Random;
-
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -44,18 +42,15 @@ public class RightNodeMetadataLeftIndexedMultiSegmentBipartiteGraphTest {
    *
    * @param leftSize   is the left hand size of the bipartite graph
    * @param rightSize  is the right hand size of the bipartite graph
-   * @param random     is the random number generator to use for constructing the graph
    * @return a random bipartite graph
    */
   public static RightNodeMetadataLeftIndexedMultiSegmentBipartiteGraph buildRandomMultiSegmentBipartiteGraph(
     int maxNumSegments,
     int maxNumEdgesPerSegment,
     int leftSize,
-    int rightSize,
-    double edgeProbability,
-    Random random) {
-    RightNodeMetadataLeftIndexedMultiSegmentBipartiteGraph graph =
-      new RightNodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraph(
+    int rightSize
+  ) {
+    return new RightNodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraph(
         maxNumSegments,
         maxNumEdgesPerSegment,
         leftSize / 2,
@@ -64,9 +59,8 @@ public class RightNodeMetadataLeftIndexedMultiSegmentBipartiteGraphTest {
         rightSize / 2,
         1,
         new IdentityEdgeTypeMask(),
-        new NullStatsReceiver());
-
-    return graph;
+        new NullStatsReceiver()
+      );
   }
 
   private void testGraph(RightNodeMetadataLeftIndexedMultiSegmentBipartiteGraph multiSegmentPowerLawBipartiteGraph) {
@@ -83,19 +77,13 @@ public class RightNodeMetadataLeftIndexedMultiSegmentBipartiteGraphTest {
     int maxNumEdgesPerSegment = 1500;
     int leftSize = 100;
     int rightSize = 1000;
-    double edgeProbability = 0.1; // this implies ~10K edges
-    int numSamples = 10;
-
-    Random random = new Random(8904572034987501L);
 
     RightNodeMetadataLeftIndexedMultiSegmentBipartiteGraph multiSegmentPowerLawBipartiteGraph =
       buildRandomMultiSegmentBipartiteGraph(
         maxNumSegments,
         maxNumEdgesPerSegment,
         leftSize,
-        rightSize,
-        edgeProbability,
-        random
+        rightSize
       );
 
     addEdges(multiSegmentPowerLawBipartiteGraph);
