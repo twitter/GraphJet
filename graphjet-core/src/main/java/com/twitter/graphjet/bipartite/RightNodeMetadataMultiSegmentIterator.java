@@ -30,7 +30,7 @@ public class RightNodeMetadataMultiSegmentIterator
    * This constructor is for easy reuse in the random iterator derived from this one.
    *
    * @param multiSegmentBipartiteGraph  is the underlying
-   *                                    {@link NodeMetadataLeftIndexedMultiSegmentBipartiteGraph}
+   *                                    {@link RightNodeMetadataLeftIndexedBipartiteGraphSegment}
    * @param segmentEdgeAccessor         abstracts the left/right access in a common interface
    */
   public RightNodeMetadataMultiSegmentIterator(

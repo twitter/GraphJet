@@ -24,7 +24,6 @@ public enum RecommendationType {
   TWEET(3),         // tweet, not a metadata type
   USER(4),          // users, in follows, mentions & mediatags
   MOMENT(5);        // moment
-
   private final int value;
 
   private RecommendationType(int value) {

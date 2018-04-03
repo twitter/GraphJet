@@ -27,7 +27,6 @@ import com.twitter.graphjet.algorithms.counting.TopSecondDegreeByCount;
 import com.twitter.graphjet.algorithms.counting.TopSecondDegreeByCountResponse;
 import com.twitter.graphjet.algorithms.counting.tweet.TopSecondDegreeByCountRequestForTweet;
 import com.twitter.graphjet.algorithms.filters.RecentTweetFilter;
-import com.twitter.graphjet.bipartite.NodeMetadataLeftIndexedMultiSegmentBipartiteGraph;
 import com.twitter.graphjet.bipartite.NodeMetadataMultiSegmentIterator;
 import com.twitter.graphjet.bipartite.RightNodeMetadataLeftIndexedMultiSegmentBipartiteGraph;
 import com.twitter.graphjet.bipartite.api.EdgeIterator;
@@ -45,7 +44,7 @@ public class TopSecondDegreeByCountForTweet extends
    * optimizations such as reusing internally allocated maps etc.
    *
    * @param leftIndexedBipartiteGraph is the
-   *                                  {@link NodeMetadataLeftIndexedMultiSegmentBipartiteGraph}
+   *                                  {@link RightNodeMetadataLeftIndexedMultiSegmentBipartiteGraph}
    *                                  to run TopSecondDegreeByCountForTweet on
    * @param expectedNodesToHit        is an estimate of how many nodes can be hit in
    *                                  TopSecondDegreeByCountForTweet. This is purely for allocating needed
@@ -122,8 +121,6 @@ public class TopSecondDegreeByCountForTweet extends
   public TopSecondDegreeByCountResponse generateRecommendationFromNodeInfo(
     TopSecondDegreeByCountRequestForTweet request) {
     int numTweetResults = 0;
-    int numHashtagResults = 0;
-    int numUrlResults = 0;
 
     List<RecommendationInfo> recommendations = new ArrayList<>();
 
@@ -138,9 +135,6 @@ public class TopSecondDegreeByCountForTweet extends
 
     LOG.info(getResultLogMessage(request)
       + ", numTweetResults = " + numTweetResults
-      + ", numHashtagResults = " + numHashtagResults
-      + ", numUrlResults = " + numUrlResults
-      + ", totalResults = " + (numTweetResults + numHashtagResults + numUrlResults)
     );
 
     return new TopSecondDegreeByCountResponse(recommendations, topSecondDegreeByCountStats);
