@@ -129,8 +129,10 @@ public abstract class RightNodeMetadataLeftIndexedBipartiteGraphSegment
     // Update RightNodesToMetadataMap, which has its own memory barrier internally.
     if (rightNodeMetadata != null) {
       for (int i = 0; i < rightNodeMetadata.length; i++) {
-        readerAccessibleInfoProvider.getReaderAccessibleInfo().
-          getRightNodesToMetadataMap(i).put(rightNodeInternalId, rightNodeMetadata[i]);
+        IntToIntArrayMap metadataMap = readerAccessibleInfoProvider.getReaderAccessibleInfo().
+          getRightNodesToMetadataMap(i);
+        metadataMap.put(rightNodeInternalId, rightNodeMetadata[i]);
+        metadataMap.incrementFeatureValue(rightNodeInternalId, edgeType);
       }
     }
 

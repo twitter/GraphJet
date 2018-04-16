@@ -71,6 +71,7 @@ public class ArrayBasedIntToIntArrayMap implements IntToIntArrayMap {
   }
 
   private static final long DEFAULT_RETURN_VALUE = -1L;
+  private static final int INTEGER_TOP_TWO_BYTE_SHIFT = 1 << 16;
 
   // This is is the only reader-accessible data
   protected ReaderAccessibleInfo readerAccessibleInfo;
@@ -174,6 +175,56 @@ public class ArrayBasedIntToIntArrayMap implements IntToIntArrayMap {
     }
 
     return readerAccessibleInfo.nodeInfo.getSecondValue(key);
+  }
+
+  @Override
+  // No thread visibility update here.
+  public boolean incrementFeatureValue(int key, byte edgeType) {
+    long nodeInfo = readerAccessibleInfo.nodeInfo.getBothValues(key);
+    int position = (int)(nodeInfo >> 32);
+
+    int featurePosition = getFeaturePosition(position, edgeType);
+    int incrementValue = getIncrementValue(edgeType);
+
+    int currentEntry = readerAccessibleInfo.edges.getEntry(featurePosition);
+
+    if (currentEntry == 32767) {
+      // prevent overflow
+      return false;
+    }
+
+    readerAccessibleInfo.edges.incrementEntry(featurePosition, incrementValue);
+    return true;
+  }
+
+  private int getFeaturePosition(int position, byte edgeType) {
+    if (edgeType == 1 || edgeType == 2) {  // FAVORITE OR RETWEET
+      return position;
+    } else if (edgeType == 3 || edgeType == 7) { // REPLY OR QUOTE
+      return position + 1;
+    } else {
+      throw new IllegalStateException("Invalid EdgeType in getFeatureTypePosition");
+    }
+  }
+
+  private int getIncrementValue(byte edgeType) {
+    if (edgeType == 1 || edgeType == 3) { // FAVORITE OR REPLY
+      return 1;
+    } else if (edgeType == 2 || edgeType == 7) { // REPLY OR QUOTE
+      return INTEGER_TOP_TWO_BYTE_SHIFT;
+    } else {
+      throw new IllegalStateException("Invalid EdgeType in getIncrementValue");
+    }
+  }
+
+  private int getFeatureValue(int currentEntry, byte edgeType) {
+    if (edgeType == 1 || edgeType == 3) { // FAVORITE OR REPLY
+      return currentEntry & 0xffff;
+    } else if (edgeType == 2 || edgeType == 7) { // REPLY OR QUOTE
+      return (currentEntry >> 16) & 0xffff;
+    } else {
+      throw new IllegalStateException("Invalid EdgeType in getFeatureValue");
+    }
   }
 
   /**

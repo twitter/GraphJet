@@ -62,4 +62,7 @@ public interface IntToIntArrayMap {
    * @return a boolean flag indicating whether operation succeeded or not
    */
   boolean put(int key, int[] value);
+
+
+  boolean incrementFeatureValue(int key, byte featureType);
 }
