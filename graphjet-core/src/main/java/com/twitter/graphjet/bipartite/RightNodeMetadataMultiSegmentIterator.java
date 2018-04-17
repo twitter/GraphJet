@@ -54,6 +54,34 @@ public class RightNodeMetadataMultiSegmentIterator
       .getRightNodeMetadata(nodeMetadataType);
   }
 
+
+  public void fetchFeatureArrayForNode(long rightNode, int metadataIndex, int[] metadata) {
+    for (int i = oldestSegmentId; i <= liveSegmentId; i++) {
+      RightNodeMetadataLeftIndexedBipartiteGraphSegment segment = readerAccessibleInfo.getSegments().get(i);
+      if (segment == null) {
+        continue;
+      }
+
+      int rightNodeIndex = segment.getRightNodesToIndexBiMap().get(rightNode);
+      // Default value is -1, which means the rightNode is not in the index map.
+      if (rightNodeIndex == -1) {
+        continue;
+      }
+
+      IntIterator metadataIterator = segment.getRightNodesToMetadataMap().get(metadataIndex).get(rightNodeIndex);
+
+      for (int j = 0; j < 4; j ++) {
+        metadata[j] = metadataIterator.nextInt();
+      }
+
+      if (i == liveSegmentId) {
+        for (int j = 4; j < 9; j++) {
+          metadata[j] = metadataIterator.nextInt();
+        }
+      }
+    }
+  }
+
   @Override
   // Return 0 because RightNodeMetadataMultiSegmentIterator does not contain edge metadata.
   public long currentMetadata() {

@@ -29,6 +29,7 @@ import com.twitter.graphjet.algorithms.counting.tweet.TopSecondDegreeByCountRequ
 import com.twitter.graphjet.algorithms.filters.RecentTweetFilter;
 import com.twitter.graphjet.bipartite.NodeMetadataMultiSegmentIterator;
 import com.twitter.graphjet.bipartite.RightNodeMetadataLeftIndexedMultiSegmentBipartiteGraph;
+import com.twitter.graphjet.bipartite.RightNodeMetadataMultiSegmentIterator;
 import com.twitter.graphjet.bipartite.api.EdgeIterator;
 import com.twitter.graphjet.hashing.IntArrayIterator;
 import com.twitter.graphjet.stats.StatsReceiver;
@@ -75,7 +76,7 @@ public class TopSecondDegreeByCountForTweet extends
     }
   }
 
-  private int[][] collectNodeMetadata(EdgeIterator edgeIterator) {
+  private int[][] collectNodeMetadata(long rightNode, EdgeIterator edgeIterator) {
     int metadataSize = TweetFeature.TWEET_FEATURE_SIZE.getValue();
     int[][] nodeMetadata = new int[metadataSize][];
     for (int i = 0; i < metadataSize; i++) {
@@ -84,10 +85,7 @@ public class TopSecondDegreeByCountForTweet extends
       int numOfMetadata = metadataIterator.size();
       if (numOfMetadata > 0 && numOfMetadata <= MAX_NUM_METADATA) {
         int[] metadata = new int[numOfMetadata];
-        int j = 0;
-        while (metadataIterator.hasNext()) {
-          metadata[j++] = metadataIterator.nextInt();
-        }
+        ((RightNodeMetadataMultiSegmentIterator) edgeIterator).fetchFeatureArrayForNode(rightNode, i, metadata);
         nodeMetadata[i] = metadata;
       }
     }
@@ -106,7 +104,7 @@ public class TopSecondDegreeByCountForTweet extends
 
     NodeInfo nodeInfo;
     if (!super.visitedRightNodes.containsKey(rightNode)) {
-      int[][] nodeMetadata = collectNodeMetadata(edgeIterator);
+      int[][] nodeMetadata = collectNodeMetadata(rightNode, edgeIterator);
       nodeInfo = new NodeInfo(rightNode, nodeMetadata, 0.0, maxSocialProofTypeSize);
       super.visitedRightNodes.put(rightNode, nodeInfo);
     } else {
