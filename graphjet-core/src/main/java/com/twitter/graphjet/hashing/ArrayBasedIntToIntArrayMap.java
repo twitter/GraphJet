@@ -187,8 +187,9 @@ public class ArrayBasedIntToIntArrayMap implements IntToIntArrayMap {
     int incrementValue = getIncrementValue(edgeType);
 
     int currentEntry = readerAccessibleInfo.edges.getEntry(featurePosition);
+    int currentFeatureValue = getFeatureValue(currentEntry, edgeType);
 
-    if (currentEntry == 32767) {
+    if (currentFeatureValue == 32767) {
       // prevent overflow
       return false;
     }
