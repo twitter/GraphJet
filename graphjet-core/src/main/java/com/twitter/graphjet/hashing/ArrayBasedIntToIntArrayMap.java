@@ -180,8 +180,8 @@ public class ArrayBasedIntToIntArrayMap implements IntToIntArrayMap {
   @Override
   // No thread visibility update here.
   public boolean incrementFeatureValue(int key, byte edgeType) {
-    long nodeInfo = readerAccessibleInfo.nodeInfo.getBothValues(key);
-    int position = (int)(nodeInfo >> 32);
+    // get the starting position of the key
+    int position = readerAccessibleInfo.nodeInfo.getFirstValue(key);
 
     int featurePosition = getFeaturePosition(position, edgeType);
     int incrementValue = getIncrementValue(edgeType);
