@@ -19,6 +19,9 @@ package com.twitter.graphjet.hashing;
 
 import com.google.common.base.Preconditions;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.twitter.graphjet.bipartite.api.ReusableNodeIntIterator;
 import com.twitter.graphjet.stats.Counter;
 import com.twitter.graphjet.stats.StatsReceiver;
@@ -70,6 +73,7 @@ public class ArrayBasedIntToIntArrayMap implements IntToIntArrayMap {
     }
   }
 
+  protected static final Logger LOG = LoggerFactory.getLogger("graph");
   private static final long DEFAULT_RETURN_VALUE = -1L;
   private static final int INTEGER_TOP_TWO_BYTE_SHIFT = 1 << 16;
 
@@ -180,22 +184,24 @@ public class ArrayBasedIntToIntArrayMap implements IntToIntArrayMap {
   @Override
   // No thread visibility update here.
   public boolean incrementFeatureValue(int key, byte edgeType) {
-    // get the starting position of the key
-    int position = readerAccessibleInfo.nodeInfo.getFirstValue(key);
+    if (edgeType == 1 || edgeType == 2 || edgeType == 3 || edgeType == 7) {
+      // get the starting position of the key
+      int position = readerAccessibleInfo.nodeInfo.getFirstValue(key);
+      int featurePosition = getFeaturePosition(position, edgeType);
+      int incrementValue = getIncrementValue(edgeType);
+      int currentEntry = readerAccessibleInfo.edges.getEntry(featurePosition);
+      int currentFeatureValue = getFeatureValue(currentEntry, edgeType);
 
-    int featurePosition = getFeaturePosition(position, edgeType);
-    int incrementValue = getIncrementValue(edgeType);
+      if (currentFeatureValue == 32767) {
+        // prevent overflow
+        return false;
+      }
 
-    int currentEntry = readerAccessibleInfo.edges.getEntry(featurePosition);
-    int currentFeatureValue = getFeatureValue(currentEntry, edgeType);
-
-    if (currentFeatureValue == 32767) {
-      // prevent overflow
+      readerAccessibleInfo.edges.incrementEntry(featurePosition, incrementValue);
+      return true;
+    } else {
       return false;
     }
-
-    readerAccessibleInfo.edges.incrementEntry(featurePosition, incrementValue);
-    return true;
   }
 
   private int getFeaturePosition(int position, byte edgeType) {

@@ -19,6 +19,7 @@ package com.twitter.graphjet.bipartite;
 
 import com.twitter.graphjet.bipartite.api.NodeMetadataEdgeIterator;
 import com.twitter.graphjet.bipartite.segment.RightNodeMetadataLeftIndexedBipartiteGraphSegment;
+import com.twitter.graphjet.hashing.IntArrayIterator;
 
 import it.unimi.dsi.fastutil.ints.IntIterator;
 
@@ -56,7 +57,9 @@ public class RightNodeMetadataMultiSegmentIterator
 
 
   public void fetchFeatureArrayForNode(long rightNode, int metadataIndex, int[] metadata) {
-    for (int i = oldestSegmentId; i <= liveSegmentId; i++) {
+    int oldestId = oldestSegmentId;
+    int liveId = liveSegmentId;
+    for (int i = oldestId; i <= liveId; i++) {
       RightNodeMetadataLeftIndexedBipartiteGraphSegment segment = readerAccessibleInfo.getSegments().get(i);
       if (segment == null) {
         continue;
@@ -68,14 +71,16 @@ public class RightNodeMetadataMultiSegmentIterator
         continue;
       }
 
-      IntIterator metadataIterator = segment.getRightNodesToMetadataMap().get(metadataIndex).get(rightNodeIndex);
+      IntArrayIterator metadataIterator = (IntArrayIterator)
+        segment.getRightNodesToMetadataMap().get(metadataIndex).get(rightNodeIndex);
+      int arraySize = metadataIterator.size();
 
       for (int j = 0; j < 4; j ++) {
         metadata[j] = metadataIterator.nextInt();
       }
 
-      if (i == liveSegmentId) {
-        for (int j = 4; j < 9; j++) {
+      if (i == oldestId) {
+        for (int j = 4; j < arraySize; j++) {
           metadata[j] = metadataIterator.nextInt();
         }
       }
