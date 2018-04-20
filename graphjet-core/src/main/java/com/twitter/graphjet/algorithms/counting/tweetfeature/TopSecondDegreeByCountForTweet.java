@@ -84,7 +84,8 @@ public class TopSecondDegreeByCountForTweet extends
           (IntArrayIterator) ((NodeMetadataMultiSegmentIterator) edgeIterator).getRightNodeMetadata((byte) i);
       int numOfMetadata = metadataIterator.size();
       if (numOfMetadata > 0 && numOfMetadata <= MAX_NUM_METADATA) {
-        int[] metadata = new int[numOfMetadata];
+        // 2 is the number of integers which store two byte features.
+        int[] metadata = new int[numOfMetadata + 2];
         ((RightNodeMetadataMultiSegmentIterator) edgeIterator).fetchFeatureArrayForNode(rightNode, i, metadata);
         nodeMetadata[i] = metadata;
       }

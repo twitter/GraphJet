@@ -76,6 +76,11 @@ public class ArrayBasedIntToIntArrayMap implements IntToIntArrayMap {
   protected static final Logger LOG = LoggerFactory.getLogger("graph");
   private static final long DEFAULT_RETURN_VALUE = -1L;
   private static final int INTEGER_TOP_TWO_BYTE_SHIFT = 1 << 16;
+  private static final int INTEGER_TOP_TWO_BYTE_OVERFLOW = 0x7fff;
+  private static final int FAVORITE_ACTION = 1;
+  private static final int RETWEET_ACTION = 2;
+  private static final int REPLY_ACTION = 3;
+  private static final int QUOTE_ACTION = 7;
 
   // This is is the only reader-accessible data
   protected ReaderAccessibleInfo readerAccessibleInfo;
@@ -184,7 +189,8 @@ public class ArrayBasedIntToIntArrayMap implements IntToIntArrayMap {
   @Override
   // No thread visibility update here.
   public boolean incrementFeatureValue(int key, byte edgeType) {
-    if (edgeType == 1 || edgeType == 2 || edgeType == 3 || edgeType == 7) {
+    if (edgeType == FAVORITE_ACTION || edgeType == RETWEET_ACTION
+      || edgeType == REPLY_ACTION || edgeType == QUOTE_ACTION) {
       // get the starting position of the key
       int position = readerAccessibleInfo.nodeInfo.getFirstValue(key);
       int featurePosition = getFeaturePosition(position, edgeType);
@@ -192,8 +198,8 @@ public class ArrayBasedIntToIntArrayMap implements IntToIntArrayMap {
       int currentEntry = readerAccessibleInfo.edges.getEntry(featurePosition);
       int currentFeatureValue = getFeatureValue(currentEntry, edgeType);
 
-      if (currentFeatureValue == 32767) {
-        // prevent overflow
+      // prevent overflow. stop counting when the feature value reaches overflow value.
+      if (currentFeatureValue == INTEGER_TOP_TWO_BYTE_OVERFLOW) {
         return false;
       }
 
@@ -204,33 +210,30 @@ public class ArrayBasedIntToIntArrayMap implements IntToIntArrayMap {
     }
   }
 
+  // This function can only be accessed through incrementFeatureValue function
   private int getFeaturePosition(int position, byte edgeType) {
-    if (edgeType == 1 || edgeType == 2) {  // FAVORITE OR RETWEET
+    if (edgeType == FAVORITE_ACTION || edgeType == RETWEET_ACTION) {  // FAVORITE OR RETWEET
       return position;
-    } else if (edgeType == 3 || edgeType == 7) { // REPLY OR QUOTE
+    } else { // REPLY OR QUOTE
       return position + 1;
-    } else {
-      throw new IllegalStateException("Invalid EdgeType in getFeatureTypePosition");
     }
   }
 
+  // This function can only be accessed through incrementFeatureValue function
   private int getIncrementValue(byte edgeType) {
-    if (edgeType == 1 || edgeType == 3) { // FAVORITE OR REPLY
+    if (edgeType == FAVORITE_ACTION || edgeType == REPLY_ACTION) { // FAVORITE OR REPLY
       return 1;
-    } else if (edgeType == 2 || edgeType == 7) { // REPLY OR QUOTE
+    } else { // RETWEET OR QUOTE
       return INTEGER_TOP_TWO_BYTE_SHIFT;
-    } else {
-      throw new IllegalStateException("Invalid EdgeType in getIncrementValue");
     }
   }
 
+  // This function can only be accessed through incrementFeatureValue function
   private int getFeatureValue(int currentEntry, byte edgeType) {
-    if (edgeType == 1 || edgeType == 3) { // FAVORITE OR REPLY
+    if (edgeType == FAVORITE_ACTION || edgeType == REPLY_ACTION) { // FAVORITE OR REPLY
       return currentEntry & 0xffff;
-    } else if (edgeType == 2 || edgeType == 7) { // REPLY OR QUOTE
+    } else { // RETWEET OR QUOTE
       return (currentEntry >> 16) & 0xffff;
-    } else {
-      throw new IllegalStateException("Invalid EdgeType in getFeatureValue");
     }
   }
 

@@ -59,6 +59,7 @@ public class RightNodeMetadataMultiSegmentIterator
   public void fetchFeatureArrayForNode(long rightNode, int metadataIndex, int[] metadata) {
     int oldestId = oldestSegmentId;
     int liveId = liveSegmentId;
+    boolean setFlag = false;
     for (int i = oldestId; i <= liveId; i++) {
       RightNodeMetadataLeftIndexedBipartiteGraphSegment segment = readerAccessibleInfo.getSegments().get(i);
       if (segment == null) {
@@ -73,18 +74,24 @@ public class RightNodeMetadataMultiSegmentIterator
 
       IntArrayIterator metadataIterator = (IntArrayIterator)
         segment.getRightNodesToMetadataMap().get(metadataIndex).get(rightNodeIndex);
-      int arraySize = metadataIterator.size();
+      int metadataSize = metadataIterator.size();
 
-      for (int j = 0; j < 4; j ++) {
-        metadata[j] = metadataIterator.nextInt();
-      }
+      int firstTwoByteFeature = metadataIterator.nextInt();
+      metadata[0] += firstTwoByteFeature >> 16;
+      metadata[1] += firstTwoByteFeature & 0xffff;
 
-      if (i == oldestId) {
-        for (int j = 4; j < arraySize; j++) {
+      int secondTwoByteFeature = metadataIterator.nextInt();
+      metadata[2] += secondTwoByteFeature >> 16;
+      metadata[3] += secondTwoByteFeature & 0xffff;
+
+      if (!setFlag) {
+        setFlag = true;
+        for (int j = 4; j < metadataSize + 2; j++) {
           metadata[j] = metadataIterator.nextInt();
         }
       }
     }
+
   }
 
   @Override
