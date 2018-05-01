@@ -39,19 +39,6 @@
     </developer>
   </developers>
 
-  <distributionManagement>
-    <repository>
-        <id>artifactory-snapshot</id>
-        <name>Apache Release Distribution Repository</name>
-        <url>https://artifactory.twitter.biz/libs-releases-local</url>
-    </repository>
-    <snapshotRepository>
-        <id>artifactory-snapshot</id>
-        <name>twitter</name>
-        <url>https://artifactory.twitter.biz/libs-releases-local</url>
-    </snapshotRepository>
-  </distributionManagement>
-
   <scm>
     <connection>scm:git:git://github.com/twitter/graphjet.git</connection>
     <developerConnection>scm:git:ssh://github.com:twitter/graphjet.git</developerConnection>
