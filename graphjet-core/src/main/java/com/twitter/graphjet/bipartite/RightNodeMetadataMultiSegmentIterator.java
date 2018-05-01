@@ -82,9 +82,9 @@ public class RightNodeMetadataMultiSegmentIterator
       // Sum up mutable features, and each of them takes the size of two bytes.
       for (int j = 0; j < twoByteFeatureLength; j++) {
         int twoByteFeature = metadataIterator.nextInt();
-        // Extract the value from the higher 2 bytes of the integer.
+        // Extract the value from the higher two bytes of the integer.
         metadata[2 * j] += twoByteFeature >> 16;
-        // Extract the value from the lower 2 bytes of the integer.
+        // Extract the value from the lower two bytes of the integer.
         metadata[2 * j + 1] += twoByteFeature & 0xffff;
       }
 
