@@ -20,9 +20,6 @@ package com.twitter.graphjet.algorithms.counting.tweetfeature;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.twitter.graphjet.algorithms.NodeInfo;
 import com.twitter.graphjet.algorithms.RecommendationInfo;
 import com.twitter.graphjet.algorithms.RecommendationType;
@@ -42,9 +39,6 @@ public class TopSecondDegreeByCountForTweet extends
   // Max number of node metadata associated with each right node.
   private static final int MAX_NUM_METADATA = 200;
   private static final int TWO_BYTE_FEATURE_LENGTH = 2;
-
-
-  protected static final Logger LOG = LoggerFactory.getLogger("graph");
 
   /**
    * Initialize all the states needed to run TopSecondDegreeByCountForTweet. Note that the object can
@@ -95,7 +89,7 @@ public class TopSecondDegreeByCountForTweet extends
         // of two byte features
         int[] metadata = new int[numOfMetadata + TWO_BYTE_FEATURE_LENGTH];
 
-        ((RightNodeMetadataMultiSegmentIterator) edgeIterator).fetchFeatureArrayForNode(rightNode, i, metadata);
+        ((RightNodeMetadataMultiSegmentIterator) edgeIterator).fetchFeatureArrayForNode(rightNode, i, metadata, TWO_BYTE_FEATURE_LENGTH);
         nodeMetadata[i] = metadata;
       }
     }

@@ -56,11 +56,14 @@ public class RightNodeMetadataMultiSegmentIterator
   }
 
 
-  public void fetchFeatureArrayForNode(long rightNode, int metadataIndex, int[] metadata) {
-    int oldestId = oldestSegmentId;
-    int liveId = liveSegmentId;
-    boolean setFlag = false;
-    for (int i = oldestId; i <= liveId; i++) {
+  public void fetchFeatureArrayForNode(
+    long rightNode,
+    int metadataIndex,
+    int[] metadata,
+    int twoByteFeatureLength
+  ) {
+    boolean setImmutableFeatures = false;
+    for (int i = oldestSegmentId; i <= liveSegmentId; i++) {
       RightNodeMetadataLeftIndexedBipartiteGraphSegment segment = readerAccessibleInfo.getSegments().get(i);
       if (segment == null) {
         continue;
@@ -76,22 +79,25 @@ public class RightNodeMetadataMultiSegmentIterator
         segment.getRightNodesToMetadataMap().get(metadataIndex).get(rightNodeIndex);
       int metadataSize = metadataIterator.size();
 
-      int firstTwoByteFeature = metadataIterator.nextInt();
-      metadata[0] += firstTwoByteFeature >> 16;
-      metadata[1] += firstTwoByteFeature & 0xffff;
+      // Sum up mutable features, and each of them takes the size of two bytes.
+      for (int j = 0; j < twoByteFeatureLength; j++) {
+        int twoByteFeature = metadataIterator.nextInt();
+        // Extract the value from the higher 2 bytes of the integer.
+        metadata[2 * j] += twoByteFeature >> 16;
+        // Extract the value from the lower 2 bytes of the integer.
+        metadata[2 * j + 1] += twoByteFeature & 0xffff;
+      }
 
-      int secondTwoByteFeature = metadataIterator.nextInt();
-      metadata[2] += secondTwoByteFeature >> 16;
-      metadata[3] += secondTwoByteFeature & 0xffff;
-
-      if (!setFlag) {
-        setFlag = true;
-        for (int j = 4; j < metadataSize + 2; j++) {
+      // For the immutable features, only set them once.
+      if (!setImmutableFeatures) {
+        setImmutableFeatures = true;
+        int startIndex = 2 * twoByteFeatureLength;
+        int endIndex = metadataSize + twoByteFeatureLength;
+        for (int j = startIndex; j < endIndex; j++) {
           metadata[j] = metadataIterator.nextInt();
         }
       }
     }
-
   }
 
   @Override
