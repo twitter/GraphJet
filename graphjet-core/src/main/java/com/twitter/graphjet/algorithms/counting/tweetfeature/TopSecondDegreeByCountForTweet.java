@@ -41,6 +41,7 @@ public class TopSecondDegreeByCountForTweet extends
   TopSecondDegreeByCount<TopSecondDegreeByCountRequestForTweet, TopSecondDegreeByCountResponse> {
   // Max number of node metadata associated with each right node.
   private static final int MAX_NUM_METADATA = 200;
+  private static final int TWO_BYTE_FEATURE_LENGTH = 2;
 
 
   protected static final Logger LOG = LoggerFactory.getLogger("graph");
@@ -90,11 +91,11 @@ public class TopSecondDegreeByCountForTweet extends
           (IntArrayIterator) ((NodeMetadataMultiSegmentIterator) edgeIterator).getRightNodeMetadata((byte) i);
       int numOfMetadata = metadataIterator.size();
       if (numOfMetadata > 0 && numOfMetadata <= MAX_NUM_METADATA) {
-        // 2 is the number of integers which store two byte features.
-        int[] metadata = new int[numOfMetadata + 2];
+        // allocate an extra TWO_BYTE_FEATURE_LENGTH integers in the array to hold the integer value
+        // of two byte features
+        int[] metadata = new int[numOfMetadata + TWO_BYTE_FEATURE_LENGTH];
 
         ((RightNodeMetadataMultiSegmentIterator) edgeIterator).fetchFeatureArrayForNode(rightNode, i, metadata);
-        LOG.info("metadata size " + metadata.length + " metadata " + metadataIterator.size());
         nodeMetadata[i] = metadata;
       }
     }
