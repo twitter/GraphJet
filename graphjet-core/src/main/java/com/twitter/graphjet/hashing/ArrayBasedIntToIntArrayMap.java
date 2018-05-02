@@ -184,7 +184,9 @@ public class ArrayBasedIntToIntArrayMap implements IntToIntArrayMap {
   }
 
   @Override
-  // No thread visibility update here.
+  // The method does not call crossMemoryBarrier on its own to save cost, and the caller of it needs
+  // to make sure the method is either preceded or followed by another method which calls
+  // crossMemoryBarrier.
   public boolean incrementFeatureValue(int key, byte edgeType) {
     if (edgeType == FAVORITE_ACTION || edgeType == RETWEET_ACTION || edgeType == REPLY_ACTION
       || edgeType == QUOTE_ACTION) {
