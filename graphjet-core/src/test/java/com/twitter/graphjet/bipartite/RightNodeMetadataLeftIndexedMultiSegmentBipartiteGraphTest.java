@@ -13,6 +13,7 @@ import it.unimi.dsi.fastutil.longs.Long2ObjectArrayMap;
 
 public class RightNodeMetadataLeftIndexedMultiSegmentBipartiteGraphTest {
   private static int FEATURE_SIZE = 5;
+  private static int TWO_BYTE_FEATURE_LENGTH = 2;
 
   private void addEdges(RightNodeMetadataLeftIndexedMultiSegmentBipartiteGraph graph) {
     int[][] array = new int[1][];
@@ -96,9 +97,8 @@ public class RightNodeMetadataLeftIndexedMultiSegmentBipartiteGraphTest {
 
       while (edgeIterator.hasNext()) {
         long rightNode = edgeIterator.nextLong();
-        int[] metadata = new int[FEATURE_SIZE + 2];
-        ((RightNodeMetadataMultiSegmentIterator) edgeIterator).fetchFeatureArrayForNode(rightNode, 0, metadata);
-        System.out.println("rightNodeOne " + rightNode + " metadata One " + new IntArrayList(metadata));
+        int[] metadata = new int[FEATURE_SIZE + TWO_BYTE_FEATURE_LENGTH];
+        ((RightNodeMetadataMultiSegmentIterator) edgeIterator).fetchFeatureArrayForNode(rightNode, 0, metadata, TWO_BYTE_FEATURE_LENGTH);
         assertEquals(long2IntArrayMap.get(rightNode), new IntArrayList(metadata));
       }
     }
