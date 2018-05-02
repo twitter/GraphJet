@@ -5,12 +5,12 @@
   <parent>
     <groupId>com.twitter</groupId>
     <artifactId>graphjet</artifactId>
-    <version>1.1.7</version>
+    <version>1.1.7-SNAPSHOT</version>
   </parent>
 
   <groupId>com.twitter</groupId>
   <artifactId>graphjet-demo</artifactId>
-  <version>1.1.7</version>
+  <version>1.1.7-SNAPSHOT</version>
   <packaging>jar</packaging>
   <name>GraphJet Demo</name>
   <description>GraphJet is a real-time graph processing library: demo of core graph library</description>
@@ -26,12 +26,12 @@
     <dependency>
       <groupId>com.twitter</groupId>
       <artifactId>graphjet-core</artifactId>
-      <version>1.1.7</version>
+      <version>1.1.7-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>com.twitter</groupId>
       <artifactId>graphjet-adapters</artifactId>
-      <version>1.1.7</version>
+      <version>1.1.7-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.twitter4j</groupId>
