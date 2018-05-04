@@ -60,7 +60,7 @@ public class RightNodeMetadataMultiSegmentIterator
     long rightNode,
     int metadataIndex,
     int[] metadata,
-    int twoByteFeatureLength
+    int numIntegerToUnpackShort
   ) {
     boolean setImmutableFeatures = false;
     for (int i = oldestSegmentId; i <= liveSegmentId; i++) {
@@ -80,7 +80,7 @@ public class RightNodeMetadataMultiSegmentIterator
       int metadataSize = metadataIterator.size();
 
       // Sum up mutable features, and each of them takes the size of two bytes.
-      for (int j = 0; j < twoByteFeatureLength; j++) {
+      for (int j = 0; j < numIntegerToUnpackShort; j++) {
         int twoByteFeature = metadataIterator.nextInt();
         // Extract the value from the higher two bytes of the integer.
         metadata[2 * j] += twoByteFeature >> 16;
@@ -91,8 +91,8 @@ public class RightNodeMetadataMultiSegmentIterator
       // For the immutable features, only set them once.
       if (!setImmutableFeatures) {
         setImmutableFeatures = true;
-        int startIndex = 2 * twoByteFeatureLength;
-        int endIndex = metadataSize + twoByteFeatureLength;
+        int startIndex = 2 * numIntegerToUnpackShort;
+        int endIndex = metadataSize + numIntegerToUnpackShort;
         for (int j = startIndex; j < endIndex; j++) {
           metadata[j] = metadataIterator.nextInt();
         }

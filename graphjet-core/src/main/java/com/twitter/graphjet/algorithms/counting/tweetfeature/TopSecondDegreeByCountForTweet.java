@@ -38,7 +38,13 @@ public class TopSecondDegreeByCountForTweet extends
   TopSecondDegreeByCount<TopSecondDegreeByCountRequestForTweet, TopSecondDegreeByCountResponse> {
   // Max number of node metadata associated with each right node.
   private static final int MAX_NUM_METADATA = 200;
-  private static final int TWO_BYTE_FEATURE_LENGTH = 2;
+  // Number of features stored in shorts instead of integers.
+  private static final int NUM_FEATURE_IN_SHORT_FORMAT = 4;
+  // Space ratio between integer and short.
+  private static final int SPACE_RATIO_BETWEEN_INTEGER_AND_SHORT = 2;
+  // Number of additional integers to unpack shorts
+  private static final int NUM_INTEGER_TO_UNPACK_SHORT =
+    NUM_FEATURE_IN_SHORT_FORMAT / SPACE_RATIO_BETWEEN_INTEGER_AND_SHORT;
 
   /**
    * Initialize all the states needed to run TopSecondDegreeByCountForTweet. Note that the object can
@@ -87,9 +93,11 @@ public class TopSecondDegreeByCountForTweet extends
       if (numOfMetadata > 0 && numOfMetadata <= MAX_NUM_METADATA) {
         // allocate an extra TWO_BYTE_FEATURE_LENGTH integers in the array to hold the integer value
         // of two byte features
-        int[] metadata = new int[numOfMetadata + TWO_BYTE_FEATURE_LENGTH];
+        int[] metadata = new int[numOfMetadata + NUM_INTEGER_TO_UNPACK_SHORT];
 
-        ((RightNodeMetadataMultiSegmentIterator) edgeIterator).fetchFeatureArrayForNode(rightNode, i, metadata, TWO_BYTE_FEATURE_LENGTH);
+        ((RightNodeMetadataMultiSegmentIterator) edgeIterator).fetchFeatureArrayForNode(
+          rightNode, i, metadata, NUM_INTEGER_TO_UNPACK_SHORT
+        );
         nodeMetadata[i] = metadata;
       }
     }
