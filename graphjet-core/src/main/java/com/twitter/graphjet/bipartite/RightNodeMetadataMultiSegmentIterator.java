@@ -27,6 +27,9 @@ public class RightNodeMetadataMultiSegmentIterator
   extends ReverseChronologicalMultiSegmentIterator<RightNodeMetadataLeftIndexedBipartiteGraphSegment>
   implements NodeMetadataEdgeIterator, ReusableNodeLongIterator {
 
+  // Space ratio between integer and short.
+  private static final int SPACE_RATIO_BETWEEN_INTEGER_AND_SHORT = 2;
+
   /**
    * This constructor is for easy reuse in the random iterator derived from this one.
    *
@@ -81,17 +84,17 @@ public class RightNodeMetadataMultiSegmentIterator
 
       // Sum up mutable features, and each of them takes the size of two bytes.
       for (int j = 0; j < numIntegerToUnpackShort; j++) {
-        int twoByteFeature = metadataIterator.nextInt();
+        int featureInShortFormat = metadataIterator.nextInt();
         // Extract the value from the higher two bytes of the integer.
-        metadata[2 * j] += twoByteFeature >> 16;
+        metadata[SPACE_RATIO_BETWEEN_INTEGER_AND_SHORT * j] += featureInShortFormat >> 16;
         // Extract the value from the lower two bytes of the integer.
-        metadata[2 * j + 1] += twoByteFeature & 0xffff;
+        metadata[SPACE_RATIO_BETWEEN_INTEGER_AND_SHORT * j + 1] += featureInShortFormat & 0xffff;
       }
 
       // For the immutable features, only set them once.
       if (!setImmutableFeatures) {
         setImmutableFeatures = true;
-        int startIndex = 2 * numIntegerToUnpackShort;
+        int startIndex = SPACE_RATIO_BETWEEN_INTEGER_AND_SHORT * numIntegerToUnpackShort;
         int endIndex = metadataSize + numIntegerToUnpackShort;
         for (int j = startIndex; j < endIndex; j++) {
           metadata[j] = metadataIterator.nextInt();
