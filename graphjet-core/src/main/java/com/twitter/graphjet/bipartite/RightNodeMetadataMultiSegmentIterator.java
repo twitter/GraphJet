@@ -58,12 +58,24 @@ public class RightNodeMetadataMultiSegmentIterator
       .getRightNodeMetadata(nodeMetadataType);
   }
 
-
+  /**
+   * The method populates both mutable and immutable features of the right node.
+   * For mutable features, it iterates through all segments, queries the features in each segment,
+   * and then sums them up.
+   * For immutable features, because different segments hold the exact same copy, the method will
+   * populate the immutable features once at its first appearance.
+   *
+   * @param rightNode the right node long id
+   * @param metadataIndex the feature index
+   * @param features the feature array that is allocated by the caller
+   * @param numAdditionalIntegerToUnpackShort the number of the additional integers to unpack
+   *                                          features stored in short i16.
+   */
   public void fetchFeatureArrayForNode(
     long rightNode,
     int metadataIndex,
-    int[] metadata,
-    int numIntegerToUnpackShort
+    int[] features,
+    int numAdditionalIntegerToUnpackShort
   ) {
     boolean setImmutableFeatures = false;
     for (int i = oldestSegmentId; i <= liveSegmentId; i++) {
@@ -83,21 +95,21 @@ public class RightNodeMetadataMultiSegmentIterator
       int metadataSize = metadataIterator.size();
 
       // Sum up mutable features, and each of them takes the size of two bytes.
-      for (int j = 0; j < numIntegerToUnpackShort; j++) {
+      for (int j = 0; j < numAdditionalIntegerToUnpackShort; j++) {
         int featureInShortFormat = metadataIterator.nextInt();
         // Extract the value from the higher two bytes of the integer.
-        metadata[SPACE_RATIO_BETWEEN_INTEGER_AND_SHORT * j] += featureInShortFormat >> 16;
+        features[SPACE_RATIO_BETWEEN_INTEGER_AND_SHORT * j] += featureInShortFormat >> 16;
         // Extract the value from the lower two bytes of the integer.
-        metadata[SPACE_RATIO_BETWEEN_INTEGER_AND_SHORT * j + 1] += featureInShortFormat & 0xffff;
+        features[SPACE_RATIO_BETWEEN_INTEGER_AND_SHORT * j + 1] += featureInShortFormat & 0xffff;
       }
 
       // For the immutable features, only set them once.
       if (!setImmutableFeatures) {
         setImmutableFeatures = true;
-        int startIndex = SPACE_RATIO_BETWEEN_INTEGER_AND_SHORT * numIntegerToUnpackShort;
-        int endIndex = metadataSize + numIntegerToUnpackShort;
+        int startIndex = SPACE_RATIO_BETWEEN_INTEGER_AND_SHORT * numAdditionalIntegerToUnpackShort;
+        int endIndex = metadataSize + numAdditionalIntegerToUnpackShort;
         for (int j = startIndex; j < endIndex; j++) {
-          metadata[j] = metadataIterator.nextInt();
+          features[j] = metadataIterator.nextInt();
         }
       }
     }

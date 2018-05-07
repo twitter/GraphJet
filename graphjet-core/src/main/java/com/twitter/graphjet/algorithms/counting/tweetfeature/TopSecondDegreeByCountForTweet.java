@@ -42,8 +42,8 @@ public class TopSecondDegreeByCountForTweet extends
   private static final int NUM_FEATURE_IN_SHORT_FORMAT = 4;
   // Space ratio between integer and short.
   private static final int SPACE_RATIO_BETWEEN_INTEGER_AND_SHORT = 2;
-  // Number of additional integers to unpack shorts
-  private static final int NUM_INTEGER_TO_UNPACK_SHORT =
+  // Number of additional integers to unpack features stored in short i16
+  private static final int NUM_ADDITIONAL_INTEGER_TO_UNPACK_SHORT =
     NUM_FEATURE_IN_SHORT_FORMAT / SPACE_RATIO_BETWEEN_INTEGER_AND_SHORT;
 
   /**
@@ -93,10 +93,10 @@ public class TopSecondDegreeByCountForTweet extends
       if (numOfMetadata > 0 && numOfMetadata <= MAX_NUM_METADATA) {
         // allocate an extra TWO_BYTE_FEATURE_LENGTH integers in the array to hold the integer value
         // of two byte features
-        int[] metadata = new int[numOfMetadata + NUM_INTEGER_TO_UNPACK_SHORT];
+        int[] metadata = new int[numOfMetadata + NUM_ADDITIONAL_INTEGER_TO_UNPACK_SHORT];
 
         ((RightNodeMetadataMultiSegmentIterator) edgeIterator).fetchFeatureArrayForNode(
-          rightNode, i, metadata, NUM_INTEGER_TO_UNPACK_SHORT
+          rightNode, i, metadata, NUM_ADDITIONAL_INTEGER_TO_UNPACK_SHORT
         );
         nodeMetadata[i] = metadata;
       }
