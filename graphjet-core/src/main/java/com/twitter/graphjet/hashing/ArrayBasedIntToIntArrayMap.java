@@ -71,7 +71,7 @@ public class ArrayBasedIntToIntArrayMap implements IntToIntArrayMap {
   }
 
   private static final long DEFAULT_RETURN_VALUE = -1L;
-
+  // TODO: Jerry: consolidate the edge types into one file.
   private static final int INTEGER_TOP_TWO_BYTE_SHIFT = 1 << 16;
   private static final int INTEGER_TOP_TWO_BYTE_OVERFLOW = 0x7fff;
   private static final int FAVORITE_ACTION = 1;
