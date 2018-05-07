@@ -92,7 +92,7 @@ public class RightNodeMetadataMultiSegmentIterator
 
       IntArrayIterator metadataIterator = (IntArrayIterator)
         segment.getRightNodesToMetadataMap().get(metadataIndex).get(rightNodeIndex);
-      int metadataSize = metadataIterator.size();
+      int packedMetadataSize = metadataIterator.size();
 
       // Sum up mutable features, and each of them takes the size of two bytes.
       for (int j = 0; j < numAdditionalIntegerToUnpackShort; j++) {
@@ -107,7 +107,7 @@ public class RightNodeMetadataMultiSegmentIterator
       if (!setImmutableFeatures) {
         setImmutableFeatures = true;
         int startIndex = SPACE_RATIO_BETWEEN_INTEGER_AND_SHORT * numAdditionalIntegerToUnpackShort;
-        int endIndex = metadataSize + numAdditionalIntegerToUnpackShort;
+        int endIndex = packedMetadataSize + numAdditionalIntegerToUnpackShort;
         for (int j = startIndex; j < endIndex; j++) {
           features[j] = metadataIterator.nextInt();
         }

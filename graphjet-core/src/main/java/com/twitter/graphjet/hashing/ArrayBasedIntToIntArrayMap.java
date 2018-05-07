@@ -184,9 +184,17 @@ public class ArrayBasedIntToIntArrayMap implements IntToIntArrayMap {
   }
 
   @Override
-  // The method does not call crossMemoryBarrier on its own to save cost, and the caller of it needs
-  // to make sure the method is either preceded or followed by another method which calls
-  // crossMemoryBarrier.
+  /**
+   *  The method does not call crossMemoryBarrier on its own to save cost, and the caller of it
+   *  needs to make sure the method is either preceded or followed by another method which calls
+   *  crossMemoryBarrier.
+   *
+   *  This method stores like, retweet, reply and quote counts into four i16s. However, since the
+   *  value of this store is i32s, we need to compress two i16s into one i32. The schema is to pack
+   *  Retweet and Favorite counts into the first integer, and Reply and Quote counts into the second
+   *  integer. Retweet and Quote counts occupy the most significant 16 bits of the integers, and the
+   *  other two counts occupy the lower 16 bits of the integers.
+   */
   public boolean incrementFeatureValue(int key, byte edgeType) {
     if (edgeType == FAVORITE_ACTION || edgeType == RETWEET_ACTION || edgeType == REPLY_ACTION
       || edgeType == QUOTE_ACTION) {
@@ -197,7 +205,7 @@ public class ArrayBasedIntToIntArrayMap implements IntToIntArrayMap {
       int currentEntry = readerAccessibleInfo.edges.getEntry(featurePosition);
       int currentFeatureValue = getFeatureValue(currentEntry, edgeType);
 
-      // Prevent overflow. stop counting when the feature value reaches overflow value.
+      // Prevent overflow. Skip counting when the feature value reaches overflow value.
       if (currentFeatureValue == INTEGER_TOP_TWO_BYTE_OVERFLOW) {
         return false;
       }
