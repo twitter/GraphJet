@@ -83,19 +83,19 @@ public class TopSecondDegreeByCountForTweet extends
     }
   }
 
-  private int[][] collectNodeMetadata(long rightNode, EdgeIterator edgeIterator) {
+  private int[][] collectNodeMetadata(long rightNode, RightNodeMetadataMultiSegmentIterator edgeIterator) {
     int metadataSize = TweetFeature.TWEET_FEATURE_SIZE.getValue();
     int[][] nodeMetadata = new int[metadataSize][];
     for (int i = 0; i < metadataSize; i++) {
       IntArrayIterator metadataIterator =
-          (IntArrayIterator) ((NodeMetadataMultiSegmentIterator) edgeIterator).getRightNodeMetadata((byte) i);
+          (IntArrayIterator)edgeIterator.getRightNodeMetadata((byte) i);
       int numOfMetadata = metadataIterator.size();
       if (numOfMetadata > 0 && numOfMetadata <= MAX_NUM_METADATA) {
         // allocate an extra NUM_ADDITIONAL_INTEGER_TO_UNPACK_SHORT integers in the array to hold
         // the integer value of features in short i16.
         int[] metadata = new int[numOfMetadata + NUM_ADDITIONAL_INTEGER_TO_UNPACK_SHORT];
 
-        ((RightNodeMetadataMultiSegmentIterator) edgeIterator).fetchFeatureArrayForNode(
+        edgeIterator.fetchFeatureArrayForNode(
           rightNode, i, metadata, NUM_ADDITIONAL_INTEGER_TO_UNPACK_SHORT
         );
         nodeMetadata[i] = metadata;
@@ -116,7 +116,8 @@ public class TopSecondDegreeByCountForTweet extends
 
     NodeInfo nodeInfo;
     if (!super.visitedRightNodes.containsKey(rightNode)) {
-      int[][] nodeMetadata = collectNodeMetadata(rightNode, edgeIterator);
+      RightNodeMetadataMultiSegmentIterator castedIterator = (RightNodeMetadataMultiSegmentIterator)edgeIterator;
+      int[][] nodeMetadata = collectNodeMetadata(rightNode, castedIterator);
       nodeInfo = new NodeInfo(rightNode, nodeMetadata, 0.0, maxSocialProofTypeSize);
       super.visitedRightNodes.put(rightNode, nodeInfo);
     } else {
