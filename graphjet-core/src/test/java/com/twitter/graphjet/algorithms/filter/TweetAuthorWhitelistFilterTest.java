@@ -21,7 +21,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 
 import com.twitter.graphjet.algorithms.RecommendationRequest;
-import com.twitter.graphjet.algorithms.filters.TweetAuthorFilter;
+import com.twitter.graphjet.algorithms.filters.TweetAuthorWhitelistFilter;
 import com.twitter.graphjet.bipartite.LeftIndexedMultiSegmentBipartiteGraph;
 import com.twitter.graphjet.bipartite.NodeMetadataLeftIndexedMultiSegmentBipartiteGraph;
 import com.twitter.graphjet.bipartite.NodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraph;
@@ -32,12 +32,12 @@ import com.twitter.graphjet.stats.NullStatsReceiver;
 import it.unimi.dsi.fastutil.longs.LongArraySet;
 import it.unimi.dsi.fastutil.longs.LongSet;
 
-public class TweetAuthorFilterTest {
+public class TweetAuthorWhitelistFilterTest {
   @Test
   public void testEmptyAuthor() {
     LeftIndexedMultiSegmentBipartiteGraph leftIndexedBipartiteGraph = null;
     LongSet tweetAuthors = new LongArraySet();
-    TweetAuthorFilter authorFilter = new TweetAuthorFilter(leftIndexedBipartiteGraph, tweetAuthors, new NullStatsReceiver());
+    TweetAuthorWhitelistFilter authorFilter = new TweetAuthorWhitelistFilter(leftIndexedBipartiteGraph, tweetAuthors, new NullStatsReceiver());
     assertEquals(false, authorFilter.filterResult(0L, new SmallArrayBasedLongToDoubleMap[] {}));
   }
 
@@ -66,7 +66,7 @@ public class TweetAuthorFilterTest {
 
     // Only look for tweets from author 1
     tweetAuthors.add(1L);
-    TweetAuthorFilter authorFilter = new TweetAuthorFilter(leftIndexedBipartiteGraph, tweetAuthors, new NullStatsReceiver());
+    TweetAuthorWhitelistFilter authorFilter = new TweetAuthorWhitelistFilter(leftIndexedBipartiteGraph, tweetAuthors, new NullStatsReceiver());
 
     // Tweets authored by tweetAuthors should not be filtered. Node 10 is authored by 1.
     assertEquals(false, authorFilter.filterResult(10, socialProofs));

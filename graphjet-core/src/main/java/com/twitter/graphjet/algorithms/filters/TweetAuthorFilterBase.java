@@ -1,5 +1,5 @@
 /**
- * Copyright 2016 Twitter. All rights reserved.
+ * Copyright 2018 Twitter. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,32 +17,43 @@
 package com.twitter.graphjet.algorithms.filters;
 
 import com.twitter.graphjet.algorithms.RecommendationRequest;
-import com.twitter.graphjet.bipartite.api.EdgeIterator;
 import com.twitter.graphjet.bipartite.LeftIndexedMultiSegmentBipartiteGraph;
-import com.twitter.graphjet.hashing.SmallArrayBasedLongToDoubleMap;
+import com.twitter.graphjet.bipartite.api.EdgeIterator;
 import com.twitter.graphjet.stats.StatsReceiver;
+
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import it.unimi.dsi.fastutil.longs.LongSet;
 
-public class TweetAuthorFilter extends ResultFilter {
-  private LongSet authoredTweets = new LongOpenHashSet();
+public abstract class TweetAuthorFilterBase extends ResultFilter {
+
+  private LongSet authoredTweets;
   private boolean isTweetAuthorsEmpty = false;
 
-  /**
-   * @param tweetAuthors the list of authors whose tweets will not be filtered. If left empty, no tweet will be filtered.
-   */
-  public TweetAuthorFilter(
+  public TweetAuthorFilterBase(
       LeftIndexedMultiSegmentBipartiteGraph leftIndexedBipartiteGraph,
       LongSet tweetAuthors,
-      StatsReceiver statsReceiver) {
+      StatsReceiver statsReceiver
+  ) {
     super(statsReceiver);
-    isTweetAuthorsEmpty = tweetAuthors.isEmpty();
-    generateAuthoredByUsersNodes(leftIndexedBipartiteGraph, tweetAuthors);
+    this.isTweetAuthorsEmpty = tweetAuthors.isEmpty();
+    this.authoredTweets = generateAuthoredByUsersNodes(leftIndexedBipartiteGraph, tweetAuthors);
   }
 
-  private void generateAuthoredByUsersNodes(
+  public boolean isTweetAuthorsEmpty() {
+    return this.isTweetAuthorsEmpty;
+  }
+
+  public boolean isTweetedByTweetAuthors(long tweetId) {
+    return authoredTweets.contains(tweetId);
+  }
+
+  /**
+   * Return the list of tweets authored by the input list of users
+   */
+  private LongSet generateAuthoredByUsersNodes(
       LeftIndexedMultiSegmentBipartiteGraph leftIndexedBipartiteGraph,
       LongSet tweetAuthors) {
+    LongSet authoredTweets = new LongOpenHashSet();
     for (long leftNode: tweetAuthors) {
       EdgeIterator edgeIterator = leftIndexedBipartiteGraph.getLeftNodeEdges(leftNode);
       if (edgeIterator == null) {
@@ -59,17 +70,7 @@ public class TweetAuthorFilter extends ResultFilter {
         }
       }
     }
+    return authoredTweets;
   }
 
-  @Override
-  public void resetFilter(RecommendationRequest request) {}
-
-  /**
-   * @return true if resultNode is not in the authoredByUsersNodes, which means that the
-   * resultNode was not authored by the specified users.
-   */
-  @Override
-  public boolean filterResult(long resultNode, SmallArrayBasedLongToDoubleMap[] socialProofs) {
-    return !isTweetAuthorsEmpty && !authoredTweets.contains(resultNode);
-  }
 }
