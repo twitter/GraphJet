@@ -147,7 +147,7 @@ public class TweetAuthorFilterTest {
     TweetAuthorFilter authorFilter = new TweetAuthorFilter(
         mockGraph, whitelistAuthors, blacklistAuthors, new NullStatsReceiver());
 
-    // Should only return whitelisted 10 and 20. 30 and 40 are filtered by balcklist
+    // Should only return whitelisted 10 and 20. 30 and 40 are filtered by blacklist
     assertEquals(false, authorFilter.filterResult(10, socialProofs));
     assertEquals(false, authorFilter.filterResult(20, socialProofs));
     assertEquals(true, authorFilter.filterResult(30, socialProofs));

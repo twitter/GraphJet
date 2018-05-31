@@ -28,9 +28,10 @@ import com.twitter.graphjet.stats.StatsReceiver;
 public abstract class ResultFilter {
   protected final Counter inputCounter;
   protected final Counter filteredCounter;
+  protected final StatsReceiver scopedStatsReceiver;
 
   public ResultFilter(StatsReceiver statsReceiver) {
-    StatsReceiver scopedStatsReceiver = statsReceiver.scope(getStatsScope());
+    this.scopedStatsReceiver = statsReceiver.scope(getStatsScope());
     this.inputCounter = scopedStatsReceiver.counter("input");
     this.filteredCounter = scopedStatsReceiver.counter("filtered");
   }

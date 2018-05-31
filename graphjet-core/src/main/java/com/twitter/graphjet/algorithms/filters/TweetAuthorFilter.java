@@ -20,25 +20,29 @@ import com.twitter.graphjet.algorithms.RecommendationRequest;
 import com.twitter.graphjet.bipartite.LeftIndexedMultiSegmentBipartiteGraph;
 import com.twitter.graphjet.bipartite.api.EdgeIterator;
 import com.twitter.graphjet.hashing.SmallArrayBasedLongToDoubleMap;
+import com.twitter.graphjet.stats.Counter;
 import com.twitter.graphjet.stats.StatsReceiver;
 
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import it.unimi.dsi.fastutil.longs.LongSet;
 
+/**
+ * This filter filters tweets by tweet authors, depending on whether the node author is
+ * on the blacklist or the whitelist.
+ *
+ * - For whitelist authors, only tweets from the whitelisted authors will pass the filter.
+ *   However, if the whitelist is empty, the filter will pass all tweets.
+ * - For blacklist authors, tweets authored by blacklisted authors will be filtered.
+ */
 public class TweetAuthorFilter extends ResultFilter {
 
   private boolean isWhitelistAllTweets;
   private LongSet whitelistedTweets;
   private LongSet blacklistedTweets;
 
-  /**
-   * This filter filters tweets by tweet authors, depending on whether the node author is
-   * on the blacklist or the whitelist.
-   *
-   * - For whitelist authors, only tweets from the whitelisted authors will pass the filter.
-   *   However, if the whitelist is empty, the filter will pass all tweets.
-   * - For blacklist authors, tweets authored by blacklisted authors will be filtered.
-   */
+  private Counter blacklistFilterCount = scopedStatsReceiver.counter("blacklist_filtered");
+  private Counter whitelistFilterCount = scopedStatsReceiver.counter("whitelist_filtered");
+
   public TweetAuthorFilter(
       LeftIndexedMultiSegmentBipartiteGraph leftIndexedBipartiteGraph,
       LongSet whitelistTweetAuthors,
@@ -92,19 +96,23 @@ public class TweetAuthorFilter extends ResultFilter {
     if (this.isWhitelistAllTweets) {
       return false; // If the whitelist is empty, filter nothing
     }
-    return !whitelistedTweets.contains(tweetId);
+    boolean isFiltered = !whitelistedTweets.contains(tweetId);
+    if (isFiltered) {
+      whitelistFilterCount.incr();
+    }
+    return isFiltered;
   }
 
   private boolean isFilteredByBlacklist(long tweetId) {
-    return blacklistedTweets.contains(tweetId);
+    boolean isFiltered = blacklistedTweets.contains(tweetId);
+    if (isFiltered) {
+      blacklistFilterCount.incr();
+    }
+    return isFiltered;
   }
 
   @Override
-  public void resetFilter(RecommendationRequest request) {
-    this.isWhitelistAllTweets = false;
-    this.whitelistedTweets = new LongOpenHashSet();
-    this.blacklistedTweets = new LongOpenHashSet();
-  }
+  public void resetFilter(RecommendationRequest request) {}
 
   @Override
   public boolean filterResult(long resultNode, SmallArrayBasedLongToDoubleMap[] socialProofs) {
