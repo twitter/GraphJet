@@ -31,12 +31,12 @@ import it.unimi.dsi.fastutil.longs.LongSet;
  * on the blacklist or the whitelist.
  *
  * - For whitelist authors, only tweets from the whitelisted authors will pass the filter.
- *   However, if the whitelist is empty, the filter will pass all tweets.
+ *   However, if the whitelist is empty, the filter will pass all tweets, and only filter from the blacklist
  * - For blacklist authors, tweets authored by blacklisted authors will be filtered.
  */
 public class TweetAuthorFilter extends ResultFilter {
 
-  private boolean isWhitelistAllTweets;
+  private boolean isIgnoreWhitelist;
   private LongSet whitelistedTweets;
   private LongSet blacklistedTweets;
 
@@ -49,10 +49,16 @@ public class TweetAuthorFilter extends ResultFilter {
       LongSet blacklistTweetAuthors,
       StatsReceiver statsReceiver) {
     super(statsReceiver);
-    this.isWhitelistAllTweets = whitelistTweetAuthors.isEmpty();
-    LongSet dedupedWhitelistAuthors = dedupWhitelistAuthors(whitelistTweetAuthors, blacklistTweetAuthors);
-    this.whitelistedTweets = getTweetsByAuthors(leftIndexedBipartiteGraph, dedupedWhitelistAuthors);
-    this.blacklistedTweets = getTweetsByAuthors(leftIndexedBipartiteGraph, blacklistTweetAuthors);
+    this.isIgnoreWhitelist = whitelistTweetAuthors.isEmpty();
+    if (this.isIgnoreWhitelist) {
+      this.whitelistedTweets = new LongOpenHashSet();
+      this.blacklistedTweets = getTweetsByAuthors(leftIndexedBipartiteGraph, blacklistTweetAuthors);
+    } else {
+      // Performance hack. Remove blacklisted authors from the whitelist, and only check whitelist
+      LongSet dedupedWhitelistAuthors = dedupWhitelistAuthors(whitelistTweetAuthors, blacklistTweetAuthors);
+      this.whitelistedTweets = getTweetsByAuthors(leftIndexedBipartiteGraph, dedupedWhitelistAuthors);
+      this.blacklistedTweets = new LongOpenHashSet();
+    }
   }
 
   /**
@@ -93,7 +99,7 @@ public class TweetAuthorFilter extends ResultFilter {
   }
 
   private boolean isFilteredByWhitelist(long tweetId) {
-    if (this.isWhitelistAllTweets) {
+    if (this.isIgnoreWhitelist) {
       return false; // If the whitelist is empty, filter nothing
     }
     boolean isFiltered = !whitelistedTweets.contains(tweetId);
