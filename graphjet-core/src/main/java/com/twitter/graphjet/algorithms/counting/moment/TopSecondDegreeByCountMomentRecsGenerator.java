@@ -65,7 +65,7 @@ public final class TopSecondDegreeByCountMomentRecsGenerator {
       );
 
       MomentRecommendationInfo momentRecs = new MomentRecommendationInfo(
-        nodeInfo.getValue(),
+        nodeInfo.getNodeId(),
         nodeInfo.getWeight(),
         topSocialProofs);
       outputResults.add(momentRecs);

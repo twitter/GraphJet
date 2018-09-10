@@ -1,5 +1,5 @@
 /**
- * Copyright 2016 Twitter. All rights reserved.
+ * Copyright 2018 Twitter. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 
 package com.twitter.graphjet.algorithms.counting.tweet;
 
@@ -37,8 +36,45 @@ import it.unimi.dsi.fastutil.longs.LongSet;
 
 public final class TopSecondDegreeByCountTweetRecsGenerator {
   private static final TweetIDMask TWEET_ID_MASK = new TweetIDMask();
+  private static final byte FavoriteSocialProofType = 1;
+  private static final byte UnfavoriteSocialProofType = 8;
 
   private TopSecondDegreeByCountTweetRecsGenerator() {
+  }
+
+  /**
+   * Given a nodeInfo containing the collection of all social proofs on a tweet, remove the
+   * Favorite social proofs that also have Unfavorite counterparts, and deduct the weight of the
+   * nodeInfo accordingly.
+   * Calling this will modify the nodeInfo object in-place.
+   */
+  private static void removeUnfavoriteSocialProofs(NodeInfo nodeInfo) {
+    SmallArrayBasedLongToDoubleMap unfavSocialProofs =
+        nodeInfo.getSocialProofs()[UnfavoriteSocialProofType];
+    SmallArrayBasedLongToDoubleMap favSocialProofs =
+        nodeInfo.getSocialProofs()[FavoriteSocialProofType];
+
+    if (unfavSocialProofs == null || favSocialProofs == null) {
+      return;
+    }
+
+    SmallArrayBasedLongToDoubleMap newFavSocialProofs = new SmallArrayBasedLongToDoubleMap();
+    double weightToRemove = 0;
+
+    for (int i = 0; i < favSocialProofs.size(); i++) {
+      long favUser = favSocialProofs.keys()[i];
+      double favWeight = favSocialProofs.values()[i];
+      long favMetadata = favSocialProofs.metadata()[i];
+
+      if (unfavSocialProofs.contains(favUser)) {
+        weightToRemove += favWeight * 2; // *2 to take into account of both fav and unfav edge
+        continue;
+      }
+      newFavSocialProofs.put(favUser, favWeight, favMetadata);
+    }
+
+    nodeInfo.setWeight(nodeInfo.getWeight() - weightToRemove);
+    nodeInfo.getSocialProofs()[FavoriteSocialProofType] = newFavSocialProofs;
   }
 
   /**
@@ -59,6 +95,8 @@ public final class TopSecondDegreeByCountTweetRecsGenerator {
 
     // handling specific rules of tweet recommendations
     for (NodeInfo nodeInfo : nodeInfoList) {
+      removeUnfavoriteSocialProofs(nodeInfo);
+
       // do not return if size of each social proof is less than minUserSocialProofSize.
       if (isLessThanMinUserSocialProofSize(nodeInfo.getSocialProofs(), validSocialProofs, minUserSocialProofSize) &&
         // do not return if size of each social proof union is less than minUserSocialProofSize.
@@ -74,7 +112,7 @@ public final class TopSecondDegreeByCountTweetRecsGenerator {
       NodeInfo nodeInfo = topResults.poll();
       outputResults.add(
         new TweetRecommendationInfo(
-          TWEET_ID_MASK.restore(nodeInfo.getValue()),
+          TWEET_ID_MASK.restore(nodeInfo.getNodeId()),
           nodeInfo.getWeight(),
           GeneratorHelper.pickTopSocialProofs(nodeInfo.getSocialProofs())));
     }

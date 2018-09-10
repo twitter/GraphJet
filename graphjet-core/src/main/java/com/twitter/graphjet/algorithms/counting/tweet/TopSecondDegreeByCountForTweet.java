@@ -1,5 +1,5 @@
 /**
- * Copyright 2016 Twitter. All rights reserved.
+ * Copyright 2018 Twitter. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -80,8 +80,10 @@ public class TopSecondDegreeByCountForTweet extends
         return timeStampFromTweetId;
       case 7:  // QUOTE
         return RecentTweetFilter.timeStampFromTweetId(edgeMetadata);
+      case 8:  // UNFAVORITE
+        return edgeMetadata;
       default:
-        throw new IllegalStateException("Invalid EdgeType in getEdgeTimeStampInMillis");
+        throw new IllegalStateException("Invalid EdgeType in getEdgeTimeStampInMillis: " + edgeType);
     }
   }
 

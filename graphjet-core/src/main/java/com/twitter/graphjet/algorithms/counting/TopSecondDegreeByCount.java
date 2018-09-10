@@ -221,7 +221,7 @@ public abstract class TopSecondDegreeByCount<Request extends TopSecondDegreeByCo
   private void filterNodeInfo(Request request) {
     int numFilteredNodes = 0;
     for (NodeInfo nodeInfo : visitedRightNodes.values()) {
-      if (request.filterResult(nodeInfo.getValue(), nodeInfo.getSocialProofs())) {
+      if (request.filterResult(nodeInfo.getNodeId(), nodeInfo.getSocialProofs())) {
         numFilteredNodes++;
         continue;
       }

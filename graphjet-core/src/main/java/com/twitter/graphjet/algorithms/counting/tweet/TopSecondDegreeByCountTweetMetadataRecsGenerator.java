@@ -52,7 +52,7 @@ public final class TopSecondDegreeByCountTweetMetadataRecsGenerator {
         recommendationInfo.addToTweetSocialProofs(
           (byte) k,
           socialProofsByType[k],
-          TWEET_ID_MASK.restore(nodeInfo.getValue()),
+          TWEET_ID_MASK.restore(nodeInfo.getNodeId()),
           maxUserSocialProofSize,
           maxTweetSocialProofSize
         );

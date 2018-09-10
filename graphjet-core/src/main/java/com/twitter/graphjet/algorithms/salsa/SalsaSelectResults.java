@@ -71,7 +71,7 @@ public class SalsaSelectResults<T extends LeftIndexedBipartiteGraph> {
     int numFilteredNodes = 0;
     for (NodeInfo nodeInfo : salsaInternalState.getVisitedRightNodes().values()) {
       if (salsaInternalState.getSalsaRequest().filterResult(
-        nodeInfo.getValue(),
+        nodeInfo.getNodeId(),
         nodeInfo.getSocialProofs())
       ) {
         numFilteredNodes++;
@@ -91,7 +91,7 @@ public class SalsaSelectResults<T extends LeftIndexedBipartiteGraph> {
       NodeInfo nodeInfo = topResults.poll();
       outputResults.add(
         new TweetRecommendationInfo(
-          TWEET_ID_MASK.restore(nodeInfo.getValue()),
+          TWEET_ID_MASK.restore(nodeInfo.getNodeId()),
           nodeInfo.getWeight(),
           pickTopSocialProofs(nodeInfo.getSocialProofs(), validSocialProofs)));
     }

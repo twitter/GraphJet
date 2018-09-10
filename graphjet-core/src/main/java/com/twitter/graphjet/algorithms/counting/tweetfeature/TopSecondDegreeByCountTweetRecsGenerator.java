@@ -74,7 +74,7 @@ public final class TopSecondDegreeByCountTweetRecsGenerator {
       NodeInfo nodeInfo = topResults.poll();
       outputResults.add(
         new TweetRecommendationInfo(
-          TWEET_ID_MASK.restore(nodeInfo.getValue()),
+          TWEET_ID_MASK.restore(nodeInfo.getNodeId()),
           nodeInfo.getWeight(),
           GeneratorHelper.pickTopSocialProofs(nodeInfo.getSocialProofs()),
           nodeInfo.getNodeMetadata(TweetFeature.TWEET_FEATURE.getValue())));

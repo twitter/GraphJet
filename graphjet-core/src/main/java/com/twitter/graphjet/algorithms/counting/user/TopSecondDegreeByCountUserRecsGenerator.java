@@ -64,7 +64,7 @@ public final class TopSecondDegreeByCountUserRecsGenerator {
         nodeInfo.getSocialProofs());
 
       UserRecommendationInfo userRecs = new UserRecommendationInfo(
-        nodeInfo.getValue(),
+        nodeInfo.getNodeId(),
         nodeInfo.getWeight(),
         topSocialProofs);
       outputResults.add(userRecs);

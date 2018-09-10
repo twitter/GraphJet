@@ -22,10 +22,12 @@ import com.google.common.base.Objects;
 import com.twitter.graphjet.hashing.SmallArrayBasedLongToDoubleMap;
 
 /**
- * This class contains information about a node that's a potential recommendation.
+ * This class contains information about a node that's a potential recommendation, by collecting the
+ * engagements (social proofs) from other nodes. An example usage is to aggregate the
+ * different social proof engagements on a tweet from different users.
  */
 public class NodeInfo implements Comparable<NodeInfo> {
-  private final long value;
+  private final long nodeId;
   private int[][] nodeMetadata;
   private double weight;
   private int numVisits;
@@ -35,13 +37,13 @@ public class NodeInfo implements Comparable<NodeInfo> {
   /**
    * Creates an instance for a node.
    *
-   * @param value        is the node value
+   * @param nodeId        is the node nodeId
    * @param nodeMetadata is the metadata arrays associated with each node, such as hashtags and urls
    * @param weight       is the initial weight
    * @param maxSocialProofTypeSize is the max social proof types to keep
    */
-  public NodeInfo(long value, int[][] nodeMetadata, double weight, int maxSocialProofTypeSize) {
-    this.value = value;
+  public NodeInfo(long nodeId, int[][] nodeMetadata, double weight, int maxSocialProofTypeSize) {
+    this.nodeId = nodeId;
     this.nodeMetadata = nodeMetadata;
     this.weight = weight;
     this.numVisits = 1;
@@ -51,20 +53,20 @@ public class NodeInfo implements Comparable<NodeInfo> {
   /**
    * Creates an instance for a node and sets empty node meta data in the node.
    *
-   * @param value  is the node value
+   * @param nodeId  is the node nodeId
    * @param weight is the initial weight
    * @param maxSocialProofTypeSize is the max social proof types to keep
    */
-  public NodeInfo(long value, double weight, int maxSocialProofTypeSize) {
-    this.value = value;
+  public NodeInfo(long nodeId, double weight, int maxSocialProofTypeSize) {
+    this.nodeId = nodeId;
     this.nodeMetadata = EMPTY_NODE_META_DATA;
     this.weight = weight;
     this.numVisits = 1;
     this.socialProofs = new SmallArrayBasedLongToDoubleMap[maxSocialProofTypeSize];
   }
 
-  public long getValue() {
-    return value;
+  public long getNodeId() {
+    return nodeId;
   }
 
   public double getWeight() {
@@ -94,22 +96,22 @@ public class NodeInfo implements Comparable<NodeInfo> {
   }
 
   /**
-   * Attempts to add the given node as social proof. Note that the node itself may or may not be
-   * added depending on the nodeWeight and the current status of the social proof, with the idea
+   * Attempts to add the given socialProofId as social proof. Note that the socialProofId itself may or may not be
+   * added depending on the socialProofWeight and the current status of the social proof, with the idea
    * being to maintain the "best" social proof.
    *
-   * @param node        is the node to attempt to add
-   * @param edgeType    is the edge type between the social proof and the recommendation
-   * @param edgeMetadata is the edge metadata between the social proof and the recommendation
-   * @param nodeWeight  is the nodeWeight of the node
-   * @return true of the node was added, false if not
+   * @param socialProofId     is the socialProofId to attempt to add
+   * @param edgeType          is the edge type between the social proof and the recommendation
+   * @param edgeMetadata      is the edge metadata between the social proof and the recommendation
+   * @param socialProofWeight is the socialProofWeight of the socialProofId
+   * @return true of the socialProofId was added, false if not
    */
-  public boolean addToSocialProof(long node, byte edgeType, long edgeMetadata, double nodeWeight) {
+  public boolean addToSocialProof(long socialProofId, byte edgeType, long edgeMetadata, double socialProofWeight) {
     if (socialProofs[edgeType] == null) {
       socialProofs[edgeType] = new SmallArrayBasedLongToDoubleMap();
     }
 
-    socialProofs[edgeType].put(node, nodeWeight, edgeMetadata);
+    socialProofs[edgeType].put(socialProofId, socialProofWeight, edgeMetadata);
     return true;
   }
 
@@ -123,7 +125,7 @@ public class NodeInfo implements Comparable<NodeInfo> {
 
   @Override
   public int hashCode() {
-    return Objects.hashCode(value, weight);
+    return Objects.hashCode(nodeId, weight);
   }
 
   @Override
@@ -141,14 +143,14 @@ public class NodeInfo implements Comparable<NodeInfo> {
     NodeInfo other = (NodeInfo) obj;
 
     return
-      Objects.equal(getValue(), other.getValue())
+      Objects.equal(getNodeId(), other.getNodeId())
         && Objects.equal(getWeight(), other.getWeight());
   }
 
   @Override
   public String toString() {
     return Objects.toStringHelper(this)
-      .add("value", value)
+      .add("nodeId", nodeId)
       .add("weight", weight)
       .add("socialProofs", socialProofs)
       .toString();
