@@ -42,6 +42,10 @@ public final class TopSecondDegreeByCountTweetRecsGenerator {
   private TopSecondDegreeByCountTweetRecsGenerator() {
   }
 
+  private static boolean isUnfavoriteTypeSupported(NodeInfo nodeInfo) {
+    return UnfavoriteSocialProofType < nodeInfo.getSocialProofs().length;
+  }
+
   /**
    * Given a nodeInfo containing the collection of all social proofs on a tweet, remove the
    * Favorite social proofs that also have Unfavorite counterparts, and deduct the weight of the
@@ -50,10 +54,8 @@ public final class TopSecondDegreeByCountTweetRecsGenerator {
    */
   private static void removeUnfavoriteSocialProofs(NodeInfo nodeInfo) {
     SmallArrayBasedLongToDoubleMap[] socialProofs = nodeInfo.getSocialProofs();
-    SmallArrayBasedLongToDoubleMap unfavSocialProofs =
-        socialProofs[UnfavoriteSocialProofType];
-    SmallArrayBasedLongToDoubleMap favSocialProofs =
-        socialProofs[FavoriteSocialProofType];
+    SmallArrayBasedLongToDoubleMap unfavSocialProofs = socialProofs[UnfavoriteSocialProofType];
+    SmallArrayBasedLongToDoubleMap favSocialProofs = socialProofs[FavoriteSocialProofType];
 
     if (unfavSocialProofs == null || favSocialProofs == null) {
       return;
@@ -110,9 +112,11 @@ public final class TopSecondDegreeByCountTweetRecsGenerator {
 
     // handling specific rules of tweet recommendations
     for (NodeInfo nodeInfo : nodeInfoList) {
-      removeUnfavoriteSocialProofs(nodeInfo);
-      if (!nodeInfoHasValidSocialProofs(nodeInfo)) {
-        continue;
+      if (isUnfavoriteTypeSupported(nodeInfo)) {
+        removeUnfavoriteSocialProofs(nodeInfo);
+        if (!nodeInfoHasValidSocialProofs(nodeInfo)) {
+          continue;
+        }
       }
 
       // do not return if size of each social proof or size of each social proof union
