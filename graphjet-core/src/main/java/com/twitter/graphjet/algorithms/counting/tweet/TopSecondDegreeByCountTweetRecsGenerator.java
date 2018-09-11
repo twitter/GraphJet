@@ -46,13 +46,14 @@ public final class TopSecondDegreeByCountTweetRecsGenerator {
    * Given a nodeInfo containing the collection of all social proofs on a tweet, remove the
    * Favorite social proofs that also have Unfavorite counterparts, and deduct the weight of the
    * nodeInfo accordingly.
-   * Calling this will modify the nodeInfo object in-place.
+   * The Unfavorite social proofs will always be reset to null.
    */
   private static void removeUnfavoriteSocialProofs(NodeInfo nodeInfo) {
+    SmallArrayBasedLongToDoubleMap[] socialProofs = nodeInfo.getSocialProofs();
     SmallArrayBasedLongToDoubleMap unfavSocialProofs =
-        nodeInfo.getSocialProofs()[UnfavoriteSocialProofType];
+        socialProofs[UnfavoriteSocialProofType];
     SmallArrayBasedLongToDoubleMap favSocialProofs =
-        nodeInfo.getSocialProofs()[FavoriteSocialProofType];
+        socialProofs[FavoriteSocialProofType];
 
     if (unfavSocialProofs == null || favSocialProofs == null) {
       return;
@@ -74,7 +75,21 @@ public final class TopSecondDegreeByCountTweetRecsGenerator {
     }
 
     nodeInfo.setWeight(nodeInfo.getWeight() - weightToRemove);
-    nodeInfo.getSocialProofs()[FavoriteSocialProofType] = newFavSocialProofs;
+    socialProofs[FavoriteSocialProofType] = (newFavSocialProofs.size() != 0) ? newFavSocialProofs : null;
+    socialProofs[UnfavoriteSocialProofType] = null;
+  }
+
+  /**
+   * Given a nodeInfo, check all social proofs stored and determine if it still has
+   * valid, non-empty social proofs.
+   */
+  private static boolean nodeInfoHasValidSocialProofs(NodeInfo nodeInfo) {
+    for ( SmallArrayBasedLongToDoubleMap socialProof: nodeInfo.getSocialProofs()) {
+      if (socialProof != null && socialProof.size() != 0) {
+        return true;
+      }
+    }
+    return false;
   }
 
   /**
@@ -96,10 +111,13 @@ public final class TopSecondDegreeByCountTweetRecsGenerator {
     // handling specific rules of tweet recommendations
     for (NodeInfo nodeInfo : nodeInfoList) {
       removeUnfavoriteSocialProofs(nodeInfo);
+      if (!nodeInfoHasValidSocialProofs(nodeInfo)) {
+        continue;
+      }
 
-      // do not return if size of each social proof is less than minUserSocialProofSize.
+      // do not return if size of each social proof or size of each social proof union
+      // is less than minUserSocialProofSize.
       if (isLessThanMinUserSocialProofSize(nodeInfo.getSocialProofs(), validSocialProofs, minUserSocialProofSize) &&
-        // do not return if size of each social proof union is less than minUserSocialProofSize.
         isLessThanMinUserSocialProofSizeCombined(
           nodeInfo.getSocialProofs(), minUserSocialProofSize, request.getSocialProofTypeUnions())) {
         continue;

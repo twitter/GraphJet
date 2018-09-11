@@ -37,8 +37,60 @@ import it.unimi.dsi.fastutil.longs.LongSet;
 
 public final class TopSecondDegreeByCountTweetRecsGenerator {
   private static final TweetIDMask TWEET_ID_MASK = new TweetIDMask();
+  private static final byte FavoriteSocialProofType = 1;
+  private static final byte UnfavoriteSocialProofType = 8;
 
   private TopSecondDegreeByCountTweetRecsGenerator() {
+  }
+
+  /**
+   * Given a nodeInfo containing the collection of all social proofs on a tweet, remove the
+   * Favorite social proofs that also have Unfavorite counterparts, and deduct the weight of the
+   * nodeInfo accordingly.
+   * The Unfavorite social proofs will always be reset to null.
+   */
+  private static void removeUnfavoriteSocialProofs(NodeInfo nodeInfo) {
+    SmallArrayBasedLongToDoubleMap[] socialProofs = nodeInfo.getSocialProofs();
+    SmallArrayBasedLongToDoubleMap unfavSocialProofs =
+        socialProofs[UnfavoriteSocialProofType];
+    SmallArrayBasedLongToDoubleMap favSocialProofs =
+        socialProofs[FavoriteSocialProofType];
+
+    if (unfavSocialProofs == null || favSocialProofs == null) {
+      return;
+    }
+
+    SmallArrayBasedLongToDoubleMap newFavSocialProofs = new SmallArrayBasedLongToDoubleMap();
+    double weightToRemove = 0;
+
+    for (int i = 0; i < favSocialProofs.size(); i++) {
+      long favUser = favSocialProofs.keys()[i];
+      double favWeight = favSocialProofs.values()[i];
+      long favMetadata = favSocialProofs.metadata()[i];
+
+      if (unfavSocialProofs.contains(favUser)) {
+        weightToRemove += favWeight * 2; // *2 to take into account of both fav and unfav edge
+        continue;
+      }
+      newFavSocialProofs.put(favUser, favWeight, favMetadata);
+    }
+
+    nodeInfo.setWeight(nodeInfo.getWeight() - weightToRemove);
+    socialProofs[FavoriteSocialProofType] = (newFavSocialProofs.size() != 0) ? newFavSocialProofs : null;
+    socialProofs[UnfavoriteSocialProofType] = null;
+  }
+
+  /**
+   * Given a nodeInfo, check all social proofs stored and determine if it still has
+   * valid, non-empty social proofs.
+   */
+  private static boolean nodeInfoHasValidSocialProofs(NodeInfo nodeInfo) {
+    for ( SmallArrayBasedLongToDoubleMap socialProof: nodeInfo.getSocialProofs()) {
+      if (socialProof != null && socialProof.size() != 0) {
+        return true;
+      }
+    }
+    return false;
   }
 
   /**
@@ -59,6 +111,11 @@ public final class TopSecondDegreeByCountTweetRecsGenerator {
 
     // handling specific rules of tweet recommendations
     for (NodeInfo nodeInfo : nodeInfoList) {
+      removeUnfavoriteSocialProofs(nodeInfo);
+      if (!nodeInfoHasValidSocialProofs(nodeInfo)) {
+        continue;
+      }
+
       // do not return if size of each social proof is less than minUserSocialProofSize.
       if (isLessThanMinUserSocialProofSize(nodeInfo.getSocialProofs(), validSocialProofs, minUserSocialProofSize) &&
         // do not return if size of each social proof union is less than minUserSocialProofSize.
