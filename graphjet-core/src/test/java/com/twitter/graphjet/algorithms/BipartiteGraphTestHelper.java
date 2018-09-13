@@ -205,6 +205,83 @@ public final class BipartiteGraphTestHelper {
   }
 
   /**
+   * Builds a small test graph with special edge type Favorite (1) and Unfavorite (8). This test
+   * graph is built specifically for the counting algorithms on tweets.
+   * The resultant graph after removing unfavorited edges consists of the following engagements:
+   * tweet1, tweet2, tweet3: no engagement
+   * tweet4: user1 Favorite
+   * tweet5: user2, user3 Favorite
+   * tweet6: user2 Retweet
+   * tweet7: user1 Favorite, user3 Retweet
+   *
+   * @return a small test {@link NodeMetadataLeftIndexedMultiSegmentBipartiteGraph}
+   */
+  public static NodeMetadataLeftIndexedMultiSegmentBipartiteGraph
+  buildTestNodeMetadataLeftIndexedMultiSegmentBipartiteGraphWithUnfavorite(
+    byte favoriteEdge, byte unfavoriteEdge, byte retweetEdge
+  ) {
+    long user1 = 1;
+    long user2 = 2;
+    long user3 = 3;
+    long user4 = 4;
+
+    long tweet1 = 1;
+    long tweet2 = 2;
+    long tweet3 = 3;
+    long tweet4 = 4;
+    long tweet5 = 5;
+    long tweet6 = 6;
+    long tweet7 = 7;
+    long tweet8 = 8;
+
+    NodeMetadataLeftIndexedMultiSegmentBipartiteGraph nodeMetadataGraph =
+      new NodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraph(
+        3,
+        10,
+        10,
+        10,
+        2.0,
+        100,
+        2,
+        new HigherBitsEdgeTypeMask(),
+        new NullStatsReceiver()
+      );
+    int[][] nodeMeta = new int[][]{};
+    nodeMetadataGraph.addEdge(user1, tweet1, favoriteEdge, 0L, nodeMeta, nodeMeta);
+    nodeMetadataGraph.addEdge(user1, tweet1, unfavoriteEdge, 0L, nodeMeta, nodeMeta);
+
+    nodeMetadataGraph.addEdge(user1, tweet2, favoriteEdge, 0L, nodeMeta, nodeMeta);
+    nodeMetadataGraph.addEdge(user1, tweet2, unfavoriteEdge, 0L, nodeMeta, nodeMeta);
+    nodeMetadataGraph.addEdge(user1, tweet2, favoriteEdge, 0L, nodeMeta, nodeMeta);
+
+    nodeMetadataGraph.addEdge(user1, tweet3, favoriteEdge, 0L, nodeMeta, nodeMeta);
+    nodeMetadataGraph.addEdge(user2, tweet3, unfavoriteEdge, 0L, nodeMeta, nodeMeta);
+
+    nodeMetadataGraph.addEdge(user1, tweet4, unfavoriteEdge, 0L, nodeMeta, nodeMeta);
+    nodeMetadataGraph.addEdge(user2, tweet4, unfavoriteEdge, 0L, nodeMeta, nodeMeta);
+
+    nodeMetadataGraph.addEdge(user1, tweet5, favoriteEdge, 0L, nodeMeta, nodeMeta);
+    nodeMetadataGraph.addEdge(user1, tweet5, unfavoriteEdge, 0L, nodeMeta, nodeMeta);
+    nodeMetadataGraph.addEdge(user2, tweet5, favoriteEdge, 0L, nodeMeta, nodeMeta);
+    nodeMetadataGraph.addEdge(user3, tweet5, favoriteEdge, 0L, nodeMeta, nodeMeta);
+
+    nodeMetadataGraph.addEdge(user2, tweet6, favoriteEdge, 0L, nodeMeta, nodeMeta);
+    nodeMetadataGraph.addEdge(user2, tweet6, unfavoriteEdge, 0L, nodeMeta, nodeMeta);
+    nodeMetadataGraph.addEdge(user2, tweet6, retweetEdge, 0L, nodeMeta, nodeMeta);
+    nodeMetadataGraph.addEdge(user3, tweet6, unfavoriteEdge, 0L, nodeMeta, nodeMeta);
+
+    nodeMetadataGraph.addEdge(user1, tweet7, favoriteEdge, 0L, nodeMeta, nodeMeta);
+    nodeMetadataGraph.addEdge(user3, tweet7, unfavoriteEdge, 0L, nodeMeta, nodeMeta);
+    nodeMetadataGraph.addEdge(user3, tweet7, retweetEdge, 0L, nodeMeta, nodeMeta);
+
+    nodeMetadataGraph.addEdge(user4, tweet8, favoriteEdge, 0L, nodeMeta, nodeMeta);
+    nodeMetadataGraph.addEdge(user1, tweet8, unfavoriteEdge, 0L, nodeMeta, nodeMeta);
+    nodeMetadataGraph.addEdge(user3, tweet8, unfavoriteEdge, 0L, nodeMeta, nodeMeta);
+
+    return nodeMetadataGraph;
+  }
+
+  /**
    * Build a small test NodeMetadataLeftIndexedMultiSegmentBipartiteGraph.
    *
    * @return a small test {@link NodeMetadataLeftIndexedMultiSegmentBipartiteGraph}

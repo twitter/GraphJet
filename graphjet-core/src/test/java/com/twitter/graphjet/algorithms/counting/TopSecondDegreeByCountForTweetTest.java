@@ -1,5 +1,5 @@
 /**
- * Copyright 2016 Twitter. All rights reserved.
+ * Copyright 2018 Twitter. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -57,22 +57,21 @@ import it.unimi.dsi.fastutil.longs.LongSet;
 public class TopSecondDegreeByCountForTweetTest {
 
   @Test
-  public void testTopSecondDegreeByCountWithSmallGraph() throws Exception {
+  public void testTopSecondDegreeByCountWithSmallGraph() {
     NodeMetadataLeftIndexedMultiSegmentBipartiteGraph bipartiteGraph =
       BipartiteGraphTestHelper.buildSmallTestNodeMetadataLeftIndexedMultiSegmentBipartiteGraph();
     long queryNode = 1;
     Long2DoubleMap seedsMap = new Long2DoubleArrayMap(new long[]{2, 3}, new double[]{1.0, 0.5});
     LongSet toBeFiltered = new LongOpenHashSet(new long[]{2, 3, 4, 5});
-    Set<RecommendationType> recommendationTypes = new HashSet<RecommendationType>();
+    Set<RecommendationType> recommendationTypes = new HashSet<>();
     recommendationTypes.add(RecommendationType.HASHTAG);
     recommendationTypes.add(RecommendationType.URL);
     recommendationTypes.add(RecommendationType.TWEET);
-    Map<RecommendationType, Integer> maxNumResults = new HashMap<RecommendationType, Integer>();
+    Map<RecommendationType, Integer> maxNumResults = new HashMap<>();
     maxNumResults.put(RecommendationType.HASHTAG, 3);
     maxNumResults.put(RecommendationType.URL, 3);
     maxNumResults.put(RecommendationType.TWEET, 3);
-    Map<RecommendationType, Integer> minUserSocialProofSizes =
-      new HashMap<RecommendationType, Integer>();
+    Map<RecommendationType, Integer> minUserSocialProofSizes = new HashMap<>();
     minUserSocialProofSizes.put(RecommendationType.HASHTAG, 1);
     minUserSocialProofSizes.put(RecommendationType.URL, 1);
     minUserSocialProofSizes.put(RecommendationType.TWEET, 1);
@@ -142,17 +141,17 @@ public class TopSecondDegreeByCountForTweetTest {
   }
 
   @Test
-  public void testTopSecondDegreeByCountWithSocialProofTypeUnionsWithSmallGraph() throws Exception {
+  public void testTopSecondDegreeByCountWithSocialProofTypeUnionsWithSmallGraph() {
     NodeMetadataLeftIndexedMultiSegmentBipartiteGraph bipartiteGraph =
       BipartiteGraphTestHelper.buildSmallTestNodeMetadataLeftIndexedMultiSegmentBipartiteGraphWithEdgeTypes();
     long queryNode = 1;
     Long2DoubleMap seedsMap = new Long2DoubleArrayMap(new long[]{1, 2, 3}, new double[]{1.5, 1.0, 0.5});
     LongSet toBeFiltered = new LongOpenHashSet(new long[]{});
-    Set<RecommendationType> recommendationTypes = new HashSet<RecommendationType>();
+    Set<RecommendationType> recommendationTypes = new HashSet<>();
     recommendationTypes.add(RecommendationType.TWEET);
-    Map<RecommendationType, Integer> maxNumResults = new HashMap<RecommendationType, Integer>();
+    Map<RecommendationType, Integer> maxNumResults = new HashMap<>();
     maxNumResults.put(RecommendationType.TWEET, 3);
-    Map<RecommendationType, Integer> minUserSocialProofSizes = new HashMap<RecommendationType, Integer>();
+    Map<RecommendationType, Integer> minUserSocialProofSizes = new HashMap<>();
     minUserSocialProofSizes.put(RecommendationType.TWEET, 2);
 
     int maxUserSocialProofSize = 3;
@@ -204,7 +203,7 @@ public class TopSecondDegreeByCountForTweetTest {
     socialProof.get(1).put((byte) 0, new ConnectingUsersWithMetadata(new LongArrayList(new long[]{2}), metadata1));
     socialProof.get(1).put((byte) 3, new ConnectingUsersWithMetadata(new LongArrayList(new long[]{1}), metadata1));
 
-    final List<RecommendationInfo> expectedTopResults = new ArrayList<RecommendationInfo>();
+    final List<RecommendationInfo> expectedTopResults = new ArrayList<>();
     expectedTopResults.add(new TweetRecommendationInfo(3, 3.0, socialProof.get(0)));
     expectedTopResults.add(new TweetRecommendationInfo(5, 2.5, socialProof.get(1)));
 
@@ -221,7 +220,102 @@ public class TopSecondDegreeByCountForTweetTest {
   }
 
   @Test
-  public void testTopSecondDegreeByCountWithRandomGraph() throws Exception {
+  public void testTopSecondDegreeByCountWithSmallGraphWithEdgeRemoval() {
+    byte favoriteType = 1;
+    byte unfavoriteType = 8;
+    byte retweetType = 2;
+
+    NodeMetadataLeftIndexedMultiSegmentBipartiteGraph bipartiteGraph =
+      BipartiteGraphTestHelper.buildTestNodeMetadataLeftIndexedMultiSegmentBipartiteGraphWithUnfavorite(
+          favoriteType, unfavoriteType, retweetType);
+
+    long queryNode = 1;
+    Long2DoubleMap seedsMap = new Long2DoubleArrayMap(new long[]{1, 2, 3, 4}, new double[]{1, 3, 5, 7});
+    LongSet toBeFiltered = new LongOpenHashSet(new long[]{});
+    Set<RecommendationType> recommendationTypes = new HashSet<>();
+    recommendationTypes.add(RecommendationType.TWEET);
+
+    Map<RecommendationType, Integer> maxNumResults = new HashMap<>();
+    maxNumResults.put(RecommendationType.TWEET, 10);
+    Map<RecommendationType, Integer> minUserSocialProofSizes = new HashMap<>();
+    minUserSocialProofSizes.put(RecommendationType.TWEET, 1);
+
+    int maxUserSocialProofSize = 10;
+    int maxTweetSocialProofSize = 10;
+
+    byte[] validSocialProofs = new byte[]{favoriteType, retweetType};
+    int maxSocialProofTypeSize = 10;
+
+    int expectedNodesToHit = 100;
+    Random random = new Random(918324701982347L);
+    long maxRightNodeAgeInMillis = Long.MAX_VALUE;
+    long maxEdgeAgeInMillis = Long.MAX_VALUE;
+    ResultFilterChain resultFilterChain = new ResultFilterChain(Lists.newArrayList());
+    Set<byte[]> socialProofTypeUnions = new HashSet<>();
+
+    TopSecondDegreeByCountRequestForTweet request = new TopSecondDegreeByCountRequestForTweet(
+        queryNode,
+        seedsMap,
+        toBeFiltered,
+        recommendationTypes,
+        maxNumResults,
+        maxSocialProofTypeSize,
+        maxUserSocialProofSize,
+        maxTweetSocialProofSize,
+        minUserSocialProofSizes,
+        validSocialProofs,
+        maxRightNodeAgeInMillis,
+        maxEdgeAgeInMillis,
+        resultFilterChain,
+        socialProofTypeUnions
+    );
+
+    TopSecondDegreeByCountResponse response = new TopSecondDegreeByCountForTweet(
+        bipartiteGraph,
+        expectedNodesToHit,
+        new NullStatsReceiver()
+    ).computeRecommendations(request, random);
+
+    LongList metadata1 = new LongArrayList(new long[]{0});
+    LongList metadata2 = new LongArrayList(new long[]{0, 0});
+
+    HashMap<Byte, ConnectingUsersWithMetadata> tweet3SocialProof = new HashMap<>();
+      tweet3SocialProof.put(
+        favoriteType, new ConnectingUsersWithMetadata(new LongArrayList(new long[]{1}), metadata1));
+
+    HashMap<Byte, ConnectingUsersWithMetadata> tweet5SocialProof = new HashMap<>();
+      tweet5SocialProof.put(
+        favoriteType, new ConnectingUsersWithMetadata(new LongArrayList(new long[]{3, 2}), metadata2));
+
+    HashMap<Byte, ConnectingUsersWithMetadata> tweet6SocialProof = new HashMap<>();
+      tweet6SocialProof.put(
+        retweetType, new ConnectingUsersWithMetadata(new LongArrayList(new long[]{2}), metadata1));
+
+    HashMap<Byte, ConnectingUsersWithMetadata> tweet7SocialProof = new HashMap<>();
+    tweet7SocialProof.put(
+        favoriteType, new ConnectingUsersWithMetadata(new LongArrayList(new long[]{1}), metadata1));
+    tweet7SocialProof.put(
+        retweetType, new ConnectingUsersWithMetadata(new LongArrayList(new long[]{3}), metadata1));
+
+    HashMap<Byte, ConnectingUsersWithMetadata> tweet8SocialProof = new HashMap<>();
+    tweet8SocialProof.put(
+        favoriteType, new ConnectingUsersWithMetadata(new LongArrayList(new long[]{4}), metadata1));
+
+    List<RecommendationInfo> topSecondDegreeByCountResults =
+      Lists.newArrayList(response.getRankedRecommendations());
+    List<RecommendationInfo> expectedResults = new ArrayList<>();
+
+    expectedResults.add(new TweetRecommendationInfo(5, 8, tweet5SocialProof));
+    expectedResults.add(new TweetRecommendationInfo(8, 7, tweet8SocialProof));
+    expectedResults.add(new TweetRecommendationInfo(7, 6, tweet7SocialProof));
+    expectedResults.add(new TweetRecommendationInfo(6, 3, tweet6SocialProof));
+    expectedResults.add(new TweetRecommendationInfo(3, 1, tweet3SocialProof));
+
+    assertEquals(expectedResults, topSecondDegreeByCountResults);
+  }
+
+  @Test
+  public void testTopSecondDegreeByCountWithRandomGraph() {
     long randomSeed = 918324701982347L;
     Random random = new Random(randomSeed);
 

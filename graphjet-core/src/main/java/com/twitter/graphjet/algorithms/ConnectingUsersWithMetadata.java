@@ -28,6 +28,11 @@ public class ConnectingUsersWithMetadata {
   }
 
   @Override
+  public String toString() {
+    return "connectingUsers = " + connectingUsers.toString() + ", metadata = " + metadata.toString();
+  }
+
+  @Override
   public boolean equals(Object obj) {
     if (obj == null) {
       return false;
