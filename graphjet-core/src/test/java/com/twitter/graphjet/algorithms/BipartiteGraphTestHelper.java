@@ -213,6 +213,8 @@ public final class BipartiteGraphTestHelper {
    * tweet5: user2, user3 Favorite
    * tweet6: user2 Retweet
    * tweet7: user1 Favorite, user3 Retweet
+   * tweet8: user4 Favorite
+   * tweet9: user3, user4 Favorite
    *
    * @return a small test {@link NodeMetadataLeftIndexedMultiSegmentBipartiteGraph}
    */
@@ -224,6 +226,7 @@ public final class BipartiteGraphTestHelper {
     long user2 = 2;
     long user3 = 3;
     long user4 = 4;
+    long user5 = 5;
 
     long tweet1 = 1;
     long tweet2 = 2;
@@ -233,6 +236,7 @@ public final class BipartiteGraphTestHelper {
     long tweet6 = 6;
     long tweet7 = 7;
     long tweet8 = 8;
+    long tweet9 = 9;
 
     NodeMetadataLeftIndexedMultiSegmentBipartiteGraph nodeMetadataGraph =
       new NodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraph(
@@ -277,6 +281,15 @@ public final class BipartiteGraphTestHelper {
     nodeMetadataGraph.addEdge(user4, tweet8, favoriteEdge, 0L, nodeMeta, nodeMeta);
     nodeMetadataGraph.addEdge(user1, tweet8, unfavoriteEdge, 0L, nodeMeta, nodeMeta);
     nodeMetadataGraph.addEdge(user3, tweet8, unfavoriteEdge, 0L, nodeMeta, nodeMeta);
+
+    nodeMetadataGraph.addEdge(user1, tweet9, favoriteEdge, 0L, nodeMeta, nodeMeta);
+    nodeMetadataGraph.addEdge(user2, tweet9, favoriteEdge, 0L, nodeMeta, nodeMeta);
+    nodeMetadataGraph.addEdge(user3, tweet9, favoriteEdge, 0L, nodeMeta, nodeMeta);
+    nodeMetadataGraph.addEdge(user4, tweet9, favoriteEdge, 0L, nodeMeta, nodeMeta);
+    nodeMetadataGraph.addEdge(user5, tweet9, favoriteEdge, 0L, nodeMeta, nodeMeta);
+    nodeMetadataGraph.addEdge(user1, tweet9, unfavoriteEdge, 0L, nodeMeta, nodeMeta);
+    nodeMetadataGraph.addEdge(user2, tweet9, unfavoriteEdge, 0L, nodeMeta, nodeMeta);
+    nodeMetadataGraph.addEdge(user5, tweet9, unfavoriteEdge, 0L, nodeMeta, nodeMeta);
 
     return nodeMetadataGraph;
   }
