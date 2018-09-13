@@ -205,7 +205,7 @@ public final class BipartiteGraphTestHelper {
   }
 
   /**
-   * Builds a small test graph with special edge type Favorite (1) and Unfavorite (8). This test
+   * Builds a small test graph with special edge types Favorite (1) and Unfavorite (8). This test
    * graph is built specifically for the counting algorithms on tweets.
    * The resultant graph after removing unfavorited edges consists of the following engagements:
    * tweet1, tweet2, tweet3: no engagement
@@ -240,8 +240,8 @@ public final class BipartiteGraphTestHelper {
 
     NodeMetadataLeftIndexedMultiSegmentBipartiteGraph nodeMetadataGraph =
       new NodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraph(
-        3,
         10,
+        5,
         10,
         10,
         2.0,
