@@ -16,7 +16,6 @@
 
 package com.twitter.graphjet.algorithms.counting.tweet;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.PriorityQueue;
@@ -26,7 +25,6 @@ import com.google.common.collect.Lists;
 
 import com.twitter.graphjet.algorithms.NodeInfo;
 import com.twitter.graphjet.algorithms.RecommendationInfo;
-import com.twitter.graphjet.algorithms.RecommendationRequest;
 import com.twitter.graphjet.algorithms.RecommendationType;
 import com.twitter.graphjet.algorithms.TweetIDMask;
 import com.twitter.graphjet.algorithms.counting.GeneratorHelper;
@@ -35,16 +33,18 @@ import com.twitter.graphjet.hashing.SmallArrayBasedLongToDoubleMap;
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import it.unimi.dsi.fastutil.longs.LongSet;
 
+import static com.twitter.graphjet.algorithms.RecommendationRequest.AUTHOR_SOCIAL_PROOF_TYPE;
+import static com.twitter.graphjet.algorithms.RecommendationRequest.FAVORITE_SOCIAL_PROOF_TYPE;
+import static com.twitter.graphjet.algorithms.RecommendationRequest.UNFAVORITE_SOCIAL_PROOF_TYPE;
+
 public final class TopSecondDegreeByCountTweetRecsGenerator {
   private static final TweetIDMask TWEET_ID_MASK = new TweetIDMask();
-  private static final byte FavoriteSocialProofType = 1;
-  private static final byte UnfavoriteSocialProofType = 8;
 
   private TopSecondDegreeByCountTweetRecsGenerator() {
   }
 
   private static boolean isUnfavoriteTypeSupported(NodeInfo nodeInfo) {
-    return UnfavoriteSocialProofType < nodeInfo.getSocialProofs().length;
+    return UNFAVORITE_SOCIAL_PROOF_TYPE < nodeInfo.getSocialProofs().length;
   }
 
   /**
@@ -60,35 +60,40 @@ public final class TopSecondDegreeByCountTweetRecsGenerator {
     }
 
     SmallArrayBasedLongToDoubleMap[] socialProofs = nodeInfo.getSocialProofs();
-    SmallArrayBasedLongToDoubleMap unfavSocialProofs = socialProofs[UnfavoriteSocialProofType];
-    SmallArrayBasedLongToDoubleMap favSocialProofs = socialProofs[FavoriteSocialProofType];
+    SmallArrayBasedLongToDoubleMap unfavSocialProofs = socialProofs[UNFAVORITE_SOCIAL_PROOF_TYPE];
+    SmallArrayBasedLongToDoubleMap favSocialProofs = socialProofs[FAVORITE_SOCIAL_PROOF_TYPE];
 
-    if (unfavSocialProofs == null || favSocialProofs == null) {
+    if (unfavSocialProofs == null) {
       return false;
     }
 
-    SmallArrayBasedLongToDoubleMap newFavSocialProofs = new SmallArrayBasedLongToDoubleMap();
-    double weightToRemove = 0;
-
-    for (int i = 0; i < favSocialProofs.size(); i++) {
-      long favUser = favSocialProofs.keys()[i];
-      double favWeight = favSocialProofs.values()[i];
-
-      if (unfavSocialProofs.contains(favUser)) {
-        weightToRemove += favSocialProofs.values()[i];
-      } else {
-        newFavSocialProofs.put(favUser, favWeight, favSocialProofs.metadata()[i]);
-      }
-    }
-
+    // Remove unfavorite social proofs and the corresponding weights
+    double unfavWeightToRemove = 0;
     for (int i = 0; i < unfavSocialProofs.size(); i++) {
-      weightToRemove += unfavSocialProofs.values()[i];
+      unfavWeightToRemove += unfavSocialProofs.values()[i];
+    }
+    nodeInfo.setWeight(nodeInfo.getWeight() - unfavWeightToRemove);
+    socialProofs[UNFAVORITE_SOCIAL_PROOF_TYPE] = null;
+
+    // Remove favorite social proofs that were unfavorited and the corresponding weights
+    if (favSocialProofs != null) {
+      int favWeightToRemove = 0;
+      SmallArrayBasedLongToDoubleMap newFavSocialProofs = new SmallArrayBasedLongToDoubleMap();
+      for (int i = 0; i < favSocialProofs.size(); i++) {
+        long favUser = favSocialProofs.keys()[i];
+        double favWeight = favSocialProofs.values()[i];
+
+        if (unfavSocialProofs.contains(favUser)) {
+          favWeightToRemove += favWeight;
+        } else {
+          newFavSocialProofs.put(favUser, favWeight, favSocialProofs.metadata()[i]);
+        }
+      }
+      // Add the filtered Favorite social proofs
+      nodeInfo.setWeight(nodeInfo.getWeight() - favWeightToRemove);
+      socialProofs[FAVORITE_SOCIAL_PROOF_TYPE] = (newFavSocialProofs.size() != 0) ? newFavSocialProofs : null;
     }
 
-    // Add the filtered Favorite social proofs, and remove the Unfavorite social proofs from nodeInfo
-    nodeInfo.setWeight(nodeInfo.getWeight() - weightToRemove);
-    socialProofs[FavoriteSocialProofType] = (newFavSocialProofs.size() != 0) ? newFavSocialProofs : null;
-    socialProofs[UnfavoriteSocialProofType] = null;
     return true;
   }
 
@@ -119,7 +124,7 @@ public final class TopSecondDegreeByCountTweetRecsGenerator {
     int minUserSocialProofSize = GeneratorHelper.getMinUserSocialProofSize(request, RecommendationType.TWEET);
     byte[] validSocialProofs = request.getSocialProofTypes();
 
-    PriorityQueue<NodeInfo> topResults = new PriorityQueue<NodeInfo>(maxNumResults);
+    PriorityQueue<NodeInfo> topResults = new PriorityQueue<>(maxNumResults);
 
     // handling specific rules of tweet recommendations
     for (NodeInfo nodeInfo : nodeInfoList) {
@@ -142,11 +147,11 @@ public final class TopSecondDegreeByCountTweetRecsGenerator {
     List<RecommendationInfo> outputResults = Lists.newArrayListWithCapacity(topResults.size());
     while (!topResults.isEmpty()) {
       NodeInfo nodeInfo = topResults.poll();
-      outputResults.add(
-        new TweetRecommendationInfo(
-          TWEET_ID_MASK.restore(nodeInfo.getNodeId()),
-          nodeInfo.getWeight(),
-          GeneratorHelper.pickTopSocialProofs(nodeInfo.getSocialProofs())));
+      TweetRecommendationInfo info = new TweetRecommendationInfo(
+        TWEET_ID_MASK.restore(nodeInfo.getNodeId()),
+        nodeInfo.getWeight(),
+        GeneratorHelper.pickTopSocialProofs(nodeInfo.getSocialProofs()));
+      outputResults.add(info);
     }
     Collections.reverse(outputResults);
 
@@ -215,7 +220,7 @@ public final class TopSecondDegreeByCountTweetRecsGenerator {
         int minUserSocialProofThreshold = minUserSocialProofSize;
         if (authorId != -1 &&
           // Skip tweet author social proof because its size can be only one
-            validSocialProofType != RecommendationRequest.AUTHOR_SOCIAL_PROOF_TYPE &&
+          validSocialProofType != AUTHOR_SOCIAL_PROOF_TYPE &&
           socialProofs[validSocialProofType].contains(authorId)) {
           minUserSocialProofThreshold += 1;
         }
@@ -229,7 +234,7 @@ public final class TopSecondDegreeByCountTweetRecsGenerator {
 
   // Return the authorId of the Tweet, if the author is in the leftSeedNodesWithWeight; otherwise, return -1.
   private static long getAuthorId(SmallArrayBasedLongToDoubleMap[] socialProofs) {
-    int socialProofTypeTweet = RecommendationRequest.AUTHOR_SOCIAL_PROOF_TYPE;
+    int socialProofTypeTweet = AUTHOR_SOCIAL_PROOF_TYPE;
     long authorId = -1;
     if (socialProofs[socialProofTypeTweet] != null) {
       // There cannot be more than one key associated with the Tweet socialProofType

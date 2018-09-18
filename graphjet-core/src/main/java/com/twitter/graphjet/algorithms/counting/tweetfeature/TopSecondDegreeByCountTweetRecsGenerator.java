@@ -35,6 +35,9 @@ import com.twitter.graphjet.hashing.SmallArrayBasedLongToDoubleMap;
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import it.unimi.dsi.fastutil.longs.LongSet;
 
+import static com.twitter.graphjet.algorithms.RecommendationRequest.FAVORITE_SOCIAL_PROOF_TYPE;
+import static com.twitter.graphjet.algorithms.RecommendationRequest.UNFAVORITE_SOCIAL_PROOF_TYPE;
+
 public final class TopSecondDegreeByCountTweetRecsGenerator {
   private static final TweetIDMask TWEET_ID_MASK = new TweetIDMask();
   private static final byte FavoriteSocialProofType = 1;
@@ -46,6 +49,7 @@ public final class TopSecondDegreeByCountTweetRecsGenerator {
   private static boolean isUnfavoriteTypeSupported(NodeInfo nodeInfo) {
     return UnfavoriteSocialProofType < nodeInfo.getSocialProofs().length;
   }
+
 
   /**
    * Given a nodeInfo containing the collection of all social proofs on a tweet, remove the
@@ -60,37 +64,43 @@ public final class TopSecondDegreeByCountTweetRecsGenerator {
     }
 
     SmallArrayBasedLongToDoubleMap[] socialProofs = nodeInfo.getSocialProofs();
-    SmallArrayBasedLongToDoubleMap unfavSocialProofs = socialProofs[UnfavoriteSocialProofType];
-    SmallArrayBasedLongToDoubleMap favSocialProofs = socialProofs[FavoriteSocialProofType];
+    SmallArrayBasedLongToDoubleMap unfavSocialProofs = socialProofs[UNFAVORITE_SOCIAL_PROOF_TYPE];
+    SmallArrayBasedLongToDoubleMap favSocialProofs = socialProofs[FAVORITE_SOCIAL_PROOF_TYPE];
 
-    if (unfavSocialProofs == null || favSocialProofs == null) {
+    if (unfavSocialProofs == null) {
       return false;
     }
 
-    SmallArrayBasedLongToDoubleMap newFavSocialProofs = new SmallArrayBasedLongToDoubleMap();
-    double weightToRemove = 0;
-
-    for (int i = 0; i < favSocialProofs.size(); i++) {
-      long favUser = favSocialProofs.keys()[i];
-      double favWeight = favSocialProofs.values()[i];
-
-      if (unfavSocialProofs.contains(favUser)) {
-        weightToRemove += favSocialProofs.values()[i];
-      } else {
-        newFavSocialProofs.put(favUser, favWeight, favSocialProofs.metadata()[i]);
-      }
-    }
-
+    // Remove unfavorite social proofs and the corresponding weights
+    double unfavWeightToRemove = 0;
     for (int i = 0; i < unfavSocialProofs.size(); i++) {
-      weightToRemove += unfavSocialProofs.values()[i];
+      unfavWeightToRemove += unfavSocialProofs.values()[i];
+    }
+    nodeInfo.setWeight(nodeInfo.getWeight() - unfavWeightToRemove);
+    socialProofs[UNFAVORITE_SOCIAL_PROOF_TYPE] = null;
+
+    // Remove favorite social proofs that were unfavorited and the corresponding weights
+    if (favSocialProofs != null) {
+      int favWeightToRemove = 0;
+      SmallArrayBasedLongToDoubleMap newFavSocialProofs = new SmallArrayBasedLongToDoubleMap();
+      for (int i = 0; i < favSocialProofs.size(); i++) {
+        long favUser = favSocialProofs.keys()[i];
+        double favWeight = favSocialProofs.values()[i];
+
+        if (unfavSocialProofs.contains(favUser)) {
+          favWeightToRemove += favWeight;
+        } else {
+          newFavSocialProofs.put(favUser, favWeight, favSocialProofs.metadata()[i]);
+        }
+      }
+      // Add the filtered Favorite social proofs
+      nodeInfo.setWeight(nodeInfo.getWeight() - favWeightToRemove);
+      socialProofs[FAVORITE_SOCIAL_PROOF_TYPE] = (newFavSocialProofs.size() != 0) ? newFavSocialProofs : null;
     }
 
-    // Add the filtered Favorite social proofs, and remove the Unfavorite social proofs from nodeInfo
-    nodeInfo.setWeight(nodeInfo.getWeight() - weightToRemove);
-    socialProofs[FavoriteSocialProofType] = (newFavSocialProofs.size() != 0) ? newFavSocialProofs : null;
-    socialProofs[UnfavoriteSocialProofType] = null;
     return true;
   }
+
 
   /**
    * Given a nodeInfo, check all social proofs stored and determine if it still has

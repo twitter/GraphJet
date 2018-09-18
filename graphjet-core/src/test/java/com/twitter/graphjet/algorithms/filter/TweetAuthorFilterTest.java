@@ -50,17 +50,17 @@ public class TweetAuthorFilterTest {
             2.0,
             100,
             2,
-            new MockEdgeTypeMask((byte)RecommendationRequest.AUTHOR_SOCIAL_PROOF_TYPE),
+            new MockEdgeTypeMask(RecommendationRequest.AUTHOR_SOCIAL_PROOF_TYPE),
             new NullStatsReceiver());
     int[][] dummyNodeMetadata = new int[][]{};
 
-    leftIndexedBipartiteGraph.addEdge(1, 10, (byte)RecommendationRequest.AUTHOR_SOCIAL_PROOF_TYPE,
+    leftIndexedBipartiteGraph.addEdge(1, 10, RecommendationRequest.AUTHOR_SOCIAL_PROOF_TYPE,
         0L, dummyNodeMetadata, dummyNodeMetadata);
-    leftIndexedBipartiteGraph.addEdge(2, 20, (byte)RecommendationRequest.AUTHOR_SOCIAL_PROOF_TYPE,
+    leftIndexedBipartiteGraph.addEdge(2, 20, RecommendationRequest.AUTHOR_SOCIAL_PROOF_TYPE,
         0L, dummyNodeMetadata, dummyNodeMetadata);
-    leftIndexedBipartiteGraph.addEdge(3, 30, (byte)RecommendationRequest.AUTHOR_SOCIAL_PROOF_TYPE,
+    leftIndexedBipartiteGraph.addEdge(3, 30, RecommendationRequest.AUTHOR_SOCIAL_PROOF_TYPE,
         0L, dummyNodeMetadata, dummyNodeMetadata);
-    leftIndexedBipartiteGraph.addEdge(4, 40, (byte)RecommendationRequest.AUTHOR_SOCIAL_PROOF_TYPE,
+    leftIndexedBipartiteGraph.addEdge(4, 40, RecommendationRequest.AUTHOR_SOCIAL_PROOF_TYPE,
         0L, dummyNodeMetadata, dummyNodeMetadata);
     return leftIndexedBipartiteGraph;
   }

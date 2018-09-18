@@ -45,6 +45,10 @@ import com.twitter.graphjet.algorithms.counting.tweet.TweetRecommendationInfo;
 import com.twitter.graphjet.bipartite.NodeMetadataLeftIndexedMultiSegmentBipartiteGraph;
 import com.twitter.graphjet.stats.NullStatsReceiver;
 
+import static com.twitter.graphjet.algorithms.RecommendationRequest.FAVORITE_SOCIAL_PROOF_TYPE;
+import static com.twitter.graphjet.algorithms.RecommendationRequest.RETWEET_SOCIAL_PROOF_TYPE;
+import static com.twitter.graphjet.algorithms.RecommendationRequest.UNFAVORITE_SOCIAL_PROOF_TYPE;
+
 import it.unimi.dsi.fastutil.doubles.DoubleArrayList;
 import it.unimi.dsi.fastutil.doubles.DoubleList;
 import it.unimi.dsi.fastutil.longs.Long2DoubleArrayMap;
@@ -225,17 +229,15 @@ public class TopSecondDegreeByCountForTweetTest {
    */
   @Test
   public void testTopSecondDegreeByCountWithSmallGraphWithEdgeRemoval() {
-    byte favoriteType = 1;
-    byte unfavoriteType = 8;
-    byte retweetType = 2;
-
     NodeMetadataLeftIndexedMultiSegmentBipartiteGraph bipartiteGraph =
       BipartiteGraphTestHelper.buildTestNodeMetadataLeftIndexedMultiSegmentBipartiteGraphWithUnfavorite(
-          favoriteType, unfavoriteType, retweetType);
+        FAVORITE_SOCIAL_PROOF_TYPE, UNFAVORITE_SOCIAL_PROOF_TYPE, RETWEET_SOCIAL_PROOF_TYPE);
 
     long queryNode = 1;
-    Long2DoubleMap seedsMap = new Long2DoubleArrayMap(new long[]{1, 2, 3, 4, 5}, new double[]{1, 3, 5, 7, 9});
-    byte[] validSocialProofs = new byte[]{favoriteType, retweetType};
+    Long2DoubleMap seedsMap = new Long2DoubleArrayMap(
+      new long[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14},
+      new double[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14});
+    byte[] validSocialProofs = new byte[]{FAVORITE_SOCIAL_PROOF_TYPE, RETWEET_SOCIAL_PROOF_TYPE};
 
     LongSet toBeFiltered = new LongOpenHashSet(new long[]{});
     Set<RecommendationType> recommendationTypes = new HashSet<>();
@@ -282,42 +284,64 @@ public class TopSecondDegreeByCountForTweetTest {
     LongList metadata1 = new LongArrayList(new long[]{0});
     LongList metadata2 = new LongArrayList(new long[]{0, 0});
 
-    HashMap<Byte, ConnectingUsersWithMetadata> tweet3SocialProof = new HashMap<>();
-    tweet3SocialProof.put(
-      favoriteType, new ConnectingUsersWithMetadata(new LongArrayList(new long[]{1}), metadata1));
+    HashMap<Byte, ConnectingUsersWithMetadata> tweet1SocialProof = new HashMap<>();
+    tweet1SocialProof.put(
+        FAVORITE_SOCIAL_PROOF_TYPE, new ConnectingUsersWithMetadata(new LongArrayList(new long[]{1}), metadata1));
+
+    HashMap<Byte, ConnectingUsersWithMetadata> tweet2SocialProof = new HashMap<>();
+    tweet2SocialProof.put(
+        RETWEET_SOCIAL_PROOF_TYPE, new ConnectingUsersWithMetadata(new LongArrayList(new long[]{2}), metadata1));
 
     HashMap<Byte, ConnectingUsersWithMetadata> tweet5SocialProof = new HashMap<>();
     tweet5SocialProof.put(
-      favoriteType, new ConnectingUsersWithMetadata(new LongArrayList(new long[]{3, 2}), metadata2));
-
-    HashMap<Byte, ConnectingUsersWithMetadata> tweet6SocialProof = new HashMap<>();
-    tweet6SocialProof.put(
-      retweetType, new ConnectingUsersWithMetadata(new LongArrayList(new long[]{2}), metadata1));
+      FAVORITE_SOCIAL_PROOF_TYPE, new ConnectingUsersWithMetadata(new LongArrayList(new long[]{5}), metadata1));
 
     HashMap<Byte, ConnectingUsersWithMetadata> tweet7SocialProof = new HashMap<>();
     tweet7SocialProof.put(
-      favoriteType, new ConnectingUsersWithMetadata(new LongArrayList(new long[]{1}), metadata1));
-    tweet7SocialProof.put(
-      retweetType, new ConnectingUsersWithMetadata(new LongArrayList(new long[]{3}), metadata1));
+      FAVORITE_SOCIAL_PROOF_TYPE, new ConnectingUsersWithMetadata(new LongArrayList(new long[]{7}), metadata1));
 
     HashMap<Byte, ConnectingUsersWithMetadata> tweet8SocialProof = new HashMap<>();
     tweet8SocialProof.put(
-      favoriteType, new ConnectingUsersWithMetadata(new LongArrayList(new long[]{4}), metadata1));
+      FAVORITE_SOCIAL_PROOF_TYPE, new ConnectingUsersWithMetadata(new LongArrayList(new long[]{9, 8}), metadata2));
 
     HashMap<Byte, ConnectingUsersWithMetadata> tweet9SocialProof = new HashMap<>();
     tweet9SocialProof.put(
-      favoriteType, new ConnectingUsersWithMetadata(new LongArrayList(new long[]{4, 3}), metadata2));
+      FAVORITE_SOCIAL_PROOF_TYPE, new ConnectingUsersWithMetadata(new LongArrayList(new long[]{10, 9}), metadata2));
+
+    HashMap<Byte, ConnectingUsersWithMetadata> tweet10SocialProof = new HashMap<>();
+    tweet10SocialProof.put(
+      FAVORITE_SOCIAL_PROOF_TYPE, new ConnectingUsersWithMetadata(new LongArrayList(new long[]{10}), metadata1));
+    tweet10SocialProof.put(
+      RETWEET_SOCIAL_PROOF_TYPE, new ConnectingUsersWithMetadata(new LongArrayList(new long[]{11}), metadata1));
+
+    HashMap<Byte, ConnectingUsersWithMetadata> tweet11SocialProof = new HashMap<>();
+    tweet11SocialProof.put(
+      RETWEET_SOCIAL_PROOF_TYPE, new ConnectingUsersWithMetadata(new LongArrayList(new long[]{11}), metadata1));
+
+    HashMap<Byte, ConnectingUsersWithMetadata> tweet12SocialProof = new HashMap<>();
+    tweet12SocialProof.put(
+      RETWEET_SOCIAL_PROOF_TYPE, new ConnectingUsersWithMetadata(new LongArrayList(new long[]{12}), metadata1));
+
+    HashMap<Byte, ConnectingUsersWithMetadata> tweet13SocialProof = new HashMap<>();
+    tweet13SocialProof.put(
+      FAVORITE_SOCIAL_PROOF_TYPE, new ConnectingUsersWithMetadata(new LongArrayList(new long[]{13}), metadata1));
+    tweet13SocialProof.put(
+      RETWEET_SOCIAL_PROOF_TYPE, new ConnectingUsersWithMetadata(new LongArrayList(new long[]{14}), metadata1));
 
     List<RecommendationInfo> topSecondDegreeByCountResults =
       Lists.newArrayList(response.getRankedRecommendations());
     List<RecommendationInfo> expectedResults = new ArrayList<>();
 
-    expectedResults.add(new TweetRecommendationInfo(9, 12, tweet9SocialProof));
-    expectedResults.add(new TweetRecommendationInfo(5, 8, tweet5SocialProof));
-    expectedResults.add(new TweetRecommendationInfo(8, 7, tweet8SocialProof));
-    expectedResults.add(new TweetRecommendationInfo(7, 6, tweet7SocialProof));
-    expectedResults.add(new TweetRecommendationInfo(6, 3, tweet6SocialProof));
-    expectedResults.add(new TweetRecommendationInfo(3, 1, tweet3SocialProof));
+    expectedResults.add(new TweetRecommendationInfo(13, 13+14, tweet13SocialProof));
+    expectedResults.add(new TweetRecommendationInfo(10, 10+11, tweet10SocialProof));
+    expectedResults.add(new TweetRecommendationInfo(9, 9+10, tweet9SocialProof));
+    expectedResults.add(new TweetRecommendationInfo(8, 8+9, tweet8SocialProof));
+    expectedResults.add(new TweetRecommendationInfo(12, 12, tweet12SocialProof));
+    expectedResults.add(new TweetRecommendationInfo(11, 11, tweet11SocialProof));
+    expectedResults.add(new TweetRecommendationInfo(7, 7, tweet7SocialProof));
+    expectedResults.add(new TweetRecommendationInfo(5, 5, tweet5SocialProof));
+    expectedResults.add(new TweetRecommendationInfo(2, 2, tweet2SocialProof));
+    expectedResults.add(new TweetRecommendationInfo(1, 1, tweet1SocialProof));
 
     assertEquals(expectedResults, topSecondDegreeByCountResults);
   }
