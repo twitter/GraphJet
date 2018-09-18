@@ -71,7 +71,8 @@ public final class TopSecondDegreeByCountTweetRecsGenerator {
       return false;
     }
 
-    // Remove unfavorite social proofs and the corresponding weights
+    // Always remove unfavorite social proofs, as they are only meant for internal processing and
+    // not to be returned to the caller.
     double unfavWeightToRemove = 0;
     for (int i = 0; i < unfavSocialProofs.size(); i++) {
       unfavWeightToRemove += unfavSocialProofs.values()[i];
