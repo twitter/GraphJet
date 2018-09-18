@@ -147,11 +147,11 @@ public final class TopSecondDegreeByCountTweetRecsGenerator {
     List<RecommendationInfo> outputResults = Lists.newArrayListWithCapacity(topResults.size());
     while (!topResults.isEmpty()) {
       NodeInfo nodeInfo = topResults.poll();
-      TweetRecommendationInfo info = new TweetRecommendationInfo(
-        TWEET_ID_MASK.restore(nodeInfo.getNodeId()),
-        nodeInfo.getWeight(),
-        GeneratorHelper.pickTopSocialProofs(nodeInfo.getSocialProofs()));
-      outputResults.add(info);
+      outputResults.add(
+        new TweetRecommendationInfo(
+          TWEET_ID_MASK.restore(nodeInfo.getNodeId()),
+          nodeInfo.getWeight(),
+          GeneratorHelper.pickTopSocialProofs(nodeInfo.getSocialProofs())));
     }
     Collections.reverse(outputResults);
 
