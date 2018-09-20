@@ -36,6 +36,7 @@ import com.twitter.graphjet.algorithms.ConnectingUsersWithMetadata;
 import com.twitter.graphjet.algorithms.RecommendationInfo;
 import com.twitter.graphjet.algorithms.RecommendationStats;
 import com.twitter.graphjet.algorithms.RecommendationType;
+import com.twitter.graphjet.algorithms.counting.tweet.TweetMetadataRecommendationInfo;
 import com.twitter.graphjet.algorithms.filters.RequestedSetFilter;
 import com.twitter.graphjet.algorithms.filters.ResultFilter;
 import com.twitter.graphjet.algorithms.filters.ResultFilterChain;
@@ -342,6 +343,114 @@ public class TopSecondDegreeByCountForTweetTest {
     expectedResults.add(new TweetRecommendationInfo(5, 5, tweet5SocialProof));
     expectedResults.add(new TweetRecommendationInfo(2, 2, tweet2SocialProof));
     expectedResults.add(new TweetRecommendationInfo(1, 1, tweet1SocialProof));
+
+    assertEquals(expectedResults, topSecondDegreeByCountResults);
+  }
+
+  /**
+   * Test a small graph that contain favorite and unfavorite edges to make sure they are
+   * removed correctly.
+   */
+  @Test
+  public void testTopSecondDegreeMetadataByCountWithSmallGraphWithEdgeRemoval() {
+    NodeMetadataLeftIndexedMultiSegmentBipartiteGraph bipartiteGraph =
+      BipartiteGraphTestHelper.buildTestNodeMetadataLeftIndexedMultiSegmentBipartiteGraphWithUnfavorite(
+        FAVORITE_SOCIAL_PROOF_TYPE, UNFAVORITE_SOCIAL_PROOF_TYPE, RETWEET_SOCIAL_PROOF_TYPE);
+
+    long queryNode = 1;
+    Long2DoubleMap seedsMap = new Long2DoubleArrayMap(
+      new long[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14},
+      new double[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14});
+    byte[] validSocialProofs = new byte[]{FAVORITE_SOCIAL_PROOF_TYPE, RETWEET_SOCIAL_PROOF_TYPE};
+
+    LongSet toBeFiltered = new LongOpenHashSet(new long[]{});
+    Set<RecommendationType> recommendationTypes = new HashSet<>();
+    recommendationTypes.add(RecommendationType.HASHTAG);
+
+    Map<RecommendationType, Integer> maxNumResults = new HashMap<>();
+    maxNumResults.put(RecommendationType.HASHTAG, 10);
+    Map<RecommendationType, Integer> minUserSocialProofSizes = new HashMap<>();
+    minUserSocialProofSizes.put(RecommendationType.HASHTAG, 1);
+
+    int maxUserSocialProofSize = 10;
+    int maxTweetSocialProofSize = 10;
+    int maxSocialProofTypeSize = 10;
+    int expectedNodesToHit = 100;
+    Random random = new Random(918324701982347L);
+    long maxRightNodeAgeInMillis = Long.MAX_VALUE;
+    long maxEdgeAgeInMillis = Long.MAX_VALUE;
+    ResultFilterChain resultFilterChain = new ResultFilterChain(Lists.newArrayList());
+    Set<byte[]> socialProofTypeUnions = new HashSet<>();
+
+    TopSecondDegreeByCountRequestForTweet request = new TopSecondDegreeByCountRequestForTweet(
+        queryNode,
+        seedsMap,
+        toBeFiltered,
+        recommendationTypes,
+        maxNumResults,
+        maxSocialProofTypeSize,
+        maxUserSocialProofSize,
+        maxTweetSocialProofSize,
+        minUserSocialProofSizes,
+        validSocialProofs,
+        maxRightNodeAgeInMillis,
+        maxEdgeAgeInMillis,
+        resultFilterChain,
+        socialProofTypeUnions
+    );
+
+    TopSecondDegreeByCountResponse response = new TopSecondDegreeByCountForTweet(
+        bipartiteGraph,
+        expectedNodesToHit,
+        new NullStatsReceiver()
+    ).computeRecommendations(request, random);
+
+    HashMap<Byte,  Map<Long, LongList>> tweet2SocialProof = new HashMap<>();
+    Map<Long, LongList> proof2 = new HashMap<>();
+    proof2.put(2L, new LongArrayList());
+    proof2.get(2L).add(2);
+    tweet2SocialProof.put(RETWEET_SOCIAL_PROOF_TYPE, proof2);
+
+    HashMap<Byte,  Map<Long, LongList>> tweet10SocialProof = new HashMap<>();
+    Map<Long, LongList> proof10 = new HashMap<>();
+    Map<Long, LongList> proof10_2 = new HashMap<>();
+    proof10.put(11L, new LongArrayList());
+    proof10.get(11L).add(10);
+    tweet10SocialProof.put(RETWEET_SOCIAL_PROOF_TYPE, proof10);
+    proof10_2.put(10L, new LongArrayList());
+    proof10_2.get(10L).add(10);
+    tweet10SocialProof.put(FAVORITE_SOCIAL_PROOF_TYPE, proof10_2);
+
+    HashMap<Byte,  Map<Long, LongList>> tweet11SocialProof = new HashMap<>();
+    Map<Long, LongList> proof11 = new HashMap<>();
+    proof11.put(11L, new LongArrayList());
+    proof11.get(11L).add(11);
+    tweet11SocialProof.put(RETWEET_SOCIAL_PROOF_TYPE, proof11);
+
+    HashMap<Byte,  Map<Long, LongList>> tweet12SocialProof = new HashMap<>();
+    Map<Long, LongList> proof12 = new HashMap<>();
+    proof12.put(12L, new LongArrayList());
+    proof12.get(12L).add(12);
+    tweet12SocialProof.put(RETWEET_SOCIAL_PROOF_TYPE, proof12);
+
+    HashMap<Byte,  Map<Long, LongList>> tweet13SocialProof = new HashMap<>();
+    Map<Long, LongList> proof13 = new HashMap<>();
+    Map<Long, LongList> proof13_2 = new HashMap<>();
+    proof13.put(14L, new LongArrayList());
+    proof13.get(14L).add(13);
+    tweet13SocialProof.put(RETWEET_SOCIAL_PROOF_TYPE, proof13);
+    proof13_2.put(13L, new LongArrayList());
+    proof13_2.get(13L).add(13);
+    tweet13SocialProof.put(FAVORITE_SOCIAL_PROOF_TYPE, proof13_2);
+
+    List<RecommendationInfo> topSecondDegreeByCountResults = Lists.newArrayList(response.getRankedRecommendations());
+    List<RecommendationInfo> expectedResults = new ArrayList<>();
+
+    expectedResults.add(new TweetMetadataRecommendationInfo(13, RecommendationType.HASHTAG, 13+14, tweet13SocialProof));
+    expectedResults.add(new TweetMetadataRecommendationInfo(10, RecommendationType.HASHTAG, 10+11, tweet10SocialProof));
+    expectedResults.add(new TweetMetadataRecommendationInfo(12, RecommendationType.HASHTAG, 12, tweet12SocialProof));
+    expectedResults.add(new TweetMetadataRecommendationInfo(11, RecommendationType.HASHTAG, 11, tweet11SocialProof));
+    expectedResults.add(new TweetMetadataRecommendationInfo(2, RecommendationType.HASHTAG, 2, tweet2SocialProof));
 
     assertEquals(expectedResults, topSecondDegreeByCountResults);
   }

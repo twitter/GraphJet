@@ -254,67 +254,67 @@ public final class BipartiteGraphTestHelper {
         new HigherBitsEdgeTypeMask(),
         new NullStatsReceiver()
       );
-    int[][] nodeMeta = new int[][]{};
+    int[][] emptyMeta = new int[][]{};
 
     // Only Favorite
-    nodeMetadataGraph.addEdge(user1, tweet1, favoriteEdge, 0L, nodeMeta, nodeMeta);
+    nodeMetadataGraph.addEdge(user1, tweet1, favoriteEdge, 0L, emptyMeta, new int[][]{{1}});
 
     // Only Retweet
-    nodeMetadataGraph.addEdge(user2, tweet2, retweetEdge, 0L, nodeMeta, nodeMeta);
+    nodeMetadataGraph.addEdge(user2, tweet2, retweetEdge, 0L, emptyMeta, new int[][]{{2}});
 
     // Only Unfavorite
     // invalid node
-    nodeMetadataGraph.addEdge(user1, tweet3, unfavoriteEdge, 0L, nodeMeta, nodeMeta);
-    nodeMetadataGraph.addEdge(user2, tweet3, unfavoriteEdge, 0L, nodeMeta, nodeMeta);
+    nodeMetadataGraph.addEdge(user1, tweet3, unfavoriteEdge, 0L, emptyMeta, emptyMeta);
+    nodeMetadataGraph.addEdge(user2, tweet3, unfavoriteEdge, 0L, emptyMeta, emptyMeta);
 
     // Favorite & Unfavorite
     // invalid node
-    nodeMetadataGraph.addEdge(user1, tweet4, favoriteEdge, 0L, nodeMeta, nodeMeta);
-    nodeMetadataGraph.addEdge(user1, tweet4, unfavoriteEdge, 0L, nodeMeta, nodeMeta);
+    nodeMetadataGraph.addEdge(user1, tweet4, favoriteEdge, 0L, emptyMeta, emptyMeta);
+    nodeMetadataGraph.addEdge(user1, tweet4, unfavoriteEdge, 0L, emptyMeta, emptyMeta);
 
-    nodeMetadataGraph.addEdge(user5, tweet5, favoriteEdge, 0L, nodeMeta, nodeMeta);
-    nodeMetadataGraph.addEdge(user2, tweet5, unfavoriteEdge, 0L, nodeMeta, nodeMeta);
+    nodeMetadataGraph.addEdge(user5, tweet5, favoriteEdge, 0L, emptyMeta, new int[][]{{5}});
+    nodeMetadataGraph.addEdge(user2, tweet5, unfavoriteEdge, 0L, emptyMeta, new int[][]{{5}});
 
     // invalid node
-    nodeMetadataGraph.addEdge(user1, tweet6, favoriteEdge, 0L, nodeMeta, nodeMeta);
-    nodeMetadataGraph.addEdge(user1, tweet6, unfavoriteEdge, 0L, nodeMeta, nodeMeta);
-    nodeMetadataGraph.addEdge(user1, tweet6, favoriteEdge, 0L, nodeMeta, nodeMeta);
+    nodeMetadataGraph.addEdge(user1, tweet6, favoriteEdge, 0L, emptyMeta, emptyMeta);
+    nodeMetadataGraph.addEdge(user1, tweet6, unfavoriteEdge, 0L, emptyMeta, emptyMeta);
+    nodeMetadataGraph.addEdge(user1, tweet6, favoriteEdge, 0L, emptyMeta, emptyMeta);
 
-    nodeMetadataGraph.addEdge(user7, tweet7, favoriteEdge, 0L, nodeMeta, nodeMeta);
-    nodeMetadataGraph.addEdge(user3, tweet7, unfavoriteEdge, 0L, nodeMeta, nodeMeta);
-    nodeMetadataGraph.addEdge(user4, tweet7, unfavoriteEdge, 0L, nodeMeta, nodeMeta);
+    nodeMetadataGraph.addEdge(user7, tweet7, favoriteEdge, 0L, emptyMeta, new int[][]{{7}});
+    nodeMetadataGraph.addEdge(user3, tweet7, unfavoriteEdge, 0L, emptyMeta, new int[][]{{7}});
+    nodeMetadataGraph.addEdge(user4, tweet7, unfavoriteEdge, 0L, emptyMeta, new int[][]{{7}});
 
-    nodeMetadataGraph.addEdge(user1, tweet8, favoriteEdge, 0L, nodeMeta, nodeMeta);
-    nodeMetadataGraph.addEdge(user1, tweet8, unfavoriteEdge, 0L, nodeMeta, nodeMeta);
-    nodeMetadataGraph.addEdge(user8, tweet8, favoriteEdge, 0L, nodeMeta, nodeMeta);
-    nodeMetadataGraph.addEdge(user9, tweet8, favoriteEdge, 0L, nodeMeta, nodeMeta);
+    nodeMetadataGraph.addEdge(user1, tweet8, favoriteEdge, 0L, emptyMeta, new int[][]{{8}});
+    nodeMetadataGraph.addEdge(user1, tweet8, unfavoriteEdge, 0L, emptyMeta, new int[][]{{8}});
+    nodeMetadataGraph.addEdge(user8, tweet8, favoriteEdge, 0L, emptyMeta, new int[][]{{8}});
+    nodeMetadataGraph.addEdge(user9, tweet8, favoriteEdge, 0L, emptyMeta, new int[][]{{8}});
 
-    nodeMetadataGraph.addEdge(user1, tweet9, favoriteEdge, 0L, nodeMeta, nodeMeta);
-    nodeMetadataGraph.addEdge(user2, tweet9, favoriteEdge, 0L, nodeMeta, nodeMeta);
-    nodeMetadataGraph.addEdge(user9, tweet9, favoriteEdge, 0L, nodeMeta, nodeMeta);
-    nodeMetadataGraph.addEdge(user10, tweet9, favoriteEdge, 0L, nodeMeta, nodeMeta);
-    nodeMetadataGraph.addEdge(user5, tweet9, favoriteEdge, 0L, nodeMeta, nodeMeta);
-    nodeMetadataGraph.addEdge(user1, tweet9, unfavoriteEdge, 0L, nodeMeta, nodeMeta);
-    nodeMetadataGraph.addEdge(user2, tweet9, unfavoriteEdge, 0L, nodeMeta, nodeMeta);
-    nodeMetadataGraph.addEdge(user5, tweet9, unfavoriteEdge, 0L, nodeMeta, nodeMeta);
+    nodeMetadataGraph.addEdge(user1, tweet9, favoriteEdge, 0L, emptyMeta, new int[][]{{9}});
+    nodeMetadataGraph.addEdge(user2, tweet9, favoriteEdge, 0L, emptyMeta, new int[][]{{9}});
+    nodeMetadataGraph.addEdge(user9, tweet9, favoriteEdge, 0L, emptyMeta, new int[][]{{9}});
+    nodeMetadataGraph.addEdge(user10, tweet9, favoriteEdge, 0L, emptyMeta, new int[][]{{9}});
+    nodeMetadataGraph.addEdge(user5, tweet9, favoriteEdge, 0L, emptyMeta, new int[][]{{9}});
+    nodeMetadataGraph.addEdge(user1, tweet9, unfavoriteEdge, 0L, emptyMeta, new int[][]{{9}});
+    nodeMetadataGraph.addEdge(user2, tweet9, unfavoriteEdge, 0L, emptyMeta, new int[][]{{9}});
+    nodeMetadataGraph.addEdge(user5, tweet9, unfavoriteEdge, 0L, emptyMeta, new int[][]{{9}});
 
     // Favorite & Retweet
-    nodeMetadataGraph.addEdge(user10, tweet10, favoriteEdge, 0L, nodeMeta, nodeMeta);
-    nodeMetadataGraph.addEdge(user11, tweet10, retweetEdge, 0L, nodeMeta, nodeMeta);
+    nodeMetadataGraph.addEdge(user10, tweet10, favoriteEdge, 0L, emptyMeta, new int[][]{{10}});
+    nodeMetadataGraph.addEdge(user11, tweet10, retweetEdge, 0L, emptyMeta, new int[][]{{10}});
 
     // Unfavorite & Retweet
-    nodeMetadataGraph.addEdge(user2, tweet11, unfavoriteEdge, 0L, nodeMeta, nodeMeta);
-    nodeMetadataGraph.addEdge(user11, tweet11, retweetEdge, 0L, nodeMeta, nodeMeta);
+    nodeMetadataGraph.addEdge(user2, tweet11, unfavoriteEdge, 0L, emptyMeta, new int[][]{{11}});
+    nodeMetadataGraph.addEdge(user11, tweet11, retweetEdge, 0L, emptyMeta, new int[][]{{11}});
 
     // Favorite, Unfavorite, and Retweet
-    nodeMetadataGraph.addEdge(user12, tweet12, favoriteEdge, 0L, nodeMeta, nodeMeta);
-    nodeMetadataGraph.addEdge(user12, tweet12, unfavoriteEdge, 0L, nodeMeta, nodeMeta);
-    nodeMetadataGraph.addEdge(user12, tweet12, retweetEdge, 0L, nodeMeta, nodeMeta);
-    nodeMetadataGraph.addEdge(user3, tweet12, unfavoriteEdge, 0L, nodeMeta, nodeMeta);
+    nodeMetadataGraph.addEdge(user12, tweet12, favoriteEdge, 0L, emptyMeta, new int[][]{{12}});
+    nodeMetadataGraph.addEdge(user12, tweet12, unfavoriteEdge, 0L, emptyMeta, new int[][]{{12}});
+    nodeMetadataGraph.addEdge(user12, tweet12, retweetEdge, 0L, emptyMeta, new int[][]{{12}});
+    nodeMetadataGraph.addEdge(user3, tweet12, unfavoriteEdge, 0L, emptyMeta, new int[][]{{12}});
 
-    nodeMetadataGraph.addEdge(user13, tweet13, favoriteEdge, 0L, nodeMeta, nodeMeta);
-    nodeMetadataGraph.addEdge(user14, tweet13, unfavoriteEdge, 0L, nodeMeta, nodeMeta);
-    nodeMetadataGraph.addEdge(user14, tweet13, retweetEdge, 0L, nodeMeta, nodeMeta);
+    nodeMetadataGraph.addEdge(user13, tweet13, favoriteEdge, 0L, emptyMeta, new int[][]{{13}});
+    nodeMetadataGraph.addEdge(user14, tweet13, unfavoriteEdge, 0L, emptyMeta, new int[][]{{13}});
+    nodeMetadataGraph.addEdge(user14, tweet13, retweetEdge, 0L, emptyMeta, new int[][]{{13}});
 
     return nodeMetadataGraph;
   }

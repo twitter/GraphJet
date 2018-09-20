@@ -40,80 +40,8 @@ import static com.twitter.graphjet.algorithms.RecommendationRequest.UNFAVORITE_S
 
 public final class TopSecondDegreeByCountTweetRecsGenerator {
   private static final TweetIDMask TWEET_ID_MASK = new TweetIDMask();
-  private static final byte FavoriteSocialProofType = 1;
-  private static final byte UnfavoriteSocialProofType = 8;
 
   private TopSecondDegreeByCountTweetRecsGenerator() {
-  }
-
-  private static boolean isUnfavoriteTypeSupported(NodeInfo nodeInfo) {
-    return UnfavoriteSocialProofType < nodeInfo.getSocialProofs().length;
-  }
-
-
-  /**
-   * Given a nodeInfo containing the collection of all social proofs on a tweet, remove the
-   * Favorite social proofs that also have Unfavorite counterparts, and deduct the weight of the
-   * nodeInfo accordingly. The Unfavorite social proofs will always be reset to null.
-   *
-   * @return true if the nodInfo has been modified, i.e. have Unfavorited removed, false otherwise.
-   */
-  private static boolean removeUnfavoriteSocialProofs(NodeInfo nodeInfo) {
-    if (!isUnfavoriteTypeSupported(nodeInfo)) {
-      return false;
-    }
-
-    SmallArrayBasedLongToDoubleMap[] socialProofs = nodeInfo.getSocialProofs();
-    SmallArrayBasedLongToDoubleMap unfavSocialProofs = socialProofs[UNFAVORITE_SOCIAL_PROOF_TYPE];
-    SmallArrayBasedLongToDoubleMap favSocialProofs = socialProofs[FAVORITE_SOCIAL_PROOF_TYPE];
-
-    if (unfavSocialProofs == null) {
-      return false;
-    }
-
-    // Always remove unfavorite social proofs, as they are only meant for internal processing and
-    // not to be returned to the caller.
-    double unfavWeightToRemove = 0;
-    for (int i = 0; i < unfavSocialProofs.size(); i++) {
-      unfavWeightToRemove += unfavSocialProofs.values()[i];
-    }
-    nodeInfo.setWeight(nodeInfo.getWeight() - unfavWeightToRemove);
-    socialProofs[UNFAVORITE_SOCIAL_PROOF_TYPE] = null;
-
-    // Remove favorite social proofs that were unfavorited and the corresponding weights
-    if (favSocialProofs != null) {
-      int favWeightToRemove = 0;
-      SmallArrayBasedLongToDoubleMap newFavSocialProofs = new SmallArrayBasedLongToDoubleMap();
-      for (int i = 0; i < favSocialProofs.size(); i++) {
-        long favUser = favSocialProofs.keys()[i];
-        double favWeight = favSocialProofs.values()[i];
-
-        if (unfavSocialProofs.contains(favUser)) {
-          favWeightToRemove += favWeight;
-        } else {
-          newFavSocialProofs.put(favUser, favWeight, favSocialProofs.metadata()[i]);
-        }
-      }
-      // Add the filtered Favorite social proofs
-      nodeInfo.setWeight(nodeInfo.getWeight() - favWeightToRemove);
-      socialProofs[FAVORITE_SOCIAL_PROOF_TYPE] = (newFavSocialProofs.size() != 0) ? newFavSocialProofs : null;
-    }
-
-    return true;
-  }
-
-
-  /**
-   * Given a nodeInfo, check all social proofs stored and determine if it still has
-   * valid, non-empty social proofs.
-   */
-  private static boolean nodeInfoHasValidSocialProofs(NodeInfo nodeInfo) {
-    for ( SmallArrayBasedLongToDoubleMap socialProof: nodeInfo.getSocialProofs()) {
-      if (socialProof != null && socialProof.size() != 0) {
-        return true;
-      }
-    }
-    return false;
   }
 
   /**
@@ -135,8 +63,8 @@ public final class TopSecondDegreeByCountTweetRecsGenerator {
     // handling specific rules of tweet recommendations
     for (NodeInfo nodeInfo : nodeInfoList) {
       // Remove unfavorited edges, and discard the nodeInfo if it no longer has social proofs
-      boolean isNodeModified = removeUnfavoriteSocialProofs(nodeInfo);
-      if (isNodeModified && !nodeInfoHasValidSocialProofs(nodeInfo)) {
+      boolean isNodeModified = GeneratorHelper.removeUnfavoriteSocialProofs(nodeInfo);
+      if (isNodeModified && !GeneratorHelper.nodeInfoHasValidSocialProofs(nodeInfo)) {
         continue;
       }
 

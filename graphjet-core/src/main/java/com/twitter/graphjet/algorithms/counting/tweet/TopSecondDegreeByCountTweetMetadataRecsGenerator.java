@@ -1,5 +1,5 @@
 /**
- * Copyright 2016 Twitter. All rights reserved.
+ * Copyright 2018 Twitter. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import java.util.Map;
 
 import com.twitter.graphjet.algorithms.NodeInfo;
 import com.twitter.graphjet.algorithms.RecommendationInfo;
+import com.twitter.graphjet.algorithms.RecommendationRequest;
 import com.twitter.graphjet.algorithms.RecommendationType;
 import com.twitter.graphjet.algorithms.TweetIDMask;
 import com.twitter.graphjet.algorithms.counting.GeneratorHelper;
@@ -65,7 +66,9 @@ public final class TopSecondDegreeByCountTweetMetadataRecsGenerator {
     int minUserSocialProofSize
   ) {
     // the sum of tweet users and retweet users needs to be greater than a threshold
-    byte[] metadataSocialProofTypes = {2, 4};
+    byte[] metadataSocialProofTypes = {
+      RecommendationRequest.RETWEET_SOCIAL_PROOF_TYPE,
+      RecommendationRequest.AUTHOR_SOCIAL_PROOF_TYPE};
     long socialProofSizeSum = 0;
 
     for (byte socialProofType: metadataSocialProofTypes) {
@@ -91,37 +94,44 @@ public final class TopSecondDegreeByCountTweetMetadataRecsGenerator {
     RecommendationType recommendationType
   ) {
     Int2ObjectMap<TweetMetadataRecommendationInfo> visitedMetadata = null;
-    List<RecommendationInfo> results = new ArrayList<RecommendationInfo>();
+    List<RecommendationInfo> results = new ArrayList<>();
 
     for (NodeInfo nodeInfo : nodeInfoList) {
-      int[] metadata = nodeInfo.getNodeMetadata(recommendationType.getValue());
+      // Remove unfavorited edges, and discard the nodeInfo if it no longer has social proofs
+      boolean isNodeModified = GeneratorHelper.removeUnfavoriteSocialProofs(nodeInfo);
+      if (isNodeModified && !GeneratorHelper.nodeInfoHasValidSocialProofs(nodeInfo)) {
+        continue;
+      }
 
-      if (metadata != null) {
-        if (visitedMetadata == null) {
-          visitedMetadata = new Int2ObjectOpenHashMap<TweetMetadataRecommendationInfo>();
-        }
-        for (int j = 0; j < metadata.length; j++) {
-          TweetMetadataRecommendationInfo recommendationInfo =
+      int[] metadata = nodeInfo.getNodeMetadata(recommendationType.getValue());
+      if (metadata == null) {
+        continue;
+      }
+
+      if (visitedMetadata == null) {
+        visitedMetadata = new Int2ObjectOpenHashMap<>();
+      }
+      for (int j = 0; j < metadata.length; j++) {
+        TweetMetadataRecommendationInfo recommendationInfo =
             visitedMetadata.get(metadata[j]);
 
-          if (recommendationInfo == null) {
-            recommendationInfo = new TweetMetadataRecommendationInfo(
+        if (recommendationInfo == null) {
+          recommendationInfo = new TweetMetadataRecommendationInfo(
               metadata[j],
               RecommendationType.at(recommendationType.getValue()),
               0,
               new HashMap<Byte, Map<Long, LongList>>()
-            );
-          }
-          recommendationInfo.addToWeight(nodeInfo.getWeight());
-          addToSocialProof(
+          );
+        }
+        recommendationInfo.addToWeight(nodeInfo.getWeight());
+        addToSocialProof(
             nodeInfo,
             recommendationInfo,
             request.getMaxUserSocialProofSize(),
             request.getMaxTweetSocialProofSize()
-          );
+        );
 
-          visitedMetadata.put(metadata[j], recommendationInfo);
-        }
+        visitedMetadata.put(metadata[j], recommendationInfo);
       }
     }
 
@@ -141,7 +151,7 @@ public final class TopSecondDegreeByCountTweetMetadataRecsGenerator {
         }
 
         if (filtered == null) {
-          filtered = new ArrayList<TweetMetadataRecommendationInfo>();
+          filtered = new ArrayList<>();
         }
         filtered.add(entry.getValue());
       }
