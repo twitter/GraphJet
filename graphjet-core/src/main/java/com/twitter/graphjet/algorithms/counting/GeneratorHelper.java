@@ -147,7 +147,7 @@ public final class GeneratorHelper {
   }
 
   /**
-   * Given a nodeInfo
+   * Given a nodeInfo, check whether this nodeInfo supports unfavorite edges.
    */
   public static boolean isUnfavoriteTypeSupported(NodeInfo nodeInfo) {
     return UNFAVORITE_SOCIAL_PROOF_TYPE < nodeInfo.getSocialProofs().length;
