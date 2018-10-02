@@ -4,7 +4,7 @@
 
   <groupId>com.twitter</groupId>
   <artifactId>graphjet</artifactId>
-  <version>1.1.14-SNAPSHOT</version>
+  <version>1.1.13</version>
   <packaging>pom</packaging>
 
   <name>graphjet</name>
@@ -100,7 +100,18 @@
       </plugin>
     </plugins>
   </build>
-
+<distributionManagement>
+    <repository>
+        <id>artifactory-snapshot</id>
+        <name>Apache Release Distribution Repository</name>
+        <url>https://artifactory.twitter.biz/libs-releases-local</url>
+    </repository>
+    <snapshotRepository>
+        <id>artifactory-snapshot</id>
+        <name>twitter</name>
+        <url>https://artifactory.twitter.biz/libs-releases-local</url>
+    </snapshotRepository>
+</distributionManagement>
   <modules>
     <module>graphjet-core</module>
     <module>graphjet-adapters</module>
