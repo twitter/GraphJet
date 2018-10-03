@@ -80,59 +80,6 @@ public abstract class SocialProofGenerator implements
     visitedRightNodes.clear();
   }
 
-  private void updateVisitedRightNodes(long leftNode, long rightNode, byte edgeType, double weight) {
-    NodeInfo nodeInfo;
-    if (!this.visitedRightNodes.containsKey(rightNode)) {
-      nodeInfo = new NodeInfo(rightNode, 0.0, NUM_OF_SOCIAL_PROOF_TYPES);
-      this.visitedRightNodes.put(rightNode, nodeInfo);
-    } else {
-      nodeInfo = this.visitedRightNodes.get(rightNode);
-    }
-
-    nodeInfo.addToWeight(weight);
-    nodeInfo.addToSocialProof(leftNode, edgeType, 0, weight);
-  }
-
-  /**
-   * Collect social proofs for a given {@link SocialProofRequest}.
-   *
-   * @param request contains a set of input ids and a set of seed users.
-   */
-  private void collectRightNodeInfo(SocialProofRequest request) {
-    ByteSet socialProofTypes = new ByteArraySet(request.getSocialProofTypes());
-
-    // Iterate through the set of left node seeds with weights.
-    // For each left node, go through its edges and collect the engagements on the right nodes
-    for (Long2DoubleMap.Entry entry: request.getLeftSeedNodesWithWeight().long2DoubleEntrySet()) {
-      long leftNode = entry.getLongKey();
-      EdgeIterator edgeIterator = leftIndexedBipartiteGraph.getLeftNodeEdges(leftNode);
-      if (edgeIterator == null) {
-        continue;
-      }
-
-      int numEdgePerNode = 0;
-      double weight = entry.getDoubleValue();
-      seenEdgesPerNode.clear();
-
-      // Sequentially iterating through the latest MAX_EDGES_PER_NODE edges per node
-      while (edgeIterator.hasNext() && numEdgePerNode++ < MAX_EDGES_PER_NODE) {
-        long rightNode = idMask.restore(edgeIterator.nextLong());
-        byte edgeType = edgeIterator.currentEdgeType();
-
-        boolean hasSeenRightNodeFromEdge =
-          seenEdgesPerNode.containsKey(rightNode) && seenEdgesPerNode.get(rightNode) == edgeType;
-
-        boolean isValidEngagement = request.getRightNodeIds().contains(rightNode) &&
-          socialProofTypes.contains(edgeType);
-
-        if (hasSeenRightNodeFromEdge || !isValidEngagement) {
-          continue;
-        }
-        updateVisitedRightNodes(leftNode, rightNode, edgeType, weight);
-      }
-    }
-  }
-
   /**
    * Given a nodeInfo containing the social proofs and weight information regarding a rightNode,
    * convert and store these data in a SocialProofResult object, to comply with the class interface.
@@ -171,6 +118,59 @@ public abstract class SocialProofGenerator implements
       results.add(makeSocialProofResult(entry.getValue()));
     }
     return new SocialProofResponse(results);
+  }
+
+  private void updateVisitedRightNodes(long leftNode, long rightNode, byte edgeType, double weight) {
+    NodeInfo nodeInfo;
+    if (!this.visitedRightNodes.containsKey(rightNode)) {
+      nodeInfo = new NodeInfo(rightNode, 0.0, NUM_OF_SOCIAL_PROOF_TYPES);
+      this.visitedRightNodes.put(rightNode, nodeInfo);
+    } else {
+      nodeInfo = this.visitedRightNodes.get(rightNode);
+    }
+
+    nodeInfo.addToWeight(weight);
+    nodeInfo.addToSocialProof(leftNode, edgeType, 0, weight);
+  }
+
+  /**
+   * Collect social proofs for a given {@link SocialProofRequest}.
+   *
+   * @param request contains a set of input ids and a set of seed users.
+   */
+  private void collectRightNodeInfo(SocialProofRequest request) {
+    ByteSet socialProofTypes = new ByteArraySet(request.getSocialProofTypes());
+
+    // Iterate through the set of left node seeds with weights.
+    // For each left node, go through its edges and collect the engagements on the right nodes
+    for (Long2DoubleMap.Entry entry: request.getLeftSeedNodesWithWeight().long2DoubleEntrySet()) {
+      long leftNode = entry.getLongKey();
+      EdgeIterator edgeIterator = leftIndexedBipartiteGraph.getLeftNodeEdges(leftNode);
+      if (edgeIterator == null) {
+        continue;
+      }
+
+      int numEdgePerNode = 0;
+      double weight = entry.getDoubleValue();
+      seenEdgesPerNode.clear();
+
+      // Sequentially iterate through the latest MAX_EDGES_PER_NODE edges per node
+      while (edgeIterator.hasNext() && numEdgePerNode++ < MAX_EDGES_PER_NODE) {
+        long rightNode = idMask.restore(edgeIterator.nextLong());
+        byte edgeType = edgeIterator.currentEdgeType();
+
+        boolean hasSeenRightNodeFromEdge =
+            seenEdgesPerNode.containsKey(rightNode) && seenEdgesPerNode.get(rightNode) == edgeType;
+
+        boolean isValidEngagement = request.getRightNodeIds().contains(rightNode) &&
+            socialProofTypes.contains(edgeType);
+
+        if (hasSeenRightNodeFromEdge || !isValidEngagement) {
+          continue;
+        }
+        updateVisitedRightNodes(leftNode, rightNode, edgeType, weight);
+      }
+    }
   }
 
   @Override
