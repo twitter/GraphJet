@@ -1,5 +1,5 @@
 /**
- * Copyright 2016 Twitter. All rights reserved.
+ * Copyright 2018 Twitter. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,53 +17,80 @@
 
 package com.twitter.graphjet.algorithms.socialproof;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import com.twitter.graphjet.algorithms.IDMask;
+import com.twitter.graphjet.algorithms.NodeInfo;
 import com.twitter.graphjet.algorithms.RecommendationAlgorithm;
 import com.twitter.graphjet.algorithms.RecommendationInfo;
+import com.twitter.graphjet.algorithms.RecommendationRequest;
 import com.twitter.graphjet.algorithms.RecommendationType;
 import com.twitter.graphjet.bipartite.LeftIndexedMultiSegmentBipartiteGraph;
 import com.twitter.graphjet.bipartite.api.EdgeIterator;
+import com.twitter.graphjet.hashing.SmallArrayBasedLongToDoubleMap;
 
 import it.unimi.dsi.fastutil.bytes.Byte2ObjectArrayMap;
-import it.unimi.dsi.fastutil.bytes.Byte2ObjectMap;
 import it.unimi.dsi.fastutil.bytes.ByteArraySet;
 import it.unimi.dsi.fastutil.bytes.ByteSet;
+import it.unimi.dsi.fastutil.longs.Long2ByteArrayMap;
+import it.unimi.dsi.fastutil.longs.Long2ByteMap;
 import it.unimi.dsi.fastutil.longs.Long2DoubleMap;
-import it.unimi.dsi.fastutil.longs.Long2DoubleOpenHashMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.longs.LongArraySet;
 import it.unimi.dsi.fastutil.longs.LongSet;
 
 /**
- * SocialProofGenerator shares similar logic with {@link com.twitter.graphjet.algorithms.counting.TopSecondDegreeByCount}.
+ * SocialProofGenerator shares similar logic with
+ * {@link com.twitter.graphjet.algorithms.counting.TopSecondDegreeByCount}.
  * In the request, clients specify a seed user set (left nodes) and an entity set (right nodes).
- * SocialProofGenerator finds the intersection between the seed users' (left node) edges and the given entity set.
+ * SocialProofGenerator finds the intersection between the seed users' (left node) edges and the
+ * given entity set.
  * Only entities with at least one social proof will be returned to clients.
  */
 public abstract class SocialProofGenerator implements
   RecommendationAlgorithm<SocialProofRequest, SocialProofResponse> {
 
   private static final int MAX_EDGES_PER_NODE = 500;
-  private static final Byte2ObjectMap<LongSet> EMPTY_SOCIALPROOF_MAP = new Byte2ObjectArrayMap<>();
+  private static int NUM_OF_SOCIAL_PROOF_TYPES = RecommendationRequest.MAX_SOCIAL_PROOF_TYPE_SIZE;
 
   private LeftIndexedMultiSegmentBipartiteGraph leftIndexedBipartiteGraph;
-  private final Long2ObjectMap<Byte2ObjectMap<LongSet>> socialProofs;
-  private final Long2DoubleMap socialProofWeights;
   protected RecommendationType recommendationType;
   protected IDMask idMask;
+
+  private final Long2ObjectMap<NodeInfo> visitedRightNodes;
+  private final Long2ByteMap seenEdgesPerNode;
 
   public SocialProofGenerator(
     LeftIndexedMultiSegmentBipartiteGraph leftIndexedBipartiteGraph
   ) {
+    // We re-use these data containers to avoid redundant allocations across requests
+    this.visitedRightNodes = new Long2ObjectOpenHashMap<>();
+    this.seenEdgesPerNode = new Long2ByteArrayMap();
+
     this.leftIndexedBipartiteGraph = leftIndexedBipartiteGraph;
-    // Variables socialProofs and socialProofWeights are re-used for each request.
-    this.socialProofs = new Long2ObjectOpenHashMap<>();
-    this.socialProofWeights = new Long2DoubleOpenHashMap();
+  }
+
+  private void reset() {
+    seenEdgesPerNode.clear();
+    visitedRightNodes.clear();
+  }
+
+  private void updateVisitedRightNodes(long leftNode, long rightNode, byte edgeType, double weight) {
+    NodeInfo nodeInfo;
+    if (!this.visitedRightNodes.containsKey(rightNode)) {
+      nodeInfo = new NodeInfo(rightNode, 0.0, NUM_OF_SOCIAL_PROOF_TYPES);
+      this.visitedRightNodes.put(rightNode, nodeInfo);
+    } else {
+      nodeInfo = this.visitedRightNodes.get(rightNode);
+    }
+
+    nodeInfo.addToWeight(weight);
+    nodeInfo.addToSocialProof(leftNode, edgeType, 0, weight);
   }
 
   /**
@@ -71,74 +98,85 @@ public abstract class SocialProofGenerator implements
    *
    * @param request contains a set of input ids and a set of seed users.
    */
-  private void collectRecommendations(SocialProofRequest request) {
-    LongSet inputRightNodeIds = request.getRightNodeIds();
+  private void collectRightNodeInfo(SocialProofRequest request) {
     ByteSet socialProofTypes = new ByteArraySet(request.getSocialProofTypes());
 
-    // Iterate through the set of seed users with weights. For each seed user, we go through his edges.
+    // Iterate through the set of left node seeds with weights.
+    // For each left node, go through its edges and collect the engagements on the right nodes
     for (Long2DoubleMap.Entry entry: request.getLeftSeedNodesWithWeight().long2DoubleEntrySet()) {
       long leftNode = entry.getLongKey();
-      double weight = entry.getDoubleValue();
       EdgeIterator edgeIterator = leftIndexedBipartiteGraph.getLeftNodeEdges(leftNode);
+      if (edgeIterator == null) {
+        continue;
+      }
 
       int numEdgePerNode = 0;
-      if (edgeIterator != null) {
-        while (edgeIterator.hasNext() && numEdgePerNode++ < MAX_EDGES_PER_NODE) {
-          long rightNode = idMask.restore(edgeIterator.nextLong());
-          byte edgeType = edgeIterator.currentEdgeType();
+      double weight = entry.getDoubleValue();
+      seenEdgesPerNode.clear();
 
-          // If the current id is in the set of inputIds, we find and store its social proof.
-          if (inputRightNodeIds.contains(rightNode) && socialProofTypes.contains(edgeType)) {
-            if (!socialProofs.containsKey(rightNode)) {
-              socialProofs.put(rightNode, new Byte2ObjectArrayMap<>());
-              socialProofWeights.put(rightNode, 0);
-            }
-            Byte2ObjectMap<LongSet> socialProofMap = socialProofs.get(rightNode);
+      // Sequentially iterating through the latest MAX_EDGES_PER_NODE edges per node
+      while (edgeIterator.hasNext() && numEdgePerNode++ < MAX_EDGES_PER_NODE) {
+        long rightNode = idMask.restore(edgeIterator.nextLong());
+        byte edgeType = edgeIterator.currentEdgeType();
 
-            // We sum the weights of incoming leftNodes as the weight of the rightNode.
-            socialProofWeights.put(
-              rightNode,
-              weight + socialProofWeights.get(rightNode)
-            );
+        boolean hasSeenRightNodeFromEdge =
+          seenEdgesPerNode.containsKey(rightNode) && seenEdgesPerNode.get(rightNode) == edgeType;
 
-            // Get the user set variable by the engagement type.
-            if (!socialProofMap.containsKey(edgeType)) {
-              socialProofMap.put(edgeType, new LongArraySet());
-            }
-            LongSet connectingUsers = socialProofMap.get(edgeType);
+        boolean isValidEngagement = request.getRightNodeIds().contains(rightNode) &&
+          socialProofTypes.contains(edgeType);
 
-            // Add the connecting user to the user set.
-            if (!connectingUsers.contains(leftNode)) {
-              connectingUsers.add(leftNode);
-            }
-          }
+        if (hasSeenRightNodeFromEdge || !isValidEngagement) {
+          continue;
         }
+        updateVisitedRightNodes(leftNode, rightNode, edgeType, weight);
       }
     }
   }
 
-  private void resetSocialProofs() {
-    socialProofs.clear();
-    socialProofWeights.clear();
+  /**
+   * Given a nodeInfo containing the social proofs and weight information regarding a rightNode,
+   * convert and store these data in a SocialProofResult object, to comply with the class interface.
+   *
+   * @param nodeInfo Contains all the social proofs on a particular right node, along with the
+   * accumulated node weight
+   */
+  private SocialProofResult makeSocialProofResult(NodeInfo nodeInfo) {
+    Byte2ObjectArrayMap<LongSet> socialProofsMap = new Byte2ObjectArrayMap<>();
+
+    for (int socialProofType = 0; socialProofType < NUM_OF_SOCIAL_PROOF_TYPES; socialProofType++) {
+      SmallArrayBasedLongToDoubleMap socialProofsByType = nodeInfo.getSocialProofs()[socialProofType];
+      if (socialProofsByType == null || socialProofsByType.size() == 0) {
+        continue;
+      }
+      LongSet rightNodeIds = new LongArraySet(
+        Arrays.copyOfRange(socialProofsByType.keys(), 0, socialProofsByType.size()));
+      socialProofsMap.put((byte)socialProofType, rightNodeIds);
+    }
+
+    return new SocialProofResult(
+      nodeInfo.getNodeId(),
+      socialProofsMap,
+      nodeInfo.getWeight(),
+      recommendationType
+    );
+  }
+
+  /**
+   * Generate the social proof recommendations based on the nodeInfo collected previously.
+   */
+  private SocialProofResponse generateRecommendationFromNodeInfo() {
+    List<RecommendationInfo> results = new LinkedList<>();
+
+    for (Map.Entry<Long, NodeInfo> entry: this.visitedRightNodes.entrySet()) {
+      results.add(makeSocialProofResult(entry.getValue()));
+    }
+    return new SocialProofResponse(results);
   }
 
   @Override
   public SocialProofResponse computeRecommendations(SocialProofRequest request, Random rand) {
-    resetSocialProofs();
-    collectRecommendations(request);
-
-    List<RecommendationInfo> socialProofList = new LinkedList<>();
-    for (Long id: request.getRightNodeIds()) {
-      // Return only ids with at least one social proof
-      if (socialProofs.containsKey(id)) {
-        socialProofList.add(new SocialProofResult(
-          id,
-          socialProofs.getOrDefault(id, EMPTY_SOCIALPROOF_MAP),
-          socialProofWeights.getOrDefault(id, 0.0),
-          recommendationType));
-      }
-    }
-
-    return new SocialProofResponse(socialProofList);
+    reset();
+    collectRightNodeInfo(request);
+    return generateRecommendationFromNodeInfo();
   }
 }

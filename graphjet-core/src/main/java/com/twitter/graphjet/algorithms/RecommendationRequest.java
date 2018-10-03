@@ -26,10 +26,17 @@ public abstract class RecommendationRequest {
   private final long queryNode;
   private final LongSet toBeFiltered;
   private final byte[] socialProofTypes;
+  public static final byte CLICK_SOCIAL_PROOF_TYPE = 0;
   public static final byte FAVORITE_SOCIAL_PROOF_TYPE = 1;
   public static final byte RETWEET_SOCIAL_PROOF_TYPE = 2;
+  public static final byte REPLY_SOCIAL_PROOF_TYPE = 3;
   public static final byte AUTHOR_SOCIAL_PROOF_TYPE = 4;
+  public static final byte IS_MENTIONED_SOCIAL_PROOF_TYPE = 5;
+  public static final byte IS_MEDIATAGGED_SOCIAL_PROOF_TYPE = 6;
+  public static final byte QUOTE_SOCIAL_PROOF_TYPE = 7;
   public static final byte UNFAVORITE_SOCIAL_PROOF_TYPE = 8;
+
+  public static final int MAX_SOCIAL_PROOF_TYPE_SIZE = 9; // total number of social proof types supported
 
   public static final int DEFAULT_MIN_USER_SOCIAL_PROOF_SIZE = 1;
   public static final int DEFAULT_RECOMMENDATION_RESULTS = 100;

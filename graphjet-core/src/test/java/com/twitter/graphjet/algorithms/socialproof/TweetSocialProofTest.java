@@ -26,8 +26,10 @@ import org.junit.Test;
 
 import com.twitter.graphjet.algorithms.BipartiteGraphTestHelper;
 import com.twitter.graphjet.algorithms.RecommendationInfo;
+import com.twitter.graphjet.algorithms.RecommendationType;
 import com.twitter.graphjet.bipartite.NodeMetadataLeftIndexedMultiSegmentBipartiteGraph;
 
+import it.unimi.dsi.fastutil.bytes.Byte2ObjectArrayMap;
 import it.unimi.dsi.fastutil.bytes.Byte2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2DoubleArrayMap;
 import it.unimi.dsi.fastutil.longs.Long2DoubleMap;
@@ -35,6 +37,12 @@ import it.unimi.dsi.fastutil.longs.LongArraySet;
 import it.unimi.dsi.fastutil.longs.LongSet;
 
 import static org.junit.Assert.*;
+
+import static com.twitter.graphjet.algorithms.RecommendationRequest.AUTHOR_SOCIAL_PROOF_TYPE;
+import static com.twitter.graphjet.algorithms.RecommendationRequest.CLICK_SOCIAL_PROOF_TYPE;
+import static com.twitter.graphjet.algorithms.RecommendationRequest.FAVORITE_SOCIAL_PROOF_TYPE;
+import static com.twitter.graphjet.algorithms.RecommendationRequest.REPLY_SOCIAL_PROOF_TYPE;
+import static com.twitter.graphjet.algorithms.RecommendationRequest.RETWEET_SOCIAL_PROOF_TYPE;
 
 /**
  * Unit test for social proof finder.
@@ -47,51 +55,66 @@ import static org.junit.Assert.*;
  */
 public class TweetSocialProofTest {
 
+  private long user2 = 2;
+  private long user3 = 3;
+
+  private long tweet2 = 2;
+  private long tweet3 = 3;
+  private long tweet4 = 4;
+  private long tweet5 = 5;
+
   @Test
-  public void testComputeRecommendations() throws Exception {
+  public void testTweetSocialProofs() {
     NodeMetadataLeftIndexedMultiSegmentBipartiteGraph bipartiteGraph =
-      BipartiteGraphTestHelper.
-        buildSmallTestNodeMetadataLeftIndexedMultiSegmentBipartiteGraph();
+      BipartiteGraphTestHelper.buildSmallTestNodeMetadataLeftIndexedMultiSegmentBipartiteGraph();
 
-    Long2DoubleMap seedsMap = new Long2DoubleArrayMap(new long[]{2, 3}, new double[]{1.0, 0.5});
-    LongSet tweets = new LongArraySet(new long[]{2, 3, 4, 5});
+    Long2DoubleMap seedsMap = new Long2DoubleArrayMap(
+      new long[] {user2, user3}, new double[] {1.0, 0.5});
+    LongSet tweets = new LongArraySet(new long[] {tweet2, tweet3, tweet4, tweet5});
 
-    byte[] validSocialProofs = new byte[]{0, 1, 2, 3, 4};
-    long randomSeed = 918324701982347L;
-    Random random = new Random(randomSeed);
+    byte[] validSocialProofTypes = new byte[] {
+      CLICK_SOCIAL_PROOF_TYPE,
+      FAVORITE_SOCIAL_PROOF_TYPE,
+      RETWEET_SOCIAL_PROOF_TYPE,
+      REPLY_SOCIAL_PROOF_TYPE,
+      AUTHOR_SOCIAL_PROOF_TYPE,
+    };
+    Random random = new Random(918324701982347L);
 
     SocialProofRequest socialProofRequest = new SocialProofRequest(
       tweets,
       seedsMap,
-      validSocialProofs
+      validSocialProofTypes
     );
+    HashMap<Long, SocialProofResult> results = new HashMap<>();
 
-    SocialProofResponse socialProofResponse = new TweetSocialProofGenerator(
-      bipartiteGraph
-    ).computeRecommendations(socialProofRequest, random);
+    new TweetSocialProofGenerator(bipartiteGraph)
+      .computeRecommendations(socialProofRequest, random)
+      .getRankedRecommendations().forEach( recInfo ->
+        results.put(((SocialProofResult)recInfo).getNode(), (SocialProofResult)recInfo));
 
-    List<RecommendationInfo> socialProofResults =
-      Lists.newArrayList(socialProofResponse.getRankedRecommendations());
+    assertEquals(results.size(), 2);
 
-    for (RecommendationInfo recommendationInfo : socialProofResults) {
-      SocialProofResult socialProofResult = (SocialProofResult) recommendationInfo;
-      Long tweetId = socialProofResult.getNode();
-      Byte2ObjectMap<LongSet> socialProofs = socialProofResult.getSocialProof();
+    // Test social proofs for tweet 2
+    SocialProofResult actual2 = results.get(tweet2);
+    Byte2ObjectMap<LongSet> expectedProofs2 = new Byte2ObjectArrayMap<>();
+    expectedProofs2.put(CLICK_SOCIAL_PROOF_TYPE, new LongArraySet(new long[] {user3}));
+    SocialProofResult expected2 =
+        new SocialProofResult(tweet2, expectedProofs2, 0.5, RecommendationType.TWEET);
+    assertEquals(expected2.getNode(), actual2.getNode());
+    assertEquals(expected2.getSocialProof(), actual2.getSocialProof());
+    assertEquals(expected2.getSocialProofSize(), actual2.getSocialProofSize());
+    assertEquals(0, Double.compare(expected2.getWeight(), actual2.getWeight()));
 
-      // Test case for tweet 3 and 4
-      if (tweetId == 3 || tweetId == 4) {
-        assertEquals(socialProofs.isEmpty(), true);
-      }
-
-      // Test case for tweet 2 and 5
-      if (tweetId == 2) {
-        assertEquals(socialProofs.get((byte) 0).size(), 1);
-        assertEquals(socialProofs.get((byte) 0).contains(3), true);
-      } else if (tweetId == 5) {
-        assertEquals(socialProofs.get((byte) 0).size(), 2);
-        assertEquals(socialProofs.get((byte) 0).contains(2), true);
-        assertEquals(socialProofs.get((byte) 0).contains(3), true);
-      }
-    }
+    // Test social proofs for tweet 5
+    SocialProofResult actual5 = results.get(tweet5);
+    Byte2ObjectMap<LongSet> expectedProofs5 = new Byte2ObjectArrayMap<>();
+    expectedProofs5.put(CLICK_SOCIAL_PROOF_TYPE, new LongArraySet(new long[] {user2, user3}));
+    SocialProofResult expected5 =
+      new SocialProofResult(tweet5, expectedProofs5, 1.5, RecommendationType.TWEET);
+    assertEquals(expected5.getNode(), actual5.getNode());
+    assertEquals(expected5.getSocialProof(), actual5.getSocialProof());
+    assertEquals(expected5.getSocialProofSize(), actual5.getSocialProofSize());
+    assertEquals(0, Double.compare(expected5.getWeight(), actual5.getWeight()));
   }
 }
