@@ -117,10 +117,8 @@ public abstract class SocialProofGenerator implements
    */
   private SocialProofResponse generateRecommendationFromNodeInfo() {
     List<RecommendationInfo> results = new LinkedList<>();
-
     for (Map.Entry<Long, NodeInfo> entry: this.visitedRightNodes.entrySet()) {
-      NodeInfo nodeInfo = entry.getValue();
-      results.add(makeSocialProofResult(nodeInfo));
+      results.add(makeSocialProofResult(entry.getValue()));
     }
     return new SocialProofResponse(results);
   }
@@ -134,7 +132,6 @@ public abstract class SocialProofGenerator implements
 
     for (Map.Entry<Long, NodeInfo> entry: this.visitedRightNodes.entrySet()) {
       NodeInfo nodeInfo = entry.getValue();
-
       // Remove unfavorited edges from the node, and skip the node if it has no social proof left
       boolean isNodeModified = NodeInfoHelper.removeUnfavoritedSocialProofs(nodeInfo);
       if (isNodeModified && !NodeInfoHelper.nodeInfoHasValidSocialProofs(nodeInfo)) {
