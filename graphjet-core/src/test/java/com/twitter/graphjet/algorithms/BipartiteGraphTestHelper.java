@@ -32,6 +32,10 @@ import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.longs.LongArrayList;
 import it.unimi.dsi.fastutil.longs.LongList;
 
+import static com.twitter.graphjet.algorithms.RecommendationRequest.FAVORITE_SOCIAL_PROOF_TYPE;
+import static com.twitter.graphjet.algorithms.RecommendationRequest.RETWEET_SOCIAL_PROOF_TYPE;
+import static com.twitter.graphjet.algorithms.RecommendationRequest.UNFAVORITE_SOCIAL_PROOF_TYPE;
+
 public final class BipartiteGraphTestHelper {
   // Utility class
   private BipartiteGraphTestHelper() { }
@@ -211,9 +215,7 @@ public final class BipartiteGraphTestHelper {
    * @return a small test {@link NodeMetadataLeftIndexedMultiSegmentBipartiteGraph}
    */
   public static NodeMetadataLeftIndexedMultiSegmentBipartiteGraph
-  buildTestNodeMetadataLeftIndexedMultiSegmentBipartiteGraphWithUnfavorite(
-    byte favoriteEdge, byte unfavoriteEdge, byte retweetEdge
-  ) {
+  buildTestNodeMetadataLeftIndexedMultiSegmentBipartiteGraphWithUnfavorite() {
     long user1 = 1;
     long user2 = 2;
     long user3 = 3;
@@ -242,7 +244,7 @@ public final class BipartiteGraphTestHelper {
     long tweet12 = 12;
     long tweet13 = 13;
 
-    NodeMetadataLeftIndexedMultiSegmentBipartiteGraph nodeMetadataGraph =
+    NodeMetadataLeftIndexedMultiSegmentBipartiteGraph graph =
       new NodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraph(
         10,
         6,
@@ -257,66 +259,66 @@ public final class BipartiteGraphTestHelper {
     int[][] emptyMeta = new int[][]{};
 
     // Only Favorite
-    nodeMetadataGraph.addEdge(user1, tweet1, favoriteEdge, 0L, emptyMeta, new int[][]{{1}});
+    graph.addEdge(user1, tweet1, FAVORITE_SOCIAL_PROOF_TYPE, 0L, emptyMeta, new int[][]{{1}});
 
     // Only Retweet
-    nodeMetadataGraph.addEdge(user2, tweet2, retweetEdge, 0L, emptyMeta, new int[][]{{2}});
+    graph.addEdge(user2, tweet2, RETWEET_SOCIAL_PROOF_TYPE, 0L, emptyMeta, new int[][]{{2}});
 
     // Only Unfavorite
     // invalid node
-    nodeMetadataGraph.addEdge(user1, tweet3, unfavoriteEdge, 0L, emptyMeta, emptyMeta);
-    nodeMetadataGraph.addEdge(user2, tweet3, unfavoriteEdge, 0L, emptyMeta, emptyMeta);
+    graph.addEdge(user1, tweet3, UNFAVORITE_SOCIAL_PROOF_TYPE, 0L, emptyMeta, emptyMeta);
+    graph.addEdge(user2, tweet3, UNFAVORITE_SOCIAL_PROOF_TYPE, 0L, emptyMeta, emptyMeta);
 
     // Favorite & Unfavorite
     // invalid node
-    nodeMetadataGraph.addEdge(user1, tweet4, favoriteEdge, 0L, emptyMeta, emptyMeta);
-    nodeMetadataGraph.addEdge(user1, tweet4, unfavoriteEdge, 0L, emptyMeta, emptyMeta);
+    graph.addEdge(user1, tweet4, FAVORITE_SOCIAL_PROOF_TYPE, 0L, emptyMeta, emptyMeta);
+    graph.addEdge(user1, tweet4, UNFAVORITE_SOCIAL_PROOF_TYPE, 0L, emptyMeta, emptyMeta);
 
-    nodeMetadataGraph.addEdge(user5, tweet5, favoriteEdge, 0L, emptyMeta, new int[][]{{5}});
-    nodeMetadataGraph.addEdge(user2, tweet5, unfavoriteEdge, 0L, emptyMeta, new int[][]{{5}});
+    graph.addEdge(user5, tweet5, FAVORITE_SOCIAL_PROOF_TYPE, 0L, emptyMeta, new int[][]{{5}});
+    graph.addEdge(user2, tweet5, UNFAVORITE_SOCIAL_PROOF_TYPE, 0L, emptyMeta, new int[][]{{5}});
 
     // invalid node
-    nodeMetadataGraph.addEdge(user1, tweet6, favoriteEdge, 0L, emptyMeta, emptyMeta);
-    nodeMetadataGraph.addEdge(user1, tweet6, unfavoriteEdge, 0L, emptyMeta, emptyMeta);
-    nodeMetadataGraph.addEdge(user1, tweet6, favoriteEdge, 0L, emptyMeta, emptyMeta);
+    graph.addEdge(user1, tweet6, FAVORITE_SOCIAL_PROOF_TYPE, 0L, emptyMeta, emptyMeta);
+    graph.addEdge(user1, tweet6, UNFAVORITE_SOCIAL_PROOF_TYPE, 0L, emptyMeta, emptyMeta);
+    graph.addEdge(user1, tweet6, FAVORITE_SOCIAL_PROOF_TYPE, 0L, emptyMeta, emptyMeta);
 
-    nodeMetadataGraph.addEdge(user7, tweet7, favoriteEdge, 0L, emptyMeta, new int[][]{{7}});
-    nodeMetadataGraph.addEdge(user3, tweet7, unfavoriteEdge, 0L, emptyMeta, new int[][]{{7}});
-    nodeMetadataGraph.addEdge(user4, tweet7, unfavoriteEdge, 0L, emptyMeta, new int[][]{{7}});
+    graph.addEdge(user7, tweet7, FAVORITE_SOCIAL_PROOF_TYPE, 0L, emptyMeta, new int[][]{{7}});
+    graph.addEdge(user3, tweet7, UNFAVORITE_SOCIAL_PROOF_TYPE, 0L, emptyMeta, new int[][]{{7}});
+    graph.addEdge(user4, tweet7, UNFAVORITE_SOCIAL_PROOF_TYPE, 0L, emptyMeta, new int[][]{{7}});
 
-    nodeMetadataGraph.addEdge(user1, tweet8, favoriteEdge, 0L, emptyMeta, new int[][]{{8}});
-    nodeMetadataGraph.addEdge(user1, tweet8, unfavoriteEdge, 0L, emptyMeta, new int[][]{{8}});
-    nodeMetadataGraph.addEdge(user8, tweet8, favoriteEdge, 0L, emptyMeta, new int[][]{{8}});
-    nodeMetadataGraph.addEdge(user9, tweet8, favoriteEdge, 0L, emptyMeta, new int[][]{{8}});
+    graph.addEdge(user1, tweet8, FAVORITE_SOCIAL_PROOF_TYPE, 0L, emptyMeta, new int[][]{{8}});
+    graph.addEdge(user1, tweet8, UNFAVORITE_SOCIAL_PROOF_TYPE, 0L, emptyMeta, new int[][]{{8}});
+    graph.addEdge(user8, tweet8, FAVORITE_SOCIAL_PROOF_TYPE, 0L, emptyMeta, new int[][]{{8}});
+    graph.addEdge(user9, tweet8, FAVORITE_SOCIAL_PROOF_TYPE, 0L, emptyMeta, new int[][]{{8}});
 
-    nodeMetadataGraph.addEdge(user1, tweet9, favoriteEdge, 0L, emptyMeta, new int[][]{{9}});
-    nodeMetadataGraph.addEdge(user2, tweet9, favoriteEdge, 0L, emptyMeta, new int[][]{{9}});
-    nodeMetadataGraph.addEdge(user9, tweet9, favoriteEdge, 0L, emptyMeta, new int[][]{{9}});
-    nodeMetadataGraph.addEdge(user10, tweet9, favoriteEdge, 0L, emptyMeta, new int[][]{{9}});
-    nodeMetadataGraph.addEdge(user5, tweet9, favoriteEdge, 0L, emptyMeta, new int[][]{{9}});
-    nodeMetadataGraph.addEdge(user1, tweet9, unfavoriteEdge, 0L, emptyMeta, new int[][]{{9}});
-    nodeMetadataGraph.addEdge(user2, tweet9, unfavoriteEdge, 0L, emptyMeta, new int[][]{{9}});
-    nodeMetadataGraph.addEdge(user5, tweet9, unfavoriteEdge, 0L, emptyMeta, new int[][]{{9}});
+    graph.addEdge(user1, tweet9, FAVORITE_SOCIAL_PROOF_TYPE, 0L, emptyMeta, new int[][]{{9}});
+    graph.addEdge(user2, tweet9, FAVORITE_SOCIAL_PROOF_TYPE, 0L, emptyMeta, new int[][]{{9}});
+    graph.addEdge(user9, tweet9, FAVORITE_SOCIAL_PROOF_TYPE, 0L, emptyMeta, new int[][]{{9}});
+    graph.addEdge(user10, tweet9, FAVORITE_SOCIAL_PROOF_TYPE, 0L, emptyMeta, new int[][]{{9}});
+    graph.addEdge(user5, tweet9, FAVORITE_SOCIAL_PROOF_TYPE, 0L, emptyMeta, new int[][]{{9}});
+    graph.addEdge(user1, tweet9, UNFAVORITE_SOCIAL_PROOF_TYPE, 0L, emptyMeta, new int[][]{{9}});
+    graph.addEdge(user2, tweet9, UNFAVORITE_SOCIAL_PROOF_TYPE, 0L, emptyMeta, new int[][]{{9}});
+    graph.addEdge(user5, tweet9, UNFAVORITE_SOCIAL_PROOF_TYPE, 0L, emptyMeta, new int[][]{{9}});
 
     // Favorite & Retweet
-    nodeMetadataGraph.addEdge(user10, tweet10, favoriteEdge, 0L, emptyMeta, new int[][]{{10}});
-    nodeMetadataGraph.addEdge(user11, tweet10, retweetEdge, 0L, emptyMeta, new int[][]{{10}});
+    graph.addEdge(user10, tweet10, FAVORITE_SOCIAL_PROOF_TYPE, 0L, emptyMeta, new int[][]{{10}});
+    graph.addEdge(user11, tweet10, RETWEET_SOCIAL_PROOF_TYPE, 0L, emptyMeta, new int[][]{{10}});
 
     // Unfavorite & Retweet
-    nodeMetadataGraph.addEdge(user2, tweet11, unfavoriteEdge, 0L, emptyMeta, new int[][]{{11}});
-    nodeMetadataGraph.addEdge(user11, tweet11, retweetEdge, 0L, emptyMeta, new int[][]{{11}});
+    graph.addEdge(user2, tweet11, UNFAVORITE_SOCIAL_PROOF_TYPE, 0L, emptyMeta, new int[][]{{11}});
+    graph.addEdge(user11, tweet11, RETWEET_SOCIAL_PROOF_TYPE, 0L, emptyMeta, new int[][]{{11}});
 
     // Favorite, Unfavorite, and Retweet
-    nodeMetadataGraph.addEdge(user12, tweet12, favoriteEdge, 0L, emptyMeta, new int[][]{{12}});
-    nodeMetadataGraph.addEdge(user12, tweet12, unfavoriteEdge, 0L, emptyMeta, new int[][]{{12}});
-    nodeMetadataGraph.addEdge(user12, tweet12, retweetEdge, 0L, emptyMeta, new int[][]{{12}});
-    nodeMetadataGraph.addEdge(user3, tweet12, unfavoriteEdge, 0L, emptyMeta, new int[][]{{12}});
+    graph.addEdge(user12, tweet12, FAVORITE_SOCIAL_PROOF_TYPE, 0L, emptyMeta, new int[][]{{12}});
+    graph.addEdge(user12, tweet12, UNFAVORITE_SOCIAL_PROOF_TYPE, 0L, emptyMeta, new int[][]{{12}});
+    graph.addEdge(user12, tweet12, RETWEET_SOCIAL_PROOF_TYPE, 0L, emptyMeta, new int[][]{{12}});
+    graph.addEdge(user3, tweet12, UNFAVORITE_SOCIAL_PROOF_TYPE, 0L, emptyMeta, new int[][]{{12}});
 
-    nodeMetadataGraph.addEdge(user13, tweet13, favoriteEdge, 0L, emptyMeta, new int[][]{{13}});
-    nodeMetadataGraph.addEdge(user14, tweet13, unfavoriteEdge, 0L, emptyMeta, new int[][]{{13}});
-    nodeMetadataGraph.addEdge(user14, tweet13, retweetEdge, 0L, emptyMeta, new int[][]{{13}});
+    graph.addEdge(user13, tweet13, FAVORITE_SOCIAL_PROOF_TYPE, 0L, emptyMeta, new int[][]{{13}});
+    graph.addEdge(user14, tweet13, UNFAVORITE_SOCIAL_PROOF_TYPE, 0L, emptyMeta, new int[][]{{13}});
+    graph.addEdge(user14, tweet13, RETWEET_SOCIAL_PROOF_TYPE, 0L, emptyMeta, new int[][]{{13}});
 
-    return nodeMetadataGraph;
+    return graph;
   }
 
   /**

@@ -25,6 +25,7 @@ import java.util.Random;
 
 import com.twitter.graphjet.algorithms.IDMask;
 import com.twitter.graphjet.algorithms.NodeInfo;
+import com.twitter.graphjet.algorithms.NodeInfoHelper;
 import com.twitter.graphjet.algorithms.RecommendationAlgorithm;
 import com.twitter.graphjet.algorithms.RecommendationInfo;
 import com.twitter.graphjet.algorithms.RecommendationRequest;
@@ -43,6 +44,9 @@ import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.longs.LongArraySet;
 import it.unimi.dsi.fastutil.longs.LongSet;
+
+import static com.twitter.graphjet.algorithms.RecommendationRequest.FAVORITE_SOCIAL_PROOF_TYPE;
+import static com.twitter.graphjet.algorithms.RecommendationRequest.UNFAVORITE_SOCIAL_PROOF_TYPE;
 
 /**
  * SocialProofGenerator shares similar logic with
@@ -115,7 +119,28 @@ public abstract class SocialProofGenerator implements
     List<RecommendationInfo> results = new LinkedList<>();
 
     for (Map.Entry<Long, NodeInfo> entry: this.visitedRightNodes.entrySet()) {
-      results.add(makeSocialProofResult(entry.getValue()));
+      NodeInfo nodeInfo = entry.getValue();
+      results.add(makeSocialProofResult(nodeInfo));
+    }
+    return new SocialProofResponse(results);
+  }
+
+  /**
+   * Remove edges that were unfavorited first, and then generate the social proof recommendations
+   * based on the filtered nodeInfo.
+   */
+  private SocialProofResponse removeUnfavoritesAndGenerateRecommendationsFromNodeInfo() {
+    List<RecommendationInfo> results = new LinkedList<>();
+
+    for (Map.Entry<Long, NodeInfo> entry: this.visitedRightNodes.entrySet()) {
+      NodeInfo nodeInfo = entry.getValue();
+
+      // Remove unfavorited edges from the node, and skip the node if it has no social proof left
+      boolean isNodeModified = NodeInfoHelper.removeUnfavoritedSocialProofs(nodeInfo);
+      if (isNodeModified && !NodeInfoHelper.nodeInfoHasValidSocialProofs(nodeInfo)) {
+        continue;
+      }
+      results.add(makeSocialProofResult(nodeInfo));
     }
     return new SocialProofResponse(results);
   }
@@ -160,10 +185,10 @@ public abstract class SocialProofGenerator implements
         byte edgeType = edgeIterator.currentEdgeType();
 
         boolean hasSeenRightNodeFromEdge =
-            seenEdgesPerNode.containsKey(rightNode) && seenEdgesPerNode.get(rightNode) == edgeType;
+          seenEdgesPerNode.containsKey(rightNode) && seenEdgesPerNode.get(rightNode) == edgeType;
 
         boolean isValidEngagement = request.getRightNodeIds().contains(rightNode) &&
-            socialProofTypes.contains(edgeType);
+          socialProofTypes.contains(edgeType);
 
         if (hasSeenRightNodeFromEdge || !isValidEngagement) {
           continue;
@@ -173,10 +198,45 @@ public abstract class SocialProofGenerator implements
     }
   }
 
+  /**
+   * When the incoming request asks for Favorite as one of the social proofs, we must check for
+   * Unfavorite edges as well, and remove the corresponding unfavorited edges.
+   */
+  private boolean shouldRemoveUnfavoritedEdges(SocialProofRequest request) {
+    for (byte socialProofType: request.getSocialProofTypes()) {
+      if (socialProofType == FAVORITE_SOCIAL_PROOF_TYPE ||
+          socialProofType == UNFAVORITE_SOCIAL_PROOF_TYPE) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Given a {@link SocialProofRequest} object, create a new request that add Unfavorite as one of
+   * the social proof types to be collected.
+   */
+  private SocialProofRequest addUnfavoriteEdgeTypeToRequest(SocialProofRequest oldRequest) {
+    byte[] oldSocialProofTypes = oldRequest.getSocialProofTypes();
+    byte[] newSocialProofTypes = Arrays.copyOf(oldSocialProofTypes, oldSocialProofTypes.length + 1);
+    newSocialProofTypes[newSocialProofTypes.length - 1] = UNFAVORITE_SOCIAL_PROOF_TYPE;
+
+    return new SocialProofRequest(
+      oldRequest.getRightNodeIds(),
+      oldRequest.getLeftSeedNodesWithWeight(),
+      newSocialProofTypes
+    );
+  }
+
   @Override
   public SocialProofResponse computeRecommendations(SocialProofRequest request, Random rand) {
     reset();
-    collectRightNodeInfo(request);
-    return generateRecommendationFromNodeInfo();
+    if (shouldRemoveUnfavoritedEdges(request)) {
+      collectRightNodeInfo(addUnfavoriteEdgeTypeToRequest(request));
+      return removeUnfavoritesAndGenerateRecommendationsFromNodeInfo();
+    } else {
+      collectRightNodeInfo(request);
+      return generateRecommendationFromNodeInfo();
+    }
   }
 }

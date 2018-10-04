@@ -24,6 +24,7 @@ import java.util.Set;
 import com.google.common.collect.Lists;
 
 import com.twitter.graphjet.algorithms.NodeInfo;
+import com.twitter.graphjet.algorithms.NodeInfoHelper;
 import com.twitter.graphjet.algorithms.RecommendationInfo;
 import com.twitter.graphjet.algorithms.RecommendationRequest;
 import com.twitter.graphjet.algorithms.RecommendationType;
@@ -34,9 +35,6 @@ import com.twitter.graphjet.hashing.SmallArrayBasedLongToDoubleMap;
 
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import it.unimi.dsi.fastutil.longs.LongSet;
-
-import static com.twitter.graphjet.algorithms.RecommendationRequest.FAVORITE_SOCIAL_PROOF_TYPE;
-import static com.twitter.graphjet.algorithms.RecommendationRequest.UNFAVORITE_SOCIAL_PROOF_TYPE;
 
 public final class TopSecondDegreeByCountTweetRecsGenerator {
   private static final TweetIDMask TWEET_ID_MASK = new TweetIDMask();
@@ -63,8 +61,8 @@ public final class TopSecondDegreeByCountTweetRecsGenerator {
     // handling specific rules of tweet recommendations
     for (NodeInfo nodeInfo : nodeInfoList) {
       // Remove unfavorited edges, and discard the nodeInfo if it no longer has social proofs
-      boolean isNodeModified = GeneratorHelper.removeUnfavoriteSocialProofs(nodeInfo);
-      if (isNodeModified && !GeneratorHelper.nodeInfoHasValidSocialProofs(nodeInfo)) {
+      boolean isNodeModified = NodeInfoHelper.removeUnfavoritedSocialProofs(nodeInfo);
+      if (isNodeModified && !NodeInfoHelper.nodeInfoHasValidSocialProofs(nodeInfo)) {
         continue;
       }
 

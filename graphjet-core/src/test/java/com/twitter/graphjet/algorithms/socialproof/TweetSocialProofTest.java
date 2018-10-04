@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-
 package com.twitter.graphjet.algorithms.socialproof;
 
 import java.util.*;
@@ -141,7 +140,6 @@ public class TweetSocialProofTest {
       validSocialProofTypes
     );
     HashMap<Long, SocialProofResult> results = new HashMap<>();
-
     new TweetSocialProofGenerator(bipartiteGraph)
       .computeRecommendations(socialProofRequest, new Random(0))
       .getRankedRecommendations().forEach( recInfo ->
@@ -178,7 +176,7 @@ public class TweetSocialProofTest {
     Byte2ObjectMap<LongSet> expectedProofs7 = new Byte2ObjectArrayMap<>();
     expectedProofs7.put(FAVORITE_SOCIAL_PROOF_TYPE, new LongArraySet(new long[] {user2}));
     SocialProofResult expected7 =
-        new SocialProofResult(tweet7, expectedProofs7, 0.5, RecommendationType.TWEET);
+      new SocialProofResult(tweet7, expectedProofs7, 0.5, RecommendationType.TWEET);
     assertEqualSocialProofResults(expected7, actual7);
 
     // Test social proofs for tweet 8
@@ -187,19 +185,19 @@ public class TweetSocialProofTest {
     expectedProofs8.put(FAVORITE_SOCIAL_PROOF_TYPE, new LongArraySet(new long[] {user1}));
     expectedProofs8.put(RETWEET_SOCIAL_PROOF_TYPE, new LongArraySet(new long[] {user2}));
     SocialProofResult expected8 =
-        new SocialProofResult(tweet8, expectedProofs8, 1.5, RecommendationType.TWEET);
+      new SocialProofResult(tweet8, expectedProofs8, 1.5, RecommendationType.TWEET);
     assertEqualSocialProofResults(expected8, actual8);
 
   }
 
   @Test
-  public void testTweetSocialProofsInvalidType() {
+  public void testTweetSocialProofsWithInvalidType() {
     // Test cases where the requested social proof types yield no results
     LeftIndexedPowerLawMultiSegmentBipartiteGraph bipartiteGraph =
       BipartiteGraphTestHelper.buildSmallTestLeftIndexedPowerLawMultiSegmentBipartiteGraphWithEdgeTypes();
 
     Long2DoubleMap seedsMap = new Long2DoubleArrayMap(
-        new long[] {user1, user2}, new double[] {1.0, 0.5});
+      new long[] {user1, user2}, new double[] {1.0, 0.5});
     LongSet tweets = new LongArraySet(new long[] {tweet2, tweet3, tweet4, tweet5, tweet6, tweet7});
 
     // In the graph there are no valid social proofs corresponding to these types
@@ -214,12 +212,40 @@ public class TweetSocialProofTest {
       validSocialProofTypes
     );
     HashMap<Long, SocialProofResult> results = new HashMap<>();
-
     new TweetSocialProofGenerator(bipartiteGraph)
       .computeRecommendations(socialProofRequest, new Random(0))
       .getRankedRecommendations().forEach( recInfo ->
       results.put(((SocialProofResult)recInfo).getNode(), (SocialProofResult)recInfo));
 
     assertTrue(results.isEmpty());
+  }
+
+  @Test
+  public void testTweetSocialProofsWithUnfavorites() {
+    NodeMetadataLeftIndexedMultiSegmentBipartiteGraph graph =
+      BipartiteGraphTestHelper.buildTestNodeMetadataLeftIndexedMultiSegmentBipartiteGraphWithUnfavorite();
+
+    Long2DoubleMap seedsMap = new Long2DoubleArrayMap(
+        new long[] {user1, user2}, new double[] {1.0, 0.5});
+    LongSet tweets = new LongArraySet(new long[] {tweet2, tweet3, tweet4, tweet5, tweet6, tweet7});
+
+    // In the graph there are no valid social proofs corresponding to these types
+    byte[] validSocialProofTypes = new byte[] {
+      FAVORITE_SOCIAL_PROOF_TYPE,
+      RETWEET_SOCIAL_PROOF_TYPE
+    };
+
+    SocialProofRequest socialProofRequest = new SocialProofRequest(
+      tweets,
+      seedsMap,
+      validSocialProofTypes
+    );
+    HashMap<Long, SocialProofResult> results = new HashMap<>();
+    new TweetSocialProofGenerator(graph)
+      .computeRecommendations(socialProofRequest, new Random(0))
+      .getRankedRecommendations().forEach( recInfo ->
+      results.put(((SocialProofResult)recInfo).getNode(), (SocialProofResult)recInfo));
+
+
   }
 }

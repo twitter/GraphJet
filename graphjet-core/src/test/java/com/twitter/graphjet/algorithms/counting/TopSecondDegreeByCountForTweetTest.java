@@ -231,8 +231,7 @@ public class TopSecondDegreeByCountForTweetTest {
   @Test
   public void testTopSecondDegreeByCountWithSmallGraphWithEdgeRemoval() {
     NodeMetadataLeftIndexedMultiSegmentBipartiteGraph bipartiteGraph =
-      BipartiteGraphTestHelper.buildTestNodeMetadataLeftIndexedMultiSegmentBipartiteGraphWithUnfavorite(
-        FAVORITE_SOCIAL_PROOF_TYPE, UNFAVORITE_SOCIAL_PROOF_TYPE, RETWEET_SOCIAL_PROOF_TYPE);
+      BipartiteGraphTestHelper.buildTestNodeMetadataLeftIndexedMultiSegmentBipartiteGraphWithUnfavorite();
 
     long queryNode = 1;
     Long2DoubleMap seedsMap = new Long2DoubleArrayMap(
@@ -354,8 +353,7 @@ public class TopSecondDegreeByCountForTweetTest {
   @Test
   public void testTopSecondDegreeMetadataByCountWithSmallGraphWithEdgeRemoval() {
     NodeMetadataLeftIndexedMultiSegmentBipartiteGraph bipartiteGraph =
-      BipartiteGraphTestHelper.buildTestNodeMetadataLeftIndexedMultiSegmentBipartiteGraphWithUnfavorite(
-        FAVORITE_SOCIAL_PROOF_TYPE, UNFAVORITE_SOCIAL_PROOF_TYPE, RETWEET_SOCIAL_PROOF_TYPE);
+      BipartiteGraphTestHelper.buildTestNodeMetadataLeftIndexedMultiSegmentBipartiteGraphWithUnfavorite();
 
     long queryNode = 1;
     Long2DoubleMap seedsMap = new Long2DoubleArrayMap(

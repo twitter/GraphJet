@@ -24,6 +24,7 @@ import java.util.Set;
 import com.google.common.collect.Lists;
 
 import com.twitter.graphjet.algorithms.NodeInfo;
+import com.twitter.graphjet.algorithms.NodeInfoHelper;
 import com.twitter.graphjet.algorithms.RecommendationInfo;
 import com.twitter.graphjet.algorithms.RecommendationType;
 import com.twitter.graphjet.algorithms.TweetIDMask;
@@ -60,8 +61,8 @@ public final class TopSecondDegreeByCountTweetRecsGenerator {
     // handling specific rules of tweet recommendations
     for (NodeInfo nodeInfo : nodeInfoList) {
       // Remove unfavorited edges, and discard the nodeInfo if it no longer has social proofs
-      boolean isNodeModified = GeneratorHelper.removeUnfavoriteSocialProofs(nodeInfo);
-      if (isNodeModified && !GeneratorHelper.nodeInfoHasValidSocialProofs(nodeInfo)) {
+      boolean isNodeModified = NodeInfoHelper.removeUnfavoritedSocialProofs(nodeInfo);
+      if (isNodeModified && !NodeInfoHelper.nodeInfoHasValidSocialProofs(nodeInfo)) {
         continue;
       }
 

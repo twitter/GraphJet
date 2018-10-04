@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.twitter.graphjet.algorithms.NodeInfo;
+import com.twitter.graphjet.algorithms.NodeInfoHelper;
 import com.twitter.graphjet.algorithms.RecommendationInfo;
 import com.twitter.graphjet.algorithms.RecommendationRequest;
 import com.twitter.graphjet.algorithms.RecommendationType;
@@ -98,8 +99,8 @@ public final class TopSecondDegreeByCountTweetMetadataRecsGenerator {
 
     for (NodeInfo nodeInfo : nodeInfoList) {
       // Remove unfavorited edges, and discard the nodeInfo if it no longer has social proofs
-      boolean isNodeModified = GeneratorHelper.removeUnfavoriteSocialProofs(nodeInfo);
-      if (isNodeModified && !GeneratorHelper.nodeInfoHasValidSocialProofs(nodeInfo)) {
+      boolean isNodeModified = NodeInfoHelper.removeUnfavoritedSocialProofs(nodeInfo);
+      if (isNodeModified && !NodeInfoHelper.nodeInfoHasValidSocialProofs(nodeInfo)) {
         continue;
       }
 
