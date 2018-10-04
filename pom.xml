@@ -100,18 +100,6 @@
       </plugin>
     </plugins>
   </build>
-<distributionManagement>
-    <repository>
-        <id>artifactory-snapshot</id>
-        <name>Apache Release Distribution Repository</name>
-        <url>https://artifactory.twitter.biz/libs-releases-local</url>
-    </repository>
-    <snapshotRepository>
-        <id>artifactory-snapshot</id>
-        <name>twitter</name>
-        <url>https://artifactory.twitter.biz/libs-releases-local</url>
-    </snapshotRepository>
-</distributionManagement>
   <modules>
     <module>graphjet-core</module>
     <module>graphjet-adapters</module>
