@@ -103,21 +103,20 @@ public class TweetSocialProofTest {
 
     assertEquals(results.size(), 2);
 
+    Byte2ObjectMap<LongSet> expectedProofs;
+    SocialProofResult expected;
+
     // Test social proofs for tweet 2
-    SocialProofResult actual2 = results.get(tweet2);
-    Byte2ObjectMap<LongSet> expectedProofs2 = new Byte2ObjectArrayMap<>();
-    expectedProofs2.put(CLICK_SOCIAL_PROOF_TYPE, new LongArraySet(new long[] {user3}));
-    SocialProofResult expected2 =
-      new SocialProofResult(tweet2, expectedProofs2, 0.5, RecommendationType.TWEET);
-    assertEqualSocialProofResults(expected2, actual2);
+    expectedProofs = new Byte2ObjectArrayMap<>();
+    expectedProofs.put(CLICK_SOCIAL_PROOF_TYPE, new LongArraySet(new long[] {user3}));
+    expected = new SocialProofResult(tweet2, expectedProofs, 0.5, RecommendationType.TWEET);
+    assertEqualSocialProofResults(expected, results.get(tweet2));
 
     // Test social proofs for tweet 5
-    SocialProofResult actual5 = results.get(tweet5);
-    Byte2ObjectMap<LongSet> expectedProofs5 = new Byte2ObjectArrayMap<>();
-    expectedProofs5.put(CLICK_SOCIAL_PROOF_TYPE, new LongArraySet(new long[] {user2, user3}));
-    SocialProofResult expected5 =
-      new SocialProofResult(tweet5, expectedProofs5, 1.5, RecommendationType.TWEET);
-    assertEqualSocialProofResults(expected5, actual5);
+    expectedProofs = new Byte2ObjectArrayMap<>();
+    expectedProofs.put(CLICK_SOCIAL_PROOF_TYPE, new LongArraySet(new long[] {user2, user3}));
+    expected = new SocialProofResult(tweet5, expectedProofs, 1.5, RecommendationType.TWEET);
+    assertEqualSocialProofResults(expected, results.get(tweet5));
   }
 
   @Test
@@ -149,46 +148,39 @@ public class TweetSocialProofTest {
 
     assertEquals(5, results.size());
 
+    Byte2ObjectMap<LongSet> expectedProofs;
+    SocialProofResult expected;
+
     // Test social proofs for tweet 3
-    SocialProofResult actual3 = results.get(tweet3);
-    Byte2ObjectMap<LongSet> expectedProofs3 = new Byte2ObjectArrayMap<>();
-    expectedProofs3.put(FAVORITE_SOCIAL_PROOF_TYPE, new LongArraySet(new long[] {user1, user2}));
-    SocialProofResult expected3 =
-      new SocialProofResult(tweet3, expectedProofs3, 1.5, RecommendationType.TWEET);
-    assertEqualSocialProofResults(expected3, actual3);
+    expectedProofs = new Byte2ObjectArrayMap<>();
+    expectedProofs.put(FAVORITE_SOCIAL_PROOF_TYPE, new LongArraySet(new long[] {user1, user2}));
+    expected = new SocialProofResult(tweet3, expectedProofs, 1.5, RecommendationType.TWEET);
+    assertEqualSocialProofResults(expected, results.get(tweet3));
 
     // Test social proofs for tweet 4
-    SocialProofResult actual4 = results.get(tweet4);
-    Byte2ObjectMap<LongSet> expectedProofs4 = new Byte2ObjectArrayMap<>();
-    expectedProofs4.put(RETWEET_SOCIAL_PROOF_TYPE, new LongArraySet(new long[] {user1}));
-    SocialProofResult expected4 =
-      new SocialProofResult(tweet4, expectedProofs4, 1, RecommendationType.TWEET);
-    assertEqualSocialProofResults(expected4, actual4);
+    expectedProofs = new Byte2ObjectArrayMap<>();
+    expectedProofs.put(RETWEET_SOCIAL_PROOF_TYPE, new LongArraySet(new long[] {user1}));
+    expected = new SocialProofResult(tweet4, expectedProofs, 1, RecommendationType.TWEET);
+    assertEqualSocialProofResults(expected, results.get(tweet4));
 
     // Test social proofs for tweet 6
-    SocialProofResult actual6 = results.get(tweet6);
-    Byte2ObjectMap<LongSet> expectedProofs6 = new Byte2ObjectArrayMap<>();
-    expectedProofs6.put(FAVORITE_SOCIAL_PROOF_TYPE, new LongArraySet(new long[] {user2}));
-    SocialProofResult expected6 =
-      new SocialProofResult(tweet6, expectedProofs6, 0.5, RecommendationType.TWEET);
-    assertEqualSocialProofResults(expected6, actual6);
+    expectedProofs = new Byte2ObjectArrayMap<>();
+    expectedProofs.put(FAVORITE_SOCIAL_PROOF_TYPE, new LongArraySet(new long[] {user2}));
+    expected = new SocialProofResult(tweet6, expectedProofs, 0.5, RecommendationType.TWEET);
+    assertEqualSocialProofResults(expected, results.get(tweet6));
 
     // Test social proofs for tweet 7
-    SocialProofResult actual7 = results.get(tweet7);
-    Byte2ObjectMap<LongSet> expectedProofs7 = new Byte2ObjectArrayMap<>();
-    expectedProofs7.put(FAVORITE_SOCIAL_PROOF_TYPE, new LongArraySet(new long[] {user2}));
-    SocialProofResult expected7 =
-        new SocialProofResult(tweet7, expectedProofs7, 0.5, RecommendationType.TWEET);
-    assertEqualSocialProofResults(expected7, actual7);
+    expectedProofs = new Byte2ObjectArrayMap<>();
+    expectedProofs.put(FAVORITE_SOCIAL_PROOF_TYPE, new LongArraySet(new long[] {user2}));
+    expected = new SocialProofResult(tweet7, expectedProofs, 0.5, RecommendationType.TWEET);
+    assertEqualSocialProofResults(expected, results.get(tweet7));
 
     // Test social proofs for tweet 8
-    SocialProofResult actual8 = results.get(tweet8);
-    Byte2ObjectMap<LongSet> expectedProofs8 = new Byte2ObjectArrayMap<>();
-    expectedProofs8.put(FAVORITE_SOCIAL_PROOF_TYPE, new LongArraySet(new long[] {user1}));
-    expectedProofs8.put(RETWEET_SOCIAL_PROOF_TYPE, new LongArraySet(new long[] {user2}));
-    SocialProofResult expected8 =
-        new SocialProofResult(tweet8, expectedProofs8, 1.5, RecommendationType.TWEET);
-    assertEqualSocialProofResults(expected8, actual8);
+    expectedProofs = new Byte2ObjectArrayMap<>();
+    expectedProofs.put(FAVORITE_SOCIAL_PROOF_TYPE, new LongArraySet(new long[] {user1}));
+    expectedProofs.put(RETWEET_SOCIAL_PROOF_TYPE, new LongArraySet(new long[] {user2}));
+    expected = new SocialProofResult(tweet8, expectedProofs, 1.5, RecommendationType.TWEET);
+    assertEqualSocialProofResults(expected, results.get(tweet8));
 
   }
 
