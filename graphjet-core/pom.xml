@@ -10,7 +10,7 @@
 
   <groupId>com.twitter</groupId>
   <artifactId>graphjet-core</artifactId>
-  <version>1.1.14-SNAPSHOT</version>
+  <version>jimdebug-20181004-1</version>
   <packaging>jar</packaging>
   <name>GraphJet Core</name>
   <description>GraphJet is a real-time graph processing library: core graph library and recommendation algorithms</description>
