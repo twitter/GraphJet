@@ -1,5 +1,5 @@
 /**
- * Copyright 2016 Twitter. All rights reserved.
+ * Copyright 2018 Twitter. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -394,6 +394,9 @@ public final class BipartiteGraphTestHelper {
 
     nodeMetadataGraph.addEdge(1, 7, (byte) 0);
     nodeMetadataGraph.addEdge(2, 7, (byte) 1);
+
+    nodeMetadataGraph.addEdge(1, 8, (byte) 1);
+    nodeMetadataGraph.addEdge(2, 8, (byte) 2);
 
     return nodeMetadataGraph;
   }
