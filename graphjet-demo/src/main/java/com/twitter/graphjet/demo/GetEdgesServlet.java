@@ -60,7 +60,7 @@ public class GetEdgesServlet extends HttpServlet {
       return;
     }
 
-    StringBuffer output = new StringBuffer();
+    StringBuilder output = new StringBuilder();
     output.append("[");
     EdgeIterator iter = side.equals(Side.LEFT) ? bigraph.getLeftNodeEdges(id) :
         bigraph.getRightNodeEdges(id);
