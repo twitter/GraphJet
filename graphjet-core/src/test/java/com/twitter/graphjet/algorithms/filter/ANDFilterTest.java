@@ -17,7 +17,11 @@
 package com.twitter.graphjet.algorithms.filter;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
+import com.twitter.graphjet.algorithms.filters.RecentTweetFilter;
+import com.twitter.graphjet.stats.StatsReceiver;
 import org.junit.Test;
 
 import com.twitter.graphjet.algorithms.filters.ANDFilters;
@@ -27,6 +31,7 @@ import com.twitter.graphjet.hashing.SmallArrayBasedLongToDoubleMap;
 import com.twitter.graphjet.stats.NullStatsReceiver;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 public class ANDFilterTest {
   // Dummy filter that always return true
@@ -62,6 +67,9 @@ public class ANDFilterTest {
     ANDFilters andFilters = new ANDFilters(new ArrayList<>(), new NullStatsReceiver());
     SmallArrayBasedLongToDoubleMap[] socialProofs = {};
     assertEquals(false, andFilters.filterResult(0L, socialProofs));
+
+    socialProofs = new SmallArrayBasedLongToDoubleMap[9];
+    assertFalse(andFilters.filterResult(1633L, socialProofs));
   }
 
   @Test
@@ -83,5 +91,17 @@ public class ANDFilterTest {
     filters.add(trueFilter);
     andFilter = new ANDFilters(filters, new NullStatsReceiver());
     assertEquals(true, andFilter.filterResult(0, new SmallArrayBasedLongToDoubleMap[]{}));
+  }
+
+  @Test
+  public void testWithRecentTweetFilter() {
+    List<ResultFilter> filters = new LinkedList<ResultFilter>();
+    StatsReceiver statsReceiver = new NullStatsReceiver();
+    RecentTweetFilter recentTweetFilter = new RecentTweetFilter(2147483639L, statsReceiver);
+    filters.add(recentTweetFilter);
+    ANDFilters andFilters = new ANDFilters(filters, statsReceiver);
+    SmallArrayBasedLongToDoubleMap[] smallArrayBasedLongToDoubleMapArray = new SmallArrayBasedLongToDoubleMap[5];
+
+    assertFalse(andFilters.filterResult(1L, smallArrayBasedLongToDoubleMapArray));
   }
 }
