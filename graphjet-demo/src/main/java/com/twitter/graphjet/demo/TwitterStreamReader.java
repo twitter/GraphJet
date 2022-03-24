@@ -97,8 +97,8 @@ public class TwitterStreamReader {
 
     try {
       parser.parseArgument(argv);
-    } catch (CmdLineException e) {
-      System.err.println(e.getMessage());
+    } catch (CmdLineException exception) {
+      System.err.println(exception.getMessage());
       parser.printUsage(System.err);
       return;
     }

@@ -52,24 +52,24 @@ public class TopTweetsServlet extends HttpServlet {
   @Override
   protected void doGet(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
-    int k = 10;
-    String p = request.getParameter("k");
-    if (p != null) {
+    int maxNumResults = 10;
+    String requestMaxNumResults = request.getParameter("k");
+    if (requestMaxNumResults != null) {
       try {
-        k = Integer.parseInt(p);
+        maxNumResults = Integer.parseInt(requestMaxNumResults);
       } catch (NumberFormatException e) {
         // Just eat it, don't need to worry.
       }
     }
 
-    PriorityQueue<NodeValueEntry> queue = new PriorityQueue<>(k);
+    PriorityQueue<NodeValueEntry> queue = new PriorityQueue<>(maxNumResults);
     LongIterator iter = tweets.iterator();
     while (iter.hasNext()) {
       long tweet = iter.nextLong();
       int cnt = graphType.equals(GraphType.USER_TWEET) ? bigraph.getRightNodeDegree(tweet) : bigraph.getLeftNodeDegree(tweet);
       if (cnt == 1) continue;
 
-      if (queue.size() < k) {
+      if (queue.size() < maxNumResults) {
         queue.add(new NodeValueEntry(tweet, cnt));
       } else {
         NodeValueEntry peek = queue.peek();

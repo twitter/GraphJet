@@ -91,10 +91,10 @@ public class PageRankCassovaryDemo {
 
     scala.collection.Iterator<Node> iter = cgraph.iterator();
     while (iter.hasNext()) {
-      Node n = iter.next();
-      nodes.add(n.id());
-      if (n.id() > maxNodeId) {
-        maxNodeId = n.id();
+      Node node = iter.next();
+      nodes.add(node.id());
+      if (node.id() > maxNodeId) {
+        maxNodeId = node.id();
       }
     }
 
@@ -115,17 +115,17 @@ public class PageRankCassovaryDemo {
       long endTime;
       if (args.threads == 1) {
         System.out.print("single-threaded: ");
-        PageRank pr = new PageRank(graph, nodes, maxNodeId, 0.85, args.iterations, 1e-15);
-        pr.run();
-        prVector = pr.getPageRankVector();
+        PageRank pageRank = new PageRank(graph, nodes, maxNodeId, 0.85, args.iterations, 1e-15);
+        pageRank.run();
+        prVector = pageRank.getPageRankVector();
         endTime = System.currentTimeMillis();
       } else {
         System.out.print(String.format("multi-threaded (%d threads): ", args.threads));
-        MultiThreadedPageRank pr = new MultiThreadedPageRank(graph,
+        MultiThreadedPageRank pageRank = new MultiThreadedPageRank(graph,
             new LongArrayList(nodes), maxNodeId, 0.85, args.iterations, 1e-15, args.threads);
-        pr.run();
+        pageRank.run();
         endTime = System.currentTimeMillis();
-        AtomicDoubleArray prValues = pr.getPageRankVector();
+        AtomicDoubleArray prValues = pageRank.getPageRankVector();
         // We need to convert the AtomicDoubleArray into an ordinary double array.
         // No need to do this more than once.
         if (prVector == null) {
