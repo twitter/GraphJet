@@ -81,11 +81,7 @@ public class ArrayBasedLongToInternalIntBiMap implements LongToInternalIntBiMap 
   private final int defaultGetReturnValue;
   private final long defaultGetKeyReturnValue;
 
-  // stats
-  private final StatsReceiver scopedStatsReceiver;
-  private final Counter numStoredKeysCounter;
-  private final Counter numFixedLengthMapsCounter;
-  private final Counter totalAllocatedArrayBytesCounter;
+  private final ArrayBasedStatsModel statsModel;
 
   // only changes by being replaced with a new instance
   private ReaderAccessibleInfo readerAccessibleInfo;
@@ -119,10 +115,14 @@ public class ArrayBasedLongToInternalIntBiMap implements LongToInternalIntBiMap 
     this.loadFactor = loadFactor;
     this.defaultGetReturnValue = defaultGetReturnValue;
     this.defaultGetKeyReturnValue = defaultGetKeyReturnValue;
-    this.scopedStatsReceiver = statsReceiver.scope(this.getClass().getSimpleName());
-    numStoredKeysCounter = scopedStatsReceiver.counter("numStoredKeys");
-    numFixedLengthMapsCounter = scopedStatsReceiver.counter("numFixedLengthMaps");
-    totalAllocatedArrayBytesCounter = scopedStatsReceiver.counter("allocatedArrayBytes");
+
+    StatsReceiver scopedStatsReceiver = statsReceiver.scope(this.getClass().getSimpleName());
+
+    this.statsModel = new ArrayBasedStatsModel(scopedStatsReceiver,
+        scopedStatsReceiver.counter("numStoredKeys"),
+        scopedStatsReceiver.counter("numFixedLengthMaps"),
+        scopedStatsReceiver.counter("allocatedArrayBytes"));
+
     initialize();
   }
 
@@ -134,7 +134,7 @@ public class ArrayBasedLongToInternalIntBiMap implements LongToInternalIntBiMap 
         loadFactor,
         defaultGetReturnValue,
         defaultGetKeyReturnValue,
-        scopedStatsReceiver.scope("0"));
+        statsModel.getScopedStatsReceiver().scope("0"));
     int[] cumulativeMapLengths = new int[1];
     cumulativeMapLengths[0] = maps[0].getBackingArrayLength();
     int[] mapIndexOffsets = new int[1];
@@ -144,8 +144,8 @@ public class ArrayBasedLongToInternalIntBiMap implements LongToInternalIntBiMap 
     currentActiveMapIndexOffset = 0;
     this.readerAccessibleInfo =
         new ReaderAccessibleInfo(maps, mapIndexOffsets, cumulativeMapLengths);
-    numFixedLengthMapsCounter.incr();
-    totalAllocatedArrayBytesCounter.incr(8 * currentActiveMap.getBackingArrayLength());
+    statsModel.getNumFixedLengthMapsCounter().incr();
+    statsModel.getTotalAllocatedArrayBytesCounter().incr(8 * currentActiveMap.getBackingArrayLength());
   }
 
   @Override
@@ -174,7 +174,7 @@ public class ArrayBasedLongToInternalIntBiMap implements LongToInternalIntBiMap 
         loadFactor,
         defaultGetReturnValue,
         defaultGetKeyReturnValue,
-        scopedStatsReceiver.scope(Integer.toString(numMaps)));
+        statsModel.getScopedStatsReceiver().scope(Integer.toString(numMaps)));
     // now the lengths
     int[] newCumulativeMapLengths = new int[numMaps + 1];
     System.arraycopy(
@@ -194,8 +194,8 @@ public class ArrayBasedLongToInternalIntBiMap implements LongToInternalIntBiMap 
         newMaps,
         newMapIndexOffsets,
         newCumulativeMapLengths);
-    numFixedLengthMapsCounter.incr();
-    totalAllocatedArrayBytesCounter.incr(8 * currentActiveMap.getBackingArrayLength());
+    statsModel.getNumFixedLengthMapsCounter().incr();
+    statsModel.getTotalAllocatedArrayBytesCounter().incr(8 * currentActiveMap.getBackingArrayLength());
   }
 
   /**
@@ -220,7 +220,7 @@ public class ArrayBasedLongToInternalIntBiMap implements LongToInternalIntBiMap 
     map = currentActiveMap;
     bucket = map.put(key) + currentActiveMapIndexOffset;
     // sometimes the key already exists so we don't increment this counter in that case
-    numStoredKeysCounter.incr(currentActiveMap.getNumStoredKeys() - numStoredKeysBefore);
+    statsModel.getNumStoredKeysCounter().incr(currentActiveMap.getNumStoredKeys() - numStoredKeysBefore);
     // resize if needed
     if (map.isAtCapacity()) {
       addNewMap();
