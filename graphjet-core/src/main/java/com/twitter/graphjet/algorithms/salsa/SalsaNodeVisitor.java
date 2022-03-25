@@ -57,6 +57,19 @@ public class SalsaNodeVisitor {
       double weight
     );
 
+    public void resetWithRequest(SalsaRequest incomingSalsaRequest) {
+      this.salsaRequest = incomingSalsaRequest;
+    }
+  }
+
+
+  public abstract static class WithRightNodeVisitor extends NodeVisitor {
+
+
+    public WithRightNodeVisitor(Long2ObjectMap<NodeInfo> visitedRightNodes) {
+      super(visitedRightNodes);
+    }
+
     protected int simpleRightNodeVisitor(long rightNode) {
       int numVisits = 1;
       if (visitedRightNodes.containsKey(rightNode)) {
@@ -65,25 +78,25 @@ public class SalsaNodeVisitor {
       } else {
         visitedRightNodes.put(rightNode,
             new NodeInfo(
-              rightNode,
-              1.0,
-              salsaRequest.getMaxSocialProofTypeSize()
+                rightNode,
+                1.0,
+                salsaRequest.getMaxSocialProofTypeSize()
             )
         );
       }
       return numVisits;
     }
 
-    public void resetWithRequest(SalsaRequest incomingSalsaRequest) {
-      this.salsaRequest = incomingSalsaRequest;
-    }
+
+    public abstract int visitRightNode(long leftNode, long rightNode, byte edgeType,
+                              long metadata, double weight);
   }
 
   /**
    * A simple visitor that just updates the visit counters and doesn't incorporate the starting
    * point/weight info.
    */
-  public static class SimpleNodeVisitor extends NodeVisitor {
+  public static class SimpleNodeVisitor extends WithRightNodeVisitor {
     public SimpleNodeVisitor(Long2ObjectMap<NodeInfo> visitedRightNodes) {
       super(visitedRightNodes);
     }
@@ -136,7 +149,7 @@ public class SalsaNodeVisitor {
   /**
    * A visitor that both updates the visit counters and adds the starting point as social proof.
    */
-  public static class NodeVisitorWithSocialProof extends NodeVisitor {
+  public static class NodeVisitorWithSocialProof extends WithRightNodeVisitor {
 
     public NodeVisitorWithSocialProof(Long2ObjectMap<NodeInfo> visitedRightNodes) {
       super(visitedRightNodes);
