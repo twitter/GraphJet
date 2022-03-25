@@ -25,6 +25,8 @@ import com.twitter.graphjet.stats.StatsReceiver;
 
 import it.unimi.dsi.fastutil.ints.IntIterator;
 
+import static com.twitter.graphjet.hashing.EdgeTypeModel.*;
+
 /**
  * This class provides a map from int to int[]. All the operations in this class are guaranteed to
  * be atomic, are lock-safe on modern CPUs, and are thread-safe under the single writer and multiple
@@ -71,13 +73,6 @@ public class ArrayBasedIntToIntArrayMap implements IntToIntArrayMap {
   }
 
   private static final long DEFAULT_RETURN_VALUE = -1L;
-  // TODO: Jerry: consolidate the edge types into one file.
-  private static final int INTEGER_TOP_TWO_BYTE_SHIFT = 1 << 16;
-  private static final int INTEGER_TOP_TWO_BYTE_OVERFLOW = 0x7fff;
-  private static final int FAVORITE_ACTION = 1;
-  private static final int RETWEET_ACTION = 2;
-  private static final int REPLY_ACTION = 3;
-  private static final int QUOTE_ACTION = 7;
 
   // This is is the only reader-accessible data
   protected ReaderAccessibleInfo readerAccessibleInfo;
@@ -88,6 +83,8 @@ public class ArrayBasedIntToIntArrayMap implements IntToIntArrayMap {
 
   private final Counter numEdgesCounter;
   private final Counter numNodesCounter;
+
+  private EdgeTypeModel edgeTypeModel;
 
   /**
    * Returns a new instance that is backed by BigIntArray and IntToIntPairHashMap internally.
@@ -108,6 +105,7 @@ public class ArrayBasedIntToIntArrayMap implements IntToIntArrayMap {
 
     this.numEdgesCounter = scopedStatsReceiver.counter("numEdges");
     this.numNodesCounter = scopedStatsReceiver.counter("numNodes");
+    this.edgeTypeModel = new EdgeTypeModel();
 
     IntToIntPairHashMap intToIntPairHashMap =
       new IntToIntPairConcurrentHashMap(
@@ -200,10 +198,10 @@ public class ArrayBasedIntToIntArrayMap implements IntToIntArrayMap {
       || edgeType == QUOTE_ACTION) {
       // Get the starting position of the key.
       int position = readerAccessibleInfo.nodeInfo.getFirstValue(key);
-      int featurePosition = getFeaturePosition(position, edgeType);
-      int incrementValue = getIncrementValue(edgeType);
+      int featurePosition = edgeTypeModel.getFeaturePosition(position, edgeType);
+      int incrementValue = edgeTypeModel.getIncrementValue(edgeType);
       int currentEntry = readerAccessibleInfo.edges.getEntry(featurePosition);
-      int currentFeatureValue = getFeatureValue(currentEntry, edgeType);
+      int currentFeatureValue = edgeTypeModel.getFeatureValue(currentEntry, edgeType);
 
       // Prevent overflow. Skip counting when the feature value reaches overflow value.
       if (currentFeatureValue == INTEGER_TOP_TWO_BYTE_OVERFLOW) {
@@ -215,33 +213,6 @@ public class ArrayBasedIntToIntArrayMap implements IntToIntArrayMap {
     }
 
     return false;
-  }
-
-  // This method can only be accessed through incrementFeatureValue method.
-  private int getFeaturePosition(int position, byte edgeType) {
-    if (edgeType == FAVORITE_ACTION || edgeType == RETWEET_ACTION) {  // FAVORITE OR RETWEET
-      return position;
-    } else { // REPLY OR QUOTE
-      return position + 1;
-    }
-  }
-
-  // This method can only be accessed through incrementFeatureValue method.
-  private int getIncrementValue(byte edgeType) {
-    if (edgeType == FAVORITE_ACTION || edgeType == REPLY_ACTION) { // FAVORITE OR REPLY
-      return 1;
-    } else { // RETWEET OR QUOTE
-      return INTEGER_TOP_TWO_BYTE_SHIFT;
-    }
-  }
-
-  // This method can only be accessed through incrementFeatureValue method.
-  private int getFeatureValue(int currentEntry, byte edgeType) {
-    if (edgeType == FAVORITE_ACTION || edgeType == REPLY_ACTION) { // FAVORITE OR REPLY
-      return currentEntry & 0xffff;
-    } else { // RETWEET OR QUOTE
-      return (currentEntry >> 16) & 0xffff;
-    }
   }
 
   /**
