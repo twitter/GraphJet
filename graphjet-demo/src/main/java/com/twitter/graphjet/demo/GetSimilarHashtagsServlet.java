@@ -39,7 +39,7 @@ public class GetSimilarHashtagsServlet extends HttpServlet {
         String numResults = request.getParameter("k");
 
         long id = (long)hashtag.hashCode();
-        int k = 10;
+        int maxNumResults = 10;
         int maxNumNeighbors = 100;
         int minNeighborDegree = 1;
         int maxNumSamplesPerNeighbor = 100;
@@ -49,7 +49,7 @@ public class GetSimilarHashtagsServlet extends HttpServlet {
         double maxUpperMultiplicativeDeviation = 5.0;
 
         try {
-            k = Integer.parseInt(numResults);
+            maxNumResults = Integer.parseInt(numResults);
         } catch (NumberFormatException e) {
             // Just eat it, don't need to worry.
         }
@@ -62,7 +62,7 @@ public class GetSimilarHashtagsServlet extends HttpServlet {
         System.out.println("Running similarity for node " + id);
         IntersectionSimilarityRequest intersectionSimilarityRequest = new IntersectionSimilarityRequest(
                 id,
-                k,
+                maxNumResults,
                 new LongOpenHashSet(),
                 maxNumNeighbors,
                 minNeighborDegree,

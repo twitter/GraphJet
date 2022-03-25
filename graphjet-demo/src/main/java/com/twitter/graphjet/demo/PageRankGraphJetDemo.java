@@ -116,9 +116,9 @@ public class PageRankGraphJetDemo {
         try {
           InputStream inputStream = Files.newInputStream(filePath);
           GZIPInputStream gzip = new GZIPInputStream(inputStream);
-          BufferedReader br = new BufferedReader(new InputStreamReader(gzip));
+          BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(gzip));
           String line;
-          while((line = br.readLine()) != null) {
+          while((line = bufferedReader.readLine()) != null) {
             if (line.startsWith("#")) continue;
 
             String[] tokens = line.split("\\s+");
@@ -185,17 +185,17 @@ public class PageRankGraphJetDemo {
       long endTime;
       if (args.threads == 1) {
         System.out.print("single-threaded: ");
-        PageRank pr = new PageRank(graph, nodes, maxNodeId.get(), 0.85, args.iterations, 1e-15);
-        pr.run();
-        prVector = pr.getPageRankVector();
+        PageRank pageRank = new PageRank(graph, nodes, maxNodeId.get(), 0.85, args.iterations, 1e-15);
+        pageRank.run();
+        prVector = pageRank.getPageRankVector();
         endTime = System.currentTimeMillis();
       } else {
         System.out.print(String.format("multi-threaded (%d threads): ", args.threads));
-        MultiThreadedPageRank pr = new MultiThreadedPageRank(graph,
+        MultiThreadedPageRank pageRank = new MultiThreadedPageRank(graph,
             new LongArrayList(nodes), maxNodeId.get(), 0.85, args.iterations, 1e-15, args.threads);
-        pr.run();
+        pageRank.run();
         endTime = System.currentTimeMillis();
-        com.google.common.util.concurrent.AtomicDoubleArray prValues = pr.getPageRankVector();
+        com.google.common.util.concurrent.AtomicDoubleArray prValues = pageRank.getPageRankVector();
         // We need to convert the AtomicDoubleArray into an ordinary double array.
         // No need to do this more than once.
         if (prVector == null) {

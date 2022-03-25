@@ -26,17 +26,17 @@ import java.util.PriorityQueue;
  * Heap for keeping track of top <i>k</i> nodes based on scores.
  */
 public class TopNodes {
-  private final int k;
+  private final int numberOfNodes;
   private PriorityQueue<NodeValueEntry> queue;
 
   /**
    * Creates a heap for keeping track of top <i>k</i> nodes based on scores.
    *
-   * @param k number of nodes to keep track of
+   * @param numberOfNodes number of nodes to keep track of
    */
-  public TopNodes(int k) {
-    this.k = k;
-    this.queue = new PriorityQueue<>(this.k);
+  public TopNodes(int numberOfNodes) {
+    this.numberOfNodes = numberOfNodes;
+    this.queue = new PriorityQueue<>(this.numberOfNodes);
   }
 
   /**
@@ -48,7 +48,7 @@ public class TopNodes {
    * @param score   score
    */
   public void offer(long nodeId, double score) {
-    if (queue.size() < k) {
+    if (queue.size() < numberOfNodes) {
       queue.add(new NodeValueEntry(nodeId, score));
     } else {
       NodeValueEntry peek = queue.peek();
@@ -65,10 +65,10 @@ public class TopNodes {
    * @return the top <i>k</i> nodes encountered by this heap.
    */
   public List<NodeValueEntry> getNodes() {
-    NodeValueEntry e;
+    NodeValueEntry entry;
     final List<NodeValueEntry> entries = new ArrayList<>(queue.size());
-    while ((e = queue.poll()) != null) {
-      entries.add(e);
+    while ((entry = queue.poll()) != null) {
+      entries.add(entry);
     }
 
     return Lists.reverse(entries);
