@@ -29,7 +29,7 @@ import it.unimi.dsi.fastutil.longs.LongSet;
  * {@link SalsaRequestBuilder}.
  */
 public class SalsaRequest extends RecommendationRequest {
-  private final Long2DoubleMap leftSeedNodesWithWeight;
+
   private final int numRandomWalks;
   private final int maxRandomWalkLength;
   private final double resetProbability;
@@ -76,8 +76,7 @@ public class SalsaRequest extends RecommendationRequest {
       double queryNodeWeightFraction,
       boolean removeCustomizedBitsNodes,
       ResultFilterChain resultFilterChain) {
-    super(queryNode, toBeFiltered, socialProofTypes);
-    this.leftSeedNodesWithWeight = leftSeedNodesWithWeight;
+    super(queryNode, toBeFiltered, socialProofTypes, leftSeedNodesWithWeight);
     this.numRandomWalks = numRandomWalks;
     this.maxRandomWalkLength = maxRandomWalkLength;
     this.resetProbability = resetProbability;
@@ -87,10 +86,6 @@ public class SalsaRequest extends RecommendationRequest {
     this.queryNodeWeightFraction = queryNodeWeightFraction;
     this.removeCustomizedBitsNodes = removeCustomizedBitsNodes;
     this.resultFilterChain = resultFilterChain;
-  }
-
-  public  Long2DoubleMap getLeftSeedNodesWithWeight() {
-    return leftSeedNodesWithWeight;
   }
 
   public int getNumRandomWalks() {

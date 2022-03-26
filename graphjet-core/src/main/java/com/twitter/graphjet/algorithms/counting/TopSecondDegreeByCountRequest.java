@@ -28,7 +28,6 @@ import it.unimi.dsi.fastutil.longs.LongSet;
  */
 public abstract class TopSecondDegreeByCountRequest extends RecommendationRequest {
 
-  private final Long2DoubleMap leftSeedNodesWithWeight;
   private final int maxSocialProofTypeSize;
   private final ResultFilterChain resultFilterChain;
   private final long maxRightNodeAgeInMillis;
@@ -54,16 +53,11 @@ public abstract class TopSecondDegreeByCountRequest extends RecommendationReques
     long maxRightNodeAgeInMillis,
     long maxEdgeAgeInMillis,
     ResultFilterChain resultFilterChain) {
-    super(queryNode, toBeFiltered, socialProofTypes);
-    this.leftSeedNodesWithWeight = leftSeedNodesWithWeight;
+    super(queryNode, toBeFiltered, socialProofTypes, leftSeedNodesWithWeight);
     this.maxSocialProofTypeSize = maxSocialProofTypeSize;
     this.maxRightNodeAgeInMillis = maxRightNodeAgeInMillis;
     this.maxEdgeAgeInMillis = maxEdgeAgeInMillis;
     this.resultFilterChain = resultFilterChain;
-  }
-
-  public Long2DoubleMap getLeftSeedNodesWithWeight() {
-    return leftSeedNodesWithWeight;
   }
 
   public int getMaxSocialProofTypeSize() {

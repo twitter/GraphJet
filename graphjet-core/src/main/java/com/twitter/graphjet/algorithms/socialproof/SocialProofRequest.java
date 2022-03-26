@@ -26,7 +26,6 @@ import it.unimi.dsi.fastutil.longs.LongSet;
 public class SocialProofRequest extends RecommendationRequest {
   private static final LongSet EMPTY_SET = new LongArraySet();
 
-  private final Long2DoubleMap leftSeedNodesWithWeight;
   private final LongSet rightNodeIds;
 
   /**
@@ -41,13 +40,8 @@ public class SocialProofRequest extends RecommendationRequest {
     Long2DoubleMap weightedSeedNodes,
     byte[] socialProofTypes
   ) {
-    super(0, EMPTY_SET, socialProofTypes);
-    this.leftSeedNodesWithWeight = weightedSeedNodes;
+    super(0, EMPTY_SET, socialProofTypes, weightedSeedNodes);
     this.rightNodeIds = rightNodeIds;
-  }
-
-  public Long2DoubleMap getLeftSeedNodesWithWeight() {
-    return leftSeedNodesWithWeight;
   }
 
   public LongSet getRightNodeIds() {

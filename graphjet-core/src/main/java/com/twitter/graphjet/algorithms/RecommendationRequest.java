@@ -17,6 +17,7 @@
 
 package com.twitter.graphjet.algorithms;
 
+import it.unimi.dsi.fastutil.longs.Long2DoubleMap;
 import it.unimi.dsi.fastutil.longs.LongSet;
 
 /**
@@ -43,14 +44,18 @@ public abstract class RecommendationRequest {
   public static final int MAX_EDGES_PER_NODE = 500;
   public static final int MAX_RECOMMENDATION_RESULTS = 2500;
 
+  private final Long2DoubleMap leftSeedNodesWithWeight;
+
   protected RecommendationRequest(
     long queryNode,
     LongSet toBeFiltered,
-    byte[] socialProofTypes
+    byte[] socialProofTypes,
+    Long2DoubleMap leftSeedNodesWithWeight
   ) {
     this.queryNode = queryNode;
     this.toBeFiltered = toBeFiltered;
     this.socialProofTypes = socialProofTypes;
+    this.leftSeedNodesWithWeight = leftSeedNodesWithWeight;
   }
 
   public long getQueryNode() {
@@ -69,5 +74,9 @@ public abstract class RecommendationRequest {
    */
   public byte[] getSocialProofTypes() {
     return socialProofTypes;
+  }
+
+  public Long2DoubleMap getLeftSeedNodesWithWeight() {
+    return leftSeedNodesWithWeight;
   }
 }
