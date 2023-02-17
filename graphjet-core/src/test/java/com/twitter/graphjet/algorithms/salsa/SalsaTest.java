@@ -69,21 +69,21 @@ public class SalsaTest {
     long randomSeed = 918324701982347L;
     int expectedNodesToHit = numRandomWalks * numIterations * 10;
     ResultFilterChain resultFilterChain = new ResultFilterChain(Lists.<ResultFilter>newArrayList(
-        new RequestedSetFilter(new NullStatsReceiver())
+            new RequestedSetFilter(new NullStatsReceiver())
     ));
 
     SalsaRequest salsaRequest =
-        new SalsaRequestBuilder(queryNode)
-            .withLeftSeedNodes(null)
-            .withToBeFiltered(toBeFiltered)
-            .withMaxNumResults(numResults)
-            .withResetProbability(resetProbability)
-            .withMaxRandomWalkLength(numIterations)
-            .withNumRandomWalks(numRandomWalks)
-            .withMaxSocialProofSize(maxSocialProofSize)
-            .withMaxSocialProofTypeSize(maxSocialProofTypeSize)
-            .withResultFilterChain(resultFilterChain)
-            .build();
+            new SalsaRequestBuilder(queryNode)
+                    .withLeftSeedNodes(null)
+                    .withToBeFiltered(toBeFiltered)
+                    .withMaxNumResults(numResults)
+                    .withResetProbability(resetProbability)
+                    .withMaxRandomWalkLength(numIterations)
+                    .withNumRandomWalks(numRandomWalks)
+                    .withMaxSocialProofSize(maxSocialProofSize)
+                    .withMaxSocialProofTypeSize(maxSocialProofTypeSize)
+                    .withResultFilterChain(resultFilterChain)
+                    .build();
 
     LongList metadata1 = new LongArrayList(new long[]{0});
     LongList metadata2 = new LongArrayList(new long[]{0, 0});
@@ -102,13 +102,13 @@ public class SalsaTest {
 
     // Should be in sorted order of weight
     Salsa salsa = new Salsa(
-        bipartiteGraph,
-        expectedNodesToHit,
-        new NullStatsReceiver());
+            bipartiteGraph,
+            expectedNodesToHit,
+            new NullStatsReceiver());
     Random random = new Random(randomSeed);
     SalsaResponse salsaResponse = salsa.computeRecommendations(salsaRequest, random);
     List<RecommendationInfo> salsaResults =
-        Lists.newArrayList(salsaResponse.getRankedRecommendations());
+            Lists.newArrayList(salsaResponse.getRankedRecommendations());
 
     assertEquals(expectedSalsaStats, salsaResponse.getSalsaStats());
     assertEquals(expectedTopResults, salsaResults);
@@ -123,22 +123,22 @@ public class SalsaTest {
 
     // try running the subgraph version
     SubgraphSalsa subgraphSalsa = new SubgraphSalsa(
-        bipartiteGraph,
-        expectedNodesToHit,
-        1,
-        new NullStatsReceiver());
+            bipartiteGraph,
+            expectedNodesToHit,
+            1,
+            new NullStatsReceiver());
 
     salsaRequest =
-        new SalsaRequestBuilder(queryNode)
-            .withLeftSeedNodes(new Long2DoubleOpenHashMap(new long[]{2}, new double[]{1.0}))
-            .withToBeFiltered(toBeFiltered)
-            .withMaxNumResults(numResults)
-            .withResetProbability(resetProbability)
-            .withMaxRandomWalkLength(numIterations)
-            .withNumRandomWalks(numRandomWalks)
-            .withMaxSocialProofSize(maxSocialProofSize)
-            .withResultFilterChain(resultFilterChain)
-            .build();
+            new SalsaRequestBuilder(queryNode)
+                    .withLeftSeedNodes(new Long2DoubleOpenHashMap(new long[]{2}, new double[]{1.0}))
+                    .withToBeFiltered(toBeFiltered)
+                    .withMaxNumResults(numResults)
+                    .withResetProbability(resetProbability)
+                    .withMaxRandomWalkLength(numIterations)
+                    .withNumRandomWalks(numRandomWalks)
+                    .withMaxSocialProofSize(maxSocialProofSize)
+                    .withResultFilterChain(resultFilterChain)
+                    .build();
 
     ArrayList<HashMap<Byte, ConnectingUsersWithMetadata>> subSocialProof = new ArrayList<>();
     for (int i = 0; i < 3; i++) {
@@ -148,32 +148,32 @@ public class SalsaTest {
 
     final List<RecommendationInfo> expectedTopResultsSubgraph = new ArrayList<RecommendationInfo>();
     expectedTopResultsSubgraph.add(
-      new TweetRecommendationInfo(5, 0.3561333333333357, subSocialProof.get(0)));
+            new TweetRecommendationInfo(5, 0.3561333333333357, subSocialProof.get(0)));
     expectedTopResultsSubgraph.add(
-      new TweetRecommendationInfo(2, 0.29866666666666786, subSocialProof.get(1)));
+            new TweetRecommendationInfo(2, 0.29866666666666786, subSocialProof.get(1)));
     expectedTopResultsSubgraph.add(
-      new TweetRecommendationInfo(4, 0.2906666666666677, subSocialProof.get(2)));
+            new TweetRecommendationInfo(4, 0.2906666666666677, subSocialProof.get(2)));
 
     final SalsaStats expectedSalsaStatsSubgraph = new SalsaStats(2, 4, 6, 5000, 1, 810, 1);
 
     random.setSeed(randomSeed);
     salsaResponse = subgraphSalsa.computeRecommendations(salsaRequest, random);
     salsaResults =
-        Lists.newArrayList(salsaResponse.getRankedRecommendations());
+            Lists.newArrayList(salsaResponse.getRankedRecommendations());
 
     assertEquals(expectedSalsaStatsSubgraph, salsaResponse.getSalsaStats());
     assertEquals(expectedTopResultsSubgraph, salsaResults);
 
     SubgraphSalsa subgraphSalsaLeftIndexedGraph = new SubgraphSalsa(
-        BipartiteGraphTestHelper.buildSmallTestLeftIndexedBipartiteGraph(),
-        expectedNodesToHit,
-        1,
-        new NullStatsReceiver());
+            BipartiteGraphTestHelper.buildSmallTestLeftIndexedBipartiteGraph(),
+            expectedNodesToHit,
+            1,
+            new NullStatsReceiver());
 
     random.setSeed(randomSeed);
     salsaResponse = subgraphSalsaLeftIndexedGraph.computeRecommendations(salsaRequest, random);
     salsaResults =
-        Lists.newArrayList(salsaResponse.getRankedRecommendations());
+            Lists.newArrayList(salsaResponse.getRankedRecommendations());
 
     assertEquals(expectedSalsaStatsSubgraph, salsaResponse.getSalsaStats());
     assertEquals(expectedTopResultsSubgraph, salsaResults);
@@ -189,14 +189,14 @@ public class SalsaTest {
     double rightPowerLawExponent = 2.0;
 
     SmallLeftRegularBipartiteGraph smallLeftRegularBipartiteGraph =
-        new SmallLeftRegularBipartiteGraph(
-            maxNumLeftNodes,
-            leftDegree,
-            maxNumRightNodes,
-            maxNumLeftNodes,
-            rightPowerLawExponent,
-            Integer.MAX_VALUE,
-            new NullStatsReceiver());
+            new SmallLeftRegularBipartiteGraph(
+                    maxNumLeftNodes,
+                    leftDegree,
+                    maxNumRightNodes,
+                    maxNumLeftNodes,
+                    rightPowerLawExponent,
+                    Integer.MAX_VALUE,
+                    new NullStatsReceiver());
 
     double queryNodeWeightFraction = 0.9;
     int maxNumResults = 3;
@@ -207,64 +207,64 @@ public class SalsaTest {
     int maxSocialProofTypeSize = 4;
     int expectedNodesToHit = numRandomWalks * maxRandomWalkLength * 10;
     ResultFilterChain resultFilterChain = new ResultFilterChain(Lists.newArrayList(
-        new RequestedSetFilter(new NullStatsReceiver()),
-        new DirectInteractionsFilter(smallLeftRegularBipartiteGraph, new NullStatsReceiver())
+            new RequestedSetFilter(new NullStatsReceiver()),
+            new DirectInteractionsFilter(smallLeftRegularBipartiteGraph, new NullStatsReceiver())
     ));
 
     int maxUserId = 1000;
 
-    final SalsaStats expectedSalsaStats = new SalsaStats(1, 64, 998, 21050, 1, 227, 64);
+    final SalsaStats expectedSalsaStats = new SalsaStats(1, 62, 999, 21124, 1, 231, 62);
 
-    LongList metadata7 = new LongArrayList(new long[]{0, 0, 0, 0, 0, 0, 0});
-    LongList metadata10 = new LongArrayList(new long[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0});
+    LongList metadata6 = new LongArrayList(new long[]{0, 0, 0, 0, 0, 0});
+    LongList metadata9 = new LongArrayList(new long[]{0, 0, 0, 0, 0, 0, 0, 0, 0});
+    LongList metadata13 = new LongArrayList(new long[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0});
     ArrayList<HashMap<Byte, ConnectingUsersWithMetadata>> socialProof = new ArrayList<>();
     for (int i = 0; i < 3; i++) {
       socialProof.add(new HashMap<>());
     }
     socialProof.get(0).put(
-      (byte) 0, new ConnectingUsersWithMetadata(
-        new LongArrayList(new long[]{718, 889, 109, 164, 207, 767, 302, 888, 453, 738}),
-        metadata10
-      )
+            (byte) 0, new ConnectingUsersWithMetadata(
+                    new LongArrayList(new long[]{917, 343, 386, 769, 125, 306, 420, 801, 858, 615, 105, 295, 358}),
+                    metadata13
+            )
     );
     socialProof.get(1).put(
-      (byte) 0, new ConnectingUsersWithMetadata(
-        new LongArrayList(new long[]{47, 96, 499, 306, 396, 805, 351, 875, 308, 186}),
-        metadata10
-      )
+            (byte) 0, new ConnectingUsersWithMetadata(
+                    new LongArrayList(new long[]{783, 607, 879, 718, 2, 586, 959, 893, 62}),
+                    metadata9
+            )
     );
     socialProof.get(2).put(
-      (byte) 0, new ConnectingUsersWithMetadata(
-        new LongArrayList(new long[]{623, 880, 550, 363, 886, 156, 130}),
-        metadata7
-      )
+            (byte) 0, new ConnectingUsersWithMetadata(
+                    new LongArrayList(new long[]{440, 971, 623, 767, 875, 157}),
+                    metadata6
+            )
     );
 
     final List<RecommendationInfo> expectedTopResults = new ArrayList<RecommendationInfo>();
-    expectedTopResults.add(new TweetRecommendationInfo(735, 0.0010926365795724466,
-      socialProof.get(0)));
-    expectedTopResults.add(new TweetRecommendationInfo(119, 0.0010451306413301663,
-      socialProof.get(1)));
-    expectedTopResults.add(new TweetRecommendationInfo(70, 0.0010451306413301663,
-      socialProof.get(2)));
-
-    Set<Long> sourceIdList = Sets.newHashSetWithExpectedSize(maxNumLeftNodes);
-    Set<Long> destinationIds = Sets.newHashSetWithExpectedSize(leftDegree);
+    expectedTopResults.add(new TweetRecommendationInfo(827, 0.0013255065328536262,
+            socialProof.get(0)));
+    expectedTopResults.add(new TweetRecommendationInfo(682, 0.0011834879757621662,
+            socialProof.get(1)));
+    expectedTopResults.add(new TweetRecommendationInfo(691, 0.0011361484567316796,
+            socialProof.get(2)));
+    Set<Long> sourceIdList = Sets.newLinkedHashSetWithExpectedSize(maxNumLeftNodes);
+    Set<Long> destinationIds = Sets.newLinkedHashSetWithExpectedSize(leftDegree);
 
     smallLeftRegularBipartiteGraph.reset();
     long userId = random.nextInt(maxUserId);
 
     SalsaRequest salsaRequest =
-        new SalsaRequestBuilder(userId)
-            .withQueryNodeWeightFraction(queryNodeWeightFraction)
-            .withMaxNumResults(maxNumResults)
-            .withResetProbability(resetProbability)
-            .withMaxRandomWalkLength(maxRandomWalkLength)
-            .withNumRandomWalks(numRandomWalks)
-            .withMaxSocialProofSize(maxSocialProofSize)
-            .withMaxSocialProofTypeSize(maxSocialProofTypeSize)
-            .withResultFilterChain(resultFilterChain)
-            .build();
+            new SalsaRequestBuilder(userId)
+                    .withQueryNodeWeightFraction(queryNodeWeightFraction)
+                    .withMaxNumResults(maxNumResults)
+                    .withResetProbability(resetProbability)
+                    .withMaxRandomWalkLength(maxRandomWalkLength)
+                    .withNumRandomWalks(numRandomWalks)
+                    .withMaxSocialProofSize(maxSocialProofSize)
+                    .withMaxSocialProofTypeSize(maxSocialProofTypeSize)
+                    .withResultFilterChain(resultFilterChain)
+                    .build();
 
     sourceIdList.clear();
     for (int i = 1; i <= maxNumLeftNodes; i++) {
@@ -283,12 +283,12 @@ public class SalsaTest {
     }
 
     Salsa salsa = new Salsa(
-        smallLeftRegularBipartiteGraph,
-        expectedNodesToHit,
-        new NullStatsReceiver());
+            smallLeftRegularBipartiteGraph,
+            expectedNodesToHit,
+            new NullStatsReceiver());
     SalsaResponse salsaResponse = salsa.computeRecommendations(salsaRequest, random);
     List<RecommendationInfo> salsaResults =
-        Lists.newArrayList(salsaResponse.getRankedRecommendations());
+            Lists.newArrayList(salsaResponse.getRankedRecommendations());
 
     assertEquals(expectedSalsaStats, salsaResponse.getSalsaStats());
     assertEquals(expectedTopResults, salsaResults);
@@ -312,20 +312,20 @@ public class SalsaTest {
     int maxSocialProofSize = 3;
     int expectedNodesToHit = numRandomWalks * numIterations / 2;
     ResultFilterChain resultFilterChain = new ResultFilterChain(Lists.<ResultFilter>newArrayList(
-        new RequestedSetFilter(new NullStatsReceiver())
+            new RequestedSetFilter(new NullStatsReceiver())
     ));
 
     SalsaRequest salsaRequest =
-        new SalsaRequestBuilder(queryNode)
-            .withLeftSeedNodes(null)
-            .withToBeFiltered(toBeFiltered)
-            .withMaxNumResults(numResults)
-            .withResetProbability(resetProbability)
-            .withMaxRandomWalkLength(numIterations)
-            .withNumRandomWalks(numRandomWalks)
-            .withMaxSocialProofSize(maxSocialProofSize)
-            .withResultFilterChain(resultFilterChain)
-            .build();
+            new SalsaRequestBuilder(queryNode)
+                    .withLeftSeedNodes(null)
+                    .withToBeFiltered(toBeFiltered)
+                    .withMaxNumResults(numResults)
+                    .withResetProbability(resetProbability)
+                    .withMaxRandomWalkLength(numIterations)
+                    .withNumRandomWalks(numRandomWalks)
+                    .withMaxSocialProofSize(maxSocialProofSize)
+                    .withResultFilterChain(resultFilterChain)
+                    .build();
 
     LongList metadata7 = new LongArrayList(new long[]{0, 0, 0, 0, 0, 0, 0});
     LongList metadata8 = new LongArrayList(new long[]{0, 0, 0, 0, 0, 0, 0, 0});
@@ -335,42 +335,42 @@ public class SalsaTest {
       socialProof.add(new HashMap<>());
     }
     socialProof.get(0).put(
-      (byte) 0, new ConnectingUsersWithMetadata(
-        new LongArrayList(new long[]{79, 51, 19, 13, 97, 56, 36, 2, 22}),
-        metadata9
-      )
+            (byte) 0, new ConnectingUsersWithMetadata(
+                    new LongArrayList(new long[]{79, 51, 19, 13, 97, 56, 36, 2, 22}),
+                    metadata9
+            )
     );
     socialProof.get(1).put(
-      (byte) 0, new ConnectingUsersWithMetadata(
-        new LongArrayList(new long[]{44, 77, 13, 63, 16, 5, 43, 90}),
-        metadata8
-      )
+            (byte) 0, new ConnectingUsersWithMetadata(
+                    new LongArrayList(new long[]{44, 77, 13, 63, 16, 5, 43, 90}),
+                    metadata8
+            )
     );
     socialProof.get(2).put(
-      (byte) 0, new ConnectingUsersWithMetadata(
-        new LongArrayList(new long[]{21, 65, 3, 8, 12, 38, 40}),
-        metadata7
-      )
+            (byte) 0, new ConnectingUsersWithMetadata(
+                    new LongArrayList(new long[]{21, 65, 3, 8, 12, 38, 40}),
+                    metadata7
+            )
     );
 
     final List<RecommendationInfo> expectedTopResults = new ArrayList<RecommendationInfo>();
     expectedTopResults.add(
-      new TweetRecommendationInfo(704, 0.0037072243346007606, socialProof.get(0)));
+            new TweetRecommendationInfo(704, 0.0037072243346007606, socialProof.get(0)));
     expectedTopResults.add(
-      new TweetRecommendationInfo(509, 0.003326996197718631, socialProof.get(1)));
+            new TweetRecommendationInfo(509, 0.003326996197718631, socialProof.get(1)));
     expectedTopResults.add(
-      new TweetRecommendationInfo(190, 0.003279467680608365, socialProof.get(2)));
+            new TweetRecommendationInfo(190, 0.003279467680608365, socialProof.get(2)));
 
     final SalsaStats expectedSalsaStats = new SalsaStats(1, 266, 999, 21040, 1, 78, 1);
 
     SalsaResponse salsaResponse = new Salsa(
-        bipartiteGraph,
-        expectedNodesToHit,
-        new NullStatsReceiver())
-        .computeRecommendations(salsaRequest, random);
+            bipartiteGraph,
+            expectedNodesToHit,
+            new NullStatsReceiver())
+            .computeRecommendations(salsaRequest, random);
     // Should be in sorted order of weight
     List<RecommendationInfo> salsaResults =
-        Lists.newArrayList(salsaResponse.getRankedRecommendations());
+            Lists.newArrayList(salsaResponse.getRankedRecommendations());
 
     assertEquals(expectedTopResults, salsaResults);
     assertEquals(expectedSalsaStats, salsaResponse.getSalsaStats());
