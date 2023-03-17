@@ -213,43 +213,44 @@ public class SalsaTest {
 
     int maxUserId = 1000;
 
-    final SalsaStats expectedSalsaStats = new SalsaStats(1, 64, 998, 21050, 1, 227, 64);
+    final SalsaStats expectedSalsaStats = new SalsaStats(1, 62, 999, 21124, 1, 231, 62);
 
-    LongList metadata7 = new LongArrayList(new long[]{0, 0, 0, 0, 0, 0, 0});
-    LongList metadata10 = new LongArrayList(new long[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0});
+    LongList metadata6 = new LongArrayList(new long[]{0, 0, 0, 0, 0, 0});
+    LongList metadata9 = new LongArrayList(new long[]{0, 0, 0, 0, 0, 0, 0, 0, 0});
+    LongList metadata13 = new LongArrayList(new long[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0});
     ArrayList<HashMap<Byte, ConnectingUsersWithMetadata>> socialProof = new ArrayList<>();
     for (int i = 0; i < 3; i++) {
       socialProof.add(new HashMap<>());
     }
     socialProof.get(0).put(
       (byte) 0, new ConnectingUsersWithMetadata(
-        new LongArrayList(new long[]{718, 889, 109, 164, 207, 767, 302, 888, 453, 738}),
-        metadata10
+        new LongArrayList(new long[]{917, 343, 386, 769, 125, 306, 420, 801, 858, 615, 105, 295, 358}),
+        metadata13
       )
     );
     socialProof.get(1).put(
       (byte) 0, new ConnectingUsersWithMetadata(
-        new LongArrayList(new long[]{47, 96, 499, 306, 396, 805, 351, 875, 308, 186}),
-        metadata10
+        new LongArrayList(new long[]{783, 607, 879, 718, 2, 586, 959, 893, 62}),
+        metadata9
       )
     );
     socialProof.get(2).put(
       (byte) 0, new ConnectingUsersWithMetadata(
-        new LongArrayList(new long[]{623, 880, 550, 363, 886, 156, 130}),
-        metadata7
+        new LongArrayList(new long[]{440, 971, 623, 767, 875, 157}),
+        metadata6
       )
     );
 
     final List<RecommendationInfo> expectedTopResults = new ArrayList<RecommendationInfo>();
-    expectedTopResults.add(new TweetRecommendationInfo(735, 0.0010926365795724466,
+    expectedTopResults.add(new TweetRecommendationInfo(827, 0.0013255065328536262,
       socialProof.get(0)));
-    expectedTopResults.add(new TweetRecommendationInfo(119, 0.0010451306413301663,
+    expectedTopResults.add(new TweetRecommendationInfo(682, 0.0011834879757621662,
       socialProof.get(1)));
-    expectedTopResults.add(new TweetRecommendationInfo(70, 0.0010451306413301663,
+    expectedTopResults.add(new TweetRecommendationInfo(691, 0.0011361484567316796,
       socialProof.get(2)));
 
-    Set<Long> sourceIdList = Sets.newHashSetWithExpectedSize(maxNumLeftNodes);
-    Set<Long> destinationIds = Sets.newHashSetWithExpectedSize(leftDegree);
+    Set<Long> sourceIdList = Sets.newLinkedHashSetWithExpectedSize(maxNumLeftNodes);
+    Set<Long> destinationIds = Sets.newLinkedHashSetWithExpectedSize(leftDegree);
 
     smallLeftRegularBipartiteGraph.reset();
     long userId = random.nextInt(maxUserId);
